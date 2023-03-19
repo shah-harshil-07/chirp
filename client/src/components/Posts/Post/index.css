@@ -1,0 +1,46 @@
+#card {
+    position: relative;
+    border-bottom: 2px solid #80808057;
+    border-radius: 0;
+}
+
+#user-image {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+    margin-top: 10px;
+    border-radius: 50%;
+}
+
+#card-body {
+    margin-left: 50px;
+    margin-top: 10px;
+}
+
+#seperator-container {
+    width: 24px;
+    height: 24px;
+    padding: 8px;
+}
+
+#seperator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: grey;
+}
+
+.chirp-action {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+#action-bar {
+    display: flex;
+    justify-content: space-around;
+    margin-left: -45px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}

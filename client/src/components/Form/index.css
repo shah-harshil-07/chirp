@@ -1,0 +1,42 @@
+#special-input {
+    border: 0px;
+    width: 100%;
+}
+
+.input-box {
+    width: 90%;
+    margin-left: 45px;
+    margin-top: -36px;
+}
+
+#special-input:focus {
+    outline: none;
+}
+
+.action-icon {
+    width: 15px;
+    height: 15px;
+    margin-left: 10px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+#chirp-button {
+    float: right;
+    background-color: #1DA1F2;
+    border-radius: 25px;
+    color: white;
+    border-color: #1DA1F2;
+    margin-top: -8px;
+    font-weight: bold;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+}
+
+.user-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
