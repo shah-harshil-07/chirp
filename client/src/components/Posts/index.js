@@ -8,9 +8,7 @@ const Posts = ({ setCurrentId }) => {
   const posts = useSelector((state) => state.posts);
 
   return (
-    !posts.length ? <CircularProgress /> : (
-      <>{ posts.map(post => <Post post={post} setCurrentId={setCurrentId} />) }</>
-    )
+    <div style={{ marginBottom: "1000px" }}>{ posts.map((post, index) => <Post key={index} post={post} setCurrentId={setCurrentId} />) }</div>
   );
 };
 

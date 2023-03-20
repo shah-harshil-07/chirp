@@ -1,0 +1,32 @@
+#auth-bar {
+    position: fixed;
+    bottom: 0%;
+    width: 100%;
+    background-color: #1DA1F2;
+    height: 50px;
+    display: block;
+    width: -webkit-fill-available;
+}
+
+.auth-btn {
+    float: right;
+    border-radius: 25px;
+    border: 1px solid;
+    font-weight: bold;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+    padding-bottom: 5px;
+}
+
+#login-btn {
+    background-color: #1DA1F2;
+    color: white;
+}
+
+#signup-btn {
+    background-color: white;
+    color: #000000;
+    margin-left: 8px;
+    margin-right: 8px;
+}

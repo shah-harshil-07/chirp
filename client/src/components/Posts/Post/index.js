@@ -26,11 +26,11 @@ const Post = ({ post, setCurrentId }) => {
         <div className="row mx-0"><div>{post.message}</div></div>
 
         <div id="action-bar">
-          <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" size="xs" />
-          <CIcon title="Rechirp" icon={cilSend} className="chirp-action" size="xs" />
-          <CIcon title="Like" icon={cilThumbUp} className="chirp-action" size="xs" />
-          <CIcon title="Views" icon={cilChart} className="chirp-action" size="xs" />
-          <CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" size="xs" />
+          <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
+          <CIcon title="Rechirp" icon={cilSend} className="chirp-action" />
+          <CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
+          <CIcon title="Views" icon={cilChart} className="chirp-action" />
+          <CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
         </div>
       </div>
     </Card>
