@@ -1,39 +1,35 @@
 import "./index.css";
+
 import React from "react";
+import CIcon from "@coreui/icons-react";
+import { cibGoogle } from "@coreui/icons";
+import CustomModal from "../CustomModal";
 
 const Register = () => {
-    const logo = require("../../assets/logo-1.png");
+    const registerBodyJSX = (
+        <>
+            <div id="google-signup-box">
+                <span className="d-flex justify-content-center align-items-center">
+                    <CIcon icon={cibGoogle} id="google-signup-icon" />
+                    <span id="google-signup-text">Sign up with google</span>
+                </span>
+            </div>
+
+            <div id="or-box">
+                <hr style={{ backgroundColor: "#bbc2c9" }} />
+                <div id="or-div">or</div>
+            </div>
+
+            <div id="create-box"><span>Create Account</span></div>
+
+            <div style={{ marginTop: "45px" }}>
+                Have an account already? <span style={{ color: "#1DA1F2" }}>Log in</span>
+            </div>
+        </>
+    )
 
     return (
-        <div className="custom-modal">
-            <div className="custom-modal-content">
-                <header className="custom-container">
-                    <div className="row custom-header-box">
-                        <div className="col-sm-11">
-                            <center><img alt="logo" width="40px" height="40px" src={String(logo)} /></center>
-                        </div>
-
-                        <div className="col-sm-1 custom-close-div">
-                            <span className="custom-close-btn">&times;</span>
-                        </div>
-                    </div>
-                </header>
-
-                <div className="custom-container-body">
-                    <div style={{ width: "100%", height: "30px", border: "1px solid black", borderRadius: "20px", paddingLeft: "12px" }}>
-                        Sign up with google
-                    </div>
-                </div>
-
-                <footer className="custom-modal-footer">
-                    <div className="row custom-button-container">
-                        <button className="btn btn-primary col-sm-4 custom-custom-btn">Cancel</button>
-                        <div className="col-sm-1" />
-                        <button className="btn btn-primary col-sm-4 custom-custom-btn">Delete</button>
-                    </div>
-                </footer>
-            </div>
-        </div>
+        <CustomModal bodyJSX={registerBodyJSX} />
     )
 }
 

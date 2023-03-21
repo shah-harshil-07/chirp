@@ -1,87 +1,45 @@
-@media (max-width: 768px) {
-    .modal {
-        padding-top: 50px;
-    }
-
-    .modal-content {
-        width: 500px;
-    }
-}
-
-@keyframes toggleModal {
-    0% {
-        top: 140px;
-    }
-
-    100% {
-        top: 180px;
-    }
-}
-
-.custom-modal {
-    z-index: 3;
-    position: fixed;
-    left: 0;
-    top: 0;
+#google-signup-box {
     width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
+    height: 35px;
+    border: 1px solid black;
+    border-radius: 20px;
+    padding-left: 12px;
+    padding-right: 12px;
 }
 
-.custom-modal-content {
-    margin: auto;
-    background-color: #fff;
-    position: relative;
-    padding: 0;
-    outline: 0;
-    width: 500px;
-    top: 180px;
-    animation: toggleModal 0.75s linear;
-}
-
-.custom-container {
-    padding-top: 0.01em;
-    padding-bottom: 0.01em;
-    padding-right: 0px;
-    padding-left: 16px;
-    height: 30px;
-}
-
-.custom-header-box {
-    margin-right: 0px;
-}
-
-.custom-close-btn {
-    font-size: larger;
-    margin-right: -10px;
-    cursor: pointer;
-}
-
-.custom-close-div {
-    padding-right: 0px;
-    height: fit-content;
-    padding-left: 16px;
-}
-
-.custom-container-body {
-    padding: 24px;
-    height: 64px;
-    margin-left: 20%;
-    margin-right: 20%;
-}
-
-.custom-modal-footer {
-    border-top: 2px solid #ced4da;
-    height: 50px;
-    width: auto;
-}
-
-.custom-button-container {
-    float: right;
-    width: 200px;
+#google-signup-icon {
+    width: 17px;
+    height: 17px;
     margin-top: 6px;
 }
 
-.custom-custom-btn {
-    width: 80px;
+#google-signup-text {
+    margin-left: 7px;
+    margin-top: 5.5px;
+}
+
+#or-box {
+    width: 100%;
+    position: relative;
+}
+
+#or-div {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    top: -13px;
+    left: 105px;
+    background-color: white;
+    text-align: center;
+}
+
+#create-box {
+    width: 100%;
+    height: 35px;
+    border: 1px solid black;
+    border-radius: 20px;
+    padding-left: 12px;
+    padding-right: 12px;
+    text-align: center;
+    padding-top: 5px;
 }
