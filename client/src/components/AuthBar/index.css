@@ -3,9 +3,10 @@
     bottom: 0%;
     width: 100%;
     background-color: #1DA1F2;
-    height: 50px;
+    height: 60px;
     display: block;
     width: -webkit-fill-available;
+    padding-top: 6px;
 }
 
 .auth-btn {
@@ -27,6 +28,7 @@
 #signup-btn {
     background-color: white;
     color: #000000;
+    border-color: #1DA1F2;
     margin-left: 8px;
     margin-right: 8px;
 }

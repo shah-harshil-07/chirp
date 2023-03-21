@@ -66,6 +66,8 @@
 .custom-container-body {
     padding: 24px;
     height: 64px;
+    margin-left: 20%;
+    margin-right: 20%;
 }
 
 .custom-modal-footer {
