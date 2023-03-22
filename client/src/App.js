@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container } from "@material-ui/core";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import Posts from "./components/Posts/";
 import Form from "./components/Form";
@@ -9,9 +9,10 @@ import AuthBar from "./components/AuthBar";
 import Register from "./components/Register";
 
 const App = () => {
+	const showDialog = useSelector(state => state.modal);
+
 	const [currentId, setCurrentId] = useState(0);
 	const dispatch = useDispatch();
-	const [showDialog, setShowDialog] = useState(false);
 
 	useEffect(() => {
 		dispatch(getPosts());
@@ -22,7 +23,7 @@ const App = () => {
 			{showDialog && (<Register />)}
 
 			<Container maxWidth="sm">
-				<p onClick={() => { setShowDialog(true); }}><b>Home</b></p>
+				<p><b>Home</b></p>
 				<Form currentId={currentId} setCurrentId={setCurrentId} />
 				<Posts setCurrentId={setCurrentId} />
 			</Container>

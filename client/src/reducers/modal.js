@@ -1,10 +1,8 @@
-export default (modal = '', action) => {
-    switch (action) {
-        case value:
-            
-            break;
-    
+export default (modal = false, action) => {
+    switch (action.type) {
+        case "MODAL":
+            return action.payload;
         default:
-            break;
+            return modal;
     }
 }

@@ -3,17 +3,30 @@ import "./index.css";
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 
+import { openModal } from "src/actions/modal";
+
 const AuthBar = () => {
+    const dispatch = useDispatch();
+
+    const openRegisterDialog = () => {
+        dispatch(openModal());
+    }
+
     return (
         <div id="auth-bar" className="row">
             <div style={{ marginLeft: "32%" }}>
-                <div style={{ fontWeight: "bolder", fontSize: "20px", color: "white" }}>Don't miss what's happening</div><br />
-                <div style={{ fontSize: "13px", color: "white", marginTop: "-28px" }}>People on Chirp are first to know</div>
+                <div id="top-text">Don't miss what's happening</div><br />
+                <div id="bottom-text">People on Chirp are first to know</div>
             </div>
 
-            <div style={{ marginRight: "14%", marginTop: "-35px" }}>
-                <div className="auth-btn" id="signup-btn"><span style={{ fontSize: "13px" }}>Sign Up</span></div>
-                <div className="auth-btn" id="login-btn"><span style={{ fontSize: "13px" }}>Log in</span></div>
+            <div id="auth-box">
+                <div className="auth-btn" id="signup-btn" onClick={openRegisterDialog}>
+                    <span className="btn-text">Sign up</span>
+                </div>
+
+                <div className="auth-btn" id="login-btn">
+                    <span className="btn-text">Log in</span>
+                </div>
             </div>
         </div>
     )

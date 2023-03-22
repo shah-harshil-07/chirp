@@ -63,6 +63,8 @@
     padding-right: 0px;
     height: fit-content;
     padding-left: 16px;
+    display: flex;
+    justify-content: center;
 }
 
 .custom-container-body {

@@ -1,9 +1,16 @@
 import "./index.css";
 
 import React from "react";
+import { closeModal } from "src/actions/modal";
+import { useDispatch } from "react-redux";
 
 const CustomModal = ({ bodyJSX }) => {
     const logo = require("../../assets/logo-1.png");
+    const dispatch = useDispatch();
+
+    const closeCustomDialog = () => {
+        dispatch(closeModal());
+    }
 
     return (
         <div className="custom-modal">
@@ -16,7 +23,7 @@ const CustomModal = ({ bodyJSX }) => {
                             </div>
                         </div>
 
-                        <div className="col-sm-1 custom-close-div">
+                        <div className="col-sm-1 custom-close-div" onClick={closeCustomDialog}>
                             <span className="custom-close-btn">&times;</span>
                         </div>
                     </div>
