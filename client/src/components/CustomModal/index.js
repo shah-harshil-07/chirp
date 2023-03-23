@@ -32,14 +32,6 @@ const CustomModal = ({ bodyJSX }) => {
                 <div className="custom-container-body">
                     { bodyJSX }
                 </div>
-
-                {/* <footer className="custom-modal-footer">
-                    <div className="row custom-button-container">
-                        <button className="btn btn-primary col-sm-4 custom-custom-btn">Cancel</button>
-                        <div className="col-sm-1" />
-                        <button className="btn btn-primary col-sm-4 custom-custom-btn">Delete</button>
-                    </div>
-                </footer> */}
             </div>
         </div>
     )

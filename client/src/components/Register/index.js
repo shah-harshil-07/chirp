@@ -4,11 +4,22 @@ import "./index.css";
 import React from "react";
 import CIcon from "@coreui/icons-react";
 import { cibGoogle } from "@coreui/icons";
+import { useDispatch } from "react-redux";
+
 import CustomModal from "../CustomModal";
+import { openModal } from "src/actions/modal";
 
 const Register = () => {
+    const dispatch = useDispatch();
+
+    const openLoginDialog = () => {
+        dispatch(openModal("login"));
+    }
+
     const registerBodyJSX = (
         <>
+            <h4 className="header">Join Chirp today</h4>
+
             <div className="auth-box">
                 <span className="d-flex justify-content-center align-items-center">
                     <CIcon icon={cibGoogle} id="google-signup-icon" />
@@ -21,10 +32,11 @@ const Register = () => {
                 <div className="or-div">or</div>
             </div>
 
-            <div id="create-box"><span>Create Account</span></div>
+            <div className="auth-box" id="create-box"><span>Create Account</span></div>
 
             <div className="bottom-text">
-                Have an account already? <span style={{ color: "#1DA1F2" }}>Log in</span>
+                Have an account already? 
+                <span className="link-text" onClick={openLoginDialog}>{` Log in`}</span>
             </div>
         </>
     )

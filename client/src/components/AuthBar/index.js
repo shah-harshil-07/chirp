@@ -8,8 +8,8 @@ import { openModal } from "src/actions/modal";
 const AuthBar = () => {
     const dispatch = useDispatch();
 
-    const openRegisterDialog = () => {
-        dispatch(openModal());
+    const openAuthDialog = type => {
+        dispatch(openModal(type));
     }
 
     return (
@@ -20,11 +20,11 @@ const AuthBar = () => {
             </div>
 
             <div id="auth-box">
-                <div className="auth-btn" id="signup-btn" onClick={openRegisterDialog}>
+                <div className="auth-btn" id="signup-btn" onClick={() => openAuthDialog("register")}>
                     <span className="btn-text">Sign up</span>
                 </div>
 
-                <div className="auth-btn" id="login-btn" onClick={openRegisterDialog}>
+                <div className="auth-btn" id="login-btn" onClick={() => openAuthDialog("login")}>
                     <span className="btn-text">Log in</span>
                 </div>
             </div>

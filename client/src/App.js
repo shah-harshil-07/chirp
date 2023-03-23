@@ -10,7 +10,7 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 
 const App = () => {
-	const showDialog = useSelector(state => state.modal);
+	const dialogState = useSelector(state => state.modal);
 
 	const [currentId, setCurrentId] = useState(0);
 	const dispatch = useDispatch();
@@ -19,10 +19,24 @@ const App = () => {
 		dispatch(getPosts());
 	}, [currentId, dispatch]);
 
+	const getDialog = () => {
+		if (dialogState.open) {
+			switch (dialogState.type) {
+				case "register":
+					return (<Register />);
+				case "login":
+					return (<Login />);
+				default:
+					return <></>;
+			}
+		} else {
+			return <></>;
+		}
+	}
+
 	return (
 		<>
-			{showDialog && (<Register />)}
-			{/* {showDialog && (<Login />)} */}
+			{ getDialog() }
 
 			<Container maxWidth="sm">
 				<p><b>Home</b></p>

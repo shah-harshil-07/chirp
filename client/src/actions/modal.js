@@ -1,7 +1,7 @@
-export const openModal = () => async dispatch => {
-    dispatch({ type: "MODAL", payload: true });
+export const openModal = type => async dispatch => {
+    dispatch({ type: "MODAL", payload: { type, open: true } });
 }
 
 export const closeModal = () => async dispatch => {
-    dispatch({ type: "MODAL", payload: false });
+    dispatch({ type: "MODAL", payload: { type: '', open: false } });
 }
