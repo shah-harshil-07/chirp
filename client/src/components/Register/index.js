@@ -8,7 +8,6 @@ import { useDispatch } from "react-redux";
 
 import CustomModal from "../CustomModal";
 import { openModal } from "src/actions/modal";
-import CreateAccount from "../CreateAccount";
 
 const Register = () => {
     const dispatch = useDispatch();
@@ -43,8 +42,7 @@ const Register = () => {
     )
 
     return (
-        // <CustomModal bodyJSX={registerBodyJSX} />
-        <CustomModal bodyJSX={<CreateAccount />} />
+        <CustomModal bodyJSX={registerBodyJSX} />
     )
 }
 
