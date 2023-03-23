@@ -7,6 +7,7 @@ import Form from "./components/Form";
 import { getPosts } from "./actions/posts";
 import AuthBar from "./components/AuthBar";
 import Register from "./components/Register";
+import Login from "./components/Login";
 
 const App = () => {
 	const showDialog = useSelector(state => state.modal);
@@ -21,6 +22,7 @@ const App = () => {
 	return (
 		<>
 			{showDialog && (<Register />)}
+			{/* {showDialog && (<Login />)} */}
 
 			<Container maxWidth="sm">
 				<p><b>Home</b></p>

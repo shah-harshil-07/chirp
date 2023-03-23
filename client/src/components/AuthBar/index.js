@@ -24,7 +24,7 @@ const AuthBar = () => {
                     <span className="btn-text">Sign up</span>
                 </div>
 
-                <div className="auth-btn" id="login-btn">
+                <div className="auth-btn" id="login-btn" onClick={openRegisterDialog}>
                     <span className="btn-text">Log in</span>
                 </div>
             </div>
