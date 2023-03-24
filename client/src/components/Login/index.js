@@ -7,23 +7,9 @@ import { useDispatch } from "react-redux";
 
 import CustomModal from "../CustomModal";
 import CredInput from "./cred-input";
-import { openModal } from "src/actions/modal";
+import { openModal, closeModal } from "src/actions/modal";
 
 const Login = () => {
-    const dispatch = useDispatch();
-
-    const openRegisterDialog = () => {
-        dispatch(openModal("register"));
-    }
-
-    const [page, setPage] = useState(1);
-    const [bodyJSX, setBodyJSX] = useState(<></>);
-
-    useEffect(() => {
-        let _bodyJSX = page === 1 ? loginBodyJSX : <CredInput />
-        setBodyJSX(_bodyJSX);
-    }, [page]);
-
     const loginBodyJSX = (
         <>
             <h4 className="header">Sign in to Chirp</h4>
@@ -42,7 +28,7 @@ const Login = () => {
 
             <input type="text" placeholder="Phone, email or username" className="input-text" />
 
-            <div className="auth-box" id="next-box" onClick={() => setPage(2)}>
+            <div className="auth-box" id="next-box" onClick={openNextLoginStep}>
                 <span className="d-flex justify-content-center align-items-end auth-text">Next</span>
             </div>
 
@@ -57,8 +43,48 @@ const Login = () => {
         </>
     );
 
+    const dispatch = useDispatch();
+
+    const bodyJSXList = [
+        { component: loginBodyJSX, footer: false },
+        { component: <CredInput goToNextStep={openNextLoginStep} />, footer: true, footerText: "Login" },
+    ];
+
+    const [loginStep, setLoginStep] = useState(0);
+    const [bodyJSX, setBodyJSX] = useState(<></>);
+    const [includeFooter, setIncludeFooter] = useState(false);
+    const [footerText, setFooterText] = useState('');
+
+    useEffect(() => {
+        let _bodyJSX = bodyJSXList?.[loginStep]?.component ?? <></>;
+        const _includeFooter = bodyJSXList?.[loginStep]?.footer ?? false;
+        const _footerText = bodyJSXList?.[loginStep]?.footerText ?? '';
+
+        setBodyJSX(_bodyJSX);
+        setIncludeFooter(_includeFooter);
+        setFooterText(_footerText);
+    }, [loginStep]);
+
+    function openRegisterDialog() {
+        dispatch(openModal("register"));
+    }
+
+    function closeLoginDialog() {
+        dispatch(closeModal());
+    }
+
+    function openNextLoginStep() {
+        if (loginStep < bodyJSXList.length - 1) setLoginStep(loginStep + 1);
+        else closeLoginDialog();
+    }
+
     return (
-        <CustomModal bodyJSX={bodyJSX} />
+        <CustomModal
+            bodyJSX={bodyJSX}
+            includeFooter={includeFooter}
+            footerText={footerText}
+            footerAction={openNextLoginStep}
+        />
     )
 }
 

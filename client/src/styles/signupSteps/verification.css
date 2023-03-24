@@ -1,0 +1,14 @@
+.verification-box {
+    margin-top: 38px;
+    background-color: white;
+    border: 1px solid;
+    height: 50px;
+    color: #212529;
+    border-radius: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.verification-box:focus {
+    border: 1px solid;
+}

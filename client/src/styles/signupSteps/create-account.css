@@ -10,15 +10,19 @@
     }
 }
 
-input[type=text] {
+.create-account-input {
     margin-top: 38px;
     background-color: white;
     border: 1px solid;
     height: 50px;
     color: #212529;
     border-radius: 10px;
+    width: 100%;
+    padding-left: 12px;
+    padding-right: 12px;
+    cursor: pointer;
 }
 
-input[type=text]:focus {
+.create-account-input:focus {
     border: 1px solid;
 }

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CIcon from "@coreui/icons-react";
 import { cilImage, cilSmile, cilList } from "@coreui/icons";
 
-import "./index.css";
+import "src/styles/form.css";
 import { createPost, updatePost } from "../../actions/posts";
 
 const Form = ({ currentId, setCurrentId }) => {

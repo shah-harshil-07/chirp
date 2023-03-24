@@ -6,7 +6,7 @@ import { cilSend, cilCommentBubble, cilChart, cilThumbUp, cilBookmark } from "@c
 import moment from "moment";
 import { useDispatch } from "react-redux";
 
-import "./index.css";
+import "src/styles/post.css";
 import { likePost } from "../../../actions/posts";
 
 const Post = ({ post, setCurrentId }) => {

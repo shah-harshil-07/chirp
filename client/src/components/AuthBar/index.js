@@ -1,7 +1,7 @@
-import "./index.css";
+import "src/styles/auth-bar.css";
 
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import { openModal } from "src/actions/modal";
 
