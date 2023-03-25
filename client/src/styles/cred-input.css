@@ -1,4 +1,4 @@
-@keyframes toggleCredModal {
+@keyframes triggerAnimation {
     0% {
         max-height: 0%;
         opacity: 0;
@@ -10,10 +10,10 @@
     }
 }
 
-#cred-modal {
+#animated-body {
     width: 100%;
     position: relative;
-    animation: toggleCredModal 1.5s linear;
+    animation: triggerAnimation 1.5s linear;
 }
 
 #username-box {

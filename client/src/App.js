@@ -3,10 +3,10 @@ import { Container } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 
 import Posts from "./components/Posts/";
-import Form from "./components/Form";
+import Form from "./components/form";
 import { getPosts } from "./actions/posts";
-import AuthBar from "./components/AuthBar";
-import Register from "./components/Register";
+import AuthBar from "./components/auth-bar";
+import Register from "./components/register";
 import Login from "./components/Login";
 
 const App = () => {

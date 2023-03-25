@@ -5,7 +5,7 @@ import { closeModal } from "src/actions/modal";
 import { useDispatch } from "react-redux";
 
 const CustomModal = ({ bodyJSX, includeFooter, footerAction, footerText }) => {
-    const logo = require("../../assets/logo-1.png");
+    const logo = require("src/assets/logo-1.png");
     const dispatch = useDispatch();
 
     const closeCustomDialog = () => {

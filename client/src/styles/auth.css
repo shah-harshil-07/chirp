@@ -40,24 +40,6 @@
     text-align: center;
 }
 
-#next-box {
-    margin-top: 28px;
-    background-color: black;
-    color: white;
-}
-
-.auth-text {
-    margin-top: 5px;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-#forgot-box {
-    margin-top: 28px;
-    background-color: white;
-    color: black;
-}
-
 .bottom-text {
     margin-top: 45px;
     font-size: 15px;
@@ -75,11 +57,6 @@
 .input-text:hover {
     border: 1px solid rgb(113, 108, 108);
     outline: none;
-}
-
-.bottom-text {
-    margin-top: 45px;
-    font-size: 16px;
 }
 
 .header {

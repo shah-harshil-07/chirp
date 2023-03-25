@@ -2,9 +2,9 @@ import "src/styles/signupSteps/verification.css";
 
 import React from "react";
 
-const Verification = ({ goToNextStep }) => {
+const Verification = () => {
     return (
-        <>
+        <div id="animated-body">
             <h4><b>Create your account</b></h4>
 
             <div className="verification-box">
@@ -21,7 +21,7 @@ const Verification = ({ goToNextStep }) => {
                 <label style={{ fontSize: "14px", fontWeight: "bold", color: "GrayText" }}>Email</label>
                 <p style={{ marginTop: "-9.5px" }}>Hello World</p>
             </div>
-        </>
+        </div>
     );
 }
 

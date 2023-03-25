@@ -1,0 +1,17 @@
+#login-next-box {
+    margin-top: 28px;
+    background-color: black;
+    color: white;
+}
+
+.auth-text {
+    margin-top: 5px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#forgot-box {
+    margin-top: 28px;
+    background-color: white;
+    color: black;
+}

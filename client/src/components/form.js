@@ -4,7 +4,7 @@ import CIcon from "@coreui/icons-react";
 import { cilImage, cilSmile, cilList } from "@coreui/icons";
 
 import "src/styles/form.css";
-import { createPost, updatePost } from "../../actions/posts";
+import { createPost, updatePost } from "../actions/posts";
 
 const Form = ({ currentId, setCurrentId }) => {
   const [postData, setPostData] = useState({ creator: '', title: '', message: '', tags: '', selectedFile: '' });
@@ -35,7 +35,7 @@ const Form = ({ currentId, setCurrentId }) => {
 
   return (
     <form noValidate onSubmit={handleSubmit}>
-      <img src={placeHolderImageSrc} className="user-image" />
+      <img src={placeHolderImageSrc} className="user-image" alt="user" />
 
       <div className="input-box">
         <textarea id="special-input" placeholder="What's happening?" />

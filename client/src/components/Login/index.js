@@ -1,11 +1,12 @@
 import "src/styles/auth.css";
+import "src/styles/login.css";
 
 import React, { useEffect, useState } from "react";
 import CIcon from "@coreui/icons-react";
 import { cibGoogle } from "@coreui/icons";
 import { useDispatch } from "react-redux";
 
-import CustomModal from "../CustomModal";
+import CustomModal from "../custom-modal";
 import CredInput from "./cred-input";
 import { openModal, closeModal } from "src/actions/modal";
 
@@ -28,7 +29,7 @@ const Login = () => {
 
             <input type="text" placeholder="Phone, email or username" className="input-text" />
 
-            <div className="auth-box" id="next-box" onClick={openNextLoginStep}>
+            <div className="auth-box" id="login-next-box" onClick={openNextLoginStep}>
                 <span className="d-flex justify-content-center align-items-end auth-text">Next</span>
             </div>
 

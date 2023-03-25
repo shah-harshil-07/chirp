@@ -2,11 +2,11 @@ import "src/styles/auth.css";
 
 import React, { useState } from "react";
 
-const KeyNote = ({ goToNextStep }) => {
+const KeyNote = () => {
     const [noteChecked, setNoteChecked] = useState(false);
 
     return (
-        <div>
+        <div id="animated-body">
             <h4><b>Customise your experience</b></h4>
 
             <span>

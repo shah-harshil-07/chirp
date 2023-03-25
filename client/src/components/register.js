@@ -6,13 +6,13 @@ import CIcon from "@coreui/icons-react";
 import { cibGoogle } from "@coreui/icons";
 import { useDispatch } from "react-redux";
 
-import CustomModal from "../CustomModal";
+import CustomModal from "./custom-modal";
 import { openModal, closeModal } from "src/actions/modal";
-import CreateAccount from "../SignupSteps/create-account";
-import KeyNote from "../SignupSteps/key-note";
-import Verification from "../SignupSteps/verification";
-import CodeInput from "../SignupSteps/code-input";
-import PasswordInput from "../SignupSteps/password-input";
+import CreateAccount from "./SignupSteps/create-account";
+import KeyNote from "./SignupSteps/key-note";
+import Verification from "./SignupSteps/verification";
+import CodeInput from "./SignupSteps/code-input";
+import PasswordInput from "./SignupSteps/password-input";
 
 const Register = () => {
     const registerBodyJSX = (

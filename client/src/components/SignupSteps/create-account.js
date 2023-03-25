@@ -3,9 +3,9 @@ import "src/styles/signupSteps/create-account.css";
 
 import React from "react";
 
-const CreateAccount = ({ goToNextStep }) => {
+const CreateAccount = () => {
     return (
-        <div id="cred-modal">
+        <div id="animated-body">
             <h4 className="header">Create your account</h4>
             <input type="text" className="create-account-input" placeholder="Name" />
             <input type="text" className="create-account-input" placeholder="Username" />
