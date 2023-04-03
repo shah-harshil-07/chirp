@@ -7,7 +7,7 @@ import { ConfigModule } from "@nestjs/config";
 	imports: [
 		PostModule,
 		ConfigModule.forRoot(),
-		MongooseModule.forRoot(process.env.CONNECTION_URL),
+		MongooseModule.forRoot(process.env.CONNECTION_URL, { dbName: process.env.DB_NAME }),
 	],
 })
 export class AppModule { }

@@ -4,7 +4,7 @@ import React from "react";
 import { closeModal } from "src/actions/modal";
 import { useDispatch } from "react-redux";
 
-const CustomModal = ({ bodyJSX, includeFooter, footerAction, footerText }) => {
+const CustomModal = ({ bodyJSX, includeFooter, footerAction, footerText, footerDisabled }) => {
     const logo = require("src/assets/logo-1.png");
     const dispatch = useDispatch();
 
@@ -33,7 +33,13 @@ const CustomModal = ({ bodyJSX, includeFooter, footerAction, footerText }) => {
 
                 {
                     includeFooter && (
-                        <div id="custom-modal-footer-box" onClick={footerAction}><b>{footerText}</b></div>
+                        <div
+                            onClick={footerAction}
+                            id="custom-modal-footer-box"
+                            style={{ opacity: footerDisabled ? 0.5 : 1 }}
+                        >
+                            <b>{footerText}</b>
+                        </div>
                     )
                 }
             </div>

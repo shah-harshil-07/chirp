@@ -15,6 +15,10 @@ import CodeInput from "./SignupSteps/code-input";
 import PasswordInput from "./SignupSteps/password-input";
 
 const Register = () => {
+    const initialBodyData = {
+        createAccount: { name: '', username: '', email: '' },
+    };
+
     const registerBodyJSX = (
         <>
             <h4 className="header">Join Chirp today</h4>
@@ -44,10 +48,15 @@ const Register = () => {
 
     const bodyJSXList = [
         { component: registerBodyJSX, footer: false },
-        { component: <CreateAccount goToNextStep={openNextSignUpStep} />, footer: true, footerText: "Next" },
-        { component: <KeyNote goToNextStep={openNextSignUpStep} />, footer: true, footerText: "Next" },
-        { component: <Verification goToNextStep={openNextSignUpStep} />, footer: true, footerText: "Next" },
-        { component: <CodeInput goToNextStep={openNextSignUpStep} />, footer: true, footerText: "Next" },
+        {
+            bodyKey: "createAccount",
+            footer: true,
+            footerText: "Next",
+            component: <CreateAccount handleDataChange={data => handleBodyDataChange("createAccount", data)} />,
+        },
+        { component: <KeyNote />, footer: true, footerText: "Next" },
+        { component: <Verification />, footer: true, footerText: "Next" },
+        { component: <CodeInput />, footer: true, footerText: "Next" },
         { component: <PasswordInput />, footer: true, footerText: "Finish" }
     ];
 
@@ -56,16 +65,37 @@ const Register = () => {
     const [signUpStep, setSignUpStep] = useState(0);
     const [includeFooter, setIncludeFooter] = useState(false);
     const [footerText, setFooterText] = useState('');
+    const [bodyData, setBodyData] = useState(initialBodyData);
+    const [bodyKey, setBodyKey] = useState('');
+    const [footerDisabled, setFooterDisabled] = useState(true);
 
     useEffect(() => {
         const _bodyJSX = bodyJSXList?.[signUpStep]?.component ?? <></>;
         const _includeFooter = bodyJSXList?.[signUpStep]?.footer ?? false;
         const _footerText = bodyJSXList?.[signUpStep]?.footerText ?? '';
+        const _bodyKey = bodyJSXList?.[signUpStep]?.bodyKey ?? '';
 
         setBodyJSX(_bodyJSX);
         setIncludeFooter(_includeFooter);
         setFooterText(_footerText);
+        setBodyKey(_bodyKey);
+        setFooterDisabled(true);
     }, [signUpStep]);
+
+    useEffect(() => {
+        let _data = null, formIsValid = true;
+
+        switch (bodyKey) {
+            case "createAccount":
+                _data = bodyData?.[bodyKey];
+                formIsValid = true;
+                for (const key in _data) if (!_data[key]) formIsValid = false;
+                if (formIsValid) setFooterDisabled(false);
+                break;
+            default:
+                break;
+        }
+    }, [bodyData]);
 
     const closeRegisterDialog = () => {
         dispatch(closeModal());
@@ -80,12 +110,17 @@ const Register = () => {
         else setSignUpStep(signUpStep + 1);
     }
 
+    function handleBodyDataChange(key, data) {
+        setBodyData({ ...bodyData, [key]: data });
+    }
+
     return (
         <CustomModal
             bodyJSX={bodyJSX}
+            footerText={footerText}
             includeFooter={includeFooter}
             footerAction={openNextSignUpStep}
-            footerText={footerText}
+            footerDisabled={footerDisabled}
         />
     )
 }
