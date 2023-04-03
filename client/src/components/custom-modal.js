@@ -34,7 +34,7 @@ const CustomModal = ({ bodyJSX, includeFooter, footerAction, footerText, footerD
                 {
                     includeFooter && (
                         <div
-                            onClick={footerAction}
+                            onClick={() => {if (!footerDisabled) footerAction();}}
                             id="custom-modal-footer-box"
                             style={{ opacity: footerDisabled ? 0.5 : 1 }}
                         >

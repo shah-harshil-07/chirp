@@ -1,7 +1,7 @@
 import "src/styles/auth.css";
 import "src/styles/register.css";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CIcon from "@coreui/icons-react";
 import { cibGoogle } from "@coreui/icons";
 import { useDispatch } from "react-redux";
@@ -13,11 +13,17 @@ import KeyNote from "./SignupSteps/key-note";
 import Verification from "./SignupSteps/verification";
 import CodeInput from "./SignupSteps/code-input";
 import PasswordInput from "./SignupSteps/password-input";
+import { validate, getErrorMessage } from "src/helpers";
 
 const Register = () => {
     const initialBodyData = {
+        password: '',
+        codeInput: '',
+        keyNoteChecked: false,
         createAccount: { name: '', username: '', email: '' },
     };
+
+    const createAccountRef = useRef(null);
 
     const registerBodyJSX = (
         <>
@@ -40,7 +46,7 @@ const Register = () => {
             </div>
 
             <div className="bottom-text">
-                Have an account already? 
+                Have an account already?
                 <span className="link-text" onClick={openLoginDialog}>{` Log in`}</span>
             </div>
         </>
@@ -49,18 +55,40 @@ const Register = () => {
     const bodyJSXList = [
         { component: registerBodyJSX, footer: false },
         {
-            bodyKey: "createAccount",
             footer: true,
             footerText: "Next",
-            component: <CreateAccount handleDataChange={data => handleBodyDataChange("createAccount", data)} />,
+            bodyKey: "createAccount",
+            component: (
+                <CreateAccount
+                    ref={createAccountRef}
+                    handleDataChange={data => handleBodyDataChange("createAccount", data)}
+                />
+            ),
         },
-        { component: <KeyNote />, footer: true, footerText: "Next" },
-        { component: <Verification />, footer: true, footerText: "Next" },
-        { component: <CodeInput />, footer: true, footerText: "Next" },
-        { component: <PasswordInput />, footer: true, footerText: "Finish" }
+        {
+            footer: true,
+            footerText: "Next",
+            bodyKey: "keyNoteChecked",
+            component: <KeyNote handleDataChange={data => handleBodyDataChange("keyNoteChecked", data)} />,
+        },
+        { footer: true, footerText: "Next", component: <Verification />, },
+        {
+            footer: true,
+            footerText: "Next",
+            bodyKey: "codeInput",
+            component: <CodeInput handleDataChange={data => handleBodyDataChange("codeInput", data)} />,
+        },
+        {
+            footer: true,
+            bodyKey: "password",
+            footerText: "Finish",
+            component: <PasswordInput handleDataChange={data => handleBodyDataChange("password", data)} />,
+        }
     ];
 
     const dispatch = useDispatch();
+    const emailObtainedCode = "123";
+
     const [bodyJSX, setBodyJSX] = useState(<></>);
     const [signUpStep, setSignUpStep] = useState(0);
     const [includeFooter, setIncludeFooter] = useState(false);
@@ -74,23 +102,47 @@ const Register = () => {
         const _includeFooter = bodyJSXList?.[signUpStep]?.footer ?? false;
         const _footerText = bodyJSXList?.[signUpStep]?.footerText ?? '';
         const _bodyKey = bodyJSXList?.[signUpStep]?.bodyKey ?? '';
+        const _footerDisabled = (signUpStep === 3) ? false : true;
 
         setBodyJSX(_bodyJSX);
         setIncludeFooter(_includeFooter);
         setFooterText(_footerText);
         setBodyKey(_bodyKey);
-        setFooterDisabled(true);
+        setFooterDisabled(_footerDisabled);
     }, [signUpStep]);
 
     useEffect(() => {
-        let _data = null, formIsValid = true;
+        let data = bodyData?.[bodyKey], formIsValid = true, _errors = {};
 
         switch (bodyKey) {
             case "createAccount":
-                _data = bodyData?.[bodyKey];
-                formIsValid = true;
-                for (const key in _data) if (!_data[key]) formIsValid = false;
-                if (formIsValid) setFooterDisabled(false);
+                if (data) {
+                    formIsValid = true;
+
+                    for (const key in data) {
+                        if (!data[key]) {
+                            formIsValid = false;
+                        } else if (validate(key, data[key])) {
+                            _errors[key] = getErrorMessage(key);
+                            formIsValid = false;
+                        } else {
+                            _errors[key] = '';
+                        }
+                    }
+
+                    if (createAccountRef?.current) createAccountRef.current.updateErrorInfo(_errors);
+                    setFooterDisabled(!formIsValid);
+                }
+
+                break;
+            case "keyNoteChecked":
+                setFooterDisabled(!data);
+                break;
+            case "codeInput":
+                setFooterDisabled(!(data === emailObtainedCode));
+                break;
+            case "password":
+                setFooterDisabled(!validate("password", data));
                 break;
             default:
                 break;
@@ -119,8 +171,8 @@ const Register = () => {
             bodyJSX={bodyJSX}
             footerText={footerText}
             includeFooter={includeFooter}
-            footerAction={openNextSignUpStep}
             footerDisabled={footerDisabled}
+            footerAction={openNextSignUpStep}
         />
     )
 }

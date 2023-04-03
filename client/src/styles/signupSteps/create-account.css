@@ -20,9 +20,13 @@
     width: 100%;
     padding-left: 12px;
     padding-right: 12px;
-    cursor: pointer;
 }
 
 .create-account-input:focus {
     border: 1px solid;
+}
+
+.create-account-text {
+    font-size: 14px;
+    position: absolute;
 }

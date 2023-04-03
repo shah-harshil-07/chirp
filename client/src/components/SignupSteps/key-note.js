@@ -1,9 +1,13 @@
 import "src/styles/auth.css";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const KeyNote = () => {
+const KeyNote = ({ handleDataChange }) => {
     const [noteChecked, setNoteChecked] = useState(false);
+
+    useEffect(() => {
+        handleDataChange(noteChecked);
+    }, [noteChecked]);
 
     return (
         <div id="animated-body">
