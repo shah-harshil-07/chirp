@@ -22,6 +22,7 @@ const Register = () => {
         keyNoteChecked: false,
         createAccount: { name: '', username: '', email: '' },
     };
+    const [bodyData, setBodyData] = useState(initialBodyData);
 
     const createAccountRef = useRef(null);
 
@@ -71,12 +72,12 @@ const Register = () => {
             bodyKey: "keyNoteChecked",
             component: <KeyNote handleDataChange={data => handleBodyDataChange("keyNoteChecked", data)} />,
         },
-        { footer: true, footerText: "Next", component: <Verification />, },
+        { footer: true, footerText: "Next", component: <Verification data={bodyData.createAccount} />, },
         {
             footer: true,
             footerText: "Next",
             bodyKey: "codeInput",
-            component: <CodeInput handleDataChange={data => handleBodyDataChange("codeInput", data)} />,
+            component: <CodeInput email={bodyData.createAccount.email} handleDataChange={data => handleBodyDataChange("codeInput", data)} />,
         },
         {
             footer: true,
@@ -93,7 +94,6 @@ const Register = () => {
     const [signUpStep, setSignUpStep] = useState(0);
     const [includeFooter, setIncludeFooter] = useState(false);
     const [footerText, setFooterText] = useState('');
-    const [bodyData, setBodyData] = useState(initialBodyData);
     const [bodyKey, setBodyKey] = useState('');
     const [footerDisabled, setFooterDisabled] = useState(true);
 
