@@ -12,3 +12,13 @@
 .verification-box:focus {
     border: 1px solid;
 }
+
+.verification-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: GrayText;
+}
+
+.verification-value {
+    margin-top: -9.5px;
+}

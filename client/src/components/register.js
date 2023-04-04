@@ -77,7 +77,12 @@ const Register = () => {
             footer: true,
             footerText: "Next",
             bodyKey: "codeInput",
-            component: <CodeInput email={bodyData.createAccount.email} handleDataChange={data => handleBodyDataChange("codeInput", data)} />,
+            component: (
+                <CodeInput
+                    email={bodyData.createAccount.email}
+                    handleDataChange={data => handleBodyDataChange("codeInput", data)}
+                />
+            ),
         },
         {
             footer: true,

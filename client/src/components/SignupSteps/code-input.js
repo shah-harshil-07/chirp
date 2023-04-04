@@ -25,7 +25,7 @@ const CodeInput = ({ email, handleDataChange }) => {
                 <b>{seconds > 0 ? `The OTP expires in: ${seconds} seconds` : "The OTP has expired!"}</b>
             </p>
 
-            <LabelledInput value={code} handleChange={value => setCode(value)} header={"Code"} />
+            <LabelledInput disabled={seconds === 0} value={code} handleChange={value => setCode(value)} header={"Code"} />
 
             <p style={{ textDecoration: "underline", color: "#1DA1F2", marginTop: "5px" }}>Resend email</p>
         </div>

@@ -8,18 +8,18 @@ const Verification = ({ data }) => {
             <h4><b>Create your account</b></h4>
 
             <div className="verification-box">
-                <label style={{ fontSize: "14px", fontWeight: "bold", color: "GrayText" }}>Name</label>
-                <p style={{ marginTop: "-9.5px" }}>{data?.name ?? ''}</p>
+                <label className="verification-label">Name</label>
+                <p className="verification-value">{data?.name ?? ''}</p>
             </div>
 
             <div className="verification-box">
-                <label style={{ fontSize: "14px", fontWeight: "bold", color: "GrayText" }}>Username</label>
-                <p style={{ marginTop: "-9.5px" }}>{data?.username ?? ''}</p>
+                <label className="verification-label">Username</label>
+                <p className="verification-value">{data?.username ?? ''}</p>
             </div>
 
             <div className="verification-box">
-                <label style={{ fontSize: "14px", fontWeight: "bold", color: "GrayText" }}>Email</label>
-                <p style={{ marginTop: "-9.5px" }}>{data?.email ?? ''}</p>
+                <label className="verification-label">Email</label>
+                <p className="verification-value">{data?.email ?? ''}</p>
             </div>
         </div>
     );
