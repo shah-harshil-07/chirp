@@ -1,17 +1,22 @@
-import { IsEmail, IsNotEmpty } from "class-validator";
+import { IsEmail, IsNotEmpty, Length, MaxLength, MinLength } from "class-validator";
 import { CustomMatch } from "src/custom-decorators/custom-validators";
-import { NAME_REGEX, NAME_ERR_MESSAGE, USERNAME_REGEX, USERNAME_ERR_MESSAGE, EMAIL_ERR_MESSAGE } from "src/constants";
+import * as Constants from "src/constants";
 
 export class UserDTO {
     @IsNotEmpty()
-    @CustomMatch(NAME_REGEX, { message: NAME_ERR_MESSAGE })
+    @CustomMatch(Constants.NAME_REGEX, { message: Constants.NAME_ERR_MESSAGE })
     name: string;
 
     @IsNotEmpty()
-    @CustomMatch(USERNAME_REGEX, { message: USERNAME_ERR_MESSAGE })
+    @CustomMatch(Constants.USERNAME_REGEX, { message: Constants.USERNAME_ERR_MESSAGE })
     username: string;
 
     @IsNotEmpty()
-    @IsEmail({}, { message: EMAIL_ERR_MESSAGE })
+    @IsEmail({}, { message: Constants.EMAIL_ERR_MESSAGE })
     email: string;
+}
+
+export class OtpDTO {
+    @Length(4, 4)
+    otp: string;
 }
