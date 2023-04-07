@@ -2,35 +2,25 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { OtpStore } from "./otp-store.schema";
 import { Model } from "mongoose";
-
-interface IOtp {
-    id: string;
-    otp: string;
-}
+import { ExceptionsHandler } from "@nestjs/core/exceptions/exceptions-handler";
 
 @Injectable()
 export class CommonService {
     constructor(@InjectModel(OtpStore.name) private readonly otpModel: Model<OtpStore>) { }
 
-    private async postOtp(otp: string): Promise<string | null> {
+    public async postOtp(otp: string): Promise<string> {
         const otpDocument = new this.otpModel({ otp });
 
         try {
             await otpDocument.save();
             return otpDocument.id;
         } catch (err) {
-            return null;
+            console.log(err);
+            throw ExceptionsHandler;
         }
     }
 
-    public async createFourDigitOtp(): Promise<IOtp | null> {
-        const num = ((+(Math.random().toFixed(4))) * 10000).toString();
-
-        try {
-            const otp_id = await this.postOtp(num);
-            return { id: otp_id, otp: num };
-        } catch (err) {
-            return null;
-        }
+    public createFourDigitOtp(): string {
+        return Math.floor(1000 + Math.random() * 9000).toString();
     }
 }

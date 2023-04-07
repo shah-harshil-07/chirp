@@ -4,6 +4,7 @@ import { CommonService } from "../common/common.service";
 import { OtpStore } from "../common/otp-store.schema";
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
+import { ExceptionsHandler } from "@nestjs/core/exceptions/exceptions-handler";
 
 @Injectable()
 export class UsersService {
@@ -13,37 +14,35 @@ export class UsersService {
         private readonly commonService: CommonService,
     ) { }
 
-    public async sendOtp(email_id: string, username: string): Promise<string | null> {
+    public async sendOtp(emailId: string, username: string): Promise<string> {
         try {
-            const otpObj = await this.commonService.createFourDigitOtp();
+            const otp = this.commonService.createFourDigitOtp();
 
-            if (otpObj?.otp) {
-                try {
-                    await this.mailerService.sendMail({
-                        to: email_id,
-                        from: '"Chirp" <noreply@chirp.com>',
-                        replyTo: "shahharshil1998@gmail.com",
-                        subject: "Email Verification",
-                        template: "otp",
-                        context: { username, otp: otpObj?.otp }
-                    });
+            const otpId = await this.commonService.postOtp(otp);
 
-                    return otpObj.id;
-                } catch (err) {
-                    return null;
-                }
-            }
-        } catch(err) {
-            return null;
+            await this.mailerService.sendMail({
+                to: emailId,
+                from: '"Chirp" <noreply@chirp.com>',
+                replyTo: "shahharshil1998@gmail.com",
+                subject: "Email Verification",
+                template: "otp",
+                context: { username, otp }
+            });
+
+            return otpId;
+        } catch (err) {
+            console.log(err);
+            throw ExceptionsHandler;
         }
     }
 
-    public async findOtpValue(otp_id: string): Promise<OtpStore> {
+    public async findOtpValue(otpId: string): Promise<OtpStore> {
         try {
-            const optObj = await this.otpModel.findById(otp_id);
+            const optObj = await this.otpModel.findById(otpId);
             return optObj;
-        } catch (error) {
-            return null;
+        } catch (err) {
+            console.log(err);
+            throw ExceptionsHandler;
         }
     }
 }
