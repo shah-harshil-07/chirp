@@ -16,7 +16,7 @@ export class CommonService {
             return otpDocument.id;
         } catch (err) {
             console.log(err);
-            throw ExceptionsHandler;
+            throw new ExceptionsHandler();
         }
     }
 

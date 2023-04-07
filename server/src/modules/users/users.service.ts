@@ -14,7 +14,7 @@ export class UsersService {
         private readonly commonService: CommonService,
     ) { }
 
-    public async sendOtp(emailId: string, username: string): Promise<string> {
+    public async sendOtp(emailId: string, username: string): Promise<{ otpId: string}> {
         try {
             const otp = this.commonService.createFourDigitOtp();
 
@@ -22,17 +22,17 @@ export class UsersService {
 
             await this.mailerService.sendMail({
                 to: emailId,
-                from: '"Chirp" <noreply@chirp.com>',
-                replyTo: "shahharshil1998@gmail.com",
+                from: process.env.FROM_EMAIL_ADDR,
+                replyTo: process.env.REPLY_TO_EMAIL_ADDR,
                 subject: "Email Verification",
                 template: "otp",
                 context: { username, otp }
             });
 
-            return otpId;
+            return { otpId };
         } catch (err) {
             console.log(err);
-            throw ExceptionsHandler;
+            throw new ExceptionsHandler();
         }
     }
 
@@ -42,7 +42,7 @@ export class UsersService {
             return optObj;
         } catch (err) {
             console.log(err);
-            throw ExceptionsHandler;
+            throw new ExceptionsHandler();
         }
     }
 }

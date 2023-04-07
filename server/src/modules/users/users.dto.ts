@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty, Length, MaxLength, MinLength } from "class-validator";
-import { CustomMatch } from "src/custom-decorators/custom-validators";
+import { CustomMatch } from "src/decorators/validators";
 import * as Constants from "src/constants";
 
 export class UserDTO {
