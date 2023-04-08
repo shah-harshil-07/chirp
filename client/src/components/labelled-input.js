@@ -4,7 +4,7 @@ import React, { useState } from "react";
 
 const LabelledInput = ({ value, handleChange, header, disabled }) => {
     const unfocusedLabelStyles = { fontSize: "20px", top: "12px", zIndex: '2', left: "21px" };
-    const focusedLabelStyles = { animation: "toggleLabel 0.5s linear" };
+    const focusedLabelStyles = { animation: "toggleLabel 0.25s linear" };
 
     const [labelStyles, setLabelStyles] = useState(unfocusedLabelStyles);
 

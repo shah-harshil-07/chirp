@@ -1,10 +1,17 @@
-import axios from 'axios';
+import axios from "axios";
 
-const url = 'http://localhost:5000/posts';
-const fetchUrl = "http://localhost:5000/posts/all";
+const origin = process.env.REACT_APP_SERVER_ORIGIN;
+const port = process.env.REACT_APP_SERVER_PORT;
 
-export const fetchPosts = () => axios.get(fetchUrl);
-export const createPost = (newPost) => axios.post(url, newPost);
-export const likePost = (id) => axios.patch(`${url}/${id}/likePost`);
-export const updatePost = (id, updatedPost) => axios.patch(`${url}/${id}`, updatedPost);
-export const deletePost = (id) => axios.delete(`${url}/${id}`);
+const API = async (method, baseUrl, data) => {
+    const requestUrl = `${origin}:${port}/${baseUrl}`;
+
+    try {
+        const responseObj = await axios[method](requestUrl, data);
+        return responseObj;
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+
+export default API;

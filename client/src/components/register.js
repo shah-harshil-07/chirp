@@ -14,6 +14,8 @@ import Verification from "./SignupSteps/verification";
 import CodeInput from "./SignupSteps/code-input";
 import PasswordInput from "./SignupSteps/password-input";
 import { validate, getErrorMessage } from "src/helpers";
+import API from "src/api";
+import * as Constants from "src/constants";
 
 const Register = () => {
     const initialBodyData = {
@@ -101,6 +103,7 @@ const Register = () => {
     const [footerText, setFooterText] = useState('');
     const [bodyKey, setBodyKey] = useState('');
     const [footerDisabled, setFooterDisabled] = useState(true);
+    const [otpId, setOtpId] = useState('');
 
     useEffect(() => {
         const _bodyJSX = bodyJSXList?.[signUpStep]?.component ?? <></>;
@@ -109,12 +112,27 @@ const Register = () => {
         const _bodyKey = bodyJSXList?.[signUpStep]?.bodyKey ?? '';
         const _footerDisabled = (signUpStep === 3) ? false : true;
 
+        if (signUpStep === 4) {
+            sendOtpMail();
+            setFooterDisabled(true);
+            return;
+        }
+
         setBodyJSX(_bodyJSX);
         setIncludeFooter(_includeFooter);
         setFooterText(_footerText);
         setBodyKey(_bodyKey);
         setFooterDisabled(_footerDisabled);
     }, [signUpStep]);
+
+    useEffect(() => {
+        if (otpId && signUpStep === 4) {
+            setBodyJSX(bodyJSXList?.[4]?.component ?? <></>);
+            setIncludeFooter(bodyJSXList?.[4]?.footer ?? false);
+            setFooterText(bodyJSXList?.[4]?.footerText ?? '');
+            setBodyKey(bodyJSXList?.[4]?.bodyKey ?? '');
+        }
+    }, [otpId]);
 
     useEffect(() => {
         let data = bodyData?.[bodyKey], formIsValid = true, _errors = {};
@@ -153,6 +171,18 @@ const Register = () => {
                 break;
         }
     }, [bodyData]);
+
+    const sendOtpMail = async () => {
+        const data = bodyData.createAccount;
+
+        try {
+            const response = await API(Constants.POST, Constants.GET_OTP, data);
+            const responseData = response.data;
+            if (responseData?.meta?.status && responseData?.data?.otpId) setOtpId(responseData.data.otpId);
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
 
     const closeRegisterDialog = () => {
         dispatch(closeModal());
