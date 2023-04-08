@@ -1,9 +1,12 @@
+import "src/styles/signupSteps/code-input.css";
+
 import React, { useEffect, useState } from "react";
+
 import LabelledInput from "../labelled-input";
 
-const CodeInput = ({ email, handleDataChange }) => {
+const CodeInput = ({ email, handleDataChange, resendOtpMail }) => {
     const [code, setCode] = useState('');
-    const [seconds, setSeconds] = useState(20);
+    const [seconds, setSeconds] = useState(40);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -17,17 +20,38 @@ const CodeInput = ({ email, handleDataChange }) => {
         handleDataChange(code);
     }, [code]);
 
+    const handleCodeChange = value => {
+        if (value.length > 4) value = value.slice(0, 4);
+        setCode(value);
+    }
+
+    const restartOtpVerification = () => {
+        if (seconds <= 0) {
+            setCode('');
+            setSeconds(40);
+            resendOtpMail();
+        }
+    }
+
     return (
         <div id="animated-body">
             <h4><b>We sent you a code</b></h4>
-            <p style={{ color: "GrayText" }}>Enter it below to verify {email}</p>
+
+            <p id="verification-para">Enter it below to verify {email}</p>
+
             <p className={seconds === 0 ? "text-danger" : ''}>
                 <b>{seconds > 0 ? `The OTP expires in: ${seconds} seconds` : "The OTP has expired!"}</b>
             </p>
 
-            <LabelledInput disabled={seconds === 0} value={code} handleChange={value => setCode(value)} header={"Code"} />
+            <LabelledInput disabled={!seconds} value={code} handleChange={value => handleCodeChange(value)} header={"Code"} />
 
-            <p style={{ textDecoration: "underline", color: "#1DA1F2", marginTop: "5px" }}>Resend email</p>
+            <p
+                id="resend-mail-link"
+                style={{ opacity: seconds > 0 ? '0.5' : '1' }}
+                onClick={restartOtpVerification}
+            >
+                Resend email
+            </p>
         </div>
     );
 }

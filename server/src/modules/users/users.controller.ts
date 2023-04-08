@@ -20,14 +20,14 @@ export class UsersController {
     }
 
     @Post("check-otp/:id")
-    async checkOtp(@Body() requestData: OtpDTO, @Param() { id }: { id: string }): Promise<{ verified: boolean }> {
+    async checkOtp(@Body() requestData: OtpDTO, @Param() { id }: { id: string }): Promise<{ valid: boolean }> {
         try {
             const otpData = await this.userService.findOtpValue(id);
-            const createdTime = otpData.createdAt.getTime();
-            const currentTime = (new Date()).getTime();
+            const createdTime = otpData.createdAt;
+            const currentTime = Date.now();
             const timeDiff = ((currentTime - createdTime) / 1000);
 
-            return { verified: (timeDiff <= 20 && requestData.otp === otpData.otp) };
+            return { valid: (timeDiff <= 40 && requestData.otp === otpData.otp) };
         } catch (err) {
             console.log(err);
             throw new ExceptionsHandler();

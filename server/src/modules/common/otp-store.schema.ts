@@ -5,8 +5,8 @@ export class OtpStore {
     @Prop()
     otp: string;
 
-    @Prop({ default: new Date() })
-    createdAt: Date;
+    @Prop()
+    createdAt: number;
 }
 
 export const OtpStoreSchema = SchemaFactory.createForClass(OtpStore);

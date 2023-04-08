@@ -81,6 +81,7 @@ const Register = () => {
             bodyKey: "codeInput",
             component: (
                 <CodeInput
+                    resendOtpMail={() => sendOtpMail()}
                     email={bodyData.createAccount.email}
                     handleDataChange={data => handleBodyDataChange("codeInput", data)}
                 />
@@ -95,7 +96,6 @@ const Register = () => {
     ];
 
     const dispatch = useDispatch();
-    const emailObtainedCode = "123";
 
     const [bodyJSX, setBodyJSX] = useState(<></>);
     const [signUpStep, setSignUpStep] = useState(0);
@@ -162,7 +162,8 @@ const Register = () => {
                 setFooterDisabled(!data);
                 break;
             case "codeInput":
-                setFooterDisabled(!(data === emailObtainedCode));
+                if (data.length === 4) verifyOtp(data);
+                else setFooterDisabled(true);
                 break;
             case "password":
                 setFooterDisabled(!validate("password", data));
@@ -181,6 +182,22 @@ const Register = () => {
             if (responseData?.meta?.status && responseData?.data?.otpId) setOtpId(responseData.data.otpId);
         } catch (error) {
             throw new Error(error);
+        }
+    }
+
+    const verifyOtp = async otp => {
+        const data = { otp };
+
+        try {
+            const response = await API(Constants.POST, `${Constants.VERIFY_OTP}/${otpId}`, data);
+
+            if (response?.data?.data) {
+                const _footerDisabled =  !(response?.data?.data?.valid);
+                if (!_footerDisabled) setSignUpStep(signUpStep + 1);
+            }
+        } catch (error) {
+            console.log(error);
+            setFooterDisabled(true);
         }
     }
 

@@ -23,3 +23,4 @@ export const DELETE = "delete";
 /*--------------------------------------------------------------------------------*/
 export const GET_POSTS = "posts/all";
 export const GET_OTP = "user/verify-email"
+export const VERIFY_OTP = "user/check-otp"

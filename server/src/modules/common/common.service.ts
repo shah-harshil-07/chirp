@@ -9,7 +9,7 @@ export class CommonService {
     constructor(@InjectModel(OtpStore.name) private readonly otpModel: Model<OtpStore>) { }
 
     public async postOtp(otp: string): Promise<string> {
-        const otpDocument = new this.otpModel({ otp });
+        const otpDocument = new this.otpModel({ otp, createdAt: Date.now() });
 
         try {
             await otpDocument.save();
