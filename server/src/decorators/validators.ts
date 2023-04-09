@@ -15,8 +15,8 @@ export function CustomMatch(property: string, validationOptions: ValidationOptio
 
             validator: {
                 validate(value?: any, args?: ValidationArguments): boolean {
-                    const [ regex_string ] = args.constraints;
-                    const regexObj = new RegExp(regex_string);                    
+                    const [ regexString ] = args.constraints;
+                    const regexObj = new RegExp(regexString);                    
                     return !regexObj.test(value);
                 },
 

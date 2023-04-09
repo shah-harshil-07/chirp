@@ -1,15 +1,17 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { MailerService } from "@nestjs-modules/mailer";
 import { CommonService } from "../common/common.service";
 import { OtpStore } from "../common/otp-store.schema";
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
-import { ExceptionsHandler } from "@nestjs/core/exceptions/exceptions-handler";
+import { RegisteredUserDTO } from "./users.dto";
+import { UserModel } from "./users.schema";
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectModel(OtpStore.name) private readonly otpModel: Model<OtpStore>,
+        @InjectModel(UserModel.name) private readonly userModel: Model<UserModel>,
         private readonly mailerService: MailerService,
         private readonly commonService: CommonService,
     ) { }
@@ -32,7 +34,7 @@ export class UsersService {
             return { otpId };
         } catch (err) {
             console.log(err);
-            throw new ExceptionsHandler();
+            throw new InternalServerErrorException();
         }
     }
 
@@ -42,7 +44,19 @@ export class UsersService {
             return optObj;
         } catch (err) {
             console.log(err);
-            throw new ExceptionsHandler();
+            throw new InternalServerErrorException();
+        }
+    }
+
+    public async createUser(userData: RegisteredUserDTO): Promise<RegisteredUserDTO> {
+        const userDocument = new this.userModel(userData);
+
+        try {
+            await userDocument.save();
+            return userDocument;
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
         }
     }
 }

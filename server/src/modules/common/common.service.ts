@@ -1,8 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { OtpStore } from "./otp-store.schema";
 import { Model } from "mongoose";
-import { ExceptionsHandler } from "@nestjs/core/exceptions/exceptions-handler";
 
 @Injectable()
 export class CommonService {
@@ -16,7 +15,7 @@ export class CommonService {
             return otpDocument.id;
         } catch (err) {
             console.log(err);
-            throw new ExceptionsHandler();
+            throw new InternalServerErrorException();
         }
     }
 

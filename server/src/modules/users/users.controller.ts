@@ -1,7 +1,6 @@
-import { Body, Controller, Param, Post, UseInterceptors } from "@nestjs/common";
-import { OtpDTO, UserDTO } from "./users.dto";
+import { Body, Controller, Param, Post, UseInterceptors, InternalServerErrorException } from "@nestjs/common";
+import { OtpDTO, RegisteredUserDTO, UserDTO } from "./users.dto";
 import { UsersService } from "./users.service";
-import { ExceptionsHandler } from "@nestjs/core/exceptions/exceptions-handler";
 import { ResponseInterceptor } from "src/interceptors/response";
 
 @UseInterceptors(ResponseInterceptor)
@@ -15,7 +14,7 @@ export class UsersController {
             return await this.userService.sendOtp(userData.email, userData.name);
         } catch (err) {
             console.log(err);
-            throw new ExceptionsHandler();
+            throw new InternalServerErrorException();
         }
     }
 
@@ -30,7 +29,18 @@ export class UsersController {
             return { valid: (timeDiff <= 40 && requestData.otp === otpData.otp) };
         } catch (err) {
             console.log(err);
-            throw new ExceptionsHandler();
+            throw new InternalServerErrorException();
+        }
+    }
+
+    @Post("register")
+    async register(@Body() requestData: RegisteredUserDTO): Promise<RegisteredUserDTO> {
+        try {
+            const userObj = await this.userService.createUser(requestData);
+            return userObj;
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
         }
     }
 }

@@ -1,4 +1,5 @@
-import { NestInterceptor, ExecutionContext, CallHandler, Injectable } from "@nestjs/common";
+import { NestInterceptor, ExecutionContext, CallHandler, Injectable, HttpException, HttpStatus } from "@nestjs/common";
+
 import { Observable } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 
@@ -28,26 +29,22 @@ export class ResponseInterceptor implements NestInterceptor {
         };
     }
 
-    private errorResponse(error: any): IErrorResponse {
+    private errorResponse(error: any, statusCode: number): IErrorResponse {
         return {
-            meta: { message: "Error", messageCode: "ERROR", status: false, statusCode: 422 },
+            meta: { statusCode, message: "Error", messageCode: "ERROR", status: false },
             error
-        };
-    }
-
-    private exceptionResponse(): IErrorResponse {
-        return {
-            meta: { message: "Exception Occurred", messageCode: "EXCEPTION", status: false, statusCode: 500 },
-            error: {
-                message: "Internal Server Error",
-            }
         };
     }
 
     public intercept(_: ExecutionContext, next: CallHandler<any>): Observable<ISuccessResponse | IErrorResponse> {
         return next.handle().pipe(
             map(data => this.successResponse(data)),
-            catchError(async () => this.exceptionResponse())
+            catchError(async err => {
+                if (err?.status === 500) throw new HttpException("INTERNAL_SERVER_ERROR", HttpStatus.INTERNAL_SERVER_ERROR);
+
+                const errorObj = { message: err?.response?.message?.[0] ?? "Validation Error" }, statusCode = err?.status ?? 422;
+                return this.errorResponse(errorObj, statusCode);
+            })
         );
     }
 }

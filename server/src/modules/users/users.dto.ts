@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, Length, MaxLength, MinLength } from "class-validator";
+import { IsEmail, IsNotEmpty, Length, Matches } from "class-validator";
 import { CustomMatch } from "src/decorators/validators";
 import * as Constants from "src/constants";
 
@@ -14,6 +14,12 @@ export class UserDTO {
     @IsNotEmpty()
     @IsEmail({}, { message: Constants.EMAIL_ERR_MESSAGE })
     email: string;
+}
+
+export class RegisteredUserDTO extends UserDTO {
+    @IsNotEmpty()
+    @Matches(Constants.PASSWORD_REGEX, { message: Constants.PASSWORD_ERR_MESSAGE })
+    password: string;
 }
 
 export class OtpDTO {
