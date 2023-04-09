@@ -104,6 +104,7 @@ const Register = () => {
     const [bodyKey, setBodyKey] = useState('');
     const [footerDisabled, setFooterDisabled] = useState(true);
     const [otpId, setOtpId] = useState('');
+    const [password, setPassword] = useState('');
 
     useEffect(() => {
         const _bodyJSX = bodyJSXList?.[signUpStep]?.component ?? <></>;
@@ -167,6 +168,7 @@ const Register = () => {
                 break;
             case "password":
                 setFooterDisabled(!validate("password", data));
+                setPassword(data);
                 break;
             default:
                 break;
@@ -201,6 +203,17 @@ const Register = () => {
         }
     }
 
+    const applyFinalRegisteration = async () => {
+        const data = { ...bodyData.createAccount, password };
+
+        try {
+            await API(Constants.POST, Constants.REGISTER, data);
+            closeRegisterDialog();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     const closeRegisterDialog = () => {
         dispatch(closeModal());
     }
@@ -210,7 +223,7 @@ const Register = () => {
     }
 
     function openNextSignUpStep() {
-        if (signUpStep === bodyJSXList.length - 1) closeRegisterDialog();
+        if (signUpStep === bodyJSXList.length - 1) applyFinalRegisteration();
         else setSignUpStep(signUpStep + 1);
     }
 

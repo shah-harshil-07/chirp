@@ -22,5 +22,6 @@ export const DELETE = "delete";
 /* API half URLs */
 /*--------------------------------------------------------------------------------*/
 export const GET_POSTS = "posts/all";
-export const GET_OTP = "user/verify-email"
-export const VERIFY_OTP = "user/check-otp"
+export const GET_OTP = "user/verify-email";
+export const VERIFY_OTP = "user/check-otp";
+export const REGISTER = "user/register";
