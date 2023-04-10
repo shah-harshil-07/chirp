@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Container } from "@material-ui/core";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import Posts from "./components/posts";
 import Form from "./components/form";
-import { getPosts } from "./actions/posts";
 import AuthBar from "./components/auth-bar";
 import Register from "./components/register";
-import Login from "./components/Login";
+import Login from "./components/login";
 
 const App = () => {
 	const dialogState = useSelector(state => state.modal);

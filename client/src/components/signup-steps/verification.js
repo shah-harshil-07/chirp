@@ -1,4 +1,4 @@
-import "src/styles/signupSteps/verification.css";
+import "src/styles/signup-steps/verification.css";
 
 import React from "react";
 

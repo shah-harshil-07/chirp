@@ -107,3 +107,8 @@
 #custom-modal-footer-box:hover {
     opacity: 0.5;
 }
+
+#custom-modal-loader-container {
+    margin-top: 24%;
+    margin-left: -7%;
+}

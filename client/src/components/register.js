@@ -8,11 +8,11 @@ import { useDispatch } from "react-redux";
 
 import CustomModal from "./custom-modal";
 import { openModal, closeModal } from "src/actions/modal";
-import CreateAccount from "./SignupSteps/create-account";
-import KeyNote from "./SignupSteps/key-note";
-import Verification from "./SignupSteps/verification";
-import CodeInput from "./SignupSteps/code-input";
-import PasswordInput from "./SignupSteps/password-input";
+import CreateAccount from "./signup-steps/create-account";
+import KeyNote from "./signup-steps/key-note";
+import Verification from "./signup-steps/verification";
+import CodeInput from "./signup-steps/code-input";
+import PasswordInput from "./signup-steps/password-input";
 import { validate, getErrorMessage } from "src/helpers";
 import API from "src/api";
 import * as Constants from "src/constants";
@@ -105,6 +105,7 @@ const Register = () => {
     const [footerDisabled, setFooterDisabled] = useState(true);
     const [otpId, setOtpId] = useState('');
     const [password, setPassword] = useState('');
+    const [showLoader, setShowLoader] = useState(false);
 
     useEffect(() => {
         const _bodyJSX = bodyJSXList?.[signUpStep]?.component ?? <></>;
@@ -114,6 +115,7 @@ const Register = () => {
         const _footerDisabled = (signUpStep === 3) ? false : true;
 
         if (signUpStep === 4) {
+            setShowLoader(true);
             sendOtpMail();
             setFooterDisabled(true);
             return;
@@ -180,10 +182,12 @@ const Register = () => {
 
         try {
             const response = await API(Constants.POST, Constants.GET_OTP, data);
+            setShowLoader(false);
             const responseData = response.data;
             if (responseData?.meta?.status && responseData?.data?.otpId) setOtpId(responseData.data.otpId);
         } catch (error) {
-            throw new Error(error);
+            console.log(error);
+            setShowLoader(false);
         }
     }
 
@@ -204,13 +208,16 @@ const Register = () => {
     }
 
     const applyFinalRegisteration = async () => {
+        setShowLoader(true);
         const data = { ...bodyData.createAccount, password };
 
         try {
             await API(Constants.POST, Constants.REGISTER, data);
+            setShowLoader(false);
             closeRegisterDialog();
         } catch (error) {
             console.log(error);
+            setShowLoader(false);
         }
     }
 
@@ -238,6 +245,7 @@ const Register = () => {
             includeFooter={includeFooter}
             footerDisabled={footerDisabled}
             footerAction={openNextSignUpStep}
+            showLoader={showLoader}
         />
     )
 }

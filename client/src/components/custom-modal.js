@@ -3,8 +3,9 @@ import "src/styles/custom-modal.css";
 import React from "react";
 import { closeModal } from "src/actions/modal";
 import { useDispatch } from "react-redux";
+import Loader from "./loader";
 
-const CustomModal = ({ bodyJSX, includeFooter, footerAction, footerText, footerDisabled }) => {
+const CustomModal = ({ bodyJSX, includeFooter, footerAction, footerText, footerDisabled, showLoader }) => {
     const logo = require("src/assets/logo-1.png");
     const dispatch = useDispatch();
 
@@ -29,7 +30,9 @@ const CustomModal = ({ bodyJSX, includeFooter, footerAction, footerText, footerD
                     </div>
                 </header>
 
-                <div className="custom-container-body"> { bodyJSX } </div>
+                <div className="custom-container-body">
+                    { showLoader ? (<div id="custom-modal-loader-container"><Loader /></div>) : bodyJSX }
+                </div>
 
                 {
                     includeFooter && (

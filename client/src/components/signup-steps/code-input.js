@@ -1,4 +1,4 @@
-import "src/styles/signupSteps/code-input.css";
+import "src/styles/signup-steps/code-input.css";
 
 import React, { useEffect, useState } from "react";
 

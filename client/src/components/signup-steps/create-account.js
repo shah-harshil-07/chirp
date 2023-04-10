@@ -1,5 +1,5 @@
 import "src/styles/auth.css";
-import "src/styles/signupSteps/create-account.css";
+import "src/styles/signup-steps/create-account.css";
 
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
