@@ -16,6 +16,7 @@ import PasswordInput from "./signup-steps/password-input";
 import { validate, getErrorMessage } from "src/helpers";
 import API from "src/api";
 import * as Constants from "src/constants";
+import { openToaster } from "src/actions/toaster";
 
 const Register = () => {
     const initialBodyData = {
@@ -184,10 +185,17 @@ const Register = () => {
             const response = await API(Constants.POST, Constants.GET_OTP, data);
             setShowLoader(false);
             const responseData = response.data;
-            if (responseData?.meta?.status && responseData?.data?.otpId) setOtpId(responseData.data.otpId);
+
+            if (responseData?.meta?.status && responseData?.data?.otpId) {
+                setOtpId(responseData.data.otpId);
+            } else if (!responseData?.meta?.status) {
+                const errorMessage = responseData?.error?.message ?? "Something went wrong!";
+                dispatch(openToaster("Error", errorMessage));
+            }
         } catch (error) {
             console.log(error);
             setShowLoader(false);
+            dispatch(openToaster("Error", "Something went wrong!"));
         }
     }
 
@@ -198,12 +206,13 @@ const Register = () => {
             const response = await API(Constants.POST, `${Constants.VERIFY_OTP}/${otpId}`, data);
 
             if (response?.data?.data) {
-                const _footerDisabled =  !(response?.data?.data?.valid);
+                const _footerDisabled = !(response?.data?.data?.valid);
                 if (!_footerDisabled) setSignUpStep(signUpStep + 1);
             }
         } catch (error) {
             console.log(error);
             setFooterDisabled(true);
+            dispatch(openToaster("Error", "Something went wrong!"));
         }
     }
 
@@ -212,9 +221,10 @@ const Register = () => {
         const data = { ...bodyData.createAccount, password };
 
         try {
-            await API(Constants.POST, Constants.REGISTER, data);
+            const response = await API(Constants.POST, Constants.REGISTER, data);
             setShowLoader(false);
             closeRegisterDialog();
+            dispatch(openToaster("Success", response?.data?.meta?.message ?? "Success"));
         } catch (error) {
             console.log(error);
             setShowLoader(false);

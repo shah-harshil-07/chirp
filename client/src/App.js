@@ -7,9 +7,11 @@ import Form from "./components/form";
 import AuthBar from "./components/auth-bar";
 import Register from "./components/register";
 import Login from "./components/login";
+import Toaster from "./components/toaster";
 
 const App = () => {
 	const dialogState = useSelector(state => state.modal);
+	const toasterState = useSelector(state => state.toaster);
 
 	const [currentId, setCurrentId] = useState(0);
 
@@ -40,6 +42,12 @@ const App = () => {
 			</Container>
 
 			<AuthBar />
+
+			{
+				toasterState.open && (
+					<Toaster type={toasterState?.messageObj?.type} message={toasterState?.messageObj?.message} />
+				)
+			}
 		</>
 	);
 };

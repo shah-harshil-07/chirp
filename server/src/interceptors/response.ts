@@ -22,9 +22,9 @@ interface IErrorResponse {
 
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
-    private successResponse(data: any): ISuccessResponse {
+    private successResponse(data: any, message: string): ISuccessResponse {
         return {
-            meta: { message: "Success", messageCode: "SUCCESS", status: true, statusCode: 200 },
+            meta: { message, messageCode: "SUCCESS", status: true, statusCode: 200 },
             data,
         };
     }
@@ -38,11 +38,12 @@ export class ResponseInterceptor implements NestInterceptor {
 
     public intercept(_: ExecutionContext, next: CallHandler<any>): Observable<ISuccessResponse | IErrorResponse> {
         return next.handle().pipe(
-            map(data => this.successResponse(data)),
+            map(data => this.successResponse(data.data, data.message)),
             catchError(async err => {
                 if (err?.status === 500) throw new HttpException("INTERNAL_SERVER_ERROR", HttpStatus.INTERNAL_SERVER_ERROR);
 
-                const errorObj = { message: err?.response?.message?.[0] ?? "Validation Error" }, statusCode = err?.status ?? 422;
+                const errorObj = { message: err?.response?.message?.[0] ?? "Validation Error" };
+                const statusCode = err?.status ?? 422;
                 return this.errorResponse(errorObj, statusCode);
             })
         );
