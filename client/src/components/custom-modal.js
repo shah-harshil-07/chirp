@@ -5,9 +5,10 @@ import { closeModal } from "src/actions/modal";
 import { useDispatch } from "react-redux";
 import Loader from "./loader";
 
-const CustomModal = ({ bodyJSX, includeFooter, footerAction, footerText, footerDisabled, showLoader }) => {
+const CustomModal = ({ bodyJSX, includeFooter, footerAction, footerText, footerDisabled, showLoader, displayOverflow }) => {
     const logo = require("src/assets/logo-1.png");
     const dispatch = useDispatch();
+    const overFlowStyles = { overflow: "scroll", overflowX: "hidden", height: "325px" };
 
     const closeCustomDialog = () => {
         dispatch(closeModal());
@@ -30,7 +31,7 @@ const CustomModal = ({ bodyJSX, includeFooter, footerAction, footerText, footerD
                     </div>
                 </header>
 
-                <div className="custom-container-body">
+                <div className="custom-container-body" style={ displayOverflow ? overFlowStyles : {} }>
                     { showLoader ? (<div id="custom-modal-loader-container"><Loader /></div>) : bodyJSX }
                 </div>
 

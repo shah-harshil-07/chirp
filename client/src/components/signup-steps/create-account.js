@@ -3,12 +3,15 @@ import "src/styles/signup-steps/create-account.css";
 
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
+import LabelledInput from "../labelled-input";
+
 const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
-    const initialData = { name: '', username: '', email: '' };
+    const initialData = { name: '', username: '', email: '', password: '', confirmPassword: '', noteChecked: false };
     const [data, setData] = useState(initialData);
     const [errors, setErrors] = useState(initialData);
 
     useEffect(() => {
+        console.log("Create Account useEffect called!");;
         handleDataChange(data);
     }, [data]);
 
@@ -32,33 +35,59 @@ const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
             <h6 className="text-danger"><i>All inputs are required.</i></h6>
 
             <div className="position-relative">
-                <input
-                    type="text"
-                    placeholder="Name"
+                <LabelledInput
                     value={data["name"]}
-                    className="create-account-input"
-                    style={{ marginTop: "2px" }}
-                    onChange={e => handleInputChange("name", e.target.value)}
+                    handleChange={value => handleInputChange("name", value)}
+                    header={"Name"}
                 />
                 <p className="text-danger create-account-text">{errors["name"]}</p>
 
-                <input
-                    type="text"
-                    placeholder="Username"
+                <LabelledInput
+                    extraClasses="create-account-input"
                     value={data["username"]}
-                    className="create-account-input"
-                    onChange={e => handleInputChange("username", e.target.value)}
+                    handleChange={value => handleInputChange("username", value)}
+                    header={"Username"}
                 />
                 <p className="text-danger create-account-text">{errors["username"]}</p>
 
-                <input
-                    type="text"
-                    placeholder="Email"
+                <LabelledInput
+                    extraClasses="create-account-input"
                     value={data["email"]}
-                    className="create-account-input"
-                    onChange={e => handleInputChange("email", e.target.value)}
+                    handleChange={value => handleInputChange("email", value)}
+                    header={"Email"}
                 />
                 <p className="text-danger create-account-text">{errors["email"]}</p>
+
+                <LabelledInput
+                    extraClasses="create-account-input"
+                    value={data["password"]}
+                    handleChange={value => handleInputChange("password", value)}
+                    header={"Password"}
+                    type={"password"}
+                />
+                <p className="text-danger create-account-text">{errors["password"]}</p>
+
+                <LabelledInput
+                    extraClasses="create-account-input"
+                    value={data["confirmPassword"]}
+                    handleChange={value => handleInputChange("confirmPassword", value)}
+                    header={"Confirm Password"}
+                    type={"password"}
+                />
+                <p className="text-danger create-account-text">{errors["confirmPassword"]}</p>
+
+                <div style={{ marginTop: "38px" }}>
+                    <input
+                        type="checkbox"
+                        defaultChecked={data["noteChecked"]}
+                        onChange={() => handleInputChange("noteChecked", !data["noteChecked"])}
+                    />
+
+                    <span style={{ opacity: data["noteChecked"] ? 1 : 0.5, marginLeft: "5px", marginTop: "30px" }}>
+                        Chirp uses your data to personalize your experience. By signing up, you agree to our terms and
+                        conditions, privacy policy & cookie use.
+                    </span>
+                </div>
             </div>
         </div>
     )

@@ -11,6 +11,7 @@ export const PASSWORD_ERR_MESSAGE = "Must contain atleast 8 characters with atle
 export const NAME_ERR_MESSAGE = "Only letters are allowed.";
 export const USERNAME_ERR_MESSAGE = "Only uppercase and lowercase letters, numbers and underscore are allowed.";
 export const EMAIL_ERR_MESSAGE = "Email must be valid.";
+export const CONFIRM_PASSWORD_MESSAGE = "Confirm Password must be same as Password.";
 
 /* Request Methods */
 /*--------------------------------------------------------------------------------*/

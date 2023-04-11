@@ -1,7 +1,7 @@
 import * as CONSTANTS from "./constants";
 
 const keyConfig = {
-    password: { regex: CONSTANTS.PASSWORD_REGEX, negativeCase: false, errorMessage: CONSTANTS.PASSWORD_ERR_MESSAGE },
+    password: { regex: CONSTANTS.PASSWORD_REGEX, negativeCase: true, errorMessage: CONSTANTS.PASSWORD_ERR_MESSAGE },
     name: { regex: CONSTANTS.NAME_REGEX, negativeCase: false, errorMessage: CONSTANTS.NAME_ERR_MESSAGE },
     username: { regex: CONSTANTS.USERNAME_REGEX, negativeCase: false, errorMessage: CONSTANTS.USERNAME_ERR_MESSAGE },
     email: { regex: CONSTANTS.EMAIL_REGEX, negativeCase: true, errorMessage: CONSTANTS.EMAIL_ERR_MESSAGE },

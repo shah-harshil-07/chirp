@@ -9,10 +9,10 @@ import { useDispatch } from "react-redux";
 import CustomModal from "./custom-modal";
 import { openModal, closeModal } from "src/actions/modal";
 import CreateAccount from "./signup-steps/create-account";
-import KeyNote from "./signup-steps/key-note";
-import Verification from "./signup-steps/verification";
+// import KeyNote from "./signup-steps/key-note";
+// import Verification from "./signup-steps/verification";
 import CodeInput from "./signup-steps/code-input";
-import PasswordInput from "./signup-steps/password-input";
+// import PasswordInput from "./signup-steps/password-input";
 import { validate, getErrorMessage } from "src/helpers";
 import API from "src/api";
 import * as Constants from "src/constants";
@@ -20,10 +20,8 @@ import { openToaster } from "src/actions/toaster";
 
 const Register = () => {
     const initialBodyData = {
-        password: '',
         codeInput: '',
-        keyNoteChecked: false,
-        createAccount: { name: '', username: '', email: '' },
+        createAccount: { name: '', username: '', email: '', password: '', confirmPassword: '', noteChecked: false },
     };
     const [bodyData, setBodyData] = useState(initialBodyData);
 
@@ -57,7 +55,7 @@ const Register = () => {
     );
 
     const bodyJSXList = [
-        { component: registerBodyJSX, footer: false },
+        { footer: false, component: registerBodyJSX },
         {
             footer: true,
             footerText: "Next",
@@ -71,14 +69,7 @@ const Register = () => {
         },
         {
             footer: true,
-            footerText: "Next",
-            bodyKey: "keyNoteChecked",
-            component: <KeyNote handleDataChange={data => handleBodyDataChange("keyNoteChecked", data)} />,
-        },
-        { footer: true, footerText: "Next", component: <Verification data={bodyData.createAccount} />, },
-        {
-            footer: true,
-            footerText: "Next",
+            footerText: "Finish",
             bodyKey: "codeInput",
             component: (
                 <CodeInput
@@ -88,12 +79,6 @@ const Register = () => {
                 />
             ),
         },
-        {
-            footer: true,
-            bodyKey: "password",
-            footerText: "Finish",
-            component: <PasswordInput handleDataChange={data => handleBodyDataChange("password", data)} />,
-        }
     ];
 
     const dispatch = useDispatch();
@@ -107,39 +92,46 @@ const Register = () => {
     const [otpId, setOtpId] = useState('');
     const [password, setPassword] = useState('');
     const [showLoader, setShowLoader] = useState(false);
+    const [displayOverflow, setDisplayOverFlow] = useState(false);
 
     useEffect(() => {
-        const _bodyJSX = bodyJSXList?.[signUpStep]?.component ?? <></>;
-        const _includeFooter = bodyJSXList?.[signUpStep]?.footer ?? false;
-        const _footerText = bodyJSXList?.[signUpStep]?.footerText ?? '';
-        const _bodyKey = bodyJSXList?.[signUpStep]?.bodyKey ?? '';
-        const _footerDisabled = (signUpStep === 3) ? false : true;
+        if (signUpStep === bodyJSXList.length) {
+            applyFinalRegisteration();
+        } else {
+            const _bodyJSX = bodyJSXList?.[signUpStep]?.component ?? <></>;
+            const _includeFooter = bodyJSXList?.[signUpStep]?.footer ?? false;
+            const _footerText = bodyJSXList?.[signUpStep]?.footerText ?? '';
+            const _bodyKey = bodyJSXList?.[signUpStep]?.bodyKey ?? '';
+            const _footerDisabled = (signUpStep === 3) ? false : true;
+            const _displayOverflow = (signUpStep === 1) ? true : false;
 
-        if (signUpStep === 4) {
-            setShowLoader(true);
-            sendOtpMail();
-            setFooterDisabled(true);
-            return;
+            setBodyJSX(_bodyJSX);
+            setIncludeFooter(_includeFooter);
+            setFooterText(_footerText);
+            setBodyKey(_bodyKey);
+            setFooterDisabled(_footerDisabled);
+            setDisplayOverFlow(_displayOverflow);
+
+            if (signUpStep === 2) {
+                setShowLoader(true);
+                sendOtpMail();
+                setFooterDisabled(true);
+            }
         }
-
-        setBodyJSX(_bodyJSX);
-        setIncludeFooter(_includeFooter);
-        setFooterText(_footerText);
-        setBodyKey(_bodyKey);
-        setFooterDisabled(_footerDisabled);
     }, [signUpStep]);
 
     useEffect(() => {
-        if (otpId && signUpStep === 4) {
-            setBodyJSX(bodyJSXList?.[4]?.component ?? <></>);
-            setIncludeFooter(bodyJSXList?.[4]?.footer ?? false);
-            setFooterText(bodyJSXList?.[4]?.footerText ?? '');
-            setBodyKey(bodyJSXList?.[4]?.bodyKey ?? '');
+        if (otpId && signUpStep === 2) {
+            setBodyJSX(bodyJSXList?.[2]?.component ?? <></>);
+            setIncludeFooter(bodyJSXList?.[2]?.footer ?? false);
+            setFooterText(bodyJSXList?.[2]?.footerText ?? '');
+            setBodyKey(bodyJSXList?.[2]?.bodyKey ?? '');
         }
     }, [otpId]);
 
     useEffect(() => {
         let data = bodyData?.[bodyKey], formIsValid = true, _errors = {};
+        console.log("bodyData => ", bodyData);
 
         switch (bodyKey) {
             case "createAccount":
@@ -147,10 +139,15 @@ const Register = () => {
                     formIsValid = true;
 
                     for (const key in data) {
-                        if (!data[key]) {
+                        const value = data[key];
+
+                        if (!value) {
                             formIsValid = false;
-                        } else if (validate(key, data[key])) {
+                        } else if (validate(key, value)) {
                             _errors[key] = getErrorMessage(key);
+                            formIsValid = false;
+                        } else if (key === "confirmPassword" && value && value !== data["password"]) {
+                            _errors[key] = Constants.CONFIRM_PASSWORD_MESSAGE;
                             formIsValid = false;
                         } else {
                             _errors[key] = '';
@@ -162,16 +159,9 @@ const Register = () => {
                 }
 
                 break;
-            case "keyNoteChecked":
-                setFooterDisabled(!data);
-                break;
             case "codeInput":
                 if (data.length === 4) verifyOtp(data);
                 else setFooterDisabled(true);
-                break;
-            case "password":
-                setFooterDisabled(!validate("password", data));
-                setPassword(data);
                 break;
             default:
                 break;
@@ -179,7 +169,11 @@ const Register = () => {
     }, [bodyData]);
 
     const sendOtpMail = async () => {
-        const data = bodyData.createAccount;
+        const data = {
+            name: bodyData.createAccount.name,
+            email: bodyData.createAccount.email,
+            username: bodyData.createAccount.username,
+        }
 
         try {
             const response = await API(Constants.POST, Constants.GET_OTP, data);
@@ -218,13 +212,22 @@ const Register = () => {
 
     const applyFinalRegisteration = async () => {
         setShowLoader(true);
-        const data = { ...bodyData.createAccount, password };
+
+        const data = {
+            name: bodyData.createAccount.name,
+            email: bodyData.createAccount.email,
+            username: bodyData.createAccount.username,
+            password: bodyData.createAccount.password,
+        };
 
         try {
             const response = await API(Constants.POST, Constants.REGISTER, data);
             setShowLoader(false);
             closeRegisterDialog();
-            dispatch(openToaster("Success", response?.data?.meta?.message ?? "Success"));
+
+            const type = response?.data?.meta?.status ? "Success" : "Error";
+            const message = type === "Success" ? response?.data?.meta?.message : response?.data?.error?.message ?? "Error";
+            dispatch(openToaster(type, message));
         } catch (error) {
             console.log(error);
             setShowLoader(false);
@@ -256,6 +259,7 @@ const Register = () => {
             footerDisabled={footerDisabled}
             footerAction={openNextSignUpStep}
             showLoader={showLoader}
+            displayOverflow={displayOverflow}
         />
     )
 }
