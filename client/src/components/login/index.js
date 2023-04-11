@@ -9,8 +9,12 @@ import { useDispatch } from "react-redux";
 import CustomModal from "../custom-modal";
 import CredInput from "./cred-input";
 import { openModal, closeModal } from "src/actions/modal";
+import LabelledInput from "../labelled-input";
 
 const Login = () => {
+    const [cred, setCred] = useState('');
+    const [password, setPassword] = useState('');
+
     const loginBodyJSX = (
         <>
             <h4 className="header">Sign in to Chirp</h4>
@@ -27,19 +31,25 @@ const Login = () => {
                 <div className="or-div">or</div>
             </div>
 
-            <input type="text" placeholder="Phone, email or username" className="input-text" />
+            <LabelledInput value={cred} handleChange={data => { setCred(data) }} header={"Email or Username"} />
+
+            <LabelledInput
+                value={password}
+                handleChange={data => { setPassword(data) }}
+                header={"Password"}
+                type={"password"}
+                extraClasses={"mt-3"}
+            />
 
             <div className="auth-box" id="login-next-box" onClick={openNextLoginStep}>
-                <span className="d-flex justify-content-center align-items-end auth-text">Next</span>
-            </div>
-
-            <div className="auth-box" id="forgot-box">
-                <span className="d-flex justify-content-center align-items-end auth-text">Forgot Password?</span>
+                <span className="d-flex justify-content-center align-items-end auth-text">Login</span>
             </div>
 
             <div className="bottom-text">
                 Don't have an account?
                 <span className="link-text" onClick={openRegisterDialog}>{` Sign up`}</span>
+
+                <span className="link-text" style={{ float: "right" }}>Forgot Password?</span>
             </div>
         </>
     );

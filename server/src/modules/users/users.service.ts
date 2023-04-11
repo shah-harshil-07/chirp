@@ -4,7 +4,7 @@ import { CommonService } from "../common/common.service";
 import { OtpStore } from "../common/otp-store.schema";
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
-import { RegisteredUserDTO, UserDTO } from "./users.dto";
+import { LoggedInUserDTO, RegisteredUserDTO, UserDTO } from "./users.dto";
 import { UserModel } from "./users.schema";
 
 @Injectable()
@@ -64,12 +64,31 @@ export class UsersService {
         try {
             const userObj = await
                 this
-                .userModel
-                .findOne({ $or: [{ email: userData.email }, { username: userData.username }] })
-                .exec()
+                    .userModel
+                    .findOne({ $or: [{ email: userData.email }, { username: userData.username }] })
+                    .exec()
             ;
 
             return userObj ? false : true;
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    public async login(userData: LoggedInUserDTO): Promise<boolean> {
+        try {
+            const userObj = await
+                this
+                    .userModel
+                    .findOne({
+                        $or: [{ email: userData.cred }, { username: userData.cred }],
+                        password: userData.password,
+                    })
+                    .exec()
+            ;
+
+            return userObj ? true : false;
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();

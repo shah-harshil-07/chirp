@@ -1,5 +1,5 @@
 import { Body, Controller, Param, Post, UseInterceptors, InternalServerErrorException } from "@nestjs/common";
-import { OtpDTO, RegisteredUserDTO, UserDTO } from "./users.dto";
+import { LoggedInUserDTO, OtpDTO, RegisteredUserDTO, UserDTO } from "./users.dto";
 import { UsersService } from "./users.service";
 import { ResponseInterceptor } from "src/interceptors/response";
 
@@ -57,6 +57,18 @@ export class UsersController {
             const userUnique = await this.userService.checkUserUniquness(requestData);
             const message = userUnique ? "The user credentials are unique." : "Please change either username or email.";
             return { data: { userUnique }, message };
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    @Post("login")
+    async login(@Body() requestData: LoggedInUserDTO): Promise<IStandardResponse> {
+        try {
+            const userValid = await this.userService.login(requestData);
+            const message = userValid ? "User logged in successfully!" : "Credentials are incorrect.";
+            return { data: { userValid }, message };
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();

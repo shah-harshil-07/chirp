@@ -22,6 +22,14 @@ export class RegisteredUserDTO extends UserDTO {
     password: string;
 }
 
+export class LoggedInUserDTO {
+    @IsNotEmpty()
+    cred: string;
+
+    @IsNotEmpty()
+    password: string;
+}
+
 export class OtpDTO {
     @Length(4, 4)
     otp: string;
