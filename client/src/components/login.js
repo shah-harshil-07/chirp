@@ -1,15 +1,17 @@
 import "src/styles/auth.css";
 import "src/styles/login.css";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CIcon from "@coreui/icons-react";
 import { cibGoogle } from "@coreui/icons";
 import { useDispatch } from "react-redux";
 
-import CustomModal from "../custom-modal";
-import CredInput from "./cred-input";
+import CustomModal from "./custom-modal";
 import { openModal, closeModal } from "src/actions/modal";
-import LabelledInput from "../labelled-input";
+import LabelledInput from "./labelled-input";
+import * as Constants from "src/constants";
+import API from "src/api";
+import { openToaster } from "src/actions/toaster";
 
 const Login = () => {
     const [cred, setCred] = useState('');
@@ -41,40 +43,24 @@ const Login = () => {
                 extraClasses={"mt-3"}
             />
 
-            <div className="auth-box" id="login-next-box" onClick={openNextLoginStep}>
-                <span className="d-flex justify-content-center align-items-end auth-text">Login</span>
+            <div
+                className="auth-box"
+                id="login-next-box"
+                onClick={attemptLogin}
+                style={{ backgroundColor: (cred && password) ? "rgba(0, 0, 0, 1)" : "rgba(0, 0, 0, 0.5)" }}
+            >
+                <span className="d-flex justify-content-center align-items-end auth-text"> Login </span>
             </div>
 
             <div className="bottom-text">
                 Don't have an account?
                 <span className="link-text" onClick={openRegisterDialog}>{` Sign up`}</span>
-
                 <span className="link-text" style={{ float: "right" }}>Forgot Password?</span>
             </div>
         </>
     );
 
     const dispatch = useDispatch();
-
-    const bodyJSXList = [
-        { component: loginBodyJSX, footer: false },
-        { component: <CredInput goToNextStep={openNextLoginStep} />, footer: true, footerText: "Login" },
-    ];
-
-    const [loginStep, setLoginStep] = useState(0);
-    const [bodyJSX, setBodyJSX] = useState(<></>);
-    const [includeFooter, setIncludeFooter] = useState(false);
-    const [footerText, setFooterText] = useState('');
-
-    useEffect(() => {
-        let _bodyJSX = bodyJSXList?.[loginStep]?.component ?? <></>;
-        const _includeFooter = bodyJSXList?.[loginStep]?.footer ?? false;
-        const _footerText = bodyJSXList?.[loginStep]?.footerText ?? '';
-
-        setBodyJSX(_bodyJSX);
-        setIncludeFooter(_includeFooter);
-        setFooterText(_footerText);
-    }, [loginStep]);
 
     function openRegisterDialog() {
         dispatch(openModal("register"));
@@ -84,18 +70,31 @@ const Login = () => {
         dispatch(closeModal());
     }
 
-    function openNextLoginStep() {
-        if (loginStep < bodyJSXList.length - 1) setLoginStep(loginStep + 1);
-        else closeLoginDialog();
+    async function attemptLogin() {
+        try {
+            const response = await API(Constants.POST, Constants.LOGIN, { cred, password });
+            const responseData = response.data;
+
+            if (responseData?.meta?.status && responseData?.data) {
+                const userValid = responseData?.data?.userValid ?? false;
+                const message = responseData?.meta?.message ?? "Something went wrong";
+                const type = userValid ? "Success" : "Error";
+                dispatch(openToaster(type, message));
+                closeLoginDialog();
+            } else {
+                const errorMessage = responseData?.error?.message ?? "Something went wrong!";
+                dispatch(openToaster("Error", errorMessage));
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch(openToaster("Error", "Something went wrong!"));
+        }
+
+        closeLoginDialog();
     }
 
     return (
-        <CustomModal
-            bodyJSX={bodyJSX}
-            includeFooter={includeFooter}
-            footerText={footerText}
-            footerAction={openNextLoginStep}
-        />
+        <CustomModal bodyJSX={loginBodyJSX} includeFooter={false} />
     )
 }
 
