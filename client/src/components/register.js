@@ -9,10 +9,7 @@ import { useDispatch } from "react-redux";
 import CustomModal from "./custom-modal";
 import { openModal, closeModal } from "src/actions/modal";
 import CreateAccount from "./signup-steps/create-account";
-// import KeyNote from "./signup-steps/key-note";
-// import Verification from "./signup-steps/verification";
 import CodeInput from "./signup-steps/code-input";
-// import PasswordInput from "./signup-steps/password-input";
 import { validate, getErrorMessage } from "src/helpers";
 import API from "src/api";
 import * as Constants from "src/constants";
@@ -114,7 +111,7 @@ const Register = () => {
 
             if (signUpStep === 2) {
                 setShowLoader(true);
-                sendOtpMail();
+                checkUserUniqueness();
                 setFooterDisabled(true);
             }
         }
@@ -131,7 +128,6 @@ const Register = () => {
 
     useEffect(() => {
         let data = bodyData?.[bodyKey], formIsValid = true, _errors = {};
-        console.log("bodyData => ", bodyData);
 
         switch (bodyKey) {
             case "createAccount":
@@ -168,12 +164,45 @@ const Register = () => {
         }
     }, [bodyData]);
 
+    const checkUserUniqueness = async () => {
+        const data = {
+            name: bodyData.createAccount.name,
+            email: bodyData.createAccount.email,
+            username: bodyData.createAccount.username,
+        };
+
+        try {
+            const response = await API(Constants.POST, Constants.CHECK_USER_CREDENTIALS, data);
+            const responseData = response.data;
+
+            if (responseData.meta.status && responseData.data) {
+                if (responseData.data.userUnique) {
+                    sendOtpMail();
+                } else {
+                    setShowLoader(false);
+                    const errorMessage = responseData?.meta?.message ?? "Something went wrong!";
+                    dispatch(openToaster("Error", errorMessage));
+                    setSignUpStep(1);
+                }
+            } else {
+                setShowLoader(false);
+                setSignUpStep(1);
+                dispatch(openToaster("Error", "Something went wrong!"));
+            }
+        } catch (error) {
+            console.log(error);
+            setShowLoader(false);
+            dispatch(openToaster("Error", "Something went wrong!"));
+            setSignUpStep(1);
+        }
+    }
+
     const sendOtpMail = async () => {
         const data = {
             name: bodyData.createAccount.name,
             email: bodyData.createAccount.email,
             username: bodyData.createAccount.username,
-        }
+        };
 
         try {
             const response = await API(Constants.POST, Constants.GET_OTP, data);

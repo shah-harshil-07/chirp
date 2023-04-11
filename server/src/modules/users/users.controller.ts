@@ -32,7 +32,7 @@ export class UsersController {
             const currentTime = Date.now();
             const timeDiff = ((currentTime - createdTime) / 1000);
 
-            const data = { valid: (timeDiff <= 40 && requestData.otp === otpData.otp) };
+            const data = { valid: (timeDiff <= 60 && requestData.otp === otpData.otp) };
             return { data, message: "OTP verified successfully." };
         } catch (err) {
             console.log(err);
@@ -51,7 +51,7 @@ export class UsersController {
         }
     }
 
-    @Post("check-unique-credentials")
+    @Post("check-user-credentials")
     async checkUniqueness(@Body() requestData: UserDTO): Promise<IStandardResponse> {
         try {
             const userUnique = await this.userService.checkUserUniquness(requestData);

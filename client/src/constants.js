@@ -26,3 +26,4 @@ export const GET_POSTS = "posts/all";
 export const GET_OTP = "user/verify-email";
 export const VERIFY_OTP = "user/check-otp";
 export const REGISTER = "user/register";
+export const CHECK_USER_CREDENTIALS = "user/check-user-credentials";

@@ -11,7 +11,6 @@ const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
     const [errors, setErrors] = useState(initialData);
 
     useEffect(() => {
-        console.log("Create Account useEffect called!");;
         handleDataChange(data);
     }, [data]);
 

@@ -6,7 +6,7 @@ import LabelledInput from "../labelled-input";
 
 const CodeInput = ({ email, handleDataChange, resendOtpMail }) => {
     const [code, setCode] = useState('');
-    const [seconds, setSeconds] = useState(40);
+    const [seconds, setSeconds] = useState(60);
 
     useEffect(() => {
         const interval = setInterval(() => {
