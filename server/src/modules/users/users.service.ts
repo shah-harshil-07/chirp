@@ -4,7 +4,7 @@ import { CommonService } from "../common/common.service";
 import { OtpStore } from "../common/otp-store.schema";
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
-import { RegisteredUserDTO } from "./users.dto";
+import { RegisteredUserDTO, UserDTO } from "./users.dto";
 import { UserModel } from "./users.schema";
 
 @Injectable()
@@ -16,7 +16,7 @@ export class UsersService {
         private readonly commonService: CommonService,
     ) { }
 
-    public async sendOtp(emailId: string, username: string): Promise<{ otpId: string}> {
+    public async sendOtp(emailId: string, username: string): Promise<{ otpId: string }> {
         try {
             const otp = this.commonService.createFourDigitOtp();
 
@@ -54,6 +54,22 @@ export class UsersService {
         try {
             await userDocument.save();
             return userDocument;
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    public async checkUserUniquness(userData: UserDTO): Promise<boolean> {
+        try {
+            const userObj = await
+                this
+                .userModel
+                .findOne({ $or: [{ email: userData.email }, { username: userData.username }] })
+                .exec()
+            ;
+
+            return userObj ? false : true;
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();

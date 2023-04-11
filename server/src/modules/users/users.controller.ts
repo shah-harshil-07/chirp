@@ -50,4 +50,16 @@ export class UsersController {
             throw new InternalServerErrorException();
         }
     }
+
+    @Post("check-unique-credentials")
+    async checkUniqueness(@Body() requestData: UserDTO): Promise<IStandardResponse> {
+        try {
+            const userUnique = await this.userService.checkUserUniquness(requestData);
+            const message = userUnique ? "The user credentials are unique." : "Please change either username or email.";
+            return { data: { userUnique }, message };
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
+    }
 }
