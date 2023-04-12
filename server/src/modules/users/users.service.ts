@@ -78,6 +78,16 @@ export class UsersService {
 
     public async login(userData: LoggedInUserDTO): Promise<boolean> {
         try {
+            const userObj = this.findUser(userData);
+            return userObj ? true : false;
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    public async findUser(userData: LoggedInUserDTO): Promise<UserDTO> {
+        try {
             const userObj = await
                 this
                     .userModel
@@ -88,7 +98,7 @@ export class UsersService {
                     .exec()
             ;
 
-            return userObj ? true : false;
+            return userObj;
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();

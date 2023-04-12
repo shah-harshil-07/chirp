@@ -7,6 +7,7 @@ import { MailerModule } from "@nestjs-modules/mailer";
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from "path";
 import { CommonModule } from './common/common.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
 	imports: [
@@ -28,6 +29,7 @@ import { CommonModule } from './common/common.module';
 		}),
 		UsersModule,
 		CommonModule,
+		AuthModule,
 	],
 })
 export class AppModule { }
