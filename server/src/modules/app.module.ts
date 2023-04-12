@@ -4,10 +4,11 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { ConfigModule } from "@nestjs/config";
 import { UsersModule } from "./users/users.module";
 import { MailerModule } from "@nestjs-modules/mailer";
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 import { join } from "path";
-import { CommonModule } from './common/common.module';
-import { AuthModule } from './auth/auth.module';
+import { CommonModule } from "./common/common.module";
+import { AuthModule } from "./auth/auth.module";
+import { AppController } from "./app.controller";
 
 @Module({
 	imports: [
@@ -31,5 +32,6 @@ import { AuthModule } from './auth/auth.module';
 		CommonModule,
 		AuthModule,
 	],
+	controllers: [AppController]
 })
 export class AppModule { }
