@@ -8,7 +8,6 @@ import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handleba
 import { join } from "path";
 import { CommonModule } from "./common/common.module";
 import { AuthModule } from "./auth/auth.module";
-import { AppController } from "./app.controller";
 
 @Module({
 	imports: [
@@ -32,6 +31,5 @@ import { AppController } from "./app.controller";
 		CommonModule,
 		AuthModule,
 	],
-	controllers: [AppController]
 })
 export class AppModule { }

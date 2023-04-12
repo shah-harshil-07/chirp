@@ -2,6 +2,7 @@ import { Body, Controller, Param, Post, UseInterceptors, InternalServerErrorExce
 import { LoggedInUserDTO, OtpDTO, RegisteredUserDTO, UserDTO } from "./users.dto";
 import { UsersService } from "./users.service";
 import { ResponseInterceptor } from "src/interceptors/response";
+import { AuthService } from "../auth/auth.service";
 
 interface IStandardResponse {
     data: any,
@@ -11,7 +12,7 @@ interface IStandardResponse {
 @UseInterceptors(ResponseInterceptor)
 @Controller("user")
 export class UsersController {
-    constructor(private readonly userService: UsersService) { }
+    constructor(private readonly userService: UsersService, private readonly authService: AuthService) { }
 
     @Post("verify-email")
     async verifyEmail(@Body() userData: UserDTO): Promise<IStandardResponse> {
@@ -66,9 +67,14 @@ export class UsersController {
     @Post("login")
     async login(@Body() requestData: LoggedInUserDTO): Promise<IStandardResponse> {
         try {
-            const userValid = await this.userService.login(requestData);
-            const message = userValid ? "User logged in successfully!" : "Credentials are incorrect.";
-            return { data: { userValid }, message };
+            let accessToken = null;
+            const userObj = await this.userService.findUser(requestData);
+            if (userObj) accessToken = this.authService.generateToken(userObj);
+            const message = userObj ? "User logged in successfully!" : "Credentials are incorrect.";
+
+            const data = { userValid: userObj ? true : false };
+            if (userObj) data["accessToken"] = accessToken;
+            return { data, message };
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();

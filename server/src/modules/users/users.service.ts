@@ -76,16 +76,6 @@ export class UsersService {
         }
     }
 
-    public async login(userData: LoggedInUserDTO): Promise<boolean> {
-        try {
-            const userObj = await this.findUser(userData);
-            return userObj ? true : false;
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
-    }
-
     public async findUser(userData: LoggedInUserDTO): Promise<UserDTO> {
         try {
             const userObj = await
