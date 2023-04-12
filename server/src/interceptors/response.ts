@@ -40,7 +40,13 @@ export class ResponseInterceptor implements NestInterceptor {
         return next.handle().pipe(
             map(data => this.successResponse(data.data, data.message)),
             catchError(async err => {
-                if (err?.status === 500) throw new HttpException("INTERNAL_SERVER_ERROR", HttpStatus.INTERNAL_SERVER_ERROR);
+                if (err?.status === 500) {
+                    throw new HttpException(
+                        "INTERNAL_SERVER_ERROR",
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        { cause: new Error(), description: "Server Error" },
+                    );
+                }
 
                 const errorObj = { message: err?.response?.message?.[0] ?? "Validation Error" };
                 const statusCode = err?.status ?? 422;

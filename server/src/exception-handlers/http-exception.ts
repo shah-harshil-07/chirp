@@ -7,13 +7,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
         const status = exception.getStatus();
+        const messageCodeObj = exception.getResponse();
+        const messageCode = typeof (messageCodeObj) === "string" ? messageCodeObj : exception.message;
 
         response.status(status).json({
             meta: {
+                messageCode,
+                status: false,
                 statusCode: status,
                 message: "Exception Occurred",
-                messageCode: exception.getResponse(),
-                status: false
             },
             error: {
                 message: "Internal Server Exception Occurred.",
