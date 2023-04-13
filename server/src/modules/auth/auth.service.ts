@@ -6,7 +6,7 @@ import { UserDTO } from "../users/users.dto";
 export class AuthService {
     constructor(private jwtService: JwtService) { }
 
-    generateToken(user: UserDTO) {
+    generateToken(user: UserDTO): string {
         return this.jwtService.sign(JSON.stringify(user));
     }
 }
