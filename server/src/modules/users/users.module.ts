@@ -7,12 +7,20 @@ import { UserModel, UserSchema } from "./users.schema";
 import { AuthService } from "../auth/auth.service";
 import { AuthModule } from "../auth/auth.module";
 import { JwtModule } from "@nestjs/jwt";
-import { jwtConstants } from "../auth/constants";
+import { ConfigModule } from "../config/config.module";
+import { ConfigService } from "../config/config.service";
 
 @Module({
 	imports: [
-		JwtModule.register({ secret: jwtConstants.secret }),
+		ConfigModule,
 		AuthModule,
+		JwtModule.registerAsync({
+			imports: [ConfigModule],
+			inject: [ConfigService],
+			useFactory: async (configService: ConfigService) => ({
+				secret: configService.getConfigObj("jwt").secret
+			}),
+		}),
 		MongooseModule.forFeature([
 			{ name: OtpStore.name, schema: OtpStoreSchema },
 			{ name: UserModel.name, schema: UserSchema },

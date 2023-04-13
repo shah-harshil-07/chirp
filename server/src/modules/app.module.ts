@@ -1,18 +1,19 @@
 import { Module } from "@nestjs/common";
 import { PostModule } from "./posts/posts.module";
 import { MongooseModule } from "@nestjs/mongoose";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule as NestConfig } from "@nestjs/config";
 import { UsersModule } from "./users/users.module";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 import { join } from "path";
 import { CommonModule } from "./common/common.module";
 import { AuthModule } from "./auth/auth.module";
+import { ConfigModule } from './config/config.module';
 
 @Module({
 	imports: [
 		PostModule,
-		ConfigModule.forRoot(),
+		NestConfig.forRoot(),
 		MongooseModule.forRoot(process.env.CONNECTION_URL, { dbName: process.env.DB_NAME }),
 		MailerModule.forRoot({
 			transport: {
@@ -30,6 +31,7 @@ import { AuthModule } from "./auth/auth.module";
 		UsersModule,
 		CommonModule,
 		AuthModule,
+		ConfigModule,
 	],
 })
 export class AppModule { }

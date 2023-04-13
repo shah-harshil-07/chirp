@@ -73,7 +73,7 @@ export class UsersController {
             const message = userObj ? "User logged in successfully!" : "Credentials are incorrect.";
 
             const data = { userValid: userObj ? true : false };
-            if (userObj) data["accessToken"] = accessToken;
+            if (accessToken) data["accessToken"] = accessToken;
             return { data, message };
         } catch (error) {
             console.log(error);
