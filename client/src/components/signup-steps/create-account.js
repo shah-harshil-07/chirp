@@ -3,7 +3,7 @@ import "src/styles/signup-steps/create-account.css";
 
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
-import LabelledInput from "../labelled-input";
+import LabelledInput from "../utilities/labelled-input";
 
 const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
     const initialData = { name: '', username: '', email: '', password: '', confirmPassword: '', noteChecked: false };

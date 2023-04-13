@@ -1,4 +1,4 @@
-import "src/styles/toaster.css";
+import "src/styles/utilities/toaster.css";
 
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";

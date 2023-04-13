@@ -1,4 +1,4 @@
-import "src/styles/labelled-input.css";
+import "src/styles/utilities/labelled-input.css";
 
 import React, { useRef, useState } from "react";
 

@@ -6,7 +6,7 @@ import CIcon from "@coreui/icons-react";
 import { cibGoogle } from "@coreui/icons";
 import { useDispatch } from "react-redux";
 
-import CustomModal from "./custom-modal";
+import CustomModal from "./utilities/custom-modal";
 import { openModal, closeModal } from "src/actions/modal";
 import CreateAccount from "./signup-steps/create-account";
 import CodeInput from "./signup-steps/code-input";

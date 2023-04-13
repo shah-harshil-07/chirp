@@ -2,7 +2,7 @@ import "src/styles/signup-steps/code-input.css";
 
 import React, { useEffect, useState } from "react";
 
-import LabelledInput from "../labelled-input";
+import LabelledInput from "../utilities/labelled-input";
 
 const CodeInput = ({ email, handleDataChange, resendOtpMail }) => {
     const [code, setCode] = useState('');

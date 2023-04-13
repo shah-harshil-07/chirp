@@ -1,0 +1,71 @@
+#left-sidebar-container {
+    position: relative;
+    width: 300px;
+    background-color: white;
+    float: right;
+    height: 100%;
+}
+
+#chirp-icon-container {
+    width: 70px;
+    border-radius: 50%;
+    padding: 10px;
+}
+
+#chirp-icon-container:hover {
+    background-color: rgba(15, 20, 25, 0.1);
+}
+
+.left-sidebar-link {
+    margin-top: 40px;
+    font-size: 25px;
+    margin-left: 15px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 32px;
+}
+
+.left-sidebar-link:hover {
+    background-color: rgba(15, 20, 25, 0.1);
+}
+
+#left-sidebar-chirp-btn {
+    font-size: 20px;
+    width: 90%;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    background-color: #1DA1F2;
+    color: whitesmoke;
+}
+
+#left-sidebar-profile-container {
+    width: 296px;
+    height: 70px;
+    float: right;
+    padding-left: 15px;
+    padding-top: 3px;
+    border-radius: 35px;
+    margin-left: 0;
+    margin-right: 0;
+    position: fixed;
+    bottom: 0;
+}
+
+#left-sidebar-profile-container:hover {
+    background-color: rgba(15, 20, 25, 0.1);
+}
+
+#profile-image-container {
+    width: 60px;
+    height: 60px;
+    border-radius: 35px;
+}
+
+#left-sidebar-profile-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 35px;
+}

@@ -6,9 +6,9 @@ import CIcon from "@coreui/icons-react";
 import { cibGoogle } from "@coreui/icons";
 import { useDispatch } from "react-redux";
 
-import CustomModal from "./custom-modal";
+import CustomModal from "./utilities/custom-modal";
 import { openModal, closeModal } from "src/actions/modal";
-import LabelledInput from "./labelled-input";
+import LabelledInput from "./utilities/labelled-input";
 import * as Constants from "src/constants";
 import API from "src/api";
 import { openToaster } from "src/actions/toaster";
@@ -77,8 +77,10 @@ const Login = () => {
 
             if (responseData?.meta?.status && responseData?.data) {
                 const userValid = responseData?.data?.userValid ?? false;
+                const token = responseData?.data?.accessToken ?? '';
                 const message = responseData?.meta?.message ?? "Something went wrong";
                 const type = userValid ? "Success" : "Error";
+                if (userValid && token) localStorage.setItem("chirp-accessToken", token);
                 dispatch(openToaster(type, message));
                 closeLoginDialog();
             } else {

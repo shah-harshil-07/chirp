@@ -1,4 +1,4 @@
-import "src/styles/loader.css";
+import "src/styles/utilities/loader.css";
 
 import React from "react";
 

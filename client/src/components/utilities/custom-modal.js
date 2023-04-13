@@ -1,4 +1,4 @@
-import "src/styles/custom-modal.css";
+import "src/styles/utilities/custom-modal.css";
 
 import React from "react";
 import { closeModal } from "src/actions/modal";
@@ -8,7 +8,7 @@ import Loader from "./loader";
 const CustomModal = ({ bodyJSX, includeFooter, footerAction, footerText, footerDisabled, showLoader, displayOverflow }) => {
     const logo = require("src/assets/logo-1.png");
     const dispatch = useDispatch();
-    const overFlowStyles = { overflow: "scroll", overflowX: "hidden", height: "325px" };
+    const overflowStyles = { overflow: "scroll", overflowX: "hidden", height: "325px" };
 
     const closeCustomDialog = () => {
         dispatch(closeModal());
@@ -31,7 +31,7 @@ const CustomModal = ({ bodyJSX, includeFooter, footerAction, footerText, footerD
                     </div>
                 </header>
 
-                <div className="custom-container-body" style={ displayOverflow ? overFlowStyles : {} }>
+                <div className="custom-container-body" style={ displayOverflow ? overflowStyles : {} }>
                     { showLoader ? (<div id="custom-modal-loader-container"><Loader /></div>) : bodyJSX }
                 </div>
 

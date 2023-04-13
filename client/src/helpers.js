@@ -20,3 +20,7 @@ export const validate = (key, data) => {
 export const getErrorMessage = key => {
     return keyConfig?.[key]?.errorMessage ?? '';
 }
+
+export const isUserLoggedIn = () => {
+    return localStorage.getItem("chirp-accessToken") ? true : false;
+}

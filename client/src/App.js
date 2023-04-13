@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Container } from "@material-ui/core";
 import { useSelector } from "react-redux";
 
 import Posts from "./components/posts";
@@ -7,7 +6,10 @@ import Form from "./components/form";
 import AuthBar from "./components/auth-bar";
 import Register from "./components/register";
 import Login from "./components/login";
-import Toaster from "./components/toaster";
+import Toaster from "./components/utilities/toaster";
+import { isUserLoggedIn } from "./helpers";
+import LeftSidebar from "./components/sidebar/left-sidebar";
+import RightSidebar from "./components/sidebar/right-sidebar";
 
 const App = () => {
 	const dialogState = useSelector(state => state.modal);
@@ -32,16 +34,24 @@ const App = () => {
 
 	return (
 		<>
-			{ getDialog() }
+			{getDialog()}
 
-			<Container maxWidth="sm">
-				<p><b>Home</b></p>
+			<div>
+				<p style={{ fontWeight: "bold", textAlign: "center" }}>Home</p>
 
-				<Form currentId={currentId} setCurrentId={setCurrentId} />
-				<Posts />
-			</Container>
+				<div style={{ display: "grid", gridTemplateColumns: "650px 600px auto" }}>
+					<LeftSidebar />
 
-			<AuthBar />
+					<div>
+						<Form currentId={currentId} setCurrentId={setCurrentId} />
+						<Posts />
+					</div>
+
+					<RightSidebar />
+				</div>
+			</div>
+
+			{!isUserLoggedIn() && <AuthBar />}
 
 			{
 				toasterState.open && (
