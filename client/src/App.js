@@ -39,7 +39,7 @@ const App = () => {
 			<div>
 				<p style={{ fontWeight: "bold", textAlign: "center" }}>Home</p>
 
-				<div style={{ display: "grid", gridTemplateColumns: "650px 600px auto" }}>
+				<div style={{ display: "grid", gridTemplateColumns: "auto auto auto" }}>
 					<LeftSidebar />
 
 					<div>
