@@ -5,6 +5,7 @@ import React from "react";
 
 const LeftSidebar = () => {
     const logo = require("src/assets/logo-1.png");
+    const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";
 
     return (
         <div className="sidebar">
@@ -39,11 +40,11 @@ const LeftSidebar = () => {
 
                 <div className="row" id="left-sidebar-profile-container">
                     <div id="profile-image-container">
-                        <img alt="logo" id="left-sidebar-profile-img" src={String(logo)} />
+                        <img alt="logo" className="sidebar-profile-img" src={placeHolderImageSrc} />
                     </div>
 
                     <div style={{ fontSize: "19px" }}>
-                        Harshil Shah<br />@shah_harshil_07
+                        &nbsp;Harshil Shah<br />@shah_harshil_07
                     </div>
 
                     <span style={{ marginLeft: "21px" }}>#</span>
