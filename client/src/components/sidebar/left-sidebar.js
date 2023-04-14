@@ -3,7 +3,7 @@ import "src/styles/sidebar/left-sidebar.css";
 
 import React from "react";
 import CIcon from "@coreui/icons-react";
-import { cilHome, cilSettings, cilBookmark, cilUser } from "@coreui/icons";
+import { cilHome, cilSettings, cilBookmark, cilUser, cilOptions } from "@coreui/icons";
 
 const LeftSidebar = () => {
     const logo = require("src/assets/logo-1.png");
@@ -67,7 +67,7 @@ const LeftSidebar = () => {
                         &nbsp;Harshil Shah<br />@shah_harshil_07
                     </div>
 
-                    <span style={{ marginLeft: "21px" }}>#</span>
+                    <CIcon className="options-icon" style={{ marginLeft: "21px" }} icon={cilOptions} />
                 </div>
             </div>
         </div>

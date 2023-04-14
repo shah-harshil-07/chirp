@@ -7,3 +7,9 @@
     height: 100%;
     border-radius: 35px;
 }
+
+.options-icon {
+    width: 30px;
+    height: 30px;
+    transform: rotate(270deg);
+}

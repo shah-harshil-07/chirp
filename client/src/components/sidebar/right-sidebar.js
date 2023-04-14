@@ -2,6 +2,8 @@ import "src/styles/sidebar/index.css";
 import "src/styles/sidebar/right-sidebar.css";
 
 import React from "react";
+import CIcon from "@coreui/icons-react";
+import { cilOptions } from "@coreui/icons";
 
 const RightSidebar = () => {
     const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";
@@ -16,39 +18,64 @@ const RightSidebar = () => {
                         <b>What's happening</b>
                     </div>
 
-                    <div className="trending-section-margin-text">
-                        <span>Trending in India</span>
-                        <span className="float-right">#</span><br />
-                        <span><b>Hello World</b></span> <br />
-                        <span>87.7k posts</span>
+                    <div className="trending-section-margin-text" style={{ fontSize: "17px" }}>
+                        <div className="row">
+                            <div className="col-md-10">Trending in India</div>
+                            <div className="col-md-1"><CIcon icon={cilOptions} className="options-icon" /></div>
+                        </div>
+
+                        <div style={{ marginTop: "-8px" }}>
+                            <span><b>Hello World</b></span> <br />
+                            <span>87.7k posts</span>
+                        </div>
                     </div>
 
-                    <div className="trending-section-margin-text">
-                        <span>Trending in India</span>
-                        <span className="float-right">#</span><br />
-                        <span><b>Hello World</b></span> <br />
-                        <span>87.7k posts</span>
+                    <div className="trending-section-margin-text" style={{ fontSize: "17px" }}>
+                        <div className="row">
+                            <div className="col-md-10">Trending in India</div>
+                            <div className="col-md-1"><CIcon icon={cilOptions} className="options-icon" /></div>
+                        </div>
+
+                        <div style={{ marginTop: "-8px" }}>
+                            <span><b>Hello World</b></span> <br />
+                            <span>87.7k posts</span>
+                        </div>
                     </div>
 
-                    <div className="trending-section-margin-text">
-                        <span>Trending in India</span>
-                        <span className="float-right">#</span><br />
-                        <span><b>Hello World</b></span> <br />
-                        <span>87.7k posts</span>
+                    <div className="trending-section-margin-text" style={{ fontSize: "17px" }}>
+                        <div className="row">
+                            <div className="col-md-10">Trending in India</div>
+                            <div className="col-md-1"><CIcon icon={cilOptions} className="options-icon" /></div>
+                        </div>
+
+                        <div style={{ marginTop: "-8px" }}>
+                            <span><b>Hello World</b></span> <br />
+                            <span>87.7k posts</span>
+                        </div>
                     </div>
 
-                    <div className="trending-section-margin-text">
-                        <span>Trending in India</span>
-                        <span className="float-right">#</span><br />
-                        <span><b>Hello World</b></span> <br />
-                        <span>87.7k posts</span>
+                    <div className="trending-section-margin-text" style={{ fontSize: "17px" }}>
+                        <div className="row">
+                            <div className="col-md-10">Trending in India</div>
+                            <div className="col-md-1"><CIcon icon={cilOptions} className="options-icon" /></div>
+                        </div>
+
+                        <div style={{ marginTop: "-8px" }}>
+                            <span><b>Hello World</b></span> <br />
+                            <span>87.7k posts</span>
+                        </div>
                     </div>
 
-                    <div className="trending-section-margin-text">
-                        <span>Trending in India</span>
-                        <span className="float-right">#</span><br />
-                        <span><b>Hello World</b></span> <br />
-                        <span>87.7k posts</span>
+                    <div className="trending-section-margin-text" style={{ fontSize: "17px" }}>
+                        <div className="row">
+                            <div className="col-md-10">Trending in India</div>
+                            <div className="col-md-1"><CIcon icon={cilOptions} className="options-icon" /></div>
+                        </div>
+
+                        <div style={{ marginTop: "-8px" }}>
+                            <span><b>Hello World</b></span> <br />
+                            <span>87.7k posts</span>
+                        </div>
                     </div>
 
                     <div id="trending-section-show-more">
@@ -64,11 +91,11 @@ const RightSidebar = () => {
                             <img alt="logo" className="sidebar-profile-img" src={placeHolderImageSrc} />
                         </div>
 
-                        <div style={{ fontSize: "16px" }}>
+                        <div className="who-to-follow-user-details">
                             &nbsp;Harshil Shah<br />@shah_harshil_07
                         </div>
 
-                        <span style={{ marginLeft: "57px" }}>#</span>
+                        <div className="follow-btn">Follow</div>
                     </div>
 
                     <div className="row who-to-follow-user-div">
@@ -76,11 +103,11 @@ const RightSidebar = () => {
                             <img alt="logo" className="sidebar-profile-img" src={placeHolderImageSrc} />
                         </div>
 
-                        <div style={{ fontSize: "16px" }}>
+                        <div className="who-to-follow-user-details">
                             &nbsp;Harshil Shah<br />@shah_harshil_07
                         </div>
 
-                        <span style={{ marginLeft: "57px" }}>#</span>
+                        <div className="follow-btn">Follow</div>
                     </div>
 
                     <div className="row who-to-follow-user-div">
@@ -88,11 +115,11 @@ const RightSidebar = () => {
                             <img alt="logo" className="sidebar-profile-img" src={placeHolderImageSrc} />
                         </div>
 
-                        <div style={{ fontSize: "16px" }}>
+                        <div className="who-to-follow-user-details">
                             &nbsp;Harshil Shah<br />@shah_harshil_07
                         </div>
 
-                        <span style={{ marginLeft: "57px" }}>#</span>
+                        <div className="follow-btn">Follow</div>
                     </div>
 
                     <div id="who-to-follow-show-more">
