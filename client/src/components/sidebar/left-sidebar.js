@@ -2,6 +2,8 @@ import "src/styles/sidebar/index.css";
 import "src/styles/sidebar/left-sidebar.css";
 
 import React from "react";
+import CIcon from "@coreui/icons-react";
+import { cilHome, cilSettings, cilBookmark, cilUser } from "@coreui/icons";
 
 const LeftSidebar = () => {
     const logo = require("src/assets/logo-1.png");
@@ -14,29 +16,47 @@ const LeftSidebar = () => {
                     <img alt="logo" width="40px" height="40px" src={String(logo)} />
                 </div>
 
-                <div className="left-sidebar-link" style={{ width: "142px" }}>
-                    # Home
+                <div className="row left-sidebar-link">
+                    <div className="col-sm-3 px-4 align-self-center">
+                        <CIcon width="30px" height="30px" icon={cilHome} />
+                    </div>
+
+                    <div className="col-sm-9 left-sidebar-link-label">Home</div>
                 </div>
 
-                <div  className="left-sidebar-link" style={{ width: "154px" }}>
-                    # Explore
+                <div className="row left-sidebar-link">
+                    <div className="col-sm-3 px-4 align-self-center">
+                        <span style={{ fontSize: "33px", marginLeft: "5px" }}>#</span>
+                    </div>
+
+                    <div className="col-sm-9 left-sidebar-link-label">Explore</div>
                 </div>
 
-                <div  className="left-sidebar-link" style={{ width: "167px" }}>
-                    # Settings
+                <div className="row left-sidebar-link">
+                    <div className="col-sm-3 px-4 align-self-center">
+                        <CIcon width="30px" height="30px" icon={cilSettings} />
+                    </div>
+
+                    <div className="col-sm-9 left-sidebar-link-label">Settings</div>
                 </div>
 
-                <div  className="left-sidebar-link" style={{ width: "190px" }}>
-                    # Bookmarks
+                <div className="row left-sidebar-link">
+                    <div className="col-sm-3 px-4 align-self-center">
+                        <CIcon width="30px" height="30px" icon={cilBookmark} />
+                    </div>
+
+                    <div className="col-sm-9 left-sidebar-link-label">Bookmarks</div>
                 </div>
 
-                <div  className="left-sidebar-link" style={{ width: "143px" }}>
-                    # Profile
+                <div className="row left-sidebar-link">
+                    <div className="col-sm-3 px-4 align-self-center">
+                        <CIcon width="30px" height="30px" icon={cilUser} />
+                    </div>
+
+                    <div className="col-sm-9 left-sidebar-link-label">Profile</div>
                 </div>
 
-                <div className="left-sidebar-link" id="left-sidebar-chirp-btn">
-                    Chirp
-                </div>
+                <div id="left-sidebar-chirp-btn">Chirp</div>
 
                 <div className="row" id="left-sidebar-profile-container">
                     <div id="profile-image-container">
