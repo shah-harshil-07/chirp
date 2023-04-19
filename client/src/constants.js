@@ -9,7 +9,7 @@ export const USERNAME_REGEX = /[^A-Za-z0-9_]/gm;
 /*--------------------------------------------------------------------------------*/
 export const PASSWORD_ERR_MESSAGE = "Must contain atleast 8 characters with atleast one uppercase, one lowercase and one special character.";
 export const NAME_ERR_MESSAGE = "Only letters are allowed.";
-export const USERNAME_ERR_MESSAGE = "Only uppercase and lowercase letters, numbers and underscore are allowed.";
+export const USERNAME_ERR_MESSAGE = "Only letters, numbers and underscore are allowed.";
 export const EMAIL_ERR_MESSAGE = "Email must be valid.";
 export const CONFIRM_PASSWORD_MESSAGE = "Confirm Password must be same as Password.";
 
@@ -28,4 +28,6 @@ export const VERIFY_OTP = "user/check-otp";
 export const REGISTER = "user/register";
 export const CHECK_USER_CREDENTIALS = "user/check-user-credentials";
 export const LOGIN = "user/login";
-export const GOOGLE_USER_VERIFICATION = "https://www.googleapis.com/oauth2/v1/userinfo"
+export const GOOGLE_USER_VERIFICATION = "https://www.googleapis.com/oauth2/v1/userinfo";
+export const CHECK_GOOGLE_CREDENTIALS = "user/check-google-credentials";
+export const REGISTER_GOOGLE_AUTHED_USER = "user/register-google-authed-user"

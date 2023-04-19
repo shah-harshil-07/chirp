@@ -37,6 +37,10 @@ export class OtpDTO {
 
 export class GoogleAuthedUserDTO {
     @IsNotEmpty()
+    @CustomMatch(Constants.NAME_REGEX, { message: Constants.NAME_ERR_MESSAGE })
+    name: string;
+
+    @IsNotEmpty()
     @IsEmail({}, { message: Constants.EMAIL_ERR_MESSAGE })
     email: string;
 
@@ -45,10 +49,6 @@ export class GoogleAuthedUserDTO {
 }
 
 export class RegisteredGoogleAuthedUserDTO extends GoogleAuthedUserDTO {
-    @IsNotEmpty()
-    @CustomMatch(Constants.NAME_REGEX, { message: Constants.NAME_ERR_MESSAGE })
-    name: string;
-
     @IsNotEmpty()
     @CustomMatch(Constants.USERNAME_REGEX, { message: Constants.USERNAME_ERR_MESSAGE })
     username: string;

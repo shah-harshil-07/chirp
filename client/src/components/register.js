@@ -15,6 +15,7 @@ import { validate, getErrorMessage } from "src/helpers";
 import API from "src/api";
 import * as Constants from "src/constants";
 import { openToaster } from "src/actions/toaster";
+import UsernameInput from "./signup-steps/username-input";
 
 const Register = () => {
     const initialBodyData = {
@@ -178,6 +179,7 @@ const Register = () => {
                     const name = response?.data?.name ?? '';
                     const email = response?.data?.email ?? '';
                     const googleId = response?.data?.id ?? '';
+                    checkGoogleAuthedUser({ name, email, googleId });
                 }
             } catch (error) {
                 dispatch(openToaster("Error", "Something went wrong!"));
@@ -221,6 +223,30 @@ const Register = () => {
             setShowLoader(false);
             dispatch(openToaster("Error", "Something went wrong!"));
             setSignUpStep(1);
+        }
+    }
+
+    const checkGoogleAuthedUser = async userData => {
+        try {
+            const response = await API(Constants.POST, Constants.CHECK_GOOGLE_CREDENTIALS, userData);
+            const responseData = response.data;
+
+            if (responseData?.meta?.status && responseData?.data) {
+                const message = responseData?.meta?.message ?? "User Already exists.";
+
+                if (responseData.data.userAvailable) {
+                    closeRegisterDialog();
+                    dispatch(openToaster("Error", message));
+                } else {
+                    showUserInputPage();
+                }
+            } else if (responseData?.error?.message) {
+                dispatch(openToaster("Error", responseData.error.message));
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch(openToaster("Error", "Something went wrong!"));
+            closeRegisterDialog();
         }
     }
 
@@ -305,6 +331,13 @@ const Register = () => {
 
     function handleBodyDataChange(key, data) {
         setBodyData({ ...bodyData, [key]: data });
+    }
+
+    function showUserInputPage() {
+        setBodyJSX(<UsernameInput />);
+        setFooterText("Set Username");
+        setIncludeFooter(true);
+        setDisplayOverFlow(false);
     }
 
     return (
