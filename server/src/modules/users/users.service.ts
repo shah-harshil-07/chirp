@@ -6,6 +6,7 @@ import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { LoggedInUserDTO, RegisteredUserDTO, UserDTO } from "./users.dto";
 import { UserModel } from "./users.schema";
+import { ConfigService } from "../config/config.service";
 
 @Injectable()
 export class UsersService {
@@ -14,6 +15,7 @@ export class UsersService {
         @InjectModel(UserModel.name) private readonly userModel: Model<UserModel>,
         private readonly mailerService: MailerService,
         private readonly commonService: CommonService,
+        private readonly configService: ConfigService,
     ) { }
 
     public async sendOtp(emailId: string, username: string): Promise<{ otpId: string }> {
@@ -24,8 +26,8 @@ export class UsersService {
 
             await this.mailerService.sendMail({
                 to: emailId,
-                from: process.env.FROM_EMAIL_ADDR,
-                replyTo: process.env.REPLY_TO_EMAIL_ADDR,
+                from: this.configService.getConfigObj("smtp").displayEmail,
+                replyTo: this.configService.getConfigObj("smtp").replyToEmail,
                 subject: "Email Verification",
                 template: "otp",
                 context: { username, otp }

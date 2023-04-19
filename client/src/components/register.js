@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 import CIcon from "@coreui/icons-react";
 import { cibGoogle } from "@coreui/icons";
 import { useDispatch } from "react-redux";
+import { useGoogleLogin } from "@react-oauth/google";
 
 import CustomModal from "./utilities/custom-modal";
 import { openModal, closeModal } from "src/actions/modal";
@@ -29,7 +30,7 @@ const Register = () => {
             <h4 className="header">Join Chirp today</h4>
 
             <div className="auth-box">
-                <span className="d-flex justify-content-center align-items-center">
+                <span className="d-flex justify-content-center align-items-center" onClick={() => registerWithGoogle()}>
                     <CIcon icon={cibGoogle} id="google-signup-icon" />
                     <span id="google-signup-text">Sign up with google</span>
                 </span>
@@ -87,9 +88,9 @@ const Register = () => {
     const [bodyKey, setBodyKey] = useState('');
     const [footerDisabled, setFooterDisabled] = useState(true);
     const [otpId, setOtpId] = useState('');
-    const [password, setPassword] = useState('');
     const [showLoader, setShowLoader] = useState(false);
     const [displayOverflow, setDisplayOverFlow] = useState(false);
+    const [googleRegisteredUser, setGoogleRegisteredUser] = useState(null);
 
     useEffect(() => {
         if (signUpStep === bodyJSXList.length) {
@@ -163,6 +164,32 @@ const Register = () => {
                 break;
         }
     }, [bodyData]);
+
+    useEffect(async () => {
+        if (googleRegisteredUser) {
+            const token = googleRegisteredUser.access_token;
+            const headerData = { Accept: "application/json", Authorization: `Bearer ${token}` };
+
+            try {
+                const requestUrl = `${Constants.GOOGLE_USER_VERIFICATION}?access_token=${token}`;
+                const response = await API(Constants.GET, requestUrl, null, headerData, true);
+
+                if (response.status === 200 && response.data) {
+                    const name = response?.data?.name ?? '';
+                    const email = response?.data?.email ?? '';
+                    const googleId = response?.data?.id ?? '';
+                }
+            } catch (error) {
+                dispatch(openToaster("Error", "Something went wrong!"));
+                setGoogleRegisteredUser(null);
+            }
+        }
+    }, [googleRegisteredUser]);
+
+    const registerWithGoogle = useGoogleLogin({
+        onSuccess: response => { setGoogleRegisteredUser(response) },
+        onError: err => { console.log(err) },
+    });
 
     const checkUserUniqueness = async () => {
         const data = {

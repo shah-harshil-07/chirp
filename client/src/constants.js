@@ -28,3 +28,4 @@ export const VERIFY_OTP = "user/check-otp";
 export const REGISTER = "user/register";
 export const CHECK_USER_CREDENTIALS = "user/check-user-credentials";
 export const LOGIN = "user/login";
+export const GOOGLE_USER_VERIFICATION = "https://www.googleapis.com/oauth2/v1/userinfo"
