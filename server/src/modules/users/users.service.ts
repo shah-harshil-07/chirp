@@ -4,7 +4,7 @@ import { CommonService } from "../common/common.service";
 import { OtpStore } from "../common/otp-store.schema";
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
-import { LoggedInUserDTO, RegisteredUserDTO, UserDTO } from "./users.dto";
+import { GoogleAuthedUserDTO, LoggedInUserDTO, RegisteredGoogleAuthedUserDTO, RegisteredUserDTO, UserDTO } from "./users.dto";
 import { UserModel } from "./users.schema";
 import { ConfigService } from "../config/config.service";
 
@@ -69,7 +69,7 @@ export class UsersService {
                     .userModel
                     .findOne({ $or: [{ email: userData.email }, { username: userData.username }] })
                     .exec()
-            ;
+                ;
 
             return userObj ? false : true;
         } catch (error) {
@@ -88,9 +88,39 @@ export class UsersService {
                         password: userData.password,
                     })
                     .exec()
+                ;
+
+            return userObj;
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    public async getGoogleCredentials(userData: GoogleAuthedUserDTO): Promise<UserDTO> {
+        try {
+            const userObj = await
+                this
+                    .userModel
+                    .findOne({
+                        $or: [{ email: userData.email }, { googleId: userData.googleId }],
+                    })
+                    .exec()
             ;
 
             return userObj;
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    public async createGoogleAuthedUser(userData: RegisteredGoogleAuthedUserDTO): Promise<UserDTO> {
+        const userDocument = new this.userModel(userData);
+
+        try {
+            await userDocument.save();
+            return userDocument;
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();

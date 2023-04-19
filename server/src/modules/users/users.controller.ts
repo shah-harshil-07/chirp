@@ -1,8 +1,15 @@
 import { Body, Controller, Param, Post, UseInterceptors, InternalServerErrorException } from "@nestjs/common";
-import { LoggedInUserDTO, OtpDTO, RegisteredUserDTO, UserDTO } from "./users.dto";
 import { UsersService } from "./users.service";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { AuthService } from "../auth/auth.service";
+import {
+    OtpDTO,
+    UserDTO,
+    LoggedInUserDTO,
+    RegisteredUserDTO,
+    GoogleAuthedUserDTO,
+    RegisteredGoogleAuthedUserDTO,
+} from "./users.dto";
 
 interface IStandardResponse {
     data: any,
@@ -58,6 +65,30 @@ export class UsersController {
             const userUnique = await this.userService.checkUserUniquness(requestData);
             const message = userUnique ? "The user credentials are unique." : "Please change either username or email.";
             return { data: { userUnique }, message };
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    @Post("check-google-credentials")
+    async checkGoogleCredentials(@Body() requestData: GoogleAuthedUserDTO): Promise<IStandardResponse> {
+        try {
+            const userData = await this.userService.getGoogleCredentials(requestData);
+            const data = { userAvailable: userData ? true : false };
+            const message = userData ? "The user already exists." : "The user is unavailable.";
+            return { data, message };
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    @Post("register-google-authed-user")
+    async registerGoogleAuthedUser(@Body() requestData: RegisteredGoogleAuthedUserDTO): Promise<IStandardResponse> {
+        try {
+            const userObj = await this.userService.createGoogleAuthedUser(requestData);
+            return { data: userObj, message: "Registeration done successfully!" };
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();
