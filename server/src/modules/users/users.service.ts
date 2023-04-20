@@ -116,6 +116,7 @@ export class UsersService {
     }
 
     public async createGoogleAuthedUser(userData: RegisteredGoogleAuthedUserDTO): Promise<UserDTO> {
+        console.log(userData);
         const userDocument = new this.userModel(userData);
 
         try {
@@ -131,6 +132,16 @@ export class UsersService {
         try {
             const userObj = await this.userModel.findOne({ username });
             return userObj ? true : false;
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    public async getGoogleAuthedUserData(userData: GoogleAuthedUserDTO): Promise<UserDTO> {
+        try {
+            const userObj = await this.userModel.findOne({ email: userData.email }, { googleId: userData.googleId });
+            return userObj;
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();

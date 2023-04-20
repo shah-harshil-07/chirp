@@ -13,6 +13,9 @@ export class UserModel {
 
     @Prop()
     password: string;
+
+    @Prop()
+    googleId: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserModel);

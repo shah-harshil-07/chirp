@@ -145,4 +145,31 @@ export class UsersController {
             throw new InternalServerErrorException();
         }
     }
+
+    @Post("login-with-google-cred")
+    async loginWithGoogleCredentials(@Body() requestData: GoogleAuthedUserDTO): Promise<any> {
+        try {
+            const userData = await this.userService.getGoogleAuthedUserData(requestData);
+
+            if (userData) {
+                const accessToken = this.authService.generateToken(userData);
+                const data = { user: userData, token: accessToken };
+                const meta = {
+                    status: true,
+                    statusCode: 200,
+                    messageCode: "SUCCESS",
+                    message: "User Logged in successfully.",
+                };
+
+                return { meta, data };
+            } else {
+                return {
+                    meta: { status: false, statusCode: 422, messageCode: "ERROR", message: "User does not exist." }
+                };
+            }
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
+    }
 }
