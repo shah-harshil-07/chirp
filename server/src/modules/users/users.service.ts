@@ -106,7 +106,7 @@ export class UsersService {
                         $or: [{ email: userData.email }, { googleId: userData.googleId }],
                     })
                     .exec()
-            ;
+                ;
 
             return userObj;
         } catch (error) {
@@ -121,6 +121,16 @@ export class UsersService {
         try {
             await userDocument.save();
             return userDocument;
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    public async checkUsernameAvailable(username: string): Promise<boolean> {
+        try {
+            const userObj = await this.userModel.findOne({ username });
+            return userObj ? true : false;
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();

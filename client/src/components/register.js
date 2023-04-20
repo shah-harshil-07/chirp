@@ -23,6 +23,12 @@ const Register = () => {
         createAccount: { name: '', username: '', email: '', password: '', confirmPassword: '', noteChecked: false },
     };
     const [bodyData, setBodyData] = useState(initialBodyData);
+    const initialGoogleAuthedUserData = { name: '', email: '', username: '', googleId: '' };
+
+    const openNextSignUpStep = () => {
+        if (signUpStep === bodyJSXList.length - 1) applyFinalRegisteration();
+        else setSignUpStep(signUpStep + 1);
+    }
 
     const createAccountRef = useRef(null);
 
@@ -30,8 +36,8 @@ const Register = () => {
         <>
             <h4 className="header">Join Chirp today</h4>
 
-            <div className="auth-box">
-                <span className="d-flex justify-content-center align-items-center" onClick={() => registerWithGoogle()}>
+            <div className="auth-box" onClick={() => registerWithGoogle()}>
+                <span className="d-flex justify-content-center align-items-center">
                     <CIcon icon={cibGoogle} id="google-signup-icon" />
                     <span id="google-signup-text">Sign up with google</span>
                 </span>
@@ -90,9 +96,11 @@ const Register = () => {
     const [footerDisabled, setFooterDisabled] = useState(true);
     const [otpId, setOtpId] = useState('');
     const [showLoader, setShowLoader] = useState(false);
-    const [displayOverflow, setDisplayOverFlow] = useState(false);
+    const [displayOverflow, setDisplayOverflow] = useState(false);
     const [googleRegisteredUser, setGoogleRegisteredUser] = useState(null);
     const [isGoogleAuthedUsernameValid, setIsGoogleAuthedUsernameValid] = useState(false);
+    const [googleAuthedUser, setGoogleAuthedUser] = useState(initialGoogleAuthedUserData);
+    const [customFooterAction, setCustomFooterAction] = useState(() => () => openNextSignUpStep());
 
     useEffect(() => {
         if (signUpStep === bodyJSXList.length) {
@@ -110,7 +118,7 @@ const Register = () => {
             setFooterText(_footerText);
             setBodyKey(_bodyKey);
             setFooterDisabled(_footerDisabled);
-            setDisplayOverFlow(_displayOverflow);
+            setDisplayOverflow(_displayOverflow);
 
             if (signUpStep === 2) {
                 setShowLoader(true);
@@ -180,7 +188,9 @@ const Register = () => {
                     const name = response?.data?.name ?? '';
                     const email = response?.data?.email ?? '';
                     const googleId = response?.data?.id ?? '';
-                    checkGoogleAuthedUser({ name, email, googleId });
+
+                    const userData = { name, email, googleId };
+                    setGoogleAuthedUser({ ...userData, username: '' });
                 }
             } catch (error) {
                 dispatch(openToaster("Error", "Something went wrong!"));
@@ -190,9 +200,14 @@ const Register = () => {
     }, [googleRegisteredUser]);
 
     useEffect(() => {
-        console.log("isGoogleAuthedUsernameValid useEffect called!");
         if (footerText === "Set Username") setFooterDisabled(!isGoogleAuthedUsernameValid);
     }, [isGoogleAuthedUsernameValid]);
+
+    useEffect(() => {
+        if (googleAuthedUser.email && googleAuthedUser.name && googleAuthedUser.googleId) {
+            checkGoogleAuthedUser(googleAuthedUser);
+        }
+    }, [googleAuthedUser]);
 
     const registerWithGoogle = useGoogleLogin({
         onSuccess: response => { setGoogleRegisteredUser(response) },
@@ -312,6 +327,7 @@ const Register = () => {
             const response = await API(Constants.POST, Constants.REGISTER, data);
             setShowLoader(false);
             closeRegisterDialog();
+            if (response?.data?.data?.token) localStorage.setItem("chirp-accessToken", response.data.data.token);
 
             const type = response?.data?.meta?.status ? "Success" : "Error";
             const message = type === "Success" ? response?.data?.meta?.message : response?.data?.error?.message ?? "Error";
@@ -319,6 +335,25 @@ const Register = () => {
         } catch (error) {
             console.log(error);
             setShowLoader(false);
+        }
+    }
+
+    const registerGoogleAuthedUser = async () => {
+        closeRegisterDialog();
+
+        try {
+            const response = await API(Constants.POST, Constants.REGISTER_GOOGLE_AUTHED_USER, googleAuthedUser);
+            const responseData = response.data;
+
+            if (responseData?.meta?.status && responseData?.meta?.message) {
+                if (responseData?.data?.token) localStorage.setItem("chirp-accessToken", responseData.data.token);
+                dispatch(openToaster("Success", responseData.meta.message));
+            } else if (responseData?.error?.message) {
+                const message = responseData.error.message ?? "Something went wrong!";
+                dispatch(openToaster("Error", message));
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -330,30 +365,35 @@ const Register = () => {
         dispatch(openModal("login"));
     }
 
-    function openNextSignUpStep() {
-        if (signUpStep === bodyJSXList.length - 1) applyFinalRegisteration();
-        else setSignUpStep(signUpStep + 1);
-    }
-
     function handleBodyDataChange(key, data) {
         setBodyData({ ...bodyData, [key]: data });
     }
 
     function showUserInputPage() {
-        setBodyJSX(<UsernameInput handleValidityChange={data => setIsGoogleAuthedUsernameValid(data)} />);
+        const userInputBodyJSX = (
+            <UsernameInput
+                handleDataChange={(username, isValid) => {
+                    setGoogleAuthedUser({ ...googleAuthedUser, username });
+                    setIsGoogleAuthedUsernameValid(isValid);
+                }}
+            />
+        );
+
+        setBodyJSX(userInputBodyJSX);
         setFooterText("Set Username");
         setIncludeFooter(true);
-        setDisplayOverFlow(false);
+        setDisplayOverflow(false);
+        setCustomFooterAction(() => () => registerGoogleAuthedUser());
     }
 
     return (
         <CustomModal
             bodyJSX={bodyJSX}
+            showLoader={showLoader}
             footerText={footerText}
             includeFooter={includeFooter}
             footerDisabled={footerDisabled}
-            footerAction={openNextSignUpStep}
-            showLoader={showLoader}
+            footerAction={customFooterAction}
             displayOverflow={displayOverflow}
         />
     )

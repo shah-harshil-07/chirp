@@ -16,11 +16,11 @@ interface IStandardResponse {
     message: string,
 }
 
-@UseInterceptors(ResponseInterceptor)
 @Controller("user")
 export class UsersController {
     constructor(private readonly userService: UsersService, private readonly authService: AuthService) { }
 
+    @UseInterceptors(ResponseInterceptor)
     @Post("verify-email")
     async verifyEmail(@Body() userData: UserDTO): Promise<IStandardResponse> {
         try {
@@ -32,6 +32,7 @@ export class UsersController {
         }
     }
 
+    @UseInterceptors(ResponseInterceptor)
     @Post("check-otp/:id")
     async checkOtp(@Body() requestData: OtpDTO, @Param() { id }: { id: string }): Promise<IStandardResponse> {
         try {
@@ -48,17 +49,20 @@ export class UsersController {
         }
     }
 
+    @UseInterceptors(ResponseInterceptor)
     @Post("register")
     async register(@Body() requestData: RegisteredUserDTO): Promise<IStandardResponse> {
         try {
             const userObj = await this.userService.createUser(requestData);
-            return { data: userObj, message: "Registeration done successfully!" };
+            const accessToken = this.authService.generateToken(userObj);
+            return { data: { user: userObj, token: accessToken }, message: "Registeration done successfully!" };
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();
         }
     }
 
+    @UseInterceptors(ResponseInterceptor)
     @Post("check-user-credentials")
     async checkUniqueness(@Body() requestData: UserDTO): Promise<IStandardResponse> {
         try {
@@ -71,6 +75,7 @@ export class UsersController {
         }
     }
 
+    @UseInterceptors(ResponseInterceptor)
     @Post("check-google-credentials")
     async checkGoogleCredentials(@Body() requestData: GoogleAuthedUserDTO): Promise<IStandardResponse> {
         try {
@@ -85,16 +90,45 @@ export class UsersController {
     }
 
     @Post("register-google-authed-user")
-    async registerGoogleAuthedUser(@Body() requestData: RegisteredGoogleAuthedUserDTO): Promise<IStandardResponse> {
+    async registerGoogleAuthedUser(@Body() requestData: RegisteredGoogleAuthedUserDTO): Promise<any> {
         try {
+            const usernameAvailable = await this.userService.checkUsernameAvailable(requestData.username);
+            if (usernameAvailable) {
+                return {
+                    meta: {
+                        status: false,
+                        statusCode: 422,
+                        messageCode: "ERROR",
+                        message: "User Registeration failed.",
+                    },
+                    error: {
+                        message: "Username already exists.",
+                    },
+                };
+            }
+
             const userObj = await this.userService.createGoogleAuthedUser(requestData);
-            return { data: userObj, message: "Registeration done successfully!" };
+            const accessToken = this.authService.generateToken(userObj);
+
+            return {
+                meta: {
+                    status: true,
+                    statusCode: 200,
+                    messageCode: "SUCCESS",
+                    message: "User Registered successfully.",
+                },
+                data: {
+                    user: userObj,
+                    token: accessToken,
+                },
+            };
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();
         }
     }
 
+    @UseInterceptors(ResponseInterceptor)
     @Post("login")
     async login(@Body() requestData: LoggedInUserDTO): Promise<IStandardResponse> {
         try {
