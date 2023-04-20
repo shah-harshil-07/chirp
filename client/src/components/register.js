@@ -92,6 +92,7 @@ const Register = () => {
     const [showLoader, setShowLoader] = useState(false);
     const [displayOverflow, setDisplayOverFlow] = useState(false);
     const [googleRegisteredUser, setGoogleRegisteredUser] = useState(null);
+    const [isGoogleAuthedUsernameValid, setIsGoogleAuthedUsernameValid] = useState(false);
 
     useEffect(() => {
         if (signUpStep === bodyJSXList.length) {
@@ -187,6 +188,11 @@ const Register = () => {
             }
         }
     }, [googleRegisteredUser]);
+
+    useEffect(() => {
+        console.log("isGoogleAuthedUsernameValid useEffect called!");
+        if (footerText === "Set Username") setFooterDisabled(!isGoogleAuthedUsernameValid);
+    }, [isGoogleAuthedUsernameValid]);
 
     const registerWithGoogle = useGoogleLogin({
         onSuccess: response => { setGoogleRegisteredUser(response) },
@@ -334,7 +340,7 @@ const Register = () => {
     }
 
     function showUserInputPage() {
-        setBodyJSX(<UsernameInput />);
+        setBodyJSX(<UsernameInput handleValidityChange={data => setIsGoogleAuthedUsernameValid(data)} />);
         setFooterText("Set Username");
         setIncludeFooter(true);
         setDisplayOverFlow(false);

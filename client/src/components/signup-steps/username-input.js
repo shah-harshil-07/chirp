@@ -1,23 +1,21 @@
 import "src/styles/signup-steps/code-input.css";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import LabelledInput from "../utilities/labelled-input";
 import * as Constants from "src/constants";
 import { validate } from "src/helpers";
 
-const UsernameInput = () => {
+const UsernameInput = ({ handleValidityChange }) => {
     const [username, setUsername] = useState('');
     const [errMessage, setErrMessage] = useState('');
 
     const handleDataChange = value => {
-        let _errMessage = '';
-
-        if (validate("username", value)) _errMessage = Constants.USERNAME_ERR_MESSAGE;
-        else _errMessage = '';
-
+        const isValid = validate("username", value);
+        const _errMessage = isValid ? Constants.USERNAME_ERR_MESSAGE : '';
         setUsername(value);
         setErrMessage(_errMessage);
+        handleValidityChange(isValid);
     }
 
     return (
@@ -31,4 +29,3 @@ const UsernameInput = () => {
 }
 
 export default UsernameInput;
-
