@@ -34,8 +34,8 @@ export class UsersService {
             });
 
             return { otpId };
-        } catch (err) {
-            console.log(err);
+        } catch (error) {
+            console.log(error);
             throw new InternalServerErrorException();
         }
     }
@@ -44,8 +44,8 @@ export class UsersService {
         try {
             const optObj = await this.otpModel.findById(otpId);
             return optObj;
-        } catch (err) {
-            console.log(err);
+        } catch (error) {
+            console.log(error);
             throw new InternalServerErrorException();
         }
     }
@@ -116,7 +116,6 @@ export class UsersService {
     }
 
     public async createGoogleAuthedUser(userData: RegisteredGoogleAuthedUserDTO): Promise<UserDTO> {
-        console.log(userData);
         const userDocument = new this.userModel(userData);
 
         try {
@@ -140,8 +139,7 @@ export class UsersService {
 
     public async getGoogleAuthedUserData(userData: GoogleAuthedUserDTO): Promise<UserDTO> {
         try {
-            const userObj = await this.userModel.findOne({ email: userData.email }, { googleId: userData.googleId });
-            return userObj;
+            return await this.userModel.findOne({ email: userData.email, googleId: userData.googleId });
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();

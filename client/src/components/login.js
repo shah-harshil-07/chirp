@@ -96,15 +96,17 @@ const Login = () => {
 
         try {
             let type = '', message = '';
-            const response = await API(Constants.POST, Constants.CHECK_GOOGLE_CREDENTIALS, userData);
+            const response = await API(Constants.POST, Constants.LOGIN_WITH_GOOGLE_CRED, userData);
             const responseData = response.data;
 
             if (responseData?.meta?.status && responseData?.data) {
-                type = responseData.data.userAvailable ? "Success" : "Error";
+                type = "Success";
                 message = "User logged in successfully.";
-            } else if (responseData?.error?.message) {
+                const accessToken = responseData.data.token;
+                if (accessToken) localStorage.setItem("chirp-accessToken", accessToken);
+            } else if (responseData?.meta?.message) {
                 type = "Error";
-                message = responseData.error.message;
+                message = responseData.meta.message;
             }
 
             dispatch(openToaster(type, message));

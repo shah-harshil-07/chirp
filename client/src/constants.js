@@ -30,4 +30,5 @@ export const CHECK_USER_CREDENTIALS = "user/check-user-credentials";
 export const LOGIN = "user/login";
 export const GOOGLE_USER_VERIFICATION = "https://www.googleapis.com/oauth2/v1/userinfo";
 export const CHECK_GOOGLE_CREDENTIALS = "user/check-google-credentials";
-export const REGISTER_GOOGLE_AUTHED_USER = "user/register-google-authed-user"
+export const REGISTER_GOOGLE_AUTHED_USER = "user/register-google-authed-user";
+export const LOGIN_WITH_GOOGLE_CRED = "user/login-with-google-cred";
