@@ -126,6 +126,7 @@ const Register = () => {
                 setFooterDisabled(true);
             }
         }
+        // eslint-disable-next-line
     }, [signUpStep]);
 
     useEffect(() => {
@@ -135,6 +136,7 @@ const Register = () => {
             setFooterText(bodyJSXList?.[2]?.footerText ?? '');
             setBodyKey(bodyJSXList?.[2]?.bodyKey ?? '');
         }
+        // eslint-disable-next-line
     }, [otpId]);
 
     useEffect(() => {
@@ -173,40 +175,46 @@ const Register = () => {
             default:
                 break;
         }
+        // eslint-disable-next-line
     }, [bodyData]);
 
-    useEffect(async () => {
-        if (googleRegisteredUser) {
-            const token = googleRegisteredUser.access_token;
-            const headerData = { Accept: "application/json", Authorization: `Bearer ${token}` };
-
-            try {
-                const requestUrl = `${Constants.GOOGLE_USER_VERIFICATION}?access_token=${token}`;
-                const response = await API(Constants.GET, requestUrl, null, headerData, true);
-
-                if (response.status === 200 && response.data) {
-                    const name = response?.data?.name ?? '';
-                    const email = response?.data?.email ?? '';
-                    const googleId = response?.data?.id ?? '';
-
-                    const userData = { name, email, googleId };
-                    setGoogleAuthedUser({ ...userData, username: '' });
+    useEffect(() => {
+        (async () => {
+            if (googleRegisteredUser) {
+                const token = googleRegisteredUser.access_token;
+                const headerData = { Accept: "application/json", Authorization: `Bearer ${token}` };
+    
+                try {
+                    const requestUrl = `${Constants.GOOGLE_USER_VERIFICATION}?access_token=${token}`;
+                    const response = await API(Constants.GET, requestUrl, null, headerData, true);
+    
+                    if (response.status === 200 && response.data) {
+                        const name = response?.data?.name ?? '';
+                        const email = response?.data?.email ?? '';
+                        const googleId = response?.data?.id ?? '';
+    
+                        const userData = { name, email, googleId };
+                        setGoogleAuthedUser({ ...userData, username: '' });
+                    }
+                } catch (error) {
+                    dispatch(openToaster("Error", "Something went wrong!"));
+                    setGoogleRegisteredUser(null);
                 }
-            } catch (error) {
-                dispatch(openToaster("Error", "Something went wrong!"));
-                setGoogleRegisteredUser(null);
             }
-        }
+        })();
+        // eslint-disable-next-line
     }, [googleRegisteredUser]);
 
     useEffect(() => {
         if (footerText === "Set Username") setFooterDisabled(!isGoogleAuthedUsernameValid);
+        // eslint-disable-next-line
     }, [isGoogleAuthedUsernameValid]);
 
     useEffect(() => {
         if (googleAuthedUser.email && googleAuthedUser.name && googleAuthedUser.googleId) {
             checkGoogleAuthedUser(googleAuthedUser);
         }
+        // eslint-disable-next-line
     }, [googleAuthedUser]);
 
     const registerWithGoogle = useGoogleLogin({
@@ -348,12 +356,15 @@ const Register = () => {
             if (responseData?.meta?.status && responseData?.meta?.message) {
                 if (responseData?.data?.token) localStorage.setItem("chirp-accessToken", responseData.data.token);
                 dispatch(openToaster("Success", responseData.meta.message));
-            } else if (responseData?.error?.message) {
-                const message = responseData.error.message ?? "Something went wrong!";
+            } else if (responseData?.errors?.length) {
+                const message = responseData?.errors?.[0] ?? "Something went wrong!";
                 dispatch(openToaster("Error", message));
             }
         } catch (error) {
             console.log(error);
+            dispatch(openToaster("Error", "Something went wrong!"));
+        } finally {
+            closeRegisterDialog();
         }
     }
 

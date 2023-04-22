@@ -24,26 +24,29 @@ const Login = () => {
         onError: err => { console.log(err) },
     });
 
-    useEffect(async () => {
-        if (googleRegisteredUser) {
-            const token = googleRegisteredUser.access_token;
-            const headerData = { Accept: "application/json", Authorization: `Bearer ${token}` };
+    useEffect(() => {
+        (async function attemptGoogleLogin() {
+            if (googleRegisteredUser) {
+                const token = googleRegisteredUser.access_token;
+                const headerData = { Accept: "application/json", Authorization: `Bearer ${token}` };
 
-            try {
-                const requestUrl = `${Constants.GOOGLE_USER_VERIFICATION}?access_token=${token}`;
-                const response = await API(Constants.GET, requestUrl, null, headerData, true);
+                try {
+                    const requestUrl = `${Constants.GOOGLE_USER_VERIFICATION}?access_token=${token}`;
+                    const response = await API(Constants.GET, requestUrl, null, headerData, true);
 
-                if (response.status === 200 && response.data) {
-                    const name = response?.data?.name ?? '';
-                    const email = response?.data?.email ?? '';
-                    const googleId = response?.data?.id ?? '';
-                    checkGoogleAuthedUser({ name, email, googleId });
+                    if (response.status === 200 && response.data) {
+                        const name = response?.data?.name ?? '';
+                        const email = response?.data?.email ?? '';
+                        const googleId = response?.data?.id ?? '';
+                        checkGoogleAuthedUser({ name, email, googleId });
+                    }
+                } catch (error) {
+                    dispatch(openToaster("Error", "Something went wrong!"));
+                    setGoogleRegisteredUser(null);
                 }
-            } catch (error) {
-                dispatch(openToaster("Error", "Something went wrong!"));
-                setGoogleRegisteredUser(null);
             }
-        }
+        })();
+        // eslint-disable-next-line
     }, [googleRegisteredUser]);
 
     const loginBodyJSX = (

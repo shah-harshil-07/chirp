@@ -12,6 +12,7 @@ const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
 
     useEffect(() => {
         handleDataChange(data);
+        // eslint-disable-next-line
     }, [data]);
 
     useImperativeHandle(ref, () => {

@@ -18,6 +18,7 @@ const CodeInput = ({ email, handleDataChange, resendOtpMail }) => {
 
     useEffect(() => {
         handleDataChange(code);
+        // eslint-disable-next-line
     }, [code]);
 
     const handleCodeChange = value => {

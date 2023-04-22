@@ -18,7 +18,7 @@ const LeftSidebar = () => {
 
                 <div className="row left-sidebar-link">
                     <div className="col-sm-3 px-4 align-self-center">
-                        <CIcon width="30px" height="30px" icon={cilHome} />
+                        <CIcon width={30} height={30} icon={cilHome} />
                     </div>
 
                     <div className="col-sm-9 left-sidebar-link-label">Home</div>
@@ -34,7 +34,7 @@ const LeftSidebar = () => {
 
                 <div className="row left-sidebar-link">
                     <div className="col-sm-3 px-4 align-self-center">
-                        <CIcon width="30px" height="30px" icon={cilSettings} />
+                        <CIcon width={30} height={30} icon={cilSettings} />
                     </div>
 
                     <div className="col-sm-9 left-sidebar-link-label">Settings</div>
@@ -42,7 +42,7 @@ const LeftSidebar = () => {
 
                 <div className="row left-sidebar-link">
                     <div className="col-sm-3 px-4 align-self-center">
-                        <CIcon width="30px" height="30px" icon={cilBookmark} />
+                        <CIcon width={30} height={30} icon={cilBookmark} />
                     </div>
 
                     <div className="col-sm-9 left-sidebar-link-label">Bookmarks</div>
@@ -50,7 +50,7 @@ const LeftSidebar = () => {
 
                 <div className="row left-sidebar-link">
                     <div className="col-sm-3 px-4 align-self-center">
-                        <CIcon width="30px" height="30px" icon={cilUser} />
+                        <CIcon width={30} height={30} icon={cilUser} />
                     </div>
 
                     <div className="col-sm-9 left-sidebar-link-label">Profile</div>
