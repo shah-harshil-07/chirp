@@ -253,7 +253,7 @@ const Register = () => {
             const responseData = response.data;
 
             if (responseData?.meta?.status && responseData?.data) {
-                const message = responseData?.meta?.message ?? "User Already exists.";
+                const message = responseData?.meta?.message ?? "User already exists.";
 
                 if (responseData.data.userAvailable) {
                     closeRegisterDialog();

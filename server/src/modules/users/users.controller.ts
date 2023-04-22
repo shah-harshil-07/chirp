@@ -11,30 +11,31 @@ import {
     RegisteredGoogleAuthedUserDTO,
 } from "./users.dto";
 
-interface IStandardResponse {
-    data: any,
+interface IResponseProps {
+    data?: any,
+    errors?: any,
     message: string,
-}
+    success: boolean,
+};
 
+@UseInterceptors(ResponseInterceptor)
 @Controller("user")
 export class UsersController {
     constructor(private readonly userService: UsersService, private readonly authService: AuthService) { }
 
-    @UseInterceptors(ResponseInterceptor)
     @Post("verify-email")
-    async verifyEmail(@Body() userData: UserDTO): Promise<IStandardResponse> {
+    async verifyEmail(@Body() userData: UserDTO): Promise<IResponseProps> {
         try {
             const otpData = await this.userService.sendOtp(userData.email, userData.name);
-            return { data: otpData, message: "Otp sent successfully." };
+            return { success: true, data: otpData, message: "Otp sent successfully." };
         } catch (err) {
             console.log(err);
             throw new InternalServerErrorException();
         }
     }
 
-    @UseInterceptors(ResponseInterceptor)
     @Post("check-otp/:id")
-    async checkOtp(@Body() requestData: OtpDTO, @Param() { id }: { id: string }): Promise<IStandardResponse> {
+    async checkOtp(@Body() requestData: OtpDTO, @Param() { id }: { id: string }): Promise<IResponseProps> {
         try {
             const otpData = await this.userService.findOtpValue(id);
             const createdTime = otpData.createdAt;
@@ -42,47 +43,46 @@ export class UsersController {
             const timeDiff = ((currentTime - createdTime) / 1000);
 
             const data = { valid: (timeDiff <= 60 && requestData.otp === otpData.otp) };
-            return { data, message: "OTP verified successfully." };
+            return { data, success: true, message: "OTP verified successfully." };
         } catch (err) {
             console.log(err);
             throw new InternalServerErrorException();
         }
     }
 
-    @UseInterceptors(ResponseInterceptor)
     @Post("register")
-    async register(@Body() requestData: RegisteredUserDTO): Promise<IStandardResponse> {
+    async register(@Body() requestData: RegisteredUserDTO): Promise<IResponseProps> {
         try {
             const userObj = await this.userService.createUser(requestData);
             const accessToken = this.authService.generateToken(userObj);
-            return { data: { user: userObj, token: accessToken }, message: "Registeration done successfully!" };
+            const data = { user: userObj, token: accessToken };
+            return { data, success: true, message: "Registeration done successfully!" };
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();
         }
     }
 
-    @UseInterceptors(ResponseInterceptor)
     @Post("check-user-credentials")
-    async checkUniqueness(@Body() requestData: UserDTO): Promise<IStandardResponse> {
+    async checkUniqueness(@Body() requestData: UserDTO): Promise<IResponseProps> {
         try {
             const userUnique = await this.userService.checkUserUniquness(requestData);
             const message = userUnique ? "The user credentials are unique." : "Please change either username or email.";
-            return { data: { userUnique }, message };
+            const data = { userUnique }
+            return { data, message, success: true };
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();
         }
     }
 
-    @UseInterceptors(ResponseInterceptor)
     @Post("check-google-credentials")
-    async checkGoogleCredentials(@Body() requestData: GoogleAuthedUserDTO): Promise<IStandardResponse> {
+    async checkGoogleCredentials(@Body() requestData: GoogleAuthedUserDTO): Promise<IResponseProps> {
         try {
             const userData = await this.userService.getGoogleCredentials(requestData);
             const data = { userAvailable: userData ? true : false };
             const message = userData ? "The user already exists." : "The user is unavailable.";
-            return { data, message };
+            return { data, message, success: true };
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();
@@ -90,47 +90,25 @@ export class UsersController {
     }
 
     @Post("register-google-authed-user")
-    async registerGoogleAuthedUser(@Body() requestData: RegisteredGoogleAuthedUserDTO): Promise<any> {
+    async registerGoogleAuthedUser(@Body() requestData: RegisteredGoogleAuthedUserDTO): Promise<IResponseProps> {
         try {
             const usernameAvailable = await this.userService.checkUsernameAvailable(requestData.username);
             if (usernameAvailable) {
-                return {
-                    meta: {
-                        status: false,
-                        statusCode: 422,
-                        messageCode: "ERROR",
-                        message: "User Registeration failed.",
-                    },
-                    error: {
-                        message: "Username already exists.",
-                    },
-                };
+                return { success: false, message: "User registeration failed.", errors: ["Username already exists."] };
             }
 
             const userObj = await this.userService.createGoogleAuthedUser(requestData);
             const accessToken = this.authService.generateToken(userObj);
-
-            return {
-                meta: {
-                    status: true,
-                    statusCode: 200,
-                    messageCode: "SUCCESS",
-                    message: "User Registered successfully.",
-                },
-                data: {
-                    user: userObj,
-                    token: accessToken,
-                },
-            };
+            const data = { user: userObj, token: accessToken };
+            return { data, success: true, message: "User registered successfully." };
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();
         }
     }
 
-    @UseInterceptors(ResponseInterceptor)
     @Post("login")
-    async login(@Body() requestData: LoggedInUserDTO): Promise<IStandardResponse> {
+    async login(@Body() requestData: LoggedInUserDTO): Promise<IResponseProps> {
         try {
             let accessToken = null;
             const userObj = await this.userService.findUser(requestData);
@@ -139,7 +117,7 @@ export class UsersController {
 
             const data = { userValid: userObj ? true : false };
             if (accessToken) data["accessToken"] = accessToken;
-            return { data, message };
+            return { data, message, success: true };
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();
@@ -147,25 +125,16 @@ export class UsersController {
     }
 
     @Post("login-with-google-cred")
-    async loginWithGoogleCredentials(@Body() requestData: GoogleAuthedUserDTO): Promise<any> {
+    async loginWithGoogleCredentials(@Body() requestData: GoogleAuthedUserDTO): Promise<IResponseProps> {
         try {
             const userData = await this.userService.getGoogleAuthedUserData(requestData);
 
             if (userData) {
                 const accessToken = this.authService.generateToken(userData);
                 const data = { user: userData, token: accessToken };
-                const meta = {
-                    status: true,
-                    statusCode: 200,
-                    messageCode: "SUCCESS",
-                    message: "User Logged in successfully.",
-                };
-
-                return { meta, data };
+                return { data, success: true, message: "User logged in successfully." };
             } else {
-                return {
-                    meta: { status: false, statusCode: 422, messageCode: "ERROR", message: "User does not exist." }
-                };
+                return { success: false, message: "User does not exist" };
             }
         } catch (error) {
             console.log(error);
