@@ -11,23 +11,11 @@ const RightSidebar = () => {
     return (
         <div className="sidebar">
             <div id="right-sidebar-container">
-                <input type="text" id="special-input" className="right-sidebar-searchbox" placeholder="Search Chirp" />
+                <input type="text" className="right-sidebar-searchbox special-input" placeholder="Search Chirp" />
 
                 <div id="trending-section">
                     <div className="right-sidebar-section-header">
                         <b>What's happening</b>
-                    </div>
-
-                    <div className="trending-section-margin-text" style={{ fontSize: "17px" }}>
-                        <div className="row">
-                            <div className="col-md-10">Trending in India</div>
-                            <div className="col-md-1"><CIcon icon={cilOptions} className="options-icon" /></div>
-                        </div>
-
-                        <div style={{ marginTop: "-8px" }}>
-                            <span><b>Hello World</b></span> <br />
-                            <span>87.7k posts</span>
-                        </div>
                     </div>
 
                     <div className="trending-section-margin-text" style={{ fontSize: "17px" }}>
