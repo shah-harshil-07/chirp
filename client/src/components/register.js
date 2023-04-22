@@ -23,7 +23,7 @@ const Register = () => {
         createAccount: { name: '', username: '', email: '', password: '', confirmPassword: '', noteChecked: false },
     };
     const [bodyData, setBodyData] = useState(initialBodyData);
-    const initialGoogleAuthedUserData = { name: '', email: '', username: '', googleId: '' };
+    const initialGoogleAuthedUserData = { name: '', email: '', googleId: '' };
 
     const openNextSignUpStep = () => {
         if (signUpStep === bodyJSXList.length - 1) applyFinalRegisteration();
@@ -31,6 +31,7 @@ const Register = () => {
     }
 
     const createAccountRef = useRef(null);
+    const usernameInputRef = useRef(null);
 
     const registerBodyJSX = (
         <>
@@ -183,18 +184,18 @@ const Register = () => {
             if (googleRegisteredUser) {
                 const token = googleRegisteredUser.access_token;
                 const headerData = { Accept: "application/json", Authorization: `Bearer ${token}` };
-    
+
                 try {
                     const requestUrl = `${Constants.GOOGLE_USER_VERIFICATION}?access_token=${token}`;
                     const response = await API(Constants.GET, requestUrl, null, headerData, true);
-    
+
                     if (response.status === 200 && response.data) {
                         const name = response?.data?.name ?? '';
                         const email = response?.data?.email ?? '';
                         const googleId = response?.data?.id ?? '';
-    
+
                         const userData = { name, email, googleId };
-                        setGoogleAuthedUser({ ...userData, username: '' });
+                        setGoogleAuthedUser({ ...userData });
                     }
                 } catch (error) {
                     dispatch(openToaster("Error", "Something went wrong!"));
@@ -347,10 +348,10 @@ const Register = () => {
     }
 
     const registerGoogleAuthedUser = async () => {
-        closeRegisterDialog();
+        const username = usernameInputRef.current.getUsername();
 
         try {
-            const response = await API(Constants.POST, Constants.REGISTER_GOOGLE_AUTHED_USER, googleAuthedUser);
+            const response = await API(Constants.POST, Constants.REGISTER_GOOGLE_AUTHED_USER, { ...googleAuthedUser, username });
             const responseData = response.data;
 
             if (responseData?.meta?.status && responseData?.meta?.message) {
@@ -382,12 +383,7 @@ const Register = () => {
 
     function showUserInputPage() {
         const userInputBodyJSX = (
-            <UsernameInput
-                handleDataChange={(username, isValid) => {
-                    setGoogleAuthedUser({ ...googleAuthedUser, username });
-                    setIsGoogleAuthedUsernameValid(isValid);
-                }}
-            />
+            <UsernameInput ref={usernameInputRef} handleDataChange={isValid => setIsGoogleAuthedUsernameValid(isValid)} />
         );
 
         setBodyJSX(userInputBodyJSX);

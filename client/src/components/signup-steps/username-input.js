@@ -1,21 +1,29 @@
 import "src/styles/signup-steps/code-input.css";
 
-import React, { useState } from "react";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
 
 import LabelledInput from "../utilities/labelled-input";
 import * as Constants from "src/constants";
 import { validate } from "src/helpers";
 
-const UsernameInput = ({ handleDataChange }) => {
+const UsernameInput = forwardRef(({ handleDataChange }, ref) => {
     const [username, setUsername] = useState('');
     const [errMessage, setErrMessage] = useState('');
+
+    useImperativeHandle(ref, () => {
+        return {
+            getUsername() {
+                return username;
+            }
+        }
+    }, [username]);
 
     const handleUsernameChange = value => {
         const isValid = !validate("username", value);
         const _errMessage = isValid ? '' : Constants.USERNAME_ERR_MESSAGE;
         setUsername(value);
         setErrMessage(_errMessage);
-        handleDataChange(value, isValid);
+        handleDataChange(isValid);
     }
 
     return (
@@ -26,6 +34,6 @@ const UsernameInput = ({ handleDataChange }) => {
             <p className="text-danger">{errMessage}</p>
         </div>
     );
-}
+});
 
 export default UsernameInput;
