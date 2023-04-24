@@ -5,3 +5,17 @@
 .float-right {
     float: right;
 }
+
+#app-header {
+    font-weight: bold;
+    text-align: center;
+}
+
+#app-container {
+    display: grid;
+    grid-template-columns: auto 500px auto;
+}
+
+.rounded-10 {
+    border-radius: 10px;
+}

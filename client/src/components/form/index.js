@@ -5,7 +5,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { cilImage, cilSmile, cilList } from "@coreui/icons";
 
-import { createPost, updatePost } from "../actions/posts";
+import { createPost, updatePost } from "../../actions/posts";
+import ImgHolder from "./img-holder";
+import { openToaster } from "src/actions/toaster";
 
 const Form = ({ currentId, setCurrentId }) => {
 	const post = useSelector(state => (currentId ? state.posts.find(message => message._id === currentId) : null));
@@ -38,39 +40,58 @@ const Form = ({ currentId, setCurrentId }) => {
 		}
 	};
 
+	const resetFileCache = () => {
+		fileUploadRef.current.value = '';
+	}
+
 	const handleImageUpload = e => {
 		const files = e.target.files, _uploadedFiles = uploadedFiles;
 
-		for (let i = 0; i < files.length; i++) {
-			const fileObj = files[i];
-			if (!allowedFileTypes.includes(fileObj.type)) break;
-
-			const reader = new FileReader();
-			reader.onload = e => {
-				_uploadedFiles.push(e.target.result);
-				setUploadedFiles([ ..._uploadedFiles ]);
+		if ((files.length && uploadedFiles.length === 4) || (files.length + uploadedFiles.length > 4)) {
+			dispatch(openToaster("Error", "More than 4 images are not allowed."));
+		} else {
+			for (let i = 0; i < files.length; i++) {
+				const fileObj = files[i];
+				if (!allowedFileTypes.includes(fileObj.type) || i > 3) break;
+	
+				const reader = new FileReader();
+				reader.onload = e => {
+					_uploadedFiles.push(e.target.result);
+					setUploadedFiles([ ..._uploadedFiles ]);
+				}
+				
+				reader.readAsDataURL(fileObj);
 			}
-
-			reader.readAsDataURL(fileObj);
 		}
+
+		resetFileCache();
 	}
 
 	return (
-		<form noValidate onSubmit={handleSubmit}>
+		<form noValidate onSubmit={handleSubmit} className="mw-100">
 			<img src={placeHolderImageSrc} className="user-image" alt="user" />
 
 			<div className="input-box">
 				<textarea className="special-input" placeholder="What's happening?" />
 				<hr />
 
-				{
-					uploadedFiles?.[0] && (
-						<img src={uploadedFiles[0]} alt="Uploaded" width={40} height={40} />
-					)
-				}
-				<input type="file" accept="image/*" className="d-none" ref={fileUploadRef} onChange={handleImageUpload} />
+				<ImgHolder images={uploadedFiles} />
+				<input
+					multiple
+					type="file"
+					accept="image/*"
+					className="d-none"
+					ref={fileUploadRef}
+					onChange={handleImageUpload}
+				/>
 
-				<CIcon className="action-icon" title="Image" icon={cilImage} size="sm" onClick={() => { fileUploadRef.current.click()} } />
+				<CIcon
+					size="sm"
+					title="Image"
+					icon={cilImage}
+					className="action-icon"
+					onClick={() => { fileUploadRef.current.click() } }
+				/>
 				<CIcon className="action-icon" title="Emoji" icon={cilSmile} size="sm" />
 				<CIcon className="action-icon" title="Poll" icon={cilList} size="sm" />
 

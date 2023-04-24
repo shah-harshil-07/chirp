@@ -39,9 +39,9 @@ const App = () => {
 			{getDialog()}
 
 			<div>
-				<p style={{ fontWeight: "bold", textAlign: "center" }}>Home</p>
+				<p id="app-header">Home</p>
 
-				<div style={{ display: "grid", gridTemplateColumns: "auto auto auto" }}>
+				<div id="app-container">
 					<LeftSidebar />
 
 					<div>
