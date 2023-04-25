@@ -13,8 +13,11 @@ import LabelledInput from "./utilities/labelled-input";
 import * as Constants from "src/constants";
 import API from "src/api";
 import { openToaster } from "src/actions/toaster";
+import useToaster from "src/custom-hooks/toaster-message";
 
 const Login = () => {
+    const { showError } = useToaster();
+
     const [cred, setCred] = useState('');
     const [password, setPassword] = useState('');
     const [googleRegisteredUser, setGoogleRegisteredUser] = useState(null);
@@ -41,7 +44,7 @@ const Login = () => {
                         checkGoogleAuthedUser({ name, email, googleId });
                     }
                 } catch (error) {
-                    dispatch(openToaster("Error", "Something went wrong!"));
+                    showError("Something went wrong!");
                     setGoogleRegisteredUser(null);
                 }
             }
@@ -115,7 +118,7 @@ const Login = () => {
             dispatch(openToaster(type, message));
         } catch (error) {
             console.log(error);
-            dispatch(openToaster("Error", "Something went wrong!"));
+            showError("Something went wrong!");
             closeLoginDialog();
         }
     }
@@ -143,11 +146,11 @@ const Login = () => {
                 closeLoginDialog();
             } else {
                 const errorMessage = responseData?.error?.message ?? "Something went wrong!";
-                dispatch(openToaster("Error", errorMessage));
+                showError(errorMessage);
             }
         } catch (error) {
             console.log(error);
-            dispatch(openToaster("Error", "Something went wrong!"));
+            showError("Something went wrong!");
         }
 
         closeLoginDialog();

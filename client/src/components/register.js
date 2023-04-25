@@ -16,6 +16,7 @@ import API from "src/api";
 import * as Constants from "src/constants";
 import { openToaster } from "src/actions/toaster";
 import UsernameInput from "./signup-steps/username-input";
+import useToaster from "src/custom-hooks/toaster-message";
 
 const Register = () => {
     const initialBodyData = {
@@ -24,6 +25,7 @@ const Register = () => {
     };
     const [bodyData, setBodyData] = useState(initialBodyData);
     const initialGoogleAuthedUserData = { name: '', email: '', googleId: '' };
+    const { showError, showSuccess } = useToaster();
 
     const openNextSignUpStep = () => {
         if (signUpStep === bodyJSXList.length - 1) applyFinalRegisteration();
@@ -198,7 +200,7 @@ const Register = () => {
                         setGoogleAuthedUser({ ...userData });
                     }
                 } catch (error) {
-                    dispatch(openToaster("Error", "Something went wrong!"));
+                    showError("Something went wrong!");
                     setGoogleRegisteredUser(null);
                 }
             }
@@ -240,18 +242,18 @@ const Register = () => {
                 } else {
                     setShowLoader(false);
                     const errorMessage = responseData?.meta?.message ?? "Something went wrong!";
-                    dispatch(openToaster("Error", errorMessage));
+                    showError(errorMessage);
                     setSignUpStep(1);
                 }
             } else {
                 setShowLoader(false);
                 setSignUpStep(1);
-                dispatch(openToaster("Error", "Something went wrong!"));
+                showError("Something went wrong!");
             }
         } catch (error) {
             console.log(error);
             setShowLoader(false);
-            dispatch(openToaster("Error", "Something went wrong!"));
+            showError("Something went wrong!");
             setSignUpStep(1);
         }
     }
@@ -266,16 +268,16 @@ const Register = () => {
 
                 if (responseData.data.userAvailable) {
                     closeRegisterDialog();
-                    dispatch(openToaster("Error", message));
+                    showError(message);
                 } else {
                     showUserInputPage();
                 }
             } else if (responseData?.error?.message) {
-                dispatch(openToaster("Error", responseData.error.message));
+                showError(responseData.error.message);
             }
         } catch (error) {
             console.log(error);
-            dispatch(openToaster("Error", "Something went wrong!"));
+            showError("Something went wrong!");
             closeRegisterDialog();
         }
     }
@@ -296,12 +298,12 @@ const Register = () => {
                 setOtpId(responseData.data.otpId);
             } else if (!responseData?.meta?.status) {
                 const errorMessage = responseData?.error?.message ?? "Something went wrong!";
-                dispatch(openToaster("Error", errorMessage));
+                showError(errorMessage);
             }
         } catch (error) {
             console.log(error);
             setShowLoader(false);
-            dispatch(openToaster("Error", "Something went wrong!"));
+            showError("Something went wrong!");
         }
     }
 
@@ -318,7 +320,7 @@ const Register = () => {
         } catch (error) {
             console.log(error);
             setFooterDisabled(true);
-            dispatch(openToaster("Error", "Something went wrong!"));
+            showError("Something went wrong!")
         }
     }
 
@@ -356,14 +358,14 @@ const Register = () => {
 
             if (responseData?.meta?.status && responseData?.meta?.message) {
                 if (responseData?.data?.token) localStorage.setItem("chirp-accessToken", responseData.data.token);
-                dispatch(openToaster("Success", responseData.meta.message));
+                showSuccess(responseData.meta.message);
             } else if (responseData?.errors?.length) {
                 const message = responseData?.errors?.[0] ?? "Something went wrong!";
-                dispatch(openToaster("Error", message));
+                showError(message);
             }
         } catch (error) {
             console.log(error);
-            dispatch(openToaster("Error", "Something went wrong!"));
+            showError("Something went wrong!");
         } finally {
             closeRegisterDialog();
         }

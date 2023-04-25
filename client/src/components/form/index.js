@@ -1,43 +1,23 @@
 import "src/styles/form/index.css";
 
 import CIcon from "@coreui/icons-react";
-import React, { useState, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState, useRef } from "react";
 import { cilImage, cilSmile, cilList } from "@coreui/icons";
 
-import { createPost, updatePost } from "../../actions/posts";
 import ImgHolder from "./img-holder";
-import { openToaster } from "src/actions/toaster";
+import useToaster from "src/custom-hooks/toaster-message";
 
-const Form = ({ currentId, setCurrentId }) => {
-	const post = useSelector(state => (currentId ? state.posts.find(message => message._id === currentId) : null));
-	const dispatch = useDispatch();
-	const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";
+const Form = () => {
 	const fileUploadRef = useRef(null);
+	const { showError } = useToaster();
+
+	const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";
 	const allowedFileTypes = ["image/png", "image/jpg", "image/jpeg"];
-	
-	const [postData, setPostData] = useState({ creator: '', title: '', message: '', tags: '', selectedFile: '' });
+
 	const [uploadedFiles, setUploadedFiles] = useState([]);
-
-	useEffect(() => {
-		if (post) setPostData(post);
-	}, [post]);
-
-	const clear = () => {
-		setCurrentId(0);
-		setPostData({ creator: '', title: '', message: '', tags: '', selectedFile: '' });
-	};
 
 	const handleSubmit = async e => {
 		e.preventDefault();
-
-		if (currentId === 0) {
-			dispatch(createPost(postData));
-			clear();
-		} else {
-			dispatch(updatePost(currentId, postData));
-			clear();
-		}
 	};
 
 	const resetFileCache = () => {
@@ -47,19 +27,19 @@ const Form = ({ currentId, setCurrentId }) => {
 	const handleImageUpload = e => {
 		const files = e.target.files, _uploadedFiles = uploadedFiles;
 
-		if ((files.length && uploadedFiles.length === 4) || (files.length + uploadedFiles.length > 4)) {
-			dispatch(openToaster("Error", "More than 4 images are not allowed."));
+		if (files.length + uploadedFiles.length > 4) {
+			showError("More than 4 images are not allowed.");
 		} else {
 			for (let i = 0; i < files.length; i++) {
 				const fileObj = files[i];
 				if (!allowedFileTypes.includes(fileObj.type) || i > 3) break;
-	
+
 				const reader = new FileReader();
 				reader.onload = e => {
 					_uploadedFiles.push(e.target.result);
 					setUploadedFiles([ ..._uploadedFiles ]);
 				}
-				
+
 				reader.readAsDataURL(fileObj);
 			}
 		}
