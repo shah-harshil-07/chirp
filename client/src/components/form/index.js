@@ -1,4 +1,4 @@
-import "src/styles/form.css";
+import "src/styles/form/index.css";
 
 import CIcon from "@coreui/icons-react";
 import React, { useState, useEffect, useRef } from "react";
@@ -67,6 +67,12 @@ const Form = ({ currentId, setCurrentId }) => {
 		resetFileCache();
 	}
 
+	const spliceImage = index => {
+		let _uploadedFiles = uploadedFiles;
+		_uploadedFiles.splice(index, 1);
+		setUploadedFiles([ ..._uploadedFiles ]);
+	}
+
 	return (
 		<form noValidate onSubmit={handleSubmit} className="mw-100">
 			<img src={placeHolderImageSrc} className="user-image" alt="user" />
@@ -75,7 +81,7 @@ const Form = ({ currentId, setCurrentId }) => {
 				<textarea className="special-input" placeholder="What's happening?" />
 				<hr />
 
-				<ImgHolder images={uploadedFiles} />
+				<ImgHolder removeImage={index => spliceImage(index)} images={uploadedFiles} />
 				<input
 					multiple
 					type="file"
