@@ -14,7 +14,7 @@
 }
 
 .labelled-input-div {
-    border: 1px solid;
+    border: 1px solid #1DA1F2;
     padding-left: 12px;
     padding-right: 12px;
     border-radius: 12px;
@@ -41,7 +41,7 @@
     margin-top: -3.5px;
     margin-bottom: 1px;
     border: 0px solid;
-    width: 100%;
+    width: 95%;
 }
 
 .labelled-input-box:focus {

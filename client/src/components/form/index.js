@@ -2,10 +2,12 @@ import "src/styles/form/index.css";
 
 import CIcon from "@coreui/icons-react";
 import React, { useState, useRef } from "react";
-import { cilImage, cilSmile, cilList } from "@coreui/icons";
+import { cilImage, cilSmile, cilList, cilCalendarCheck } from "@coreui/icons";
+import EmojiPicker from "emoji-picker-react";
 
 import ImgHolder from "./img-holder";
 import useToaster from "src/custom-hooks/toaster-message";
+import PollCreator from "./poll-creator";
 
 const Form = () => {
 	const fileUploadRef = useRef(null);
@@ -14,7 +16,10 @@ const Form = () => {
 	const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";
 	const allowedFileTypes = ["image/png", "image/jpg", "image/jpeg"];
 
+	const [text, setText] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
+	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+	const [showPollCreator, setShowPollCreator] = useState(false);
 
 	const handleSubmit = async e => {
 		e.preventDefault();
@@ -37,7 +42,7 @@ const Form = () => {
 				const reader = new FileReader();
 				reader.onload = e => {
 					_uploadedFiles.push(e.target.result);
-					setUploadedFiles([ ..._uploadedFiles ]);
+					setUploadedFiles([..._uploadedFiles]);
 				}
 
 				reader.readAsDataURL(fileObj);
@@ -50,7 +55,12 @@ const Form = () => {
 	const spliceImage = index => {
 		let _uploadedFiles = uploadedFiles;
 		_uploadedFiles.splice(index, 1);
-		setUploadedFiles([ ..._uploadedFiles ]);
+		setUploadedFiles([..._uploadedFiles]);
+	}
+
+	const handleEmojiSelect = e => {
+		setText(`${text}${e.emoji}`);
+		setShowEmojiPicker(false);
 	}
 
 	return (
@@ -58,10 +68,22 @@ const Form = () => {
 			<img src={placeHolderImageSrc} className="user-image" alt="user" />
 
 			<div className="input-box">
-				<textarea className="special-input" placeholder="What's happening?" />
+				<textarea
+					value={text}
+					onChange={e => setText(e.target.value)}
+					className="special-input"
+					placeholder="What's happening?"
+				/>
 				<hr />
 
 				<ImgHolder removeImage={index => spliceImage(index)} images={uploadedFiles} />
+				<CIcon
+					size="sm"
+					title="Image"
+					icon={cilImage}
+					className="action-icon"
+					onClick={() => { fileUploadRef.current.click() }}
+				/>
 				<input
 					multiple
 					type="file"
@@ -73,13 +95,29 @@ const Form = () => {
 
 				<CIcon
 					size="sm"
-					title="Image"
-					icon={cilImage}
+					title="Emoji"
+					icon={cilSmile}
 					className="action-icon"
-					onClick={() => { fileUploadRef.current.click() } }
+					onClick={() => setShowEmojiPicker(!showEmojiPicker)}
 				/>
-				<CIcon className="action-icon" title="Emoji" icon={cilSmile} size="sm" />
-				<CIcon className="action-icon" title="Poll" icon={cilList} size="sm" />
+				{
+					showEmojiPicker && (
+						<div style={{ zIndex: '2', position: "absolute" }}>
+							<EmojiPicker lazyLoadEmojis={true} onEmojiClick={handleEmojiSelect} />
+						</div>
+					)
+				}
+
+				<CIcon
+					className="action-icon"
+					title="Poll"
+					onClick={() => setShowPollCreator(!showPollCreator)}
+					icon={cilList}
+					size="sm"
+				/>
+				{showPollCreator && (<PollCreator />)}
+
+				<CIcon className="action-icon" title="Schedule" icon={cilCalendarCheck} size="sm" />
 
 				<div id="chirp-button">Chirp</div>
 			</div>

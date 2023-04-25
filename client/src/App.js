@@ -45,7 +45,7 @@ const App = () => {
 					<LeftSidebar />
 
 					<div>
-						<Form currentId={currentId} setCurrentId={setCurrentId} />
+						{ isUserLoggedIn() && <Form currentId={currentId} setCurrentId={setCurrentId} /> }
 						<Posts />
 					</div>
 
