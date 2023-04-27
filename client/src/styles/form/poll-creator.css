@@ -28,3 +28,36 @@
 .add-choice-icon:hover {
     background-color: rgba(29, 161, 242, 0.3);
 }
+
+#poll-length-box {
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(29, 161, 242, 0.6);
+}
+
+#poll-action-box {
+    display: flex;
+    height: 50px;
+}
+
+.poll-box-item {
+    text-align: center;
+    width: 100%;
+    padding-top: 14px;
+    cursor: pointer;
+}
+
+#reset-poll-item {
+    border-right: 1px solid rgba(29, 161, 242, 0.6);
+}
+
+#reset-poll-item:hover {
+    background-color: rgba(29, 161, 242, 0.6);
+    border-bottom-left-radius: 20px;
+}
+
+#remove-poll-item:hover {
+    background-color: rgba(226, 13, 24, 0.6);
+    border-bottom-right-radius: 20px;
+}

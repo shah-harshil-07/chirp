@@ -5,13 +5,14 @@ import CIcon from "@coreui/icons-react";
 import { cilPlus } from "@coreui/icons";
 
 import LabelledInput from "../utilities/labelled-input";
+import CustomSelect from "../utilities/custom-select";
 
 const PollCreator = () => {
     const dayOptions = [], hourOptions = [], minuteOptions = [];
     for (let i = 0; i < 60; i++) {
-        if (i < 8) dayOptions.push(i);
-        if (i < 24) hourOptions.push(i);
-        minuteOptions.push(i);
+        if (i < 8) dayOptions.push({value: i, label: i});
+        if (i < 24) hourOptions.push({value: i, label: i});
+        minuteOptions.push({value: i, label: i});
     }
 
     const [choices, setChoices] = useState(['', '']);
@@ -36,7 +37,7 @@ const PollCreator = () => {
                         const n = choices.length;
 
                         return (
-                            <div style={{ display: "flex" }} key={choiceIndex}>
+                            <div className="d-flex" key={choiceIndex}>
                                 <LabelledInput
                                     value={choice}
                                     extraClasses={"choice-input-box"}
@@ -57,39 +58,19 @@ const PollCreator = () => {
                 }
             </div>
 
-            <div style={{ paddingLeft: "10px", paddingTop: "10px", paddingBottom: "10px", borderBottom: "1px solid rgba(29, 161, 242, 0.6)" }}>
+            <div id="poll-length-box">
                 <h6><b>Poll Length</b></h6>
 
                 <div className="row w-100 ml-0">
-                    <div style={{ width: "33%", paddingLeft: "5px", paddingRight: "5px", position: "relative" }}>
-                        <label style={{ position: "absolute", left: "10px" }}>Days</label>
-
-                        <select className="w-100" style={{ height: "50px", paddingTop: "20px", paddingLeft: "1px", border: "1px solid rgba(29, 161, 242, 0.6)", backgroundColor: "white", cursor: "pointer" }}>
-                            {dayOptions.map(day => (<option value={day}>{day}</option>))}
-                        </select>
-                    </div>
-
-                    <div style={{ width: "33%", paddingLeft: "5px", paddingRight: "5px", position: "relative" }}>
-                        <label style={{ position: "absolute", left: "10px" }}>Hours</label>
-
-                        <select className="w-100" style={{ height: "50px", paddingTop: "20px", paddingLeft: "1px", border: "1px solid rgba(29, 161, 242, 0.6)", backgroundColor: "white", cursor: "pointer" }}>
-                            {hourOptions.map(hour => (<option value={hour}>{hour}</option>))}
-                        </select>
-                    </div>
-
-                    <div style={{ width: "28%", paddingLeft: "5px", paddingRight: "5px", position: "relative" }}>
-                        <label style={{ position: "absolute", left: "10px" }}>Minutes</label>
-
-                        <select className="w-100" style={{ height: "50px", paddingTop: "20px", paddingLeft: "1px", border: "1px solid rgba(29, 161, 242, 0.6)", backgroundColor: "white", cursor: "pointer" }}>
-                            {minuteOptions.map(minute => (<option value={minute}>{minute}</option>))}
-                        </select>
-                    </div>
+                    <div className="col-md-4"><CustomSelect label={"Day"} options={dayOptions} /></div>
+                    <div className="col-md-4"><CustomSelect label={"Hours"} options={hourOptions} /></div>
+                    <div className="col-md-4"><CustomSelect label={"Minutes"} options={minuteOptions} /></div>
                 </div>
             </div>
 
-            <div style={{ display: "flex", height: "50px" }}>
-                <div style={{ textAlign: "center", width: "100%", paddingTop: "14px", borderRight: "1px solid rgba(29, 161, 242, 0.6)" }}>Reset Poll</div>
-                <div style={{ textAlign: "center", width: "100%", paddingTop: "14px" }}>Remove Poll</div>
+            <div id="poll-action-box">
+                <div className="poll-box-item" id="reset-poll-item">Reset Poll</div>
+                <div className="poll-box-item" id="remove-poll-item">Remove Poll</div>
             </div>
         </div>
     )
