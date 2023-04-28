@@ -83,7 +83,7 @@ const RightSidebar = () => {
                             &nbsp;Harshil Shah<br />@shah_harshil_07
                         </div>
 
-                        <div className="follow-btn">Follow</div>
+                        <div className="common-custom-btn">Follow</div>
                     </div>
 
                     <div className="row who-to-follow-user-div">
@@ -95,7 +95,7 @@ const RightSidebar = () => {
                             &nbsp;Harshil Shah<br />@shah_harshil_07
                         </div>
 
-                        <div className="follow-btn">Follow</div>
+                        <div className="common-custom-btn">Follow</div>
                     </div>
 
                     <div className="row who-to-follow-user-div">
@@ -107,7 +107,7 @@ const RightSidebar = () => {
                             &nbsp;Harshil Shah<br />@shah_harshil_07
                         </div>
 
-                        <div className="follow-btn">Follow</div>
+                        <div className="common-custom-btn">Follow</div>
                     </div>
 
                     <div id="who-to-follow-show-more">

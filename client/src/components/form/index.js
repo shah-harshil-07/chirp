@@ -8,6 +8,7 @@ import ImgHolder from "./img-holder";
 import useToaster from "src/custom-hooks/toaster-message";
 import PollCreator from "./poll-creator";
 import EmojiContainer from "./emoji-container";
+import Scheduler from "./scheduler";
 
 const Form = () => {
 	const fileUploadRef = useRef(null);
@@ -20,6 +21,7 @@ const Form = () => {
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 	const [showPollCreator, setShowPollCreator] = useState(false);
+	const [showScheduler, setShowScheduler] = useState(false);
 
 	const handleSubmit = async e => {
 		e.preventDefault();
@@ -109,15 +111,22 @@ const Form = () => {
 				}
 
 				<CIcon
-					className="action-icon"
-					title="Poll"
-					onClick={() => setShowPollCreator(!showPollCreator)}
-					icon={cilList}
 					size="sm"
+					title="Poll"
+					icon={cilList}
+					className="action-icon"
+					onClick={() => setShowPollCreator(!showPollCreator)}
 				/>
 				{showPollCreator && (<PollCreator handleClickOutside={() => { setShowPollCreator(false); }} />)}
 
-				<CIcon className="action-icon" title="Schedule" icon={cilCalendarCheck} size="sm" />
+				<CIcon
+					size="sm"
+					title="Schedule"
+					className="action-icon"
+					icon={cilCalendarCheck}
+					onClick={() => { setShowScheduler(!showScheduler); }}
+				/>
+				{showScheduler && <Scheduler />}
 
 				<div id="chirp-button">Chirp</div>
 			</div>

@@ -100,14 +100,3 @@
     font-size: 16px;
     width: 58%;
 }
-
-.follow-btn {
-    padding-left: 10px;
-    height: 34px;
-    padding-right: 10px;
-    padding-top: 5px;
-    background-color: black;
-    color: whitesmoke;
-    padding-bottom: 5px;
-    border-radius: 20px;
-}
