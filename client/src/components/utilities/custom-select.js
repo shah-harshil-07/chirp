@@ -8,7 +8,7 @@ const CustomSelect = ({ label, options }) => {
             <label className="custom-select-label">{label}</label>
 
             <select className="w-100 main-select">
-                {options.map(optionObj => (<option value={optionObj.value}>{optionObj.label}</option>))}
+                {options.map(optionObj => (<option key={optionObj.value} value={optionObj.value}>{optionObj.label}</option>))}
             </select>
         </div>
     )

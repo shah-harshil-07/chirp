@@ -1,13 +1,14 @@
 import "src/styles/form/poll-creator.css";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CIcon from "@coreui/icons-react";
 import { cilPlus } from "@coreui/icons";
 
 import LabelledInput from "../utilities/labelled-input";
 import CustomSelect from "../utilities/custom-select";
 
-const PollCreator = () => {
+const PollCreator = ({ handleClickOutside }) => {
+    const containerRef = useRef(null);
     const dayOptions = [], hourOptions = [], minuteOptions = [];
     for (let i = 0; i < 60; i++) {
         if (i < 8) dayOptions.push({value: i, label: i});
@@ -16,6 +17,20 @@ const PollCreator = () => {
     }
 
     const [choices, setChoices] = useState(['', '']);
+
+    useEffect(() => {
+        const outsideClickFn = e => {
+            if (containerRef.current && !containerRef.current.contains(e.target)) {
+                handleClickOutside();
+            }
+        }
+
+        document.addEventListener("click", outsideClickFn);
+
+        return () => {
+            document.removeEventListener("click", outsideClickFn);
+        };
+    }, [handleClickOutside]);
 
     const handleChoiceInput = (data, choiceIndex) => {
         let _choices = choices;
@@ -30,8 +45,8 @@ const PollCreator = () => {
     }
 
     return (
-        <div id="poll-creator-box">
-            <div style={{ borderBottom: "1px solid rgba(29, 161, 242, 0.6)", paddingLeft: "10px" }}>
+        <div id="poll-creator-box" ref={containerRef}>
+            <div id="poll-choices-box">
                 {
                     choices.map((choice, choiceIndex) => {
                         const n = choices.length;

@@ -3,11 +3,11 @@ import "src/styles/form/index.css";
 import CIcon from "@coreui/icons-react";
 import React, { useState, useRef } from "react";
 import { cilImage, cilSmile, cilList, cilCalendarCheck } from "@coreui/icons";
-import EmojiPicker from "emoji-picker-react";
 
 import ImgHolder from "./img-holder";
 import useToaster from "src/custom-hooks/toaster-message";
 import PollCreator from "./poll-creator";
+import EmojiContainer from "./emoji-container";
 
 const Form = () => {
 	const fileUploadRef = useRef(null);
@@ -60,7 +60,6 @@ const Form = () => {
 
 	const handleEmojiSelect = e => {
 		setText(`${text}${e.emoji}`);
-		setShowEmojiPicker(false);
 	}
 
 	return (
@@ -102,9 +101,10 @@ const Form = () => {
 				/>
 				{
 					showEmojiPicker && (
-						<div style={{ zIndex: '2', position: "absolute" }}>
-							<EmojiPicker lazyLoadEmojis={true} onEmojiClick={handleEmojiSelect} />
-						</div>
+						<EmojiContainer
+							handleEmojiSelect={handleEmojiSelect}
+							handleClickOutside={() => { setShowEmojiPicker(false); }}
+						/>
 					)
 				}
 
@@ -115,7 +115,7 @@ const Form = () => {
 					icon={cilList}
 					size="sm"
 				/>
-				{showPollCreator && (<PollCreator />)}
+				{showPollCreator && (<PollCreator handleClickOutside={() => { setShowPollCreator(false); }} />)}
 
 				<CIcon className="action-icon" title="Schedule" icon={cilCalendarCheck} size="sm" />
 
