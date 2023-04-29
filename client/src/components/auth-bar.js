@@ -3,7 +3,7 @@ import "src/styles/auth-bar.css";
 import React from "react";
 import { useDispatch } from "react-redux";
 
-import { openModal } from "src/actions/modal";
+import { openModal } from "src/redux/actions/modal";
 
 const AuthBar = () => {
     const dispatch = useDispatch();

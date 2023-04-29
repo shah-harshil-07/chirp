@@ -6,15 +6,13 @@ import { cilPlus } from "@coreui/icons";
 
 import LabelledInput from "../utilities/labelled-input";
 import CustomSelect from "../utilities/custom-select";
+import * as Helpers from "src/helpers";
 
 const PollCreator = ({ handleClickOutside }) => {
     const containerRef = useRef(null);
-    const dayOptions = [], hourOptions = [], minuteOptions = [];
-    for (let i = 0; i < 60; i++) {
-        if (i < 8) dayOptions.push({value: i, label: i});
-        if (i < 24) hourOptions.push({value: i, label: i});
-        minuteOptions.push({value: i, label: i});
-    }
+    const dayOfWeekOptions = Helpers.getDayOfWeekOptions();
+    const hourOptions = Helpers.getHourOptions();
+    const minuteOptions = Helpers.getMinuteOptions();
 
     const [choices, setChoices] = useState(['', '']);
 
@@ -77,7 +75,7 @@ const PollCreator = ({ handleClickOutside }) => {
                 <h6><b>Poll Length</b></h6>
 
                 <div className="row w-100 ml-0">
-                    <div className="col-md-4"><CustomSelect label={"Day"} options={dayOptions} /></div>
+                    <div className="col-md-4"><CustomSelect label={"Day"} options={dayOfWeekOptions} /></div>
                     <div className="col-md-4"><CustomSelect label={"Hours"} options={hourOptions} /></div>
                     <div className="col-md-4"><CustomSelect label={"Minutes"} options={minuteOptions} /></div>
                 </div>

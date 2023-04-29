@@ -8,11 +8,11 @@ import { useDispatch } from "react-redux";
 import { useGoogleLogin } from "@react-oauth/google";
 
 import CustomModal from "./utilities/custom-modal";
-import { openModal, closeModal } from "src/actions/modal";
+import { openModal, closeModal } from "src/redux/actions/modal";
 import LabelledInput from "./utilities/labelled-input";
 import * as Constants from "src/constants";
 import API from "src/api";
-import { openToaster } from "src/actions/toaster";
+import { openToaster } from "src/redux/actions/toaster";
 import useToaster from "src/custom-hooks/toaster-message";
 
 const Login = () => {

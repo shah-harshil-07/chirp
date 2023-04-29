@@ -8,13 +8,13 @@ import { useDispatch } from "react-redux";
 import { useGoogleLogin } from "@react-oauth/google";
 
 import CustomModal from "./utilities/custom-modal";
-import { openModal, closeModal } from "src/actions/modal";
+import { openModal, closeModal } from "src/redux/actions/modal";
 import CreateAccount from "./signup-steps/create-account";
 import CodeInput from "./signup-steps/code-input";
 import { validate, getErrorMessage } from "src/helpers";
 import API from "src/api";
 import * as Constants from "src/constants";
-import { openToaster } from "src/actions/toaster";
+import { openToaster } from "src/redux/actions/toaster";
 import UsernameInput from "./signup-steps/username-input";
 import useToaster from "src/custom-hooks/toaster-message";
 

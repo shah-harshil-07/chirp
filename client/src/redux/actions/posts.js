@@ -1,5 +1,5 @@
 import { FETCH_ALL, CREATE, UPDATE, DELETE, LIKE } from '../constants/actionTypes';
-import API from "../api/index.js";
+import API from "../../api/index.js";
 import * as Constants from "src/constants";
 
 export const getPosts = () => async dispatch => {

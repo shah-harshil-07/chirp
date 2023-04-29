@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 
-import { openToaster } from "src/actions/toaster";
+import { openToaster } from "src/redux/actions/toaster";
 
 const useToaster = () => {
     const dispatch = useDispatch();

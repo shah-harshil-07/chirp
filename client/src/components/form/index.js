@@ -11,8 +11,7 @@ import EmojiContainer from "./emoji-container";
 import Scheduler from "./scheduler";
 
 const Form = () => {
-	const fileUploadRef = useRef(null);
-	const { showError } = useToaster();
+	const fileUploadRef = useRef(null), { showError } = useToaster();
 
 	const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";
 	const allowedFileTypes = ["image/png", "image/jpg", "image/jpeg"];
@@ -126,7 +125,14 @@ const Form = () => {
 					icon={cilCalendarCheck}
 					onClick={() => { setShowScheduler(!showScheduler); }}
 				/>
-				{showScheduler && <Scheduler />}
+				{
+					showScheduler && (
+						<Scheduler
+							handleClickOutside={() => { setShowScheduler(false); }}
+							closeScheduler={() => { setShowScheduler(false) }}
+						/>
+					)
+				}
 
 				<div id="chirp-button">Chirp</div>
 			</div>

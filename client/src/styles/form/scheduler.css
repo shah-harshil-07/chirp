@@ -34,5 +34,14 @@
 #scheduler-footer-text {
     font-weight: bold;
     font-size: 17px;
-    color: rgb(29, 161, 242);
+}
+
+#scheduler-footer {
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    cursor: pointer;
+}
+
+#scheduler-footer:hover {
+    background-color: rgba(29, 161, 242, 0.6);
 }

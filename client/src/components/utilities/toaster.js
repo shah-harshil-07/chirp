@@ -3,7 +3,7 @@ import "src/styles/utilities/toaster.css";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import { closeToaster } from "src/actions/toaster";
+import { closeToaster } from "src/redux/actions/toaster";
 
 const Toaster = ({ type, message }) => {
     const dispatch = useDispatch();

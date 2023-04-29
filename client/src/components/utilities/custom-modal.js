@@ -1,7 +1,7 @@
 import "src/styles/utilities/custom-modal.css";
 
 import React from "react";
-import { closeModal } from "src/actions/modal";
+import { closeModal } from "src/redux/actions/modal";
 import { useDispatch } from "react-redux";
 import Loader from "./loader";
 
