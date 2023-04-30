@@ -66,3 +66,9 @@
     background-color: rgba(226, 13, 24, 0.6);
     border-bottom-right-radius: 20px;
 }
+
+#poll-creator-text-limit {
+    position: absolute;
+    right: 75px;
+    font-size: 14px;
+}

@@ -21,6 +21,7 @@ const Form = () => {
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 	const [showPollCreator, setShowPollCreator] = useState(false);
 	const [showScheduler, setShowScheduler] = useState(false);
+	const [choiceErrors, setChoiceErrors] = useState([]);
 
 	const handleSubmit = async e => {
 		e.preventDefault();
@@ -63,6 +64,24 @@ const Form = () => {
 		setText(`${text}${e.emoji}`);
 	}
 
+	const createPoll = choices => {
+		const _choiceErrors = [];
+		let formIsValid = true;
+
+		choices.forEach((choiceInput, choiceIndex) => {
+			_choiceErrors[choiceIndex] = choiceInput ? '' : "Please enter your choice.";
+			if (!choiceInput) formIsValid = false;
+		});
+
+		setChoiceErrors([ ..._choiceErrors ]);
+		if (formIsValid) setShowPollCreator(false);
+	}
+
+	const removePoll = () => {
+		setShowPollCreator(false);
+		setChoiceErrors([]);
+	}
+
 	return (
 		<form noValidate onSubmit={handleSubmit} className="mw-100">
 			<img src={placeHolderImageSrc} className="user-image" alt="user" />
@@ -70,9 +89,9 @@ const Form = () => {
 			<div className="input-box">
 				<textarea
 					value={text}
-					onChange={e => setText(e.target.value)}
 					className="special-input"
 					placeholder="What's happening?"
+					onChange={e => setText(e.target.value)}
 				/>
 				<hr />
 
@@ -82,7 +101,7 @@ const Form = () => {
 					title="Image"
 					icon={cilImage}
 					className="action-icon"
-					onClick={() => { fileUploadRef.current.click() }}
+					onClick={() => { fileUploadRef.current.click(); }}
 				/>
 				<input
 					multiple
@@ -116,7 +135,16 @@ const Form = () => {
 					className="action-icon"
 					onClick={() => setShowPollCreator(!showPollCreator)}
 				/>
-				{showPollCreator && (<PollCreator handleClickOutside={() => { setShowPollCreator(false); }} />)}
+				{
+					showPollCreator && (
+						<PollCreator
+							closePollCreator={removePoll}
+							handleClickOutside={() => { setShowPollCreator(false); }}
+							createPoll={choices => { createPoll(choices); }}
+							choiceErrors={choiceErrors}
+						/>
+					)
+				}
 
 				<CIcon
 					size="sm"
@@ -129,7 +157,7 @@ const Form = () => {
 					showScheduler && (
 						<Scheduler
 							handleClickOutside={() => { setShowScheduler(false); }}
-							closeScheduler={() => { setShowScheduler(false) }}
+							closeScheduler={() => { setShowScheduler(false); }}
 						/>
 					)
 				}
