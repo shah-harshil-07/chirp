@@ -68,7 +68,7 @@ const Form = () => {
 		const _choiceErrors = [];
 		let formIsValid = true;
 
-		choices.forEach((choiceInput, choiceIndex) => {
+		choices.slice(0, 2).forEach((choiceInput, choiceIndex) => {
 			_choiceErrors[choiceIndex] = choiceInput ? '' : "Please enter your choice.";
 			if (!choiceInput) formIsValid = false;
 		});
@@ -162,7 +162,7 @@ const Form = () => {
 					)
 				}
 
-				<div id="chirp-button">Chirp</div>
+				<div id="chirp-button">Post</div>
 			</div>
 		</form>
 	);

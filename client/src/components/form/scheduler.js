@@ -12,22 +12,28 @@ const presentYear = date.getFullYear(), monthIndex = date.getMonth();
 const dayOfMonthOptions = Helpers.getDayOfMonthOptions(monthIndex, presentYear);
 
 const Scheduler = ({ handleClickOutside, closeScheduler }) => {
-    const containerRef = useRef(null);
+    const containerRef = useRef(null), defaultDate = new Date();
 
     const hourOptions = Helpers.getHourOptions();
     const minuteOptions = Helpers.getMinuteOptions();
     const monthOptions = Helpers.getMonthOptions();
+    const weekOptions = Helpers.getWeekOptions();
     const yearOptions = [
         { value: presentYear, label: presentYear },
         { value: presentYear + 1, label: presentYear + 1}
     ];
 
+    defaultDate.setDate(defaultDate.getDate() + 5);
+
     const [footerTextColor, setFooterTextColor] = useState("#1DA1F2");
-    const [dayOfMonth, setDayOfMonth] = useState(date.getDate());
-    const [month, setMonth] = useState(date.getMonth());
+    const [dayOfMonth, setDayOfMonth] = useState(defaultDate.getDate());
+    const [month, setMonth] = useState(defaultDate.getMonth());
+    const [displayedMonth, setDisplayedMonth] = useState(monthOptions[month].label);
+    const [displayedDayOfWeek, setDisplayedDayOfWeek] = useState(weekOptions[defaultDate.getDay()]);
     const [year, setYear] = useState(presentYear);
-    const [hours, setHours] = useState(date.getHours());
-    const [minutes, setMinutes] = useState(date.getMinutes());
+    const [hours, setHours] = useState(defaultDate.getHours());
+    const [minutes, setMinutes] = useState(defaultDate.getMinutes());
+    const [isDateValid, setIsDateValid] = useState(true);
 
     useEffect(() => {
         const outsideClickFn = e => {
@@ -43,20 +49,93 @@ const Scheduler = ({ handleClickOutside, closeScheduler }) => {
         };
     }, [handleClickOutside]);
 
+    const handleDateChange = (key, value) => {
+        let _year = year, _month = month, _dayOfMonth = dayOfMonth, _minutes = minutes, _hours = hours;
+
+        switch (key) {
+            case "dayOfMonth":
+                _dayOfMonth = value;
+                setDayOfMonth(value);
+                break;
+            case "month":
+                _month = value;
+                setMonth(value);
+                break;
+            case "year":
+                _year = value;
+                setYear(value);
+                break;
+            case "hour":
+                _hours = value;
+                setHours(value);
+                break;
+            case "minute":
+                _minutes = value;
+                setMinutes(value);
+                break;
+            default:
+                break;
+        }
+
+        const date = new Date(_year, _month, _dayOfMonth, _hours, _minutes, 0, 0);
+        setDisplayedMonth(monthOptions[_month].label);
+        setDisplayedDayOfWeek(weekOptions[date.getDay()]);
+        validateDate(date);
+    }
+
+    const validateDate = date => {
+        const currentDate = new Date();
+        let _isDateValid = false;
+
+        if (date.getFullYear() > currentDate.getFullYear()) {
+            _isDateValid = true;
+        } else if (date.getFullYear() === currentDate.getFullYear()) {
+            if (date.getMonth() > currentDate.getMonth()) {
+                _isDateValid = true;
+            } else if (date.getMonth() === currentDate.getMonth()) {
+                if (date.getDate() > currentDate.getDate()) {
+                    _isDateValid = true;
+                } else if (date.getDate() === currentDate.getDate()) {
+                    if (date.getHours() > currentDate.getHours()) {
+                        _isDateValid = true;
+                    } else if (date.getHours() === currentDate.getHours()) {
+                        _isDateValid = date.getMinutes() > currentDate.getMinutes();
+                    }
+                }
+            }
+        }
+
+        setIsDateValid(_isDateValid);
+    }
+
     return (
         <div id="scheduler-box" ref={containerRef}>
             <div id="scheduler-body">
                 <div className="row pl-2 pr-2">
                     <div className="col-md-1" onClick={closeScheduler} id="scheduler-header-close">&times;</div>
+
                     <div className="col-md-6"><h4 className="mt-1"><b>Schedule</b></h4></div>
-                    <div className="col-md-4 pr-0 ml-3" onClick={closeScheduler}>
-                        <div className="common-custom-btn float-right mt-1">Confirm</div>
+
+                    <div
+                        className="col-md-4 pr-0 ml-3"
+                        style={{ opacity: isDateValid ? 1 : 0.5 }}
+                        onClick={() => { if (isDateValid) closeScheduler(); }}
+                    >
+                        <div style={{ cursor: isDateValid ? "pointer" : "not-allowed" }} className="common-custom-btn float-right mt-1">
+                            Confirm
+                        </div>
                     </div>
                 </div>
 
                 <div className="pl-2 mt-2">
                     <CIcon icon={cilCalendar} size="custom" width={20} height={20} />
-                    <span className="ml-2">Will send on May 3, 2023 at 4:13PM</span>
+
+                    <span className="ml-2">
+                        {
+                            `Will send on ${displayedDayOfWeek} ${displayedMonth} ${dayOfMonth}, ${year} at
+                            ${hours > 9 ? hours : `0${hours}`}:${minutes > 9 ? minutes : `0${minutes}`} hours`
+                        }
+                    </span>
                 </div>
 
                 <div className="mt-2 pl-2">
@@ -68,7 +147,7 @@ const Scheduler = ({ handleClickOutside, closeScheduler }) => {
                                 label={"Day"}
                                 selectedValue={dayOfMonth}
                                 options={dayOfMonthOptions}
-                                handleValueChange={dayOfMonthValue => setDayOfMonth(dayOfMonthValue)}
+                                handleValueChange={dayOfMonthValue => handleDateChange("dayOfMonth", dayOfMonthValue)}
                             />
                         </div>
 
@@ -77,7 +156,7 @@ const Scheduler = ({ handleClickOutside, closeScheduler }) => {
                                 label={"Month"}
                                 selectedValue={month}
                                 options={monthOptions}
-                                handleValueChange={monthValue => setMonth(monthValue)}
+                                handleValueChange={monthValue => handleDateChange("month", monthValue)}
                             />
                         </div>
 
@@ -86,7 +165,7 @@ const Scheduler = ({ handleClickOutside, closeScheduler }) => {
                                 label={"Year"}
                                 selectedValue={year}
                                 options={yearOptions}
-                                handleValueChange={yearValue => setYear(yearValue)}
+                                handleValueChange={yearValue => handleDateChange("year", yearValue)}
                             />
                         </div>
                     </div>
@@ -101,7 +180,7 @@ const Scheduler = ({ handleClickOutside, closeScheduler }) => {
                                 label={"Hour"}
                                 options={hourOptions}
                                 selectedValue={hours}
-                                handleValueChange={hourValue => setHours(hourValue)}
+                                handleValueChange={hourValue => handleDateChange("hour", hourValue)}
                             />
                         </div>
 
@@ -110,10 +189,12 @@ const Scheduler = ({ handleClickOutside, closeScheduler }) => {
                                 label={"Minute"}
                                 options={minuteOptions}
                                 selectedValue={minutes}
-                                handleValueChange={minuteValue => setMinutes(minuteValue)}
+                                handleValueChange={minuteValue => handleDateChange("minute", minuteValue)}
                             />
                         </div>
                     </div>
+
+                    {!isDateValid && (<p className="text-danger">{"You can't schedule a post to send it to past."}</p>)}
                 </div>
 
                 <div className="mt-4 pl-2">

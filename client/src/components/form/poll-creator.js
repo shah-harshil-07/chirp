@@ -24,7 +24,6 @@ const PollCreator = ({ handleClickOutside, closePollCreator, createPoll, choiceE
     useEffect(() => {
         const outsideClickFn = e => {
             if (containerRef.current && !containerRef.current.contains(e.target)) {
-                console.log("outside click fn called!");
                 handleClickOutside();
             }
         }
@@ -90,14 +89,14 @@ const PollCreator = ({ handleClickOutside, closePollCreator, createPoll, choiceE
                         const n = choices.length;
 
                         return (
-                            <>
-                                <div className="d-flex position-relative" key={choiceIndex}>
-                                    <span id="poll-creator-text-limit">0 / 25</span>
+                            <React.Fragment key={choiceIndex}>
+                                <div className="d-flex position-relative">
+                                    <span id="poll-creator-text-limit">{`${choice.length} / 25`}</span>
 
                                     <LabelledInput
                                         value={choice}
                                         extraClasses={"choice-input-box"}
-                                        header={`Choice ${choiceIndex + 1}`}
+                                        header={`Choice ${choiceIndex + 1} ${choiceIndex > 1 ? " (optional)" : ''}`}
                                         handleChange={data => handleChoiceInput(data, choiceIndex)}
                                     />
 
@@ -110,8 +109,14 @@ const PollCreator = ({ handleClickOutside, closePollCreator, createPoll, choiceE
                                     }
                                 </div>
 
-                                <p className="text-danger" style={{ fontSize: "15px" }}>{choiceErrors?.[choiceIndex] ?? ''}</p>
-                            </>
+                                {
+                                    choiceIndex <= 1 && (
+                                        <p className="text-danger" style={{ fontSize: "15px" }}>
+                                            {choiceErrors?.[choiceIndex] ?? ''}
+                                        </p>
+                                    )
+                                }
+                            </React.Fragment>
                         )
                     })
                 }

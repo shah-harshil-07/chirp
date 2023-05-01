@@ -6,7 +6,7 @@ for (let i = 0; i < 60; i++) {
 
     if (i < 8) dayOfWeekOptions.push(option);
     if (i < 24) hourOptions.push(option);
-    if (i <= 28) dayOfMonthOptions.push(option);
+    if (i <= 28 && i > 0) dayOfMonthOptions.push(option);
     minuteOptions.push(option);
 }
 
@@ -24,6 +24,8 @@ const monthOptions = [
     { value: 10, label: "November" }, // index: 10, days: 30
     { value: 11, label: "December" }, // index: 11, days: 31
 ];
+
+const weekOptions = [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ];
 
 const keyConfig = {
     password: { regex: CONSTANTS.PASSWORD_REGEX, negativeCase: true, errorMessage: CONSTANTS.PASSWORD_ERR_MESSAGE },
@@ -80,4 +82,8 @@ export const getDayOfMonthOptions = (monthIndex, year) => {
 
 export const getMonthOptions = () => {
     return monthOptions;
+}
+
+export const getWeekOptions = () => {
+    return weekOptions;
 }

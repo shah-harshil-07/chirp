@@ -56,7 +56,7 @@ const LeftSidebar = () => {
                     <div className="col-sm-9 left-sidebar-link-label">Profile</div>
                 </div>
 
-                <div id="left-sidebar-chirp-btn">Chirp</div>
+                <div id="left-sidebar-chirp-btn">Post</div>
 
                 <div className="row" id="left-sidebar-profile-container">
                     <div id="profile-image-container">
