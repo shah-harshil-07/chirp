@@ -2,12 +2,16 @@ import "src/styles/utilities/custom-select.css";
 
 import React from "react";
 
-const CustomSelect = ({ label, options, selectedValue, handleValueChange }) => {
+const CustomSelect = ({ label, options, selectedValue, handleValueChange, innerClass, labelClass }) => {
     return (
         <div className="custom-select-div">
-            <label className="custom-select-label">{label}</label>
+            <label className={`custom-select-label ${labelClass}`}>{label}</label>
 
-            <select className="w-100 main-select" value={selectedValue} onChange={e => handleValueChange(e.target.value)}>
+            <select
+                value={selectedValue}
+                onChange={e => handleValueChange(e.target.value)}
+                className={`w-100 main-select inner-class ${innerClass}`}
+            >
                 {options.map(optionObj => (<option key={optionObj.value} value={optionObj.value}>{optionObj.label}</option>))}
             </select>
         </div>

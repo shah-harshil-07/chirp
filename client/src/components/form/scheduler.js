@@ -147,6 +147,8 @@ const Scheduler = ({ handleClickOutside, closeScheduler }) => {
                                 label={"Day"}
                                 selectedValue={dayOfMonth}
                                 options={dayOfMonthOptions}
+                                innerClass={!isDateValid ? "scheduler-error-select" : ''}
+                                labelClass={!isDateValid ? "scheduler-error-select-label" : ''}
                                 handleValueChange={dayOfMonthValue => handleDateChange("dayOfMonth", dayOfMonthValue)}
                             />
                         </div>
@@ -156,6 +158,8 @@ const Scheduler = ({ handleClickOutside, closeScheduler }) => {
                                 label={"Month"}
                                 selectedValue={month}
                                 options={monthOptions}
+                                innerClass={!isDateValid ? "scheduler-error-select" : ''}
+                                labelClass={!isDateValid ? "scheduler-error-select-label" : ''}
                                 handleValueChange={monthValue => handleDateChange("month", monthValue)}
                             />
                         </div>
@@ -165,6 +169,8 @@ const Scheduler = ({ handleClickOutside, closeScheduler }) => {
                                 label={"Year"}
                                 selectedValue={year}
                                 options={yearOptions}
+                                innerClass={!isDateValid ? "scheduler-error-select" : ''}
+                                labelClass={!isDateValid ? "scheduler-error-select-label" : ''}
                                 handleValueChange={yearValue => handleDateChange("year", yearValue)}
                             />
                         </div>
@@ -180,6 +186,8 @@ const Scheduler = ({ handleClickOutside, closeScheduler }) => {
                                 label={"Hour"}
                                 options={hourOptions}
                                 selectedValue={hours}
+                                innerClass={!isDateValid ? "scheduler-error-select" : ''}
+                                labelClass={!isDateValid ? "scheduler-error-select-label" : ''}
                                 handleValueChange={hourValue => handleDateChange("hour", hourValue)}
                             />
                         </div>
@@ -189,6 +197,8 @@ const Scheduler = ({ handleClickOutside, closeScheduler }) => {
                                 label={"Minute"}
                                 options={minuteOptions}
                                 selectedValue={minutes}
+                                innerClass={!isDateValid ? "scheduler-error-select" : ''}
+                                labelClass={!isDateValid ? "scheduler-error-select-label" : ''}
                                 handleValueChange={minuteValue => handleDateChange("minute", minuteValue)}
                             />
                         </div>

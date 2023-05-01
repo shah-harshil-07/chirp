@@ -45,3 +45,11 @@
 #scheduler-footer:hover {
     background-color: rgba(29, 161, 242, 0.6);
 }
+
+.scheduler-error-select {
+    border: 1px solid crimson;
+}
+
+.scheduler-error-select-label {
+    color: crimson;
+}
