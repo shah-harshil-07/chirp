@@ -9,6 +9,8 @@ import useToaster from "src/custom-hooks/toaster-message";
 import PollCreator from "./poll-creator";
 import EmojiContainer from "./emoji-container";
 import Scheduler from "./scheduler";
+import API from "src/api";
+import * as Constants from "src/constants";
 
 const Form = () => {
 	const fileUploadRef = useRef(null), { showError } = useToaster();
@@ -80,6 +82,16 @@ const Form = () => {
 	const removePoll = () => {
 		setShowPollCreator(false);
 		setChoiceErrors([]);
+	}
+
+	const createPost = async () => {
+		try {
+			const data = { text };
+			const response = await API(Constants.POST, Constants.CREATE_POST, data);
+			console.log(response.data);
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	return (
@@ -162,7 +174,7 @@ const Form = () => {
 					)
 				}
 
-				<div id="chirp-button">Post</div>
+				<div id="chirp-button" onClick={createPost}>Post</div>
 			</div>
 		</form>
 	);

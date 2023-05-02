@@ -1,8 +1,6 @@
+import { MaxLength } from "class-validator";
+
 export class PostDTO {
-    likes: number;
-    tags: string[];
-    title: string;
-    message: string;
-    selectedFile: '';
-    creator: string;
+    @MaxLength(140)
+    text: string;
 }
