@@ -86,8 +86,8 @@ const Form = () => {
 
 	const createPost = async () => {
 		try {
-			const data = { text };
-			const response = await API(Constants.POST, Constants.CREATE_POST, data);
+			const data = { text }, headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
+			const response = await API(Constants.POST, Constants.CREATE_POST, data, headerData);
 			console.log(response.data);
 		} catch (error) {
 			console.log(error);

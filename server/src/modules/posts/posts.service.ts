@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, ObjectId } from "mongoose";
 import { Post } from "./post.schema";
 import { PostDTO } from "./post.dto";
 
@@ -12,7 +12,8 @@ export class PostService {
         return this.postModel.find().exec();
     }
 
-    async create(postData: PostDTO): Promise<Post> {
+    async create(postData: PostDTO, userId: ObjectId): Promise<Post> {
+        postData["userId"] = userId;
         const createdPost = new this.postModel(postData);
         return createdPost.save();
     }

@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from "@nestjs/common";
 import { PostService } from "./posts.service";
 import { Post as UserPost } from "./post.schema";
 import { PostDTO } from "./post.dto";
+import { AuthGuard } from "@nestjs/passport";
 
 @Controller("posts")
 export class PostController {
@@ -12,9 +13,11 @@ export class PostController {
         return this.postService.findAll();
     }
 
+    @UseGuards(AuthGuard("jwt"))
     @Post("create")
-    async create(@Body() postDTO: PostDTO): Promise<UserPost> {
-        return this.postService.create(postDTO);
+    async create(@Req() req: any, @Body() postData: PostDTO): Promise<UserPost> {
+        const { _id } = req.user;
+        return this.postService.create(postData, _id);
     }
 
     @Put("update/:id")
