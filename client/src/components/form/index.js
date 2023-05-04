@@ -20,6 +20,7 @@ const Form = () => {
 
 	const [text, setText] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
+	const [uploadedFileObjects, setUploadedFileObjects] = useState([]);
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 	const [showPollCreator, setShowPollCreator] = useState(false);
 	const [showScheduler, setShowScheduler] = useState(false);
@@ -34,7 +35,7 @@ const Form = () => {
 	}
 
 	const handleImageUpload = e => {
-		const files = e.target.files, _uploadedFiles = uploadedFiles;
+		const files = e.target.files, _uploadedFiles = uploadedFiles, _uploadedFileObjects = uploadedFileObjects;
 
 		if (files.length + uploadedFiles.length > 4) {
 			showError("More than 4 images are not allowed.");
@@ -46,7 +47,10 @@ const Form = () => {
 				const reader = new FileReader();
 				reader.onload = e => {
 					_uploadedFiles.push(e.target.result);
+					_uploadedFileObjects.push(fileObj);
+
 					setUploadedFiles([..._uploadedFiles]);
+					setUploadedFileObjects([..._uploadedFileObjects]);
 				}
 
 				reader.readAsDataURL(fileObj);
@@ -57,9 +61,13 @@ const Form = () => {
 	}
 
 	const spliceImage = index => {
-		let _uploadedFiles = uploadedFiles;
+		let _uploadedFiles = uploadedFiles, _uploadedFileObjects = uploadedFileObjects;
+
 		_uploadedFiles.splice(index, 1);
+		_uploadedFileObjects.splice(index, 1);
+
 		setUploadedFiles([..._uploadedFiles]);
+		setUploadedFileObjects([..._uploadedFileObjects]);
 	}
 
 	const handleEmojiSelect = e => {
@@ -86,8 +94,16 @@ const Form = () => {
 
 	const createPost = async () => {
 		try {
-			const data = { text }, headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
-			const response = await API(Constants.POST, Constants.CREATE_POST, data, headerData);
+			const formData = new FormData();
+			const data = { text };
+			formData.set("data", JSON.stringify(data));
+
+			uploadedFileObjects.forEach((fileObj, fileIndex) => {
+				formData.append(`images[${fileIndex}]`, fileObj);
+			});
+
+			const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
+			const response = await API(Constants.POST, Constants.CREATE_POST, formData, headerData);
 			console.log(response.data);
 		} catch (error) {
 			console.log(error);
