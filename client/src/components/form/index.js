@@ -98,8 +98,8 @@ const Form = () => {
 			const data = { text };
 			formData.set("data", JSON.stringify(data));
 
-			uploadedFileObjects.forEach((fileObj, fileIndex) => {
-				formData.append(`images[${fileIndex}]`, fileObj);
+			uploadedFileObjects.forEach(fileObj => {
+				formData.append("images[]", fileObj);
 			});
 
 			const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };

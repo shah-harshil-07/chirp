@@ -1,6 +1,8 @@
-import { MaxLength } from "class-validator";
+import { IsJSON } from "class-validator";
 
 export class PostDTO {
-    @MaxLength(140)
-    text: string;
+    @IsJSON()
+    data: string;
+
+    images: string[]
 }

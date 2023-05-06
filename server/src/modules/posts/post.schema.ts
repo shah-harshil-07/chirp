@@ -1,5 +1,4 @@
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
-import { ObjectId } from "mongoose";
 
 @Schema({ collection: "PostMessages" })
 export class Post {
@@ -8,6 +7,9 @@ export class Post {
 
     @Prop()
     userId: string;
+
+    @Prop()
+    images: string[];
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

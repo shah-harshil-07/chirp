@@ -13,8 +13,8 @@ export class PostService {
     }
 
     async create(postData: PostDTO, userId: ObjectId): Promise<Post> {
-        postData["userId"] = userId;
-        const createdPost = new this.postModel(postData);
+        const mainData = { text: JSON.parse(postData.data).text, userId, images: postData.images };
+        const createdPost = new this.postModel(mainData);
         return createdPost.save();
     }
 
