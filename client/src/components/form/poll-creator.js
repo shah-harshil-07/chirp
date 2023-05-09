@@ -78,7 +78,8 @@ const PollCreator = ({ handleClickOutside, closePollCreator, createPoll, choiceE
     }
 
     const handleSubmit = () => {
-        createPoll(choices);
+        const durationData = { days: dayOfWeek, hours, minutes };
+        createPoll(choices, durationData);
     }
 
     return (

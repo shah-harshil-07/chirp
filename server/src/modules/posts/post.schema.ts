@@ -6,7 +6,7 @@ class IDuration {
     minutes: number;
 }
 
-class ISchedule {
+class Schedule {
     @Prop()
     year: number;
 
@@ -46,7 +46,7 @@ export class Post {
     poll: Poll;
 
     @Prop()
-    schedule: ISchedule;
+    schedule: Schedule;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

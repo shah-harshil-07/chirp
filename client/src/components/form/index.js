@@ -11,9 +11,11 @@ import EmojiContainer from "./emoji-container";
 import Scheduler from "./scheduler";
 import API from "src/api";
 import * as Constants from "src/constants";
+import { getMonthOptions, getWeekOptions } from "src/helpers";
 
 const Form = () => {
 	const fileUploadRef = useRef(null), { showError } = useToaster();
+	const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
 
 	const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";
 	const allowedFileTypes = ["image/png", "image/jpg", "image/jpeg"];
@@ -25,6 +27,9 @@ const Form = () => {
 	const [showPollCreator, setShowPollCreator] = useState(false);
 	const [showScheduler, setShowScheduler] = useState(false);
 	const [choiceErrors, setChoiceErrors] = useState([]);
+	const [pollData, setPollData] = useState(null);
+	const [isPostScheduled, setIsPostScheduled] = useState(false);
+	const [schedulerData, setSchedulerData] = useState(null);
 
 	const handleSubmit = async e => {
 		e.preventDefault();
@@ -74,7 +79,7 @@ const Form = () => {
 		setText(`${text}${e.emoji}`);
 	}
 
-	const createPoll = choices => {
+	const createPoll = (choices, durationData) => {
 		const _choiceErrors = [];
 		let formIsValid = true;
 
@@ -83,8 +88,14 @@ const Form = () => {
 			if (!choiceInput) formIsValid = false;
 		});
 
-		setChoiceErrors([ ..._choiceErrors ]);
-		if (formIsValid) setShowPollCreator(false);
+		setChoiceErrors([..._choiceErrors]);
+
+		if (formIsValid) {
+			setPollData({ choices, duration: durationData });
+			setShowPollCreator(false);
+		} else {
+			setPollData(null);
+		}
 	}
 
 	const removePoll = () => {
@@ -92,22 +103,44 @@ const Form = () => {
 		setChoiceErrors([]);
 	}
 
+	const confirmPostSchedule = scheduleData => {
+		setShowScheduler(false);
+		setIsPostScheduled(true);
+		setSchedulerData(scheduleData);
+	}
+
 	const createPost = async () => {
 		try {
-			const formData = new FormData();
-			const data = { text };
-			formData.set("data", JSON.stringify(data));
+			console.log(pollData);
+			// const data = { text };
+			// const formData = new FormData();
+			// formData.set("data", JSON.stringify(data));
 
-			uploadedFileObjects.forEach(fileObj => {
-				formData.append("images[]", fileObj);
-			});
+			// uploadedFileObjects.forEach(fileObj => {
+			// 	formData.append("images[]", fileObj);
+			// });
 
-			const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
-			const response = await API(Constants.POST, Constants.CREATE_POST, formData, headerData);
-			console.log(response.data);
+			// const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
+			// const response = await API(Constants.POST, Constants.CREATE_POST, formData, headerData);
+			// console.log(response.data);
 		} catch (error) {
 			console.log(error);
 		}
+	}
+
+	const scheduleText = () => {
+		const { year, month, dayOfMonth, hours, minutes } = schedulerData;
+		const date = new Date(year, month, dayOfMonth, hours, minutes);
+		const displayedMonth = monthOptions[month].label, displayedDayOfWeek = weekOptions[date.getDay()];
+
+		return (
+			<span>
+				{
+					`Will send on ${displayedDayOfWeek} ${displayedMonth} ${dayOfMonth}, ${year} at
+					${hours > 9 ? hours : `0${hours}`}:${minutes > 9 ? minutes : `0${minutes}`} hours`
+				}
+			</span>
+		);
 	}
 
 	return (
@@ -115,6 +148,7 @@ const Form = () => {
 			<img src={placeHolderImageSrc} className="user-image" alt="user" />
 
 			<div className="input-box">
+				{isPostScheduled && schedulerData && (scheduleText())}
 				<textarea
 					value={text}
 					className="special-input"
@@ -166,10 +200,10 @@ const Form = () => {
 				{
 					showPollCreator && (
 						<PollCreator
+							createPoll={createPoll}
+							choiceErrors={choiceErrors}
 							closePollCreator={removePoll}
 							handleClickOutside={() => { setShowPollCreator(false); }}
-							createPoll={choices => { createPoll(choices); }}
-							choiceErrors={choiceErrors}
 						/>
 					)
 				}
@@ -184,8 +218,10 @@ const Form = () => {
 				{
 					showScheduler && (
 						<Scheduler
-							handleClickOutside={() => { setShowScheduler(false); }}
+							isPostScheduled={isPostScheduled}
+							confirmSchedule={confirmPostSchedule}
 							closeScheduler={() => { setShowScheduler(false); }}
+							handleClickOutside={() => { setShowScheduler(false); }}
 						/>
 					)
 				}

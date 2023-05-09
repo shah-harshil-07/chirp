@@ -11,7 +11,7 @@ const date = new Date();
 const presentYear = date.getFullYear(), monthIndex = date.getMonth();
 const dayOfMonthOptions = Helpers.getDayOfMonthOptions(monthIndex, presentYear);
 
-const Scheduler = ({ handleClickOutside, closeScheduler }) => {
+const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confirmSchedule }) => {
     const containerRef = useRef(null), defaultDate = new Date();
 
     const hourOptions = Helpers.getHourOptions();
@@ -108,6 +108,12 @@ const Scheduler = ({ handleClickOutside, closeScheduler }) => {
         setIsDateValid(_isDateValid);
     }
 
+    const confirmAction = e => {
+        e.preventDefault();
+        e.stopPropagation();
+        confirmSchedule({ year, month, dayOfMonth, hours, minutes });
+    }
+
     return (
         <div id="scheduler-box" ref={containerRef}>
             <div id="scheduler-body">
@@ -118,10 +124,10 @@ const Scheduler = ({ handleClickOutside, closeScheduler }) => {
 
                     <div
                         className="col-md-4 pr-0 ml-3"
+                        onClick={e => confirmAction(e)}
                         style={{ opacity: isDateValid ? 1 : 0.5 }}
-                        onClick={() => { if (isDateValid) closeScheduler(); }}
                     >
-                        <div style={{ cursor: isDateValid ? "pointer" : "not-allowed" }} className="common-custom-btn float-right mt-1">
+                        <div className="common-custom-btn float-right mt-1" style={{ cursor: isDateValid ? "pointer" : "not-allowed" }}>
                             Confirm
                         </div>
                     </div>
@@ -216,10 +222,10 @@ const Scheduler = ({ handleClickOutside, closeScheduler }) => {
             </div>
 
             <div
+                id="scheduler-footer"
                 className="pt-2 pb-2 pl-3"
                 onMouseOver={() => setFooterTextColor("white")}
                 onMouseLeave={() => setFooterTextColor("#1DA1F2")}
-                id="scheduler-footer"
             >
                 <span style={{ color: footerTextColor }} id="scheduler-footer-text">Scheduled Events</span>
             </div>
