@@ -26,10 +26,10 @@ const Form = () => {
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 	const [showPollCreator, setShowPollCreator] = useState(false);
 	const [showScheduler, setShowScheduler] = useState(false);
-	const [choiceErrors, setChoiceErrors] = useState([]);
 	const [pollData, setPollData] = useState(null);
 	const [isPostScheduled, setIsPostScheduled] = useState(false);
 	const [schedulerData, setSchedulerData] = useState(null);
+	const [isFormValid, setIsFormValid] = useState(true);
 
 	const handleSubmit = async e => {
 		e.preventDefault();
@@ -79,28 +79,28 @@ const Form = () => {
 		setText(`${text}${e.emoji}`);
 	}
 
-	const createPoll = (choices, durationData) => {
-		const _choiceErrors = [];
-		let formIsValid = true;
+	const handlePollData = (choices, durationData) => {
+		let _isFormValid = true;
 
-		choices.slice(0, 2).forEach((choiceInput, choiceIndex) => {
-			_choiceErrors[choiceIndex] = choiceInput ? '' : "Please enter your choice.";
-			if (!choiceInput) formIsValid = false;
+		choices.forEach(choiceInput => {
+			if (!choiceInput) _isFormValid = false;
 		});
 
-		setChoiceErrors([..._choiceErrors]);
+		setPollData({ choices, duration: durationData });
+		setIsFormValid(_isFormValid);
+	}
 
-		if (formIsValid) {
-			setPollData({ choices, duration: durationData });
-			setShowPollCreator(false);
-		} else {
-			setPollData(null);
+	const openPollCreator = () => {
+		if (!uploadedFileObjects.length) {
+			setShowPollCreator(true);
+			setIsFormValid(false);
 		}
 	}
 
 	const removePoll = () => {
+		setPollData(null);
+		setIsFormValid(true);
 		setShowPollCreator(false);
-		setChoiceErrors([]);
 	}
 
 	const confirmPostSchedule = scheduleData => {
@@ -110,33 +110,34 @@ const Form = () => {
 	}
 
 	const createPost = async () => {
-		try {
-			console.log(pollData);
-			// const data = { text };
-			// const formData = new FormData();
-			// formData.set("data", JSON.stringify(data));
+		if (isFormValid && text) {
+			try {
+				const data = { text };
+				const formData = new FormData();
+				formData.set("data", JSON.stringify(data));
 
-			// uploadedFileObjects.forEach(fileObj => {
-			// 	formData.append("images[]", fileObj);
-			// });
+				uploadedFileObjects.forEach(fileObj => {
+					formData.append("images[]", fileObj);
+				});
 
-			// const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
-			// const response = await API(Constants.POST, Constants.CREATE_POST, formData, headerData);
-			// console.log(response.data);
-		} catch (error) {
-			console.log(error);
+				const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
+				const response = await API(Constants.POST, Constants.CREATE_POST, formData, headerData);
+				console.log(response.data);
+			} catch (error) {
+				console.log(error);
+			}
 		}
 	}
 
 	const scheduleText = () => {
 		const { year, month, dayOfMonth, hours, minutes } = schedulerData;
-		const date = new Date(year, month, dayOfMonth, hours, minutes);
+		const date = new Date(year, month, dayOfMonth, hours, minutes, 0, 0);
 		const displayedMonth = monthOptions[month].label, displayedDayOfWeek = weekOptions[date.getDay()];
 
 		return (
-			<span>
+			<span id="schedule-text">
 				{
-					`Will send on ${displayedDayOfWeek} ${displayedMonth} ${dayOfMonth}, ${year} at
+					`Will send on ${displayedDayOfWeek}, ${displayedMonth} ${dayOfMonth}, ${year} at
 					${hours > 9 ? hours : `0${hours}`}:${minutes > 9 ? minutes : `0${minutes}`} hours`
 				}
 			</span>
@@ -147,7 +148,7 @@ const Form = () => {
 		<form noValidate onSubmit={handleSubmit} className="mw-100">
 			<img src={placeHolderImageSrc} className="user-image" alt="user" />
 
-			<div className="input-box">
+			<div className="form-action-container">
 				{isPostScheduled && schedulerData && (scheduleText())}
 				<textarea
 					value={text}
@@ -155,6 +156,7 @@ const Form = () => {
 					placeholder="What's happening?"
 					onChange={e => setText(e.target.value)}
 				/>
+				{showPollCreator && (<PollCreator closePollCreator={removePoll} handleChoiceChange={handlePollData} />)}
 				<hr />
 
 				<ImgHolder removeImage={index => spliceImage(index)} images={uploadedFiles} />
@@ -163,7 +165,8 @@ const Form = () => {
 					title="Image"
 					icon={cilImage}
 					className="action-icon"
-					onClick={() => { fileUploadRef.current.click(); }}
+					style={{ opacity: showPollCreator ? "0.4" : '1' }}
+					onClick={() => { if (!showPollCreator) fileUploadRef.current.click(); }}
 				/>
 				<input
 					multiple
@@ -195,18 +198,9 @@ const Form = () => {
 					title="Poll"
 					icon={cilList}
 					className="action-icon"
-					onClick={() => setShowPollCreator(!showPollCreator)}
+					onClick={openPollCreator}
+					style={{ opacity: uploadedFileObjects.length > 0 ? "0.4" : '1' }}
 				/>
-				{
-					showPollCreator && (
-						<PollCreator
-							createPoll={createPoll}
-							choiceErrors={choiceErrors}
-							closePollCreator={removePoll}
-							handleClickOutside={() => { setShowPollCreator(false); }}
-						/>
-					)
-				}
 
 				<CIcon
 					size="sm"
@@ -218,6 +212,7 @@ const Form = () => {
 				{
 					showScheduler && (
 						<Scheduler
+							scheduleData={schedulerData}
 							isPostScheduled={isPostScheduled}
 							confirmSchedule={confirmPostSchedule}
 							closeScheduler={() => { setShowScheduler(false); }}
@@ -226,7 +221,7 @@ const Form = () => {
 					)
 				}
 
-				<div id="chirp-button" onClick={createPost}>Post</div>
+				<div id="chirp-button" style={{ opacity: isFormValid && text ? '1' : "0.4" }} onClick={createPost}>Post</div>
 			</div>
 		</form>
 	);

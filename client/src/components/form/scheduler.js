@@ -11,7 +11,7 @@ const date = new Date();
 const presentYear = date.getFullYear(), monthIndex = date.getMonth();
 const dayOfMonthOptions = Helpers.getDayOfMonthOptions(monthIndex, presentYear);
 
-const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confirmSchedule }) => {
+const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confirmSchedule, scheduleData }) => {
     const containerRef = useRef(null), defaultDate = new Date();
 
     const hourOptions = Helpers.getHourOptions();
@@ -48,6 +48,16 @@ const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confir
             document.removeEventListener("click", outsideClickFn);
         };
     }, [handleClickOutside]);
+
+    useEffect(() => {
+        if (isPostScheduled && scheduleData) {
+            setYear(scheduleData.year);
+            setMonth(scheduleData.month);
+            setDayOfMonth(scheduleData.dayOfMonth);
+            setHours(scheduleData.hours);
+            setMinutes(scheduleData.minutes);
+        }
+    }, [scheduleData]);
 
     const handleDateChange = (key, value) => {
         let _year = year, _month = month, _dayOfMonth = dayOfMonth, _minutes = minutes, _hours = hours;
@@ -111,7 +121,7 @@ const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confir
     const confirmAction = e => {
         e.preventDefault();
         e.stopPropagation();
-        confirmSchedule({ year, month, dayOfMonth, hours, minutes });
+        if (isDateValid) confirmSchedule({ year, month, dayOfMonth, hours, minutes });
     }
 
     return (
@@ -138,7 +148,7 @@ const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confir
 
                     <span className="ml-2">
                         {
-                            `Will send on ${displayedDayOfWeek} ${displayedMonth} ${dayOfMonth}, ${year} at
+                            `Will send on ${displayedDayOfWeek}, ${displayedMonth} ${dayOfMonth}, ${year} at
                             ${hours > 9 ? hours : `0${hours}`}:${minutes > 9 ? minutes : `0${minutes}`} hours`
                         }
                     </span>

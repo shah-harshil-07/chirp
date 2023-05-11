@@ -4,7 +4,7 @@
     font-size: 22px;
 }
 
-.input-box {
+.form-action-container {
     width: 90%;
     margin-left: 45px;
     margin-top: -36px;
@@ -46,4 +46,12 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
+}
+
+#schedule-text {
+    text-decoration: underline;
+    font-weight: bold;
+    font-size: 13px;
+    position: absolute;
+    top: 30px;
 }

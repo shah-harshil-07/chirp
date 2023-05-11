@@ -8,7 +8,7 @@ import LabelledInput from "../utilities/labelled-input";
 import CustomSelect from "../utilities/custom-select";
 import * as Helpers from "src/helpers";
 
-const PollCreator = ({ handleClickOutside, closePollCreator, createPoll, choiceErrors }) => {
+const PollCreator = ({ closePollCreator, handleChoiceChange }) => {
     const containerRef = useRef(null);
     const dayOfWeekOptions = Helpers.getDayOfWeekOptions();
     const hourOptions = Helpers.getHourOptions();
@@ -22,18 +22,9 @@ const PollCreator = ({ handleClickOutside, closePollCreator, createPoll, choiceE
     const [displayedMinuteOptions, setDisplayedMinuteOptions] = useState(minuteOptions);
 
     useEffect(() => {
-        const outsideClickFn = e => {
-            if (containerRef.current && !containerRef.current.contains(e.target)) {
-                handleClickOutside();
-            }
-        }
-
-        document.addEventListener("click", outsideClickFn);
-
-        return () => {
-            document.removeEventListener("click", outsideClickFn);
-        };
-    }, [handleClickOutside]);
+        const durationData = { days: dayOfWeek, hours, minutes };
+        handleChoiceChange(choices, durationData);
+    }, [choices, dayOfWeek, hours, minutes]);
 
     const handleChoiceInput = (data, choiceIndex) => {
         let _choices = choices;
@@ -77,11 +68,6 @@ const PollCreator = ({ handleClickOutside, closePollCreator, createPoll, choiceE
         }
     }
 
-    const handleSubmit = () => {
-        const durationData = { days: dayOfWeek, hours, minutes };
-        createPoll(choices, durationData);
-    }
-
     return (
         <div id="poll-creator-box" ref={containerRef}>
             <div id="poll-choices-box">
@@ -109,14 +95,6 @@ const PollCreator = ({ handleClickOutside, closePollCreator, createPoll, choiceE
                                         )
                                     }
                                 </div>
-
-                                {
-                                    choiceIndex <= 1 && (
-                                        <p className="text-danger" style={{ fontSize: "15px" }}>
-                                            {choiceErrors?.[choiceIndex] ?? ''}
-                                        </p>
-                                    )
-                                }
                             </React.Fragment>
                         )
                     })
@@ -157,7 +135,6 @@ const PollCreator = ({ handleClickOutside, closePollCreator, createPoll, choiceE
             </div>
 
             <div id="poll-action-box">
-                <div className="poll-box-item" id="reset-poll-item" onClick={handleSubmit}>Create Poll</div>
                 <div className="poll-box-item" id="remove-poll-item" onClick={closePollCreator}>Remove Poll</div>
             </div>
         </div>
