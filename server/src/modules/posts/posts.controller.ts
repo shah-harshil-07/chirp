@@ -50,6 +50,7 @@ export class PostController {
         @Body() postData: PostDTO,
         @UploadedFiles(
             new ParseFilePipe({
+                fileIsRequired: false,
                 validators: [
                     new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 }),
                     new FileTypeValidator({ fileType: ".(jpg|jpeg|png)" }),

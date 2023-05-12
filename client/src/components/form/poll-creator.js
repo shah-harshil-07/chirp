@@ -24,6 +24,7 @@ const PollCreator = ({ closePollCreator, handleChoiceChange }) => {
     useEffect(() => {
         const durationData = { days: dayOfWeek, hours, minutes };
         handleChoiceChange(choices, durationData);
+        //eslint-disable-next-line
     }, [choices, dayOfWeek, hours, minutes]);
 
     const handleChoiceInput = (data, choiceIndex) => {

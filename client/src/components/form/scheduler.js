@@ -57,6 +57,7 @@ const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confir
             setHours(scheduleData.hours);
             setMinutes(scheduleData.minutes);
         }
+        //eslint-disable-next-line
     }, [scheduleData]);
 
     const handleDateChange = (key, value) => {
