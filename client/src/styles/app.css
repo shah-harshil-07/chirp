@@ -35,3 +35,7 @@
     border-radius: 20px;
     cursor: pointer;
 }
+
+.text-decoration-underline {
+    text-decoration: underline;
+}

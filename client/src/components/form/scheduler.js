@@ -11,7 +11,7 @@ const date = new Date();
 const presentYear = date.getFullYear(), monthIndex = date.getMonth();
 const dayOfMonthOptions = Helpers.getDayOfMonthOptions(monthIndex, presentYear);
 
-const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confirmSchedule, scheduleData }) => {
+const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confirmSchedule, clearSchedule, scheduleData }) => {
     const containerRef = useRef(null), defaultDate = new Date();
 
     const hourOptions = Helpers.getHourOptions();
@@ -127,15 +127,23 @@ const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confir
     return (
         <div id="scheduler-box" ref={containerRef}>
             <div id="scheduler-body">
-                <div className="row pl-2 pr-2">
+                <div className="row pl-2">
                     <div className="col-md-1" onClick={closeScheduler} id="scheduler-header-close">&times;</div>
 
-                    <div className="col-md-6"><h4 className="mt-1"><b>Schedule</b></h4></div>
+                    <div className="col-md-5"><h4 className="mt-1"><b>Schedule</b></h4></div>
+
+                    {
+                        isPostScheduled && (
+                            <div className="col-md-2" id="scheduler-clear-text">
+                                <span className="text-decoration-underline" onClick={clearSchedule}><b>Clear</b></span>
+                            </div>
+                        )
+                    }
 
                     <div
-                        className="col-md-4 pr-0 ml-3"
                         onClick={e => confirmAction(e)}
                         style={{ opacity: isDateValid ? 1 : 0.5 }}
+                        className={`pr-0 ${isPostScheduled ? "col-md-3" : "col-md-5"}`}
                     >
                         <div className="common-custom-btn float-right mt-1" style={{ cursor: isDateValid ? "pointer" : "not-allowed" }}>
                             Confirm

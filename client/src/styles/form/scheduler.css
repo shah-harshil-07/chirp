@@ -53,3 +53,9 @@
 .scheduler-error-select-label {
     color: crimson;
 }
+
+#scheduler-clear-text {
+    font-size: 18px;
+    margin-top: 8px;
+    cursor: pointer;
+}

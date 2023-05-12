@@ -109,10 +109,19 @@ const Form = () => {
 		setSchedulerData(scheduleData);
 	}
 
+	const clearPostSchedule = () => {
+		setShowScheduler(false);
+		setIsPostScheduled(false);
+		setSchedulerData(null);
+	}
+
 	const createPost = async () => {
 		if (isFormValid && text) {
 			try {
 				const data = { text };
+				if (showPollCreator && pollData) data["poll"] = { ...pollData };
+				if (isPostScheduled && schedulerData) data["schedule"] = { ...schedulerData };
+
 				const formData = new FormData();
 				formData.set("data", JSON.stringify(data));
 
@@ -214,6 +223,7 @@ const Form = () => {
 						<Scheduler
 							scheduleData={schedulerData}
 							isPostScheduled={isPostScheduled}
+							clearSchedule={clearPostSchedule}
 							confirmSchedule={confirmPostSchedule}
 							closeScheduler={() => { setShowScheduler(false); }}
 							handleClickOutside={() => { setShowScheduler(false); }}
