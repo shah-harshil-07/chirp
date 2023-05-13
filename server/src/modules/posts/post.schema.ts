@@ -1,6 +1,6 @@
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
 
-class IDuration {
+class Duration {
     days: number;
     hours: number;
     minutes: number;
@@ -28,7 +28,7 @@ class Poll {
     choices: string[];
 
     @Prop()
-    duration: IDuration[];
+    duration: Duration;
 }
 
 @Schema({ collection: "PostMessages" })
@@ -44,9 +44,22 @@ export class Post {
 
     @Prop()
     poll: Poll;
+}
+
+@Schema({ collection: "ScheduledMessages" })
+export class ScheduledPost {
+    @Prop()
+    text: string;
+
+    @Prop()
+    timeoutId: string;
+
+    @Prop()
+    postTiming: number;
 
     @Prop()
     schedule: Schedule;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);
+export const ScheduledPostSchema = SchemaFactory.createForClass(ScheduledPost);

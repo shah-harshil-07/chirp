@@ -10,12 +10,13 @@ import { CommonModule } from "./common/common.module";
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "./config/config.module";
 import { MulterModule } from "@nestjs/platform-express";
-import { diskStorage } from "multer";
+import { ScheduleModule } from "@nestjs/schedule";
 
 @Module({
 	imports: [
 		PostModule,
 		NestConfig.forRoot(),
+		ScheduleModule.forRoot(),
 		MongooseModule.forRoot(process.env.CONNECTION_URL, { dbName: process.env.DB_NAME }),
 		MulterModule.register({ dest: "storage/post-images/" }),
 		MailerModule.forRoot({

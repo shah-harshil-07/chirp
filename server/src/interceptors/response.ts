@@ -1,6 +1,6 @@
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { NestInterceptor, ExecutionContext, CallHandler, Injectable } from "@nestjs/common";
+import { Observable, throwError } from "rxjs";
+import { catchError, map } from "rxjs/operators";
+import { NestInterceptor, ExecutionContext, CallHandler, Injectable, InternalServerErrorException } from "@nestjs/common";
 
 import { IResponse, IResponseProps, IErrorProps, ISuccessProps } from "./interfaces";
 
@@ -23,6 +23,7 @@ export class ResponseInterceptor implements NestInterceptor {
                 const props = success ? { data, message } : { message, errors };
                 return method(props);
             }),
+            catchError(() => throwError(() => new InternalServerErrorException()))
         );
     }
 }
