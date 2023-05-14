@@ -4,16 +4,27 @@ import { Model, ObjectId } from "mongoose";
 
 import { Post, ScheduledPost } from "./post.schema";
 import { ParsedPostDTO, PostDTO, ScheduledPostDTO } from "./post.dto";
+import { CommonService } from "../common/common.service";
 
 @Injectable()
 export class PostService {
     constructor(
+        private readonly commonService: CommonService,
         @InjectModel(Post.name) private readonly postModel: Model<Post>,
         @InjectModel(ScheduledPost.name) private readonly scheduledPostModel: Model<ScheduledPost>,
     ) { }
 
     async findAll(): Promise<Post[]> {
         return this.postModel.find().exec();
+    }
+
+    async getAllSchduledPosts(): Promise<ScheduledPost[]> {
+        try {
+            return this.scheduledPostModel.find().exec();
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
     }
 
     async create(postData: ParsedPostDTO, userId: ObjectId): Promise<Post> {
@@ -37,9 +48,27 @@ export class PostService {
         }
     }
 
-    async deleteScheduledPost(postId: ObjectId): Promise<void> {
+    async deleteScheduledPost(postId: ObjectId): Promise<ScheduledPost> {
         try {
             return this.scheduledPostModel.findByIdAndDelete(postId);
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    async deleteScheduledPostWithImages(postId: ObjectId): Promise<ScheduledPost> {
+        try {
+            const post = await this.deleteScheduledPost(postId);
+            const images = post?.data?.images;
+
+            if (images?.length) {
+                images?.forEach(image => {
+                    this.commonService.unlinkImage("storage/post-images", image);
+                });
+            }
+
+            return post;
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();

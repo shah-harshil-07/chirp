@@ -49,7 +49,7 @@ export class Post {
 @Schema({ collection: "ScheduledMessages" })
 export class ScheduledPost {
     @Prop()
-    text: string;
+    data: Post;
 
     @Prop()
     timeoutId: string;

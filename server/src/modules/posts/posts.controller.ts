@@ -35,6 +35,19 @@ export class PostController {
         return this.postService.findAll();
     }
 
+    @Get("scheduled/all")
+    @UseGuards(AuthGuard("jwt"))
+    @UseInterceptors(ResponseInterceptor)
+    async getScheduledPosts(): Promise<IResponseProps> {
+        try {
+            const data = await this.postService.getAllSchduledPosts();
+            return { data, success: true, message: "Received all the scheduled posts successfully." };
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
+    }
+
     @Post("create")
     @UseGuards(AuthGuard("jwt"))
     @UseInterceptors(
@@ -86,7 +99,7 @@ export class PostController {
                         this.postService.deleteScheduledPost(scheduledPost["_id"])
                         this.postService.create(data, _id);
                     }, diffMillis);
-    
+
                     this.schedulerRegistery.addTimeout(timeoutName, timeoutFn);
                     return { success: true, message: "Post scheduled successfully." };
                 } else {
@@ -94,7 +107,7 @@ export class PostController {
                 }
             }
 
-            const post = this.postService.create(data, _id);
+            const post = await this.postService.create(data, _id);
             return { success: true, message: "Post created successfully.", data: post };
         } catch (err) {
             console.log(err);
@@ -110,5 +123,62 @@ export class PostController {
     @Delete("delete/:id")
     async delete(@Param() { id }: any): Promise<any> {
         return this.postService.delete(id);
+    }
+
+    @Delete("scheduled/delete/:id")
+    @UseGuards(AuthGuard("jwt"))
+    @UseInterceptors(ResponseInterceptor)
+    async deleteScheduledPost(@Param() { id }: any): Promise<IResponseProps> {
+        try {
+            const post = await this.postService.deleteScheduledPostWithImages(id);
+            this.schedulerRegistery.deleteTimeout(post.timeoutId);
+            return { success: true, message: "Scheduled post deleted successfully." };
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    @Post("scheduled/reschedule/:id")
+    @UseGuards(AuthGuard("jwt"))
+    @UseInterceptors(
+        ResponseInterceptor,
+        FilesInterceptor(
+            "images[]",
+            5,
+            {
+                storage: diskStorage({
+                    destination: "storage/post-images/",
+                    filename: (_, file, cb) => {
+                        const extension = file?.originalname?.split('.')?.[1] ?? "jpg";
+                        cb(null, `${Date.now()}.${extension}`);
+                    },
+                })
+            }
+        )
+    )
+    async reschedulePost(
+        @Req() req: any,
+        @Param() { id }: any,
+        @Body() postData: PostDTO,
+        @UploadedFiles(
+            new ParseFilePipe({
+                fileIsRequired: false,
+                validators: [
+                    new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 }),
+                    new FileTypeValidator({ fileType: ".(jpg|jpeg|png)" }),
+                ],
+            })
+        ) images: Array<Express.Multer.File>
+    ): Promise<IResponseProps> {
+        try {
+            const post = await this.postService.deleteScheduledPostWithImages(id);
+            this.schedulerRegistery.deleteTimeout(post.timeoutId);
+            const newPostResponse = await this.create(req, postData, images);
+            return newPostResponse;
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
     }
 }

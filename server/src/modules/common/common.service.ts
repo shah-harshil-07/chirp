@@ -1,7 +1,9 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { OtpStore } from "./otp-store.schema";
 import { Model } from "mongoose";
+import { unlinkSync } from "fs";
+
+import { OtpStore } from "./otp-store.schema";
 
 @Injectable()
 export class CommonService {
@@ -21,5 +23,14 @@ export class CommonService {
 
     public createFourDigitOtp(): string {
         return Math.floor(1000 + Math.random() * 9000).toString();
+    }
+
+    public unlinkImage(dir: string, fileName: string): void {
+        try {
+            unlinkSync(`${dir}/${fileName}`);
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
     }
 }
