@@ -24,7 +24,7 @@ import { ResponseInterceptor } from "src/interceptors/response";
 import { IResponseProps } from "src/interceptors/interfaces";
 import { PostService } from "./posts.service";
 import { Post as UserPost } from "./post.schema";
-import { PostDTO } from "./post.dto";
+import { IScheduledPostIds, PostDTO } from "./post.dto";
 
 @Controller("posts")
 export class PostController {
@@ -133,6 +133,20 @@ export class PostController {
             const post = await this.postService.deleteScheduledPostWithImages(id);
             this.schedulerRegistery.deleteTimeout(post.timeoutId);
             return { success: true, message: "Scheduled post deleted successfully." };
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    @Delete("scheduled/delete-many")
+    @UseGuards(AuthGuard("jwt"))
+    @UseInterceptors(ResponseInterceptor)
+    async deleteMultipleScheduledPosts(@Body() postData: IScheduledPostIds): Promise<IResponseProps> {
+        try {
+            const { postIds } = postData;
+            for (let i = 0; i < postIds.length; i++) this.deleteScheduledPost(postIds[i]);
+            return { success: true, message: "Scheduled posts deleted successfully." };
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();

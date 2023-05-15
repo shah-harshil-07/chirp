@@ -40,3 +40,7 @@ export interface ScheduledPostDTO {
     postTiming: number;
     schedule: ISchedule;
 }
+
+export interface IScheduledPostIds {
+    postIds: string[];
+}
