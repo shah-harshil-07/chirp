@@ -131,7 +131,8 @@ export class PostController {
     async deleteScheduledPost(@Param() { id }: any): Promise<IResponseProps> {
         try {
             const post = await this.postService.deleteScheduledPostWithImages(id);
-            this.schedulerRegistery.deleteTimeout(post.timeoutId);
+            const timeoutAvailable = this.schedulerRegistery.getTimeout(post.timeoutId);
+            if (timeoutAvailable) this.schedulerRegistery.deleteTimeout(post.timeoutId);
             return { success: true, message: "Scheduled post deleted successfully." };
         } catch (error) {
             console.log(error);
@@ -145,7 +146,7 @@ export class PostController {
     async deleteMultipleScheduledPosts(@Body() postData: IScheduledPostIds): Promise<IResponseProps> {
         try {
             const { postIds } = postData;
-            for (let i = 0; i < postIds.length; i++) this.deleteScheduledPost(postIds[i]);
+            for (let i = 0; i < postIds.length; i++) this.deleteScheduledPost({ id:  postIds[i] });
             return { success: true, message: "Scheduled posts deleted successfully." };
         } catch (error) {
             console.log(error);
