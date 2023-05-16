@@ -14,7 +14,7 @@ import * as Constants from "src/constants";
 import { getMonthOptions, getWeekOptions } from "src/helpers";
 
 const Form = () => {
-	const fileUploadRef = useRef(null), { showError } = useToaster();
+	const fileUploadRef = useRef(null), { showError, showSuccess } = useToaster();
 	const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
 
 	const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";
@@ -131,11 +131,29 @@ const Form = () => {
 
 				const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
 				const response = await API(Constants.POST, Constants.CREATE_POST, formData, headerData);
-				console.log(response.data);
+				const responseData = response.data;
+
+				const alert = responseData?.meta?.status ? showSuccess : showError;
+				const message = responseData?.meta?.message ?? '';
+				if (message) alert(message);
+
+				clearPost();
 			} catch (error) {
 				console.log(error);
+				showError("Something went wrong!");
+				clearPost();
 			}
 		}
+	}
+
+	const clearPost = () => {
+		setText('');
+		setPollData(null);
+		setUploadedFiles([]);
+		setSchedulerData(null);
+		setShowPollCreator(false);
+		setIsPostScheduled(false);
+		setUploadedFileObjects([]);
 	}
 
 	const scheduleText = () => {
@@ -208,7 +226,7 @@ const Form = () => {
 					icon={cilList}
 					className="action-icon"
 					onClick={openPollCreator}
-					style={{ opacity: uploadedFileObjects.length > 0 ? "0.4" : '1' }}
+					style={{ opacity: uploadedFileObjects.length ? "0.4" : '1' }}
 				/>
 
 				<CIcon
