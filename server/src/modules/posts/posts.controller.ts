@@ -2,6 +2,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { SchedulerRegistry } from "@nestjs/schedule";
+import { StorageEngine } from "multer";
 import {
     Get,
     Put,
@@ -25,6 +26,7 @@ import { IResponseProps } from "src/interceptors/interfaces";
 import { PostService } from "./posts.service";
 import { Post as UserPost } from "./post.schema";
 import { IScheduledPostIds, PostDTO } from "./post.dto";
+import { fileStorageConfigObj, parseFilePipeObj } from "./file.config";
 
 @Controller("posts")
 export class PostController {
@@ -50,34 +52,11 @@ export class PostController {
 
     @Post("create")
     @UseGuards(AuthGuard("jwt"))
-    @UseInterceptors(
-        ResponseInterceptor,
-        FilesInterceptor(
-            "images[]",
-            5,
-            {
-                storage: diskStorage({
-                    destination: "storage/post-images/",
-                    filename: (_, file, cb) => {
-                        const extension = file?.originalname?.split('.')?.[1] ?? "jpg";
-                        cb(null, `${Date.now()}.${extension}`);
-                    },
-                })
-            }
-        )
-    )
+    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 5, fileStorageConfigObj))
     async create(
         @Req() req: any,
         @Body() postData: PostDTO,
-        @UploadedFiles(
-            new ParseFilePipe({
-                fileIsRequired: false,
-                validators: [
-                    new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 }),
-                    new FileTypeValidator({ fileType: ".(jpg|jpeg|png)" }),
-                ],
-            })
-        ) images: Array<Express.Multer.File>
+        @UploadedFiles(parseFilePipeObj) images: Array<Express.Multer.File>
     ): Promise<IResponseProps> {
         try {
             const { _id } = req.user;
@@ -156,35 +135,12 @@ export class PostController {
 
     @Post("scheduled/reschedule/:id")
     @UseGuards(AuthGuard("jwt"))
-    @UseInterceptors(
-        ResponseInterceptor,
-        FilesInterceptor(
-            "images[]",
-            5,
-            {
-                storage: diskStorage({
-                    destination: "storage/post-images/",
-                    filename: (_, file, cb) => {
-                        const extension = file?.originalname?.split('.')?.[1] ?? "jpg";
-                        cb(null, `${Date.now()}.${extension}`);
-                    },
-                })
-            }
-        )
-    )
+    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 5, fileStorageConfigObj))
     async reschedulePost(
         @Req() req: any,
         @Param() { id }: any,
         @Body() postData: PostDTO,
-        @UploadedFiles(
-            new ParseFilePipe({
-                fileIsRequired: false,
-                validators: [
-                    new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 }),
-                    new FileTypeValidator({ fileType: ".(jpg|jpeg|png)" }),
-                ],
-            })
-        ) images: Array<Express.Multer.File>
+        @UploadedFiles(parseFilePipeObj) images: Array<Express.Multer.File>
     ): Promise<IResponseProps> {
         try {
             const post = await this.postService.deleteScheduledPostWithImages(id);
