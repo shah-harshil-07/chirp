@@ -34,3 +34,4 @@ export const REGISTER_GOOGLE_AUTHED_USER = "user/register-google-authed-user";
 export const LOGIN_WITH_GOOGLE_CRED = "user/login-with-google-cred";
 
 export const CREATE_POST = "posts/create";
+export const GET_SCHEDULED_POSTS = "posts/scheduled/all";

@@ -1,25 +1,56 @@
 import "src/styles/form/index.css";
 import "src/styles/form/scheduled-posts.css";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomModal from "../utilities/custom-modal";
 import CIcon from "@coreui/icons-react";
 import { cilCalendarCheck } from "@coreui/icons";
+import useToaster from "src/custom-hooks/toaster-message";
+import * as Constants from "src/constants";
+import API from "src/api";
 
 const ScheduledPostList = () => {
-    const _posts = Array(4).fill(0);
+    const { showError } = useToaster();
+
     const [showLoader, setShowLoader] = useState(false);
-    const [footerText, setFooterText] = useState('');
-    const [includeFooter, setIncludeFooter] = useState(false);
-    const [displayOverflow, setDisplayOverflow] = useState(true);
-    const [posts, setPosts] = useState(_posts);
+    const [displayOverflow, setDisplayOverflow] = useState(false);
+    const [posts, setPosts] = useState([]);
     const [selectedPosts, setSelectedPosts] = useState(0);
+
+    useEffect(() => {
+        getAllScheduledPosts();
+        // eslint-disable-next-line
+    }, []);
+
+    const getAllScheduledPosts = async () => {
+        try {
+            setShowLoader(true);
+            const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
+            const response = await API(Constants.GET, Constants.GET_SCHEDULED_POSTS, null, headerData);
+            const responseData = response.data;
+
+            let _posts = [];
+            if (responseData?.meta?.status && responseData?.data?.length) {
+                _posts = responseData.data.map(postObj => {
+                    return { ...postObj, selected: false };
+                });
+            }
+
+            setPosts(_posts);
+            setShowLoader(false);
+            if (_posts.length > 3) setDisplayOverflow(true);
+        } catch (error) {
+            setShowLoader(false);
+            console.log(error);
+            showError("Something went wrong!");
+        }
+    }
 
     const selectUnselectPost = postIndex => {
         const _posts = posts;
 
-        _posts[postIndex] = _posts[postIndex] === 1 ? 0 : 1;
-        const _selectedPosts = _posts.filter(postObj => postObj === 1).length;
+        _posts[postIndex].selected = !_posts[postIndex].selected;
+        const _selectedPosts = _posts.filter(postObj => postObj.selected).length;
 
         setPosts([..._posts]);
         setSelectedPosts(_selectedPosts);
@@ -52,9 +83,10 @@ const ScheduledPostList = () => {
                 posts.map((postObj, postIndex) => (
                     <div
                         title="Delete"
+                        key={postIndex}
                         onClick={() => selectUnselectPost(postIndex)}
                         className="scheduled-post-container mt-3 mb-3"
-                        style={{ backgroundColor: postObj ? "#DC3545" : "aliceblue" }}
+                        style={{ backgroundColor: postObj.selected ? "#DC3545" : "aliceblue" }}
                     >
                         <div className="scheduled-post-box w-75">
                             <div className="h-50 position-relative">
@@ -67,7 +99,7 @@ const ScheduledPostList = () => {
                             <div className="h-50 ml-4 row">
                                 <div className="col-md-8">Hello World</div>
                                 {
-                                    (postObj === 0) && (
+                                    !postObj.selected && (
                                         <div className="col-md-4">
                                             <button
                                                 className="scheduled-post-edit-btn"
@@ -89,14 +121,8 @@ const ScheduledPostList = () => {
     );
 
     return (
-        <CustomModal
-            bodyJSX={bodyJSX}
-            showLoader={showLoader}
-            footerText={footerText}
-            includeFooter={includeFooter}
-            displayOverflow={displayOverflow}
-        />
-    )
+        <CustomModal bodyJSX={bodyJSX} showLoader={showLoader} displayOverflow={displayOverflow} />
+    );
 }
 
 export default ScheduledPostList;

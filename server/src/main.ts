@@ -4,6 +4,7 @@ import { ValidationPipe } from "@nestjs/common";
 import { InternalServerExceptionFilter } from "./exception-handlers/500";
 import { NotFoundExceptionFilter } from "./exception-handlers/404";
 import { BadRequestExceptionFilter } from "./exception-handlers/400";
+import { UnauthorizedExceptionFilter } from "./exception-handlers/401";
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -13,6 +14,7 @@ async function bootstrap() {
 		new InternalServerExceptionFilter(),
 		new NotFoundExceptionFilter(),
 		new BadRequestExceptionFilter(),
+		new UnauthorizedExceptionFilter(),
 	);
 
 	await app.listen(process.env.PORT);
