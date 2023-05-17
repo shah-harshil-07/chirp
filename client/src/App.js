@@ -6,10 +6,8 @@ import { useSelector } from "react-redux";
 import Posts from "./components/posts";
 import Form from "./components/form";
 import AuthBar from "./components/auth-bar";
-import Register from "./components/register";
-import Login from "./components/login";
 import Toaster from "./components/utilities/toaster";
-import { isUserLoggedIn } from "./helpers";
+import { isUserLoggedIn, modalConfig } from "./helpers";
 import LeftSidebar from "./components/sidebar/left-sidebar";
 import RightSidebar from "./components/sidebar/right-sidebar";
 
@@ -20,18 +18,7 @@ const App = () => {
 	const [currentId, setCurrentId] = useState(0);
 
 	const getDialog = () => {
-		if (dialogState.open) {
-			switch (dialogState.type) {
-				case "register":
-					return (<Register />);
-				case "login":
-					return (<Login />);
-				default:
-					return <></>;
-			}
-		} else {
-			return <></>;
-		}
+		return dialogState.open ? (modalConfig[dialogState.type] ?? <></>) : <></>;
 	}
 
 	return (

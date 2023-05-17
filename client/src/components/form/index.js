@@ -1,6 +1,7 @@
 import "src/styles/form/index.css";
 
 import CIcon from "@coreui/icons-react";
+import { useDispatch } from "react-redux";
 import React, { useState, useRef } from "react";
 import { cilImage, cilSmile, cilList, cilCalendarCheck } from "@coreui/icons";
 
@@ -12,8 +13,10 @@ import Scheduler from "./scheduler";
 import API from "src/api";
 import * as Constants from "src/constants";
 import { getMonthOptions, getWeekOptions } from "src/helpers";
+import { openModal } from "src/redux/actions/modal";
 
 const Form = () => {
+	const dispatch = useDispatch();
 	const fileUploadRef = useRef(null), { showError, showSuccess } = useToaster();
 	const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
 
@@ -171,6 +174,11 @@ const Form = () => {
 		);
 	}
 
+	const openScheduledPostList = () => {
+		setShowScheduler(false);
+		dispatch(openModal("scheduledPosts"));
+	}
+
 	return (
 		<form noValidate onSubmit={handleSubmit} className="mw-100">
 			<img src={placeHolderImageSrc} className="user-image" alt="user" />
@@ -243,6 +251,7 @@ const Form = () => {
 							isPostScheduled={isPostScheduled}
 							clearSchedule={clearPostSchedule}
 							confirmSchedule={confirmPostSchedule}
+							openScheduledPostList={openScheduledPostList}
 							closeScheduler={() => { setShowScheduler(false); }}
 							handleClickOutside={() => { setShowScheduler(false); }}
 						/>

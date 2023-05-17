@@ -1,4 +1,8 @@
+import React from "react";
+import Login from "./components/login";
+import Register from "./components/register";
 import * as CONSTANTS from "./constants";
+import ScheduledPostList from "./components/form/scheduled-posts";
 
 const dayOfWeekOptions = [], hourOptions = [], minuteOptions = [], dayOfMonthOptions = [];
 for (let i = 0; i < 60; i++) {
@@ -86,4 +90,10 @@ export const getMonthOptions = () => {
 
 export const getWeekOptions = () => {
     return weekOptions;
+}
+
+export const modalConfig = {
+    register: <Register />,
+    login: <Login />,
+    scheduledPosts: <ScheduledPostList />,
 }

@@ -11,7 +11,7 @@ const date = new Date();
 const presentYear = date.getFullYear(), monthIndex = date.getMonth();
 const dayOfMonthOptions = Helpers.getDayOfMonthOptions(monthIndex, presentYear);
 
-const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confirmSchedule, clearSchedule, scheduleData }) => {
+const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confirmSchedule, clearSchedule, scheduleData, openScheduledPostList }) => {
     const containerRef = useRef(null), defaultDate = new Date();
 
     const hourOptions = Helpers.getHourOptions();
@@ -243,6 +243,7 @@ const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confir
             <div
                 id="scheduler-footer"
                 className="pt-2 pb-2 pl-3"
+                onClick={() => openScheduledPostList()}
                 onMouseOver={() => setFooterTextColor("white")}
                 onMouseLeave={() => setFooterTextColor("#1DA1F2")}
             >

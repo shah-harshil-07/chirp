@@ -1,9 +1,10 @@
 import "src/styles/utilities/custom-modal.css";
 
 import React from "react";
-import { closeModal } from "src/redux/actions/modal";
-import { useDispatch } from "react-redux";
+
 import Loader from "./loader";
+import { useDispatch } from "react-redux";
+import { closeModal } from "src/redux/actions/modal";
 
 const CustomModal = ({ bodyJSX, includeFooter, footerAction, footerText, footerDisabled, showLoader, displayOverflow }) => {
     const logo = require("src/assets/logo-1.png");
