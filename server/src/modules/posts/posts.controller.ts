@@ -1,8 +1,6 @@
 import { AuthGuard } from "@nestjs/passport";
 import { FilesInterceptor } from "@nestjs/platform-express";
-import { diskStorage } from "multer";
 import { SchedulerRegistry } from "@nestjs/schedule";
-import { StorageEngine } from "multer";
 import {
     Get,
     Put,
@@ -14,10 +12,7 @@ import {
     UseGuards,
     Controller,
     UploadedFiles,
-    ParseFilePipe,
     UseInterceptors,
-    FileTypeValidator,
-    MaxFileSizeValidator,
     InternalServerErrorException,
 } from "@nestjs/common";
 
@@ -75,7 +70,7 @@ export class PostController {
 
                 if (scheduledPost && diffMillis > 0) {
                     const timeoutFn = setTimeout(() => {
-                        this.postService.deleteScheduledPost(scheduledPost["_id"])
+                        this.postService.deleteScheduledPost(scheduledPost["_id"]);
                         this.postService.create(data, _id);
                     }, diffMillis);
 
