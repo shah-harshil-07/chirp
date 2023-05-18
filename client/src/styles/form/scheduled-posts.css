@@ -12,7 +12,7 @@
 .scheduled-post-container:hover {
     border-width: 2px;
     border-style: solid;
-    border-color: #DC3545;
+    border-color: rgba(220, 53, 69, 0.4);
 }
 
 .scheduled-post-delete-btn {

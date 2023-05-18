@@ -1,16 +1,18 @@
 import "src/styles/form/index.css";
 import "src/styles/form/scheduled-posts.css";
 
+import API from "src/api";
+import CIcon from "@coreui/icons-react";
+import * as Constants from "src/constants";
+import { cilCalendarCheck } from "@coreui/icons";
 import React, { useEffect, useState } from "react";
 import CustomModal from "../utilities/custom-modal";
-import CIcon from "@coreui/icons-react";
-import { cilCalendarCheck } from "@coreui/icons";
 import useToaster from "src/custom-hooks/toaster-message";
-import * as Constants from "src/constants";
-import API from "src/api";
+import { getMonthOptions, getWeekOptions } from "src/helpers";
 
 const ScheduledPostList = () => {
     const { showError } = useToaster();
+    const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
 
     const [showLoader, setShowLoader] = useState(false);
     const [displayOverflow, setDisplayOverflow] = useState(false);
@@ -80,42 +82,59 @@ const ScheduledPostList = () => {
             </div>
 
             {
-                posts.map((postObj, postIndex) => (
-                    <div
-                        title="Delete"
-                        key={postIndex}
-                        onClick={() => selectUnselectPost(postIndex)}
-                        className="scheduled-post-container mt-3 mb-3"
-                        style={{ backgroundColor: postObj.selected ? "#DC3545" : "aliceblue" }}
-                    >
-                        <div className="scheduled-post-box w-75">
-                            <div className="h-50 position-relative">
-                                <CIcon icon={cilCalendarCheck} size="sm" className="action-icon" />
-                                <span className="position-absolute" style={{ fontSize: "14px" }}>
-                                    &nbsp;&nbsp;Will send on Wed May 17, 2023 at 11:27 hours
-                                </span>
+                posts.map((postObj, postIndex) => {
+                    const { year, month, dayOfMonth, hours, minutes } = postObj.schedule;
+                    const date = new Date(year, month, dayOfMonth, hours, minutes, 0, 0);
+                    const displayedMonth = monthOptions[month].label, displayedDayOfWeek = weekOptions[date.getDay()];
+                    const images = postObj?.data?.images?.map(image => `var/www/html/Projects/chirp/server/storage/post-images/${image}`) ?? [];
+                    const text = postObj?.data?.text ?? '';
+
+                    return (
+                        <div
+                            title="Delete"
+                            key={postIndex}
+                            onClick={() => selectUnselectPost(postIndex)}
+                            className="scheduled-post-container mt-3 mb-3"
+                            style={{ backgroundColor: postObj.selected ? "rgba(220, 53, 69, 0.4)" : "aliceblue" }}
+                        >
+                            <div className="scheduled-post-box w-75">
+                                <div className="h-50 position-relative">
+                                    <CIcon icon={cilCalendarCheck} size="sm" className="action-icon" />
+                                    <span className="position-absolute" style={{ fontSize: "14px" }}>
+                                        &nbsp;&nbsp;
+                                        {
+                                            `Will send on ${displayedDayOfWeek}, ${displayedMonth} ${dayOfMonth}, ${year} at
+					                        ${hours > 9 ? hours : `0${hours}`}:${minutes > 9 ? minutes : `0${minutes}`} hours`
+                                        }
+                                    </span>
+                                </div>
+
+                                <div className="h-50 ml-4 row">
+                                    <div className="col-md-8">
+                                        {`${text?.slice(0, 28)}${text?.length > 31 ? "..." : ''}` ?? ''}
+                                    </div>
+
+                                    {
+                                        !postObj.selected && (
+                                            <div className="col-md-4">
+                                                <button
+                                                    className="scheduled-post-edit-btn"
+                                                    onClick={e => editScheduledPost(e, postIndex)}
+                                                >
+                                                    Edit
+                                                </button>
+                                            </div>
+                                        )
+                                    }
+                                </div>
                             </div>
 
-                            <div className="h-50 ml-4 row">
-                                <div className="col-md-8">Hello World</div>
-                                {
-                                    !postObj.selected && (
-                                        <div className="col-md-4">
-                                            <button
-                                                className="scheduled-post-edit-btn"
-                                                onClick={e => editScheduledPost(e, postIndex)}
-                                            >
-                                                Edit
-                                            </button>
-                                        </div>
-                                    )
-                                }
+                            <div className="w-25 p-2">
+                                <img src={images[0]} style={{ width: "100%", height: "100%" }} alt="uploaded" />
                             </div>
                         </div>
-
-                        <div className="w-25 p-2">Images</div>
-                    </div>
-                ))
+                    )
+                })
             }
         </>
     );
