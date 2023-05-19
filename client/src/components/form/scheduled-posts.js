@@ -18,6 +18,7 @@ const ScheduledPostList = () => {
     const [displayOverflow, setDisplayOverflow] = useState(false);
     const [posts, setPosts] = useState([]);
     const [selectedPosts, setSelectedPosts] = useState(0);
+    const [sampleImage, setSampleImage] = useState(null);
 
     useEffect(() => {
         getAllScheduledPosts();
@@ -29,6 +30,8 @@ const ScheduledPostList = () => {
             setShowLoader(true);
             const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
             const response = await API(Constants.GET, Constants.GET_SCHEDULED_POSTS, null, headerData);
+            const imageResponse = await API(Constants.GET, Constants.GET_SAMPLE_FILE, null, headerData);
+            setSampleImage(imageResponse.data);
             const responseData = response.data;
 
             let _posts = [];
@@ -130,7 +133,7 @@ const ScheduledPostList = () => {
                             </div>
 
                             <div className="w-25 p-2">
-                                <img src={images[0]} style={{ width: "100%", height: "100%" }} alt="uploaded" />
+                                <img src={sampleImage} style={{ width: "100%", height: "100%" }} alt="uploaded" />
                             </div>
                         </div>
                     )

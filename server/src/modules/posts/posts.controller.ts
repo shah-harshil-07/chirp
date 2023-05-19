@@ -2,6 +2,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { SchedulerRegistry } from "@nestjs/schedule";
 import {
+    Res,
     Get,
     Put,
     Req,
@@ -22,6 +23,9 @@ import { PostService } from "./posts.service";
 import { Post as UserPost } from "./post.schema";
 import { IScheduledPostIds, PostDTO } from "./post.dto";
 import { fileStorageConfigObj, parseFilePipeObj } from "./file.config";
+import { createReadStream } from "fs";
+import { join } from "path";
+import { Response } from "express";
 
 @Controller("posts")
 export class PostController {
@@ -146,5 +150,11 @@ export class PostController {
             console.log(error);
             throw new InternalServerErrorException();
         }
+    }
+
+    @Get("sample-file")
+    getSampleImage(@Res() res: Response) {
+        const file = createReadStream(join(process.cwd(), "storage/post-images/1684455089601.jpg"));
+        return file.pipe(res);
     }
 }

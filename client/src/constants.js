@@ -35,3 +35,4 @@ export const LOGIN_WITH_GOOGLE_CRED = "user/login-with-google-cred";
 
 export const CREATE_POST = "posts/create";
 export const GET_SCHEDULED_POSTS = "posts/scheduled/all";
+export const GET_SAMPLE_FILE = "posts/sample-file"
