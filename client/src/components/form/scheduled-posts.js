@@ -30,9 +30,11 @@ const ScheduledPostList = () => {
             setShowLoader(true);
             const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
             const response = await API(Constants.GET, Constants.GET_SCHEDULED_POSTS, null, headerData);
-            const imageResponse = await API(Constants.GET, Constants.GET_SAMPLE_FILE, null, headerData);
-            setSampleImage(imageResponse.data);
             const responseData = response.data;
+
+            API(Constants.GET, Constants.GET_SAMPLE_FILE, null, headerData).then(imageResponse => {
+                setSampleImage(`data:image/*;charset=utf-8;base64,${imageResponse.data}`);
+            });
 
             let _posts = [];
             if (responseData?.meta?.status && responseData?.data?.length) {

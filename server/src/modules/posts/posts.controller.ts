@@ -1,6 +1,8 @@
 import { AuthGuard } from "@nestjs/passport";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { SchedulerRegistry } from "@nestjs/schedule";
+import { createReadStream, existsSync } from "fs";
+import { join } from "path";
 import {
     Res,
     Get,
@@ -13,8 +15,10 @@ import {
     UseGuards,
     Controller,
     UploadedFiles,
+    StreamableFile,
     UseInterceptors,
     InternalServerErrorException,
+    UnprocessableEntityException,
 } from "@nestjs/common";
 
 import { ResponseInterceptor } from "src/interceptors/response";
@@ -23,9 +27,6 @@ import { PostService } from "./posts.service";
 import { Post as UserPost } from "./post.schema";
 import { IScheduledPostIds, PostDTO } from "./post.dto";
 import { fileStorageConfigObj, parseFilePipeObj } from "./file.config";
-import { createReadStream } from "fs";
-import { join } from "path";
-import { Response } from "express";
 
 @Controller("posts")
 export class PostController {
@@ -152,9 +153,14 @@ export class PostController {
         }
     }
 
-    @Get("sample-file")
-    getSampleImage(@Res() res: Response) {
-        const file = createReadStream(join(process.cwd(), "storage/post-images/1684455089601.jpg"));
-        return file.pipe(res);
+    @Get("scheduled/get-image/:filename")
+    getScheduledPostImage(@Param() { filename }: any): StreamableFile {
+        const path = join(process.cwd(), `storage/post-images/${filename}`);
+        if (existsSync(path)) {
+            const file = createReadStream(join(process.cwd(), `storage/post-images/${filename}`), "base64");
+            return new StreamableFile(file);
+        }
+
+        throw new UnprocessableEntityException();
     }
 }
