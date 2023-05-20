@@ -195,70 +195,73 @@ const Form = () => {
 				<hr />
 
 				<ImgHolder removeImage={index => spliceImage(index)} images={uploadedFiles} />
-				<CIcon
-					size="sm"
-					title="Image"
-					icon={cilImage}
-					className="action-icon"
-					style={{ opacity: showPollCreator ? "0.4" : '1' }}
-					onClick={() => { if (!showPollCreator) fileUploadRef.current.click(); }}
-				/>
-				<input
-					multiple
-					type="file"
-					accept="image/*"
-					className="d-none"
-					ref={fileUploadRef}
-					onChange={handleImageUpload}
-				/>
 
-				<CIcon
-					size="sm"
-					title="Emoji"
-					icon={cilSmile}
-					className="action-icon"
-					onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-				/>
-				{
-					showEmojiPicker && (
-						<EmojiContainer
-							handleEmojiSelect={handleEmojiSelect}
-							handleClickOutside={() => { setShowEmojiPicker(false); }}
-						/>
-					)
-				}
+				<div className={`${uploadedFileObjects.length > 0 ? "mt-3" : ''}`}>
+					<CIcon
+						size="sm"
+						title="Image"
+						icon={cilImage}
+						className="action-icon"
+						style={{ opacity: showPollCreator ? "0.4" : '1' }}
+						onClick={() => { if (!showPollCreator) fileUploadRef.current.click(); }}
+					/>
+					<input
+						multiple
+						type="file"
+						accept="image/*"
+						className="d-none"
+						ref={fileUploadRef}
+						onChange={handleImageUpload}
+					/>
 
-				<CIcon
-					size="sm"
-					title="Poll"
-					icon={cilList}
-					className="action-icon"
-					onClick={openPollCreator}
-					style={{ opacity: uploadedFileObjects.length ? "0.4" : '1' }}
-				/>
+					<CIcon
+						size="sm"
+						title="Emoji"
+						icon={cilSmile}
+						className="action-icon"
+						onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+					/>
+					{
+						showEmojiPicker && (
+							<EmojiContainer
+								handleEmojiSelect={handleEmojiSelect}
+								handleClickOutside={() => { setShowEmojiPicker(false); }}
+							/>
+						)
+					}
 
-				<CIcon
-					size="sm"
-					title="Schedule"
-					className="action-icon"
-					icon={cilCalendarCheck}
-					onClick={() => { setShowScheduler(!showScheduler); }}
-				/>
-				{
-					showScheduler && (
-						<Scheduler
-							scheduleData={schedulerData}
-							isPostScheduled={isPostScheduled}
-							clearSchedule={clearPostSchedule}
-							confirmSchedule={confirmPostSchedule}
-							openScheduledPostList={openScheduledPostList}
-							closeScheduler={() => { setShowScheduler(false); }}
-							handleClickOutside={() => { setShowScheduler(false); }}
-						/>
-					)
-				}
+					<CIcon
+						size="sm"
+						title="Poll"
+						icon={cilList}
+						className="action-icon"
+						onClick={openPollCreator}
+						style={{ opacity: uploadedFileObjects.length ? "0.4" : '1' }}
+					/>
 
-				<div id="chirp-button" style={{ opacity: isFormValid && text ? '1' : "0.4" }} onClick={createPost}>Post</div>
+					<CIcon
+						size="sm"
+						title="Schedule"
+						className="action-icon"
+						icon={cilCalendarCheck}
+						onClick={() => { setShowScheduler(!showScheduler); }}
+					/>
+					{
+						showScheduler && (
+							<Scheduler
+								scheduleData={schedulerData}
+								isPostScheduled={isPostScheduled}
+								clearSchedule={clearPostSchedule}
+								confirmSchedule={confirmPostSchedule}
+								openScheduledPostList={openScheduledPostList}
+								closeScheduler={() => { setShowScheduler(false); }}
+								handleClickOutside={() => { setShowScheduler(false); }}
+							/>
+						)
+					}
+
+					<div id="chirp-button" style={{ opacity: isFormValid && text ? '1' : "0.4" }} onClick={createPost}>Post</div>
+				</div>
 			</div>
 		</form>
 	);

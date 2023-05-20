@@ -156,8 +156,9 @@ export class PostController {
     @Get("scheduled/get-image/:filename")
     getScheduledPostImage(@Param() { filename }: any): StreamableFile {
         const path = join(process.cwd(), `storage/post-images/${filename}`);
+
         if (existsSync(path)) {
-            const file = createReadStream(join(process.cwd(), `storage/post-images/${filename}`), "base64");
+            const file = createReadStream(path, "base64");
             return new StreamableFile(file);
         }
 
