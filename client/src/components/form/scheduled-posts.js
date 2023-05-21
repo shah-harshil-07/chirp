@@ -15,6 +15,7 @@ import { getMonthOptions, getWeekOptions } from "src/helpers";
 const ScheduledPostList = () => {
     const { showError } = useToaster();
     const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
+    const placeHolderImgUrl = "https://abs.twimg.com/responsive-web/client-web/alarm-clock-400x200.v1.da96e5d9.png";
 
     const [posts, setPosts] = useState([]);
     const [showLoader, setShowLoader] = useState(false);
@@ -40,11 +41,15 @@ const ScheduledPostList = () => {
                 const _scheduledPostImages = scheduledPostImages;
                 if (!_scheduledPostImages[postIndex]) _scheduledPostImages[postIndex] = [];
 
-                promises.push(new Promise(res => {
+                promises.push(new Promise((res, rej) => {
                     getBasePromise(image).then(imageResponse => {
-                        _scheduledPostImages[postIndex][imageIndex] = `data:image/*;charset=utf-8;base64,${imageResponse.data}`
-                        setSchduledPostImages([ ..._scheduledPostImages ]);
-                        res();
+                        if (imageResponse?.data) {
+                            _scheduledPostImages[postIndex][imageIndex] = `data:image/*;charset=utf-8;base64,${imageResponse.data}`
+                            setSchduledPostImages([..._scheduledPostImages]);
+                            res();
+                        } else {
+                            rej();
+                        }
                     });
                 }));
             });
@@ -105,18 +110,22 @@ const ScheduledPostList = () => {
             <div className="row">
                 <div className="col-md-8"><h3><b>Scheduled Posts</b></h3></div>
 
-                <div className="col-md-4">
-                    <button
-                        className="btn btn-danger scheduled-post-delete-btn"
-                        style={{ opacity: selectedPosts > 0 ? '1' : "0.4" }}
-                    >
-                        {`Delete post${selectedPosts > 1 ? 's' : ''}`}
-                    </button>
-                </div>
+                {
+                    posts.length > 0 && (
+                        <div className="col-md-4">
+                            <button
+                                className="btn btn-danger scheduled-post-delete-btn"
+                                style={{ opacity: selectedPosts > 0 ? '1' : "0.4" }}
+                            >
+                                {`Delete ${selectedPosts > 0 ? selectedPosts : ''} post${selectedPosts > 1 ? 's' : ''}`}
+                            </button>
+                        </div>
+                    )
+                }
             </div>
 
             {
-                posts.map((postObj, postIndex) => {
+                posts.length > 0 ? posts.map((postObj, postIndex) => {
                     const { year, month, dayOfMonth, hours, minutes } = postObj.schedule;
                     const date = new Date(year, month, dayOfMonth, hours, minutes, 0, 0);
                     const displayedMonth = monthOptions[month].label, displayedDayOfWeek = weekOptions[date.getDay()];
@@ -142,23 +151,14 @@ const ScheduledPostList = () => {
                                     </span>
                                 </div>
 
-                                <div className="h-50 ml-4 row">
-                                    <div className="col-md-8">
-                                        {`${text?.slice(0, 28)}${text?.length > 31 ? "..." : ''}` ?? ''}
-                                    </div>
+                                <div className="h-50 ml-4">
+                                    {`${text?.slice(0, 28)}${text?.length > 31 ? "..." : ''}` ?? ''}
 
-                                    {
-                                        !postObj.selected && (
-                                            <div className="col-md-4">
-                                                <button
-                                                    className="scheduled-post-edit-btn"
-                                                    onClick={e => editScheduledPost(e, postIndex)}
-                                                >
-                                                    Edit
-                                                </button>
-                                            </div>
-                                        )
-                                    }
+                                    <div>
+                                        <button className="scheduled-post-edit-btn" onClick={e => editScheduledPost(e, postIndex)}>
+                                            Edit
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -167,7 +167,15 @@ const ScheduledPostList = () => {
                             </div>
                         </div>
                     )
-                })
+                }) : (
+                    <div>
+                        <img src={placeHolderImgUrl} alt="placeholder" className="w-100 h-70" />
+
+                        <div id="scheduled-post-placeholder-text">
+                            Not ready to send a Tweet just yet? Save it to your drafts or schedule it for later.
+                        </div>
+                    </div>
+                )
             }
         </>
     );

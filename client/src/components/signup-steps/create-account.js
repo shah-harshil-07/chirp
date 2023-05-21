@@ -43,7 +43,7 @@ const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
                 <p className="text-danger create-account-text">{errors["name"]}</p>
 
                 <LabelledInput
-                    extraClasses="create-account-input"
+                    extraClasses="mt-3"
                     value={data["username"]}
                     handleChange={value => handleInputChange("username", value)}
                     header={"Username"}
@@ -51,7 +51,7 @@ const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
                 <p className="text-danger create-account-text">{errors["username"]}</p>
 
                 <LabelledInput
-                    extraClasses="create-account-input"
+                    extraClasses="mt-3"
                     value={data["email"]}
                     handleChange={value => handleInputChange("email", value)}
                     header={"Email"}
@@ -59,7 +59,7 @@ const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
                 <p className="text-danger create-account-text">{errors["email"]}</p>
 
                 <LabelledInput
-                    extraClasses="create-account-input"
+                    extraClasses="mt-3"
                     value={data["password"]}
                     handleChange={value => handleInputChange("password", value)}
                     header={"Password"}
@@ -68,7 +68,7 @@ const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
                 <p className="text-danger create-account-text">{errors["password"]}</p>
 
                 <LabelledInput
-                    extraClasses="create-account-input"
+                    extraClasses="mt-3"
                     value={data["confirmPassword"]}
                     handleChange={value => handleInputChange("confirmPassword", value)}
                     header={"Confirm Password"}

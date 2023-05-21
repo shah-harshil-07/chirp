@@ -1,15 +1,15 @@
 import "src/styles/utilities/custom-modal.css";
 
 import React from "react";
+import { useDispatch } from "react-redux";
 
 import Loader from "./loader";
-import { useDispatch } from "react-redux";
 import { closeModal } from "src/redux/actions/modal";
 
 const CustomModal = ({ bodyJSX, includeFooter, footerAction, footerText, footerDisabled, showLoader, displayOverflow }) => {
     const logo = require("src/assets/logo-1.png");
     const dispatch = useDispatch();
-    const overflowStyles = { overflow: "scroll", overflowX: "hidden", height: "325px" };
+    const overflowStyles = { overflow: "scroll", overflowX: "hidden", height: includeFooter ? "325px" : "80%" };
 
     const closeCustomDialog = () => {
         dispatch(closeModal());

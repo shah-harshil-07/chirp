@@ -22,34 +22,34 @@ const ImgHolder = ({ images, removeImage, showActionButtons = true }) => {
             {
                 images.length === 1 ? (
                     <div className="w-100 h-100 position-relative">
-                        {showActionButtons && removeImageIcon()}
-                        <img src={images[0]} alt="uploaded" className="object-fit-cover w-100 rounded-10" />
-                        {showActionButtons && editButton()}
+                        {showActionButtons && removeImageIcon(0, "10px")}
+                        <img src={images[0]} alt="uploaded" className="object-fit-cover w-100 h-100 rounded-10" />
+                        {showActionButtons && editButton("6px", "10px")}
                     </div>
                 ) : images.length === 2 ? (
                     <>
                         <div className="w-50 pr-1 position-relative">
-                            {showActionButtons && removeImageIcon(0)}
+                            {showActionButtons && removeImageIcon(0, "10px")}
                             <img src={images[0]} alt="uploaded" className="object-fit-cover w-100 h-100 rounded-10" />
-                            {showActionButtons && editButton()}
+                            {showActionButtons && editButton("6px", "10px")}
                         </div>
 
                         <div className="w-50 pl-1 position-relative">
-                            {showActionButtons && removeImageIcon(1)}
+                            {showActionButtons && removeImageIcon(1, "10px")}
                             <img src={images[1]} alt="uploaded" className="object-fit-cover w-100 h-100 rounded-10" />
-                            {showActionButtons && editButton()}
+                            {showActionButtons && editButton("6px", "10px")}
                         </div>
                     </>
                 ) : images.length === 3 ? (
                     <>
                         <div className="w-50 pr-1 position-relative">
-                            {showActionButtons && removeImageIcon(0)}
+                            {showActionButtons && removeImageIcon(0, "10px")}
                             <img
                                 alt="uploaded"
                                 src={images[0]}
                                 className="object-fit-cover w-100 h-100 rounded-10 position-relative"
                             />
-                            {showActionButtons && editButton("10px", "23px")}
+                            {showActionButtons && editButton("10px", "10px")}
                         </div>
 
                         <div className="w-50 pl-1 d-flex flex-column">
@@ -70,29 +70,29 @@ const ImgHolder = ({ images, removeImage, showActionButtons = true }) => {
                     <div className="d-flex flex-column">
                         <div className="d-flex pb-1 h-50">
                             <div className="w-50 pr-1 position-relative">
-                                {showActionButtons && removeImageIcon(0)}
+                                {showActionButtons && removeImageIcon(0, "10px")}
                                 <img src={images[0]} alt="uploaded" className="object-fit-cover w-100 h-100 rounded-10" />
-                                {showActionButtons && editButton()}
+                                {showActionButtons && editButton("6px", "10px")}
                             </div>
 
                             <div className="w-50 pl-1 position-relative">
-                                {showActionButtons && removeImageIcon(1)}
+                                {showActionButtons && removeImageIcon(1, "10px")}
                                 <img src={images[1]} alt="uploaded" className="object-fit-cover w-100 h-100 rounded-10" />
-                                {showActionButtons && editButton()}
+                                {showActionButtons && editButton("6px", "10px")}
                             </div>
                         </div>
 
                         <div className="d-flex pt-1 h-50">
                             <div className="w-50 pr-1 position-relative">
-                                {showActionButtons && removeImageIcon(2)}
+                                {showActionButtons && removeImageIcon(2, "10px")}
                                 <img src={images[2]} alt="uploaded" className="object-fit-cover w-100 h-100 rounded-10" />
-                                {showActionButtons && editButton()}
+                                {showActionButtons && editButton("6px", "10px")}
                             </div>
 
                             <div className="w-50 pl-1 position-relative">
-                                {showActionButtons && removeImageIcon(3)}
+                                {showActionButtons && removeImageIcon(3, "10px")}
                                 <img src={images[3]} alt="uploaded" className="object-fit-cover w-100 h-100 rounded-10" />
-                                {showActionButtons && editButton()}
+                                {showActionButtons && editButton("6px", "10px")}
                             </div>
                         </div>
                     </div>
