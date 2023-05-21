@@ -1,19 +1,22 @@
 import "src/styles/form/index.css";
 import "src/styles/form/scheduled-posts.css";
 
+import React, { useEffect, useState } from "react";
 import { cilCalendarCheck } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
+import { useDispatch } from "react-redux";
 
 import API from "src/api";
 import ImgHolder from "./img-holder";
 import * as Constants from "src/constants";
-import React, { useEffect, useState } from "react";
 import CustomModal from "../utilities/custom-modal";
 import useToaster from "src/custom-hooks/toaster-message";
 import { getMonthOptions, getWeekOptions } from "src/helpers";
+import { openModalWithProps } from "src/redux/actions/modal";
 
 const ScheduledPostList = () => {
     const { showError } = useToaster();
+    const dispatch = useDispatch();
     const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
     const placeHolderImgUrl = "https://abs.twimg.com/responsive-web/client-web/alarm-clock-400x200.v1.da96e5d9.png";
 
@@ -102,7 +105,14 @@ const ScheduledPostList = () => {
     const editScheduledPost = (e, postIndex) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log(postIndex);
+
+        const { data } = posts[postIndex];
+
+        for (let i = 0; i < data?.images?.length; i++) {
+            data["images"][i] = scheduledPostImages[postIndex][i];
+        }
+
+		dispatch(openModalWithProps("scheduledPostEditor", data));
     }
 
     const bodyJSX = (
@@ -153,13 +163,17 @@ const ScheduledPostList = () => {
 
                                 <div className="h-50 ml-4">
                                     {`${text?.slice(0, 28)}${text?.length > 31 ? "..." : ''}` ?? ''}
-
-                                    <div>
-                                        <button className="scheduled-post-edit-btn" onClick={e => editScheduledPost(e, postIndex)}>
-                                            Edit
-                                        </button>
-                                    </div>
                                 </div>
+
+                                {
+                                    !postObj.selected && (
+                                        <div className="ml-4">
+                                            <button className="scheduled-post-edit-btn" onClick={e => editScheduledPost(e, postIndex)}>
+                                                Edit
+                                            </button>
+                                        </div>
+                                    )
+                                }
                             </div>
 
                             <div className="w-25 mh-100 p-2">

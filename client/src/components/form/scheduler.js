@@ -243,7 +243,7 @@ const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confir
             <div
                 id="scheduler-footer"
                 className="pt-2 pb-2 pl-3"
-                onClick={() => openScheduledPostList()}
+                onClick={openScheduledPostList}
                 onMouseOver={() => setFooterTextColor("white")}
                 onMouseLeave={() => setFooterTextColor("#1DA1F2")}
             >

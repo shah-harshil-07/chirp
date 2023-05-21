@@ -18,7 +18,8 @@ const App = () => {
 	const [currentId, setCurrentId] = useState(0);
 
 	const getDialog = () => {
-		return dialogState.open ? (modalConfig[dialogState.type] ?? <></>) : <></>;
+		const Dialog = modalConfig?.[dialogState.type] ?? <></>, props = dialogState.props ?? {};
+		return dialogState.open ? <Dialog {...props} /> : <></>;
 	}
 
 	return (
