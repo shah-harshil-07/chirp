@@ -157,7 +157,7 @@ const Login = () => {
     }
 
     return (
-        <CustomModal bodyJSX={loginBodyJSX} includeFooter={false} />
+        <CustomModal bodyJSX={loginBodyJSX} includeFooter={false} includeHeader={true} />
     )
 }
 

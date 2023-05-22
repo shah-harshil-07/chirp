@@ -6,7 +6,18 @@ import { useDispatch } from "react-redux";
 import Loader from "./loader";
 import { closeModal } from "src/redux/actions/modal";
 
-const CustomModal = ({ bodyJSX, includeFooter, footerAction, footerText, footerDisabled, showLoader, displayOverflow }) => {
+const CustomModal = ({
+    bodyJSX,
+    footerText,
+    showLoader,
+    bodyClasses,
+    footerAction,
+    includeHeader,
+    includeFooter,
+    footerDisabled,
+    displayOverflow,
+    modalContentClasses,
+}) => {
     const logo = require("src/assets/logo-1.png");
     const dispatch = useDispatch();
     const overflowStyles = { overflow: "scroll", overflowX: "hidden", height: includeFooter ? "325px" : "80%" };
@@ -17,29 +28,41 @@ const CustomModal = ({ bodyJSX, includeFooter, footerAction, footerText, footerD
 
     return (
         <div className="custom-modal">
-            <div className="custom-modal-content">
+            <div className={`custom-modal-content ${modalContentClasses}`}>
                 <header className="custom-header">
                     <div className="row custom-header-box">
-                        <div className="col-sm-11">
-                            <div style={{ marginLeft: "51%" }}>
-                                <img alt="logo" width="40px" height="40px" src={String(logo)} />
-                            </div>
-                        </div>
+                        {
+                            includeHeader ? (
+                                <>
+                                    <div className="col-sm-11">
+                                        <div style={{ marginLeft: "51%" }}>
+                                            <img alt="logo" width="40px" height="40px" src={String(logo)} />
+                                        </div>
+                                    </div>
 
-                        <div className="col-sm-1 custom-close-div" onClick={closeCustomDialog}>
-                            <span className="custom-close-btn">&times;</span>
-                        </div>
+                                    <div className="col-sm-1 custom-close-div" onClick={closeCustomDialog}>
+                                        <span className="custom-close-btn">&times;</span>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="col-sm-12">
+                                    <div className="col-sm-1 custom-close-div" style={{ float: "right" }} onClick={closeCustomDialog}>
+                                        <span className="custom-close-btn">&times;</span>
+                                    </div>
+                                </div>
+                            )
+                        }
                     </div>
                 </header>
 
-                <div className="custom-container-body" style={ displayOverflow ? overflowStyles : {} }>
-                    { showLoader ? (<div id="custom-modal-loader-container"><Loader /></div>) : bodyJSX }
+                <div className={`custom-container-body ${bodyClasses}`} style={displayOverflow ? overflowStyles : {}}>
+                    {showLoader ? (<div id="custom-modal-loader-container"><Loader /></div>) : bodyJSX}
                 </div>
 
                 {
                     includeFooter && (
                         <div
-                            onClick={() => {if (!footerDisabled) footerAction();}}
+                            onClick={() => { if (!footerDisabled) footerAction(); }}
                             id="custom-modal-footer-box"
                             style={{ opacity: footerDisabled ? 0.5 : 1 }}
                         >

@@ -195,7 +195,7 @@ const ScheduledPostList = () => {
     );
 
     return (
-        <CustomModal bodyJSX={bodyJSX} showLoader={showLoader} displayOverflow={displayOverflow} />
+        <CustomModal bodyJSX={bodyJSX} includeHeader={true} showLoader={showLoader} displayOverflow={displayOverflow} />
     );
 }
 

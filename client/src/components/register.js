@@ -398,6 +398,7 @@ const Register = () => {
     return (
         <CustomModal
             bodyJSX={bodyJSX}
+            includeHeader={true}
             showLoader={showLoader}
             footerText={footerText}
             includeFooter={includeFooter}

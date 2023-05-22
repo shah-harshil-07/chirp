@@ -8,12 +8,14 @@ const ScheduledPostEditor = props => {
         console.log("props obtained => ", props);
     }, [props]);
 
-    const bodyJSX = (
-        <Form />
-    )
-
     return (
-        <CustomModal bodyJSX={bodyJSX} />
+        <CustomModal
+            bodyJSX={<Form />}
+            includeHeader={false}
+            bodyClasses={"mt-0 mr-0 ml-0"}
+            modalContentClasses={"h-100"}
+            displayOverflow={props?.images?.length > 0}
+        />
     )
 }
 
