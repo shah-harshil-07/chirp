@@ -22,3 +22,11 @@
     cursor: pointer;
     position: absolute;
 }
+
+.max-height-400 {
+    max-height: 400px;
+}
+
+.max-height-200 {
+    max-height: 200px;
+}
