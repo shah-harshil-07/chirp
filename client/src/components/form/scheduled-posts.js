@@ -47,7 +47,8 @@ const ScheduledPostList = () => {
                 promises.push(new Promise((res, rej) => {
                     getBasePromise(image).then(imageResponse => {
                         if (imageResponse?.data) {
-                            _scheduledPostImages[postIndex][imageIndex] = `data:image/*;charset=utf-8;base64,${imageResponse.data}`
+                            // _scheduledPostImages[postIndex][imageIndex] = `data:image/*;charset=utf-8;base64,${imageResponse.data}`
+                            _scheduledPostImages[postIndex][imageIndex] = imageResponse.data;
                             setSchduledPostImages([..._scheduledPostImages]);
                             res();
                         } else {

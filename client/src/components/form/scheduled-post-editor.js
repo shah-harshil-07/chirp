@@ -2,23 +2,38 @@ import "src/styles/form/scheduled-post-editor.css";
 
 import React, { useEffect } from "react";
 
-import CustomModal from "../utilities/custom-modal";
 import Form from "./index";
+import CustomModal from "../utilities/custom-modal";
 
 const ScheduledPostEditor = props => {
-    useEffect(async () => {
-        console.log("props obtained => ", props);
+    useEffect(() => {
         if (props?.images?.length) {
-            const image = props.images[0];
-            const blobImage = new Uint8ClampedArray(image);
-            const blob = new Blob([blobImage]);
+            const b64Data = props.images[0];
+            var contentType = "image/*", sliceSize = 512;
+
+            var byteCharacters = window.atob(b64Data);
+            var byteArrays = [];
+
+            for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                var slice = byteCharacters.slice(offset, offset + sliceSize);
+
+                var byteNumbers = new Array(slice.length);
+                for (var i = 0; i < slice.length; i++) {
+                    byteNumbers[i] = slice.charCodeAt(i);
+                }
+
+                var byteArray = new Uint8Array(byteNumbers);
+
+                byteArrays.push(byteArray);
+            }
+
+            var blob = new Blob(byteArrays, { type: contentType });
             const file = new File([blob], "sample-img.jpeg");
             const reader = new FileReader();
-            reader.readAsDataURL(file);
             reader.onload = e => {
                 console.log(e.target.result);
-            };
-            console.log(file);
+            }
+            reader.readAsDataURL(file);
         }
     }, [props]);
 

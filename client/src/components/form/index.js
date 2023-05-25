@@ -5,15 +5,15 @@ import { useDispatch } from "react-redux";
 import React, { useState, useRef } from "react";
 import { cilImage, cilSmile, cilList, cilCalendarCheck } from "@coreui/icons";
 
-import ImgHolder from "./img-holder";
-import useToaster from "src/custom-hooks/toaster-message";
-import PollCreator from "./poll-creator";
-import EmojiContainer from "./emoji-container";
-import Scheduler from "./scheduler";
 import API from "src/api";
+import Scheduler from "./scheduler";
+import ImgHolder from "./img-holder";
+import PollCreator from "./poll-creator";
 import * as Constants from "src/constants";
-import { getMonthOptions, getWeekOptions } from "src/helpers";
+import EmojiContainer from "./emoji-container";
 import { openModal } from "src/redux/actions/modal";
+import useToaster from "src/custom-hooks/toaster-message";
+import { getMonthOptions, getWeekOptions } from "src/helpers";
 
 const Form = () => {
 	const dispatch = useDispatch();
@@ -72,7 +72,7 @@ const Form = () => {
 		let _uploadedFiles = uploadedFiles, _uploadedFileObjects = uploadedFileObjects;
 
 		_uploadedFiles.splice(index, 1);
-		_uploadedFileObjects.splice(index, 1);
+		if (_uploadedFileObjects[index]) _uploadedFileObjects.splice(index, 1);
 
 		setUploadedFiles([..._uploadedFiles]);
 		setUploadedFileObjects([..._uploadedFileObjects]);
@@ -94,7 +94,7 @@ const Form = () => {
 	}
 
 	const openPollCreator = () => {
-		if (!uploadedFileObjects.length) {
+		if (!uploadedFiles.length) {
 			setShowPollCreator(true);
 			setIsFormValid(false);
 		}
@@ -196,7 +196,7 @@ const Form = () => {
 
 				<ImgHolder removeImage={index => spliceImage(index)} images={uploadedFiles} />
 
-				<div className={`${uploadedFileObjects.length > 0 ? "mt-3" : ''}`}>
+				<div className={`${uploadedFiles.length > 0 ? "mt-3" : ''}`}>
 					<CIcon
 						size="sm"
 						title="Image"
@@ -236,7 +236,7 @@ const Form = () => {
 						icon={cilList}
 						className="action-icon"
 						onClick={openPollCreator}
-						style={{ opacity: uploadedFileObjects.length ? "0.4" : '1' }}
+						style={{ opacity: uploadedFiles.length ? "0.4" : '1' }}
 					/>
 
 					<CIcon
