@@ -4,7 +4,6 @@ import { SchedulerRegistry } from "@nestjs/schedule";
 import { createReadStream, existsSync } from "fs";
 import { join } from "path";
 import {
-    Res,
     Get,
     Put,
     Req,

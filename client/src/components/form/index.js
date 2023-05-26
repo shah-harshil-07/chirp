@@ -2,7 +2,7 @@ import "src/styles/form/index.css";
 
 import CIcon from "@coreui/icons-react";
 import { useDispatch } from "react-redux";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { cilImage, cilSmile, cilList, cilCalendarCheck } from "@coreui/icons";
 
 import API from "src/api";
@@ -15,7 +15,7 @@ import { openModal } from "src/redux/actions/modal";
 import useToaster from "src/custom-hooks/toaster-message";
 import { getMonthOptions, getWeekOptions } from "src/helpers";
 
-const Form = () => {
+const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollData }) => {
 	const dispatch = useDispatch();
 	const fileUploadRef = useRef(null), { showError, showSuccess } = useToaster();
 	const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
@@ -33,6 +33,16 @@ const Form = () => {
 	const [isPostScheduled, setIsPostScheduled] = useState(false);
 	const [schedulerData, setSchedulerData] = useState(null);
 	const [isFormValid, setIsFormValid] = useState(true);
+
+	useEffect(() => {
+		if (editText) setText(editText);
+
+		if (editUploadedFiles?.length) setUploadedFiles([ ...editUploadedFiles ]);
+
+		if (editUploadedFileObjects?.length) setUploadedFileObjects([ ...editUploadedFiles ]);
+
+		if (editPollData) setPollData(editPollData);
+	}, [editText, editUploadedFiles, editUploadedFileObjects, editPollData]);
 
 	const handleSubmit = async e => {
 		e.preventDefault();

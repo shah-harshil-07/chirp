@@ -1,45 +1,40 @@
 import "src/styles/form/scheduled-post-editor.css";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import Form from "./index";
 import CustomModal from "../utilities/custom-modal";
 
 const ScheduledPostEditor = props => {
+    const [editText, setEditText] = useState('');
+    const [editUploadedFileObjects, setEditUploadedFileObjects] = useState([]);
+    const [editUploadedFiles, setEditUploadedFiles] = useState([]);
+    const [editPollData, setEditPollData] = useState(null);
+
     useEffect(() => {
-        if (props?.images?.length) {
-            const b64Data = props.images[0];
-            var contentType = "image/*", sliceSize = 512;
+        const { images, poll, text } = props;
 
-            var byteCharacters = window.atob(b64Data);
-            var byteArrays = [];
+        const imageObjects = images.map(imageObj => imageObj.image);
+        const fileObjects = images.map(imageObj => imageObj.file);
 
-            for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-                var slice = byteCharacters.slice(offset, offset + sliceSize);
-
-                var byteNumbers = new Array(slice.length);
-                for (var i = 0; i < slice.length; i++) {
-                    byteNumbers[i] = slice.charCodeAt(i);
-                }
-
-                var byteArray = new Uint8Array(byteNumbers);
-
-                byteArrays.push(byteArray);
-            }
-
-            var blob = new Blob(byteArrays, { type: contentType });
-            const file = new File([blob], "sample-img.jpeg");
-            const reader = new FileReader();
-            reader.onload = e => {
-                console.log(e.target.result);
-            }
-            reader.readAsDataURL(file);
-        }
+        setEditText(text);
+        setEditPollData({ ...poll });
+        setEditUploadedFiles([ ...imageObjects ]);
+        setEditUploadedFileObjects([ ...fileObjects ]);
     }, [props]);
+
+    const bodyJSX = (
+        <Form
+            editText={editText}
+            editPollData={editPollData}
+            editUploadedFiles={editUploadedFiles}
+            editUploadedFileObjects={editUploadedFileObjects}
+        />
+    );
 
     return (
         <CustomModal
-            bodyJSX={<Form />}
+            bodyJSX={bodyJSX}
             includeHeader={false}
             bodyClasses={"mt-0 mr-0 ml-0"}
             modalContentClasses={"scheduled-post-content-class"}

@@ -25,6 +25,7 @@ const ScheduledPostList = () => {
     const [selectedPosts, setSelectedPosts] = useState(0);
     const [displayOverflow, setDisplayOverflow] = useState(false);
     const [scheduledPostImages, setSchduledPostImages] = useState([]);
+    const [scheduledPostFileObjects, setScheduledPostFileObjects] = useState([]);
 
     useEffect(() => {
         getAllScheduledPosts();
@@ -47,8 +48,9 @@ const ScheduledPostList = () => {
                 promises.push(new Promise((res, rej) => {
                     getBasePromise(image).then(imageResponse => {
                         if (imageResponse?.data) {
-                            // _scheduledPostImages[postIndex][imageIndex] = `data:image/*;charset=utf-8;base64,${imageResponse.data}`
-                            _scheduledPostImages[postIndex][imageIndex] = imageResponse.data;
+                            const base64ImgData = imageResponse.data;
+                            _scheduledPostImages[postIndex][imageIndex] = `data:image/*;charset=utf-8;base64,${base64ImgData}`
+                            updateScheduledPostFileObjects(base64ImgData, postIndex, imageIndex, image);
                             setSchduledPostImages([..._scheduledPostImages]);
                             res();
                         } else {
@@ -60,6 +62,24 @@ const ScheduledPostList = () => {
         });
 
         Promise.allSettled(promises);
+    }
+
+    const updateScheduledPostFileObjects = (base64ImgData, postIndex, imageIndex, fileName) => {
+        let contentType = "image/*", sliceSize = 512, _scheduledPostFileObjects = scheduledPostFileObjects;
+        let byteChars = window.atob(base64ImgData), byteArrays = [];
+
+        if (!_scheduledPostFileObjects[postIndex]) _scheduledPostFileObjects[postIndex] = [];
+
+        for (let i = 0; i < byteChars.length; i += sliceSize) {
+            let slice = byteChars.slice(i, i + sliceSize), byteNumbers = Array(slice.length);
+            for (let j = 0; j < slice.length; j++) byteNumbers[j] = slice.charCodeAt(j);
+            let byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+        }
+
+        let blob = new Blob(byteArrays, { type: contentType });
+        _scheduledPostFileObjects[postIndex][imageIndex] = new File([blob], fileName);
+        setScheduledPostFileObjects([ ..._scheduledPostFileObjects ]);
     }
 
     const getAllScheduledPosts = async () => {
@@ -110,7 +130,10 @@ const ScheduledPostList = () => {
         const { data } = posts[postIndex];
 
         for (let i = 0; i < data?.images?.length; i++) {
-            data["images"][i] = scheduledPostImages[postIndex][i];
+            data["images"][i] = {
+                image: scheduledPostImages[postIndex][i],
+                file: scheduledPostFileObjects[postIndex][i],
+            };
         }
 
 		dispatch(openModalWithProps("scheduledPostEditor", data));
