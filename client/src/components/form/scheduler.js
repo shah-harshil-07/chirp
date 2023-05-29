@@ -1,8 +1,8 @@
 import "src/styles/form/scheduler.css";
 
-import React, { useRef, useEffect, useState } from "react";
-import { cilCalendar } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
+import { cilCalendar } from "@coreui/icons";
+import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
 
 import CustomSelect from "../utilities/custom-select";
 import * as Helpers from "src/helpers";
@@ -20,7 +20,7 @@ const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confir
     const weekOptions = Helpers.getWeekOptions();
     const yearOptions = [
         { value: presentYear, label: presentYear },
-        { value: presentYear + 1, label: presentYear + 1}
+        { value: presentYear + 1, label: presentYear + 1 }
     ];
 
     defaultDate.setDate(defaultDate.getDate() + 5);
@@ -34,6 +34,14 @@ const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confir
     const [hours, setHours] = useState(defaultDate.getHours());
     const [minutes, setMinutes] = useState(defaultDate.getMinutes());
     const [isDateValid, setIsDateValid] = useState(true);
+
+    useLayoutEffect(() => {
+        const containerRect = containerRef?.current?.getBoundingClientRect() ?? null;
+        if (containerRect) {
+            const isContainerInViewport = checkContainerInViewport(containerRect);
+            if (!isContainerInViewport) containerRef.current.style.top = "63px";
+        }
+    }, []);
 
     useEffect(() => {
         const outsideClickFn = e => {
@@ -123,6 +131,15 @@ const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confir
         e.preventDefault();
         e.stopPropagation();
         if (isDateValid) confirmSchedule({ year, month, dayOfMonth, hours, minutes });
+    }
+
+    const checkContainerInViewport = rectObj => {
+        return (
+            rectObj.top >= 0 &&
+            rectObj.left >= 0 &&
+            rectObj.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rectObj.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
     }
 
     return (

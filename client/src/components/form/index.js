@@ -15,7 +15,7 @@ import { openModal } from "src/redux/actions/modal";
 import useToaster from "src/custom-hooks/toaster-message";
 import { getMonthOptions, getWeekOptions } from "src/helpers";
 
-const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollData }) => {
+const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollData, editSchedule }) => {
 	const dispatch = useDispatch();
 	const fileUploadRef = useRef(null), { showError, showSuccess } = useToaster();
 	const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
@@ -42,7 +42,12 @@ const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollDa
 		if (editUploadedFileObjects?.length) setUploadedFileObjects([ ...editUploadedFiles ]);
 
 		if (editPollData) setPollData(editPollData);
-	}, [editText, editUploadedFiles, editUploadedFileObjects, editPollData]);
+
+		if (editSchedule) {
+			setIsPostScheduled(true);
+			setSchedulerData(editSchedule);
+		}
+	}, [editText, editUploadedFiles, editUploadedFileObjects, editPollData, editSchedule]);
 
 	const handleSubmit = async e => {
 		e.preventDefault();

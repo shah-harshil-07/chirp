@@ -1,10 +1,10 @@
 import "src/styles/form/index.css";
 import "src/styles/form/scheduled-posts.css";
 
-import React, { useEffect, useState } from "react";
-import { cilCalendarCheck } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
 import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { cilCalendarCheck, cilList } from "@coreui/icons";
 
 import API from "src/api";
 import ImgHolder from "./img-holder";
@@ -124,10 +124,9 @@ const ScheduledPostList = () => {
     }
 
     const editScheduledPost = (e, postIndex) => {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault(); e.stopPropagation();
 
-        const { data } = posts[postIndex];
+        const { data, schedule } = posts[postIndex];
 
         for (let i = 0; i < data?.images?.length; i++) {
             data["images"][i] = {
@@ -136,7 +135,7 @@ const ScheduledPostList = () => {
             };
         }
 
-		dispatch(openModalWithProps("scheduledPostEditor", data));
+		dispatch(openModalWithProps("scheduledPostEditor", { data, schedule }));
     }
 
     const bodyJSX = (
@@ -163,7 +162,7 @@ const ScheduledPostList = () => {
                     const { year, month, dayOfMonth, hours, minutes } = postObj.schedule;
                     const date = new Date(year, month, dayOfMonth, hours, minutes, 0, 0);
                     const displayedMonth = monthOptions[month].label, displayedDayOfWeek = weekOptions[date.getDay()];
-                    const text = postObj?.data?.text ?? '', images = scheduledPostImages[postIndex];
+                    const text = postObj?.data?.text ?? '', images = scheduledPostImages[postIndex], poll = postObj?.data?.poll;
 
                     return (
                         <div
@@ -201,7 +200,15 @@ const ScheduledPostList = () => {
                             </div>
 
                             <div className="w-25 mh-100 p-2">
-                                {images?.length > 0 && (<ImgHolder images={scheduledPostImages[postIndex]} showActionButtons={false} />)}
+                                {
+                                    images?.length > 0 ? (
+                                        <ImgHolder images={scheduledPostImages[postIndex]} showActionButtons={false} />
+                                    ) : poll ? (
+                                        <CIcon icon={cilList} size="sm" className="mw-100 mh-100" style={{ color: "gainsboro" }} />
+                                    ) : (
+                                        <></>
+                                    )
+                                }
                             </div>
                         </div>
                     )
@@ -210,7 +217,7 @@ const ScheduledPostList = () => {
                         <img src={placeHolderImgUrl} alt="placeholder" className="w-100 h-70" />
 
                         <div id="scheduled-post-placeholder-text">
-                            Not ready to send a Tweet just yet? Save it to your drafts or schedule it for later.
+                            Not ready to send a post just yet? Save it to your drafts or schedule it for later.
                         </div>
                     </div>
                 )

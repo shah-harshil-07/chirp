@@ -10,15 +10,18 @@ const ScheduledPostEditor = props => {
     const [editUploadedFileObjects, setEditUploadedFileObjects] = useState([]);
     const [editUploadedFiles, setEditUploadedFiles] = useState([]);
     const [editPollData, setEditPollData] = useState(null);
+    const [editSchedule, setEditSchedule] = useState(null);
 
     useEffect(() => {
-        const { images, poll, text } = props;
+        const { data, schedule } = props;
+        const { images, poll, text } = data;
 
         const imageObjects = images.map(imageObj => imageObj.image);
         const fileObjects = images.map(imageObj => imageObj.file);
 
         setEditText(text);
         setEditPollData({ ...poll });
+        setEditSchedule({ ...schedule });
         setEditUploadedFiles([ ...imageObjects ]);
         setEditUploadedFileObjects([ ...fileObjects ]);
     }, [props]);
@@ -27,6 +30,7 @@ const ScheduledPostEditor = props => {
         <Form
             editText={editText}
             editPollData={editPollData}
+            editSchedule={editSchedule}
             editUploadedFiles={editUploadedFiles}
             editUploadedFileObjects={editUploadedFileObjects}
         />
