@@ -12,12 +12,13 @@ import * as Constants from "src/constants";
 import CustomModal from "../utilities/custom-modal";
 import useToaster from "src/custom-hooks/toaster-message";
 import { getMonthOptions, getWeekOptions } from "src/helpers";
-import { openModalWithProps } from "src/redux/actions/modal";
+import { closeModal, openModalWithProps } from "src/redux/actions/modal";
 
 const ScheduledPostList = () => {
-    const { showError } = useToaster();
+    const { showError, showSuccess } = useToaster();
     const dispatch = useDispatch();
     const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
+    const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
     const placeHolderImgUrl = "https://abs.twimg.com/responsive-web/client-web/alarm-clock-400x200.v1.da96e5d9.png";
 
     const [posts, setPosts] = useState([]);
@@ -33,7 +34,6 @@ const ScheduledPostList = () => {
     }, []);
 
     const getBasePromise = image => {
-        const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
         return API(Constants.GET, `${Constants.GET_SCHEDULED_POST_IMAGE}/${image}`, null, headerData);
     }
 
@@ -79,7 +79,7 @@ const ScheduledPostList = () => {
 
         let blob = new Blob(byteArrays, { type: contentType });
         _scheduledPostFileObjects[postIndex][imageIndex] = new File([blob], fileName);
-        setScheduledPostFileObjects([ ..._scheduledPostFileObjects ]);
+        setScheduledPostFileObjects([..._scheduledPostFileObjects]);
     }
 
     const getAllScheduledPosts = async () => {
@@ -104,7 +104,7 @@ const ScheduledPostList = () => {
                 });
 
                 setPosts(_posts);
-                if (_posts.length > 3) setDisplayOverflow(true);
+                if (_posts.length > 2) setDisplayOverflow(true);
             }
         } catch (error) {
             setShowLoader(false);
@@ -135,7 +135,24 @@ const ScheduledPostList = () => {
             };
         }
 
-		dispatch(openModalWithProps("scheduledPostEditor", { data, schedule }));
+        dispatch(openModalWithProps("scheduledPostEditor", { data, schedule }));
+    }
+
+    const deleteScheduledPosts = async () => {
+        try {
+            const selectedPosts = posts.filter(post => post.selected);
+            const selectedPostIds = selectedPosts.map(post => post._id);
+            const data = { postIds: selectedPostIds };
+            const response = await API(Constants.DELETE, Constants.DELETE_SCHEDULED_POST_IMAGES, data, headerData);
+            const responseData = response.data;
+            if (responseData?.meta?.message) {
+                showSuccess(responseData.meta.message);
+                dispatch(closeModal());
+            }
+        } catch (error) {
+            console.log(error);
+            showError("Something went wrong!");
+        }
     }
 
     const bodyJSX = (
@@ -147,6 +164,7 @@ const ScheduledPostList = () => {
                     posts.length > 0 && (
                         <div className="col-md-4">
                             <button
+                                onClick={deleteScheduledPosts}
                                 className="btn btn-danger scheduled-post-delete-btn"
                                 style={{ opacity: selectedPosts > 0 ? '1' : "0.4" }}
                             >
@@ -191,7 +209,10 @@ const ScheduledPostList = () => {
                                 {
                                     !postObj.selected && (
                                         <div className="ml-4">
-                                            <button className="scheduled-post-edit-btn" onClick={e => editScheduledPost(e, postIndex)}>
+                                            <button
+                                                className="scheduled-post-edit-btn"
+                                                onClick={e => editScheduledPost(e, postIndex)}
+                                            >
                                                 Edit
                                             </button>
                                         </div>
@@ -204,7 +225,12 @@ const ScheduledPostList = () => {
                                     images?.length > 0 ? (
                                         <ImgHolder images={scheduledPostImages[postIndex]} showActionButtons={false} />
                                     ) : poll ? (
-                                        <CIcon icon={cilList} size="sm" className="mw-100 mh-100" style={{ color: "gainsboro" }} />
+                                        <CIcon
+                                            size="sm"
+                                            icon={cilList}
+                                            className="mw-100 mh-100"
+                                            style={{ color: "gainsboro" }}
+                                        />
                                     ) : (
                                         <></>
                                     )

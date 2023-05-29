@@ -8,7 +8,7 @@ import LabelledInput from "../utilities/labelled-input";
 import CustomSelect from "../utilities/custom-select";
 import * as Helpers from "src/helpers";
 
-const PollCreator = ({ closePollCreator, handleChoiceChange }) => {
+const PollCreator = ({ closePollCreator, handleChoiceChange, editPollData }) => {
     const containerRef = useRef(null);
     const dayOfWeekOptions = Helpers.getDayOfWeekOptions();
     const hourOptions = Helpers.getHourOptions();
@@ -26,6 +26,19 @@ const PollCreator = ({ closePollCreator, handleChoiceChange }) => {
         handleChoiceChange(choices, durationData);
         //eslint-disable-next-line
     }, [choices, dayOfWeek, hours, minutes]);
+
+    useEffect(() => {
+        if (editPollData) {
+            const { choices, duration } = editPollData;
+            if (choices?.length) setChoices([ ...choices ]);
+            if (duration) {
+                const { days, hours, minutes } = duration;
+                setDayOfWeek(days >= 0 ? days : 1);
+                setHours(hours >= 0 ? hours : 0);
+                setMinutes(minutes >= 0 ? minutes : 0);
+            }
+        }
+    }, [editPollData]);
 
     const handleChoiceInput = (data, choiceIndex) => {
         let _choices = choices;
@@ -84,8 +97,8 @@ const PollCreator = ({ closePollCreator, handleChoiceChange }) => {
                                     <LabelledInput
                                         value={choice}
                                         extraClasses={"choice-input-box"}
-                                        header={`Choice ${choiceIndex + 1} ${choiceIndex > 1 ? " (optional)" : ''}`}
                                         handleChange={data => handleChoiceInput(data, choiceIndex)}
+                                        header={`Choice ${choiceIndex + 1} ${choiceIndex > 1 ? " (optional)" : ''}`}
                                     />
 
                                     {

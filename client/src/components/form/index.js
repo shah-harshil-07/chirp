@@ -30,6 +30,7 @@ const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollDa
 	const [showPollCreator, setShowPollCreator] = useState(false);
 	const [showScheduler, setShowScheduler] = useState(false);
 	const [pollData, setPollData] = useState(null);
+	const [scheduledPollData, setScheduledPollData] = useState(null);
 	const [isPostScheduled, setIsPostScheduled] = useState(false);
 	const [schedulerData, setSchedulerData] = useState(null);
 	const [isFormValid, setIsFormValid] = useState(true);
@@ -41,11 +42,20 @@ const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollDa
 
 		if (editUploadedFileObjects?.length) setUploadedFileObjects([...editUploadedFiles]);
 
-		if (editPollData) setPollData(editPollData);
+		if (editPollData) {
+			setShowPollCreator(true);
+			setScheduledPollData(editPollData);
+		} else {
+			setShowPollCreator(false);
+			setScheduledPollData(null);
+		}
 
 		if (editSchedule) {
 			setIsPostScheduled(true);
 			setSchedulerData(editSchedule);
+		} else {
+			setIsPostScheduled(false);
+			setSchedulerData(null);
 		}
 	}, [editText, editUploadedFiles, editUploadedFileObjects, editPollData, editSchedule]);
 
@@ -206,7 +216,15 @@ const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollDa
 					placeholder="What's happening?"
 					onChange={e => setText(e.target.value)}
 				/>
-				{showPollCreator && (<PollCreator closePollCreator={removePoll} handleChoiceChange={handlePollData} />)}
+				{
+					showPollCreator && (
+						<PollCreator
+							closePollCreator={removePoll}
+							editPollData={scheduledPollData}
+							handleChoiceChange={handlePollData}
+						/>
+					)
+				}
 				<hr />
 
 				<ImgHolder removeImage={index => spliceImage(index)} images={uploadedFiles} />

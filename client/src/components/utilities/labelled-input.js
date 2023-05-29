@@ -1,6 +1,6 @@
 import "src/styles/utilities/labelled-input.css";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const LabelledInput = ({ value, handleChange, header, disabled, extraClasses, type }) => {
     const unfocusedLabelStyles = { fontSize: "20px", top: "12px", zIndex: '2', left: "21px" };
@@ -8,6 +8,10 @@ const LabelledInput = ({ value, handleChange, header, disabled, extraClasses, ty
     const inputRef = useRef(null);
 
     const [labelStyles, setLabelStyles] = useState(unfocusedLabelStyles);
+
+    useEffect(() => {
+        if (value && inputRef.current) inputRef.current.click();
+    }, [value]);
 
     return (
         <div className={`labelled-input-div ${extraClasses}`} onClick={() => { inputRef.current.focus(); }}>
