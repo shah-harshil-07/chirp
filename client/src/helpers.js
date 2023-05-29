@@ -98,3 +98,12 @@ export const modalConfig = {
     scheduledPosts: ScheduledPostList,
     scheduledPostEditor: ScheduledPostEditor,
 }
+
+export const checkContainerInViewport = rectObj => {
+    return (
+        rectObj.top >= 0 &&
+        rectObj.left >= 0 &&
+        rectObj.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rectObj.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+}

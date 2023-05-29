@@ -1,8 +1,18 @@
 import EmojiPicker from "emoji-picker-react";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useLayoutEffect, useRef } from "react";
+
+import * as Helpers from "src/helpers";
 
 const EmojiContainer = ({ handleEmojiSelect, handleClickOutside }) => {
     const containerRef = useRef(null);
+
+    useLayoutEffect(() => {
+        const containerRect = containerRef?.current?.getBoundingClientRect() ?? null;
+        if (containerRect) {
+            const isContainerInViewport = Helpers.checkContainerInViewport(containerRect);
+            if (!isContainerInViewport) containerRef.current.style.bottom = "63px";
+        }
+    }, []);
 
     useEffect(() => {
         const outsideClickFn = e => {

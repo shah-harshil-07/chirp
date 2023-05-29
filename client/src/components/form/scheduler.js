@@ -11,7 +11,15 @@ const date = new Date();
 const presentYear = date.getFullYear(), monthIndex = date.getMonth();
 const dayOfMonthOptions = Helpers.getDayOfMonthOptions(monthIndex, presentYear);
 
-const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confirmSchedule, clearSchedule, scheduleData, openScheduledPostList }) => {
+const Scheduler = ({
+    scheduleData,
+    clearSchedule,
+    closeScheduler,
+    isPostScheduled,
+    confirmSchedule,
+    handleClickOutside,
+    openScheduledPostList,
+}) => {
     const containerRef = useRef(null), defaultDate = new Date();
 
     const hourOptions = Helpers.getHourOptions();
@@ -38,7 +46,7 @@ const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confir
     useLayoutEffect(() => {
         const containerRect = containerRef?.current?.getBoundingClientRect() ?? null;
         if (containerRect) {
-            const isContainerInViewport = checkContainerInViewport(containerRect);
+            const isContainerInViewport = Helpers.checkContainerInViewport(containerRect);
             if (!isContainerInViewport) containerRef.current.style.top = "63px";
         }
     }, []);
@@ -131,15 +139,6 @@ const Scheduler = ({ handleClickOutside, closeScheduler, isPostScheduled, confir
         e.preventDefault();
         e.stopPropagation();
         if (isDateValid) confirmSchedule({ year, month, dayOfMonth, hours, minutes });
-    }
-
-    const checkContainerInViewport = rectObj => {
-        return (
-            rectObj.top >= 0 &&
-            rectObj.left >= 0 &&
-            rectObj.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-            rectObj.right <= (window.innerWidth || document.documentElement.clientWidth)
-        );
     }
 
     return (

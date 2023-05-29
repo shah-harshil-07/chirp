@@ -37,9 +37,9 @@ const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollDa
 	useEffect(() => {
 		if (editText) setText(editText);
 
-		if (editUploadedFiles?.length) setUploadedFiles([ ...editUploadedFiles ]);
+		if (editUploadedFiles?.length) setUploadedFiles([...editUploadedFiles]);
 
-		if (editUploadedFileObjects?.length) setUploadedFileObjects([ ...editUploadedFiles ]);
+		if (editUploadedFileObjects?.length) setUploadedFileObjects([...editUploadedFiles]);
 
 		if (editPollData) setPollData(editPollData);
 
@@ -275,7 +275,9 @@ const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollDa
 						)
 					}
 
-					<div id="chirp-button" style={{ opacity: isFormValid && text ? '1' : "0.4" }} onClick={createPost}>Post</div>
+					<div id="chirp-button" style={{ opacity: isFormValid && text ? '1' : "0.4" }} onClick={createPost}>
+						Post
+					</div>
 				</div>
 			</div>
 		</form>
