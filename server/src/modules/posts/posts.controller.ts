@@ -143,9 +143,10 @@ export class PostController {
     ): Promise<IResponseProps> {
         try {
             const post = await this.postService.deleteScheduledPostWithImages(id);
-            this.schedulerRegistery.deleteTimeout(post.timeoutId);
-            const newPostResponse = await this.create(req, postData, images);
-            return newPostResponse;
+            const timeoutId = post?.timeoutId ?? '';
+            const timeouts = this.schedulerRegistery.getTimeouts();
+            if (timeouts.includes(timeoutId)) this.schedulerRegistery.deleteTimeout(post.timeoutId);
+            return await this.create(req, postData, images);
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();
