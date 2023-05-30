@@ -16,7 +16,7 @@ import useToaster from "src/custom-hooks/toaster-message";
 import { getMonthOptions, getWeekOptions } from "src/helpers";
 
 const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollData, editSchedule }) => {
-	const dispatch = useDispatch();
+	const dispatch = useDispatch(), actionContainerRef = useRef(null);
 	const fileUploadRef = useRef(null), { showError, showSuccess } = useToaster();
 	const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
 
@@ -45,17 +45,11 @@ const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollDa
 		if (editPollData) {
 			setShowPollCreator(true);
 			setScheduledPollData(editPollData);
-		} else {
-			setShowPollCreator(false);
-			setScheduledPollData(null);
 		}
 
 		if (editSchedule) {
 			setIsPostScheduled(true);
 			setSchedulerData(editSchedule);
-		} else {
-			setIsPostScheduled(false);
-			setSchedulerData(null);
 		}
 	}, [editText, editUploadedFiles, editUploadedFileObjects, editPollData, editSchedule]);
 
@@ -119,7 +113,7 @@ const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollDa
 	}
 
 	const openPollCreator = () => {
-		if (!uploadedFiles.length) {
+		if (!uploadedFiles.length && !pollData) {
 			setShowPollCreator(true);
 			setIsFormValid(false);
 		}
@@ -229,7 +223,7 @@ const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollDa
 
 				<ImgHolder removeImage={index => spliceImage(index)} images={uploadedFiles} />
 
-				<div className={`${uploadedFiles.length > 0 ? "mt-3" : ''}`}>
+				<div ref={actionContainerRef} className={`${uploadedFiles.length > 0 ? "mt-3" : ''}`}>
 					<CIcon
 						size="sm"
 						title="Image"
@@ -259,6 +253,7 @@ const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollDa
 							<EmojiContainer
 								handleEmojiSelect={handleEmojiSelect}
 								handleClickOutside={() => { setShowEmojiPicker(false); }}
+								actionContainerRect={actionContainerRef?.current?.getBoundingClientRect() ?? null}
 							/>
 						)
 					}
@@ -269,7 +264,7 @@ const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollDa
 						icon={cilList}
 						className="action-icon"
 						onClick={openPollCreator}
-						style={{ opacity: uploadedFiles.length ? "0.4" : '1' }}
+						style={{ opacity: (uploadedFiles.length || pollData) ? "0.4" : '1' }}
 					/>
 
 					<CIcon
@@ -289,6 +284,7 @@ const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollDa
 								openScheduledPostList={openScheduledPostList}
 								closeScheduler={() => { setShowScheduler(false); }}
 								handleClickOutside={() => { setShowScheduler(false); }}
+								actionContainerRect={actionContainerRef?.current?.getBoundingClientRect() ?? null}
 							/>
 						)
 					}

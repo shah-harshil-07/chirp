@@ -14,14 +14,14 @@ const ScheduledPostEditor = props => {
 
     useEffect(() => {
         const { data, schedule } = props;
-        const { images, poll, text } = data;
+        const { images, poll, text } = data ? data : {};
 
         const imageObjects = images.map(imageObj => imageObj.image);
         const fileObjects = images.map(imageObj => imageObj.file);
 
         setEditText(text);
-        setEditPollData({ ...poll });
-        setEditSchedule({ ...schedule });
+        setEditPollData(poll);
+        setEditSchedule(schedule);
         setEditUploadedFiles([ ...imageObjects ]);
         setEditUploadedFileObjects([ ...fileObjects ]);
     }, [props]);

@@ -18,6 +18,7 @@ const Scheduler = ({
     isPostScheduled,
     confirmSchedule,
     handleClickOutside,
+    actionContainerRect,
     openScheduledPostList,
 }) => {
     const containerRef = useRef(null), defaultDate = new Date();
@@ -46,9 +47,11 @@ const Scheduler = ({
     useLayoutEffect(() => {
         const containerRect = containerRef?.current?.getBoundingClientRect() ?? null;
         if (containerRect) {
+            const bottom = actionContainerRect?.bottom ? `${actionContainerRect.bottom - 613}px` : "87px";
             const isContainerInViewport = Helpers.checkContainerInViewport(containerRect);
-            if (!isContainerInViewport) containerRef.current.style.top = "63px";
+            if (!isContainerInViewport) containerRef.current.style.bottom = bottom;
         }
+        // eslint-disable-next-line
     }, []);
 
     useEffect(() => {
