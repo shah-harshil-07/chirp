@@ -15,8 +15,16 @@ import { openModal } from "src/redux/actions/modal";
 import useToaster from "src/custom-hooks/toaster-message";
 import { getMonthOptions, getWeekOptions } from "src/helpers";
 
-const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollData, editSchedule }) => {
-	const dispatch = useDispatch(), actionContainerRef = useRef(null);
+const Form = ({
+	editText,
+	editUploadedFiles,
+	editUploadedFileObjects,
+	editPollData,
+	editSchedule,
+	editScheduleMode,
+	editScheduledPost
+}) => {
+	const dispatch = useDispatch();
 	const fileUploadRef = useRef(null), { showError, showSuccess } = useToaster();
 	const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
 
@@ -151,13 +159,17 @@ const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollDa
 					formData.append("images[]", fileObj);
 				});
 
-				const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
-				const response = await API(Constants.POST, Constants.CREATE_POST, formData, headerData);
-				const responseData = response.data;
+				if (editScheduleMode && editScheduledPost) {
+					editScheduledPost(formData);
+				} else {
+					const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
+					const response = await API(Constants.POST, Constants.CREATE_POST, formData, headerData);
+					const responseData = response.data;
 
-				const alert = responseData?.meta?.status ? showSuccess : showError;
-				const message = responseData?.meta?.message ?? '';
-				if (message) alert(message);
+					const alert = responseData?.meta?.status ? showSuccess : showError;
+					const message = responseData?.meta?.message ?? '';
+					if (message) alert(message);
+				}
 
 				clearPost();
 			} catch (error) {
@@ -223,7 +235,7 @@ const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollDa
 
 				<ImgHolder removeImage={index => spliceImage(index)} images={uploadedFiles} />
 
-				<div ref={actionContainerRef} className={`${uploadedFiles.length > 0 ? "mt-3" : ''}`}>
+				<div className={`${uploadedFiles.length > 0 ? "mt-3" : ''}`}>
 					<CIcon
 						size="sm"
 						title="Image"
@@ -253,7 +265,6 @@ const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollDa
 							<EmojiContainer
 								handleEmojiSelect={handleEmojiSelect}
 								handleClickOutside={() => { setShowEmojiPicker(false); }}
-								actionContainerRect={actionContainerRef?.current?.getBoundingClientRect() ?? null}
 							/>
 						)
 					}
@@ -284,13 +295,12 @@ const Form = ({ editText, editUploadedFiles, editUploadedFileObjects, editPollDa
 								openScheduledPostList={openScheduledPostList}
 								closeScheduler={() => { setShowScheduler(false); }}
 								handleClickOutside={() => { setShowScheduler(false); }}
-								actionContainerRect={actionContainerRef?.current?.getBoundingClientRect() ?? null}
 							/>
 						)
 					}
 
 					<div id="chirp-button" style={{ opacity: isFormValid && text ? '1' : "0.4" }} onClick={createPost}>
-						Post
+						{isPostScheduled ? "Schedule" : "Post"}
 					</div>
 				</div>
 			</div>

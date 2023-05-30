@@ -3,15 +3,14 @@ import React, { useEffect, useLayoutEffect, useRef } from "react";
 
 import * as Helpers from "src/helpers";
 
-const EmojiContainer = ({ handleEmojiSelect, handleClickOutside, actionContainerRect }) => {
+const EmojiContainer = ({ handleEmojiSelect, handleClickOutside }) => {
     const containerRef = useRef(null);
 
     useLayoutEffect(() => {
         const containerRect = containerRef?.current?.getBoundingClientRect() ?? null;
         if (containerRect) {
-            const bottom = actionContainerRect?.bottom ? `${actionContainerRect.bottom - 613}px` : "87px";
             const isContainerInViewport = Helpers.checkContainerInViewport(containerRect);
-            if (!isContainerInViewport) containerRef.current.style.bottom = bottom;
+            if (!isContainerInViewport) containerRef.current.style.bottom = "87px";
         }
         // eslint-disable-next-line
     }, []);

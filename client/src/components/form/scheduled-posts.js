@@ -126,7 +126,9 @@ const ScheduledPostList = () => {
     const editScheduledPost = (e, postIndex) => {
         e.preventDefault(); e.stopPropagation();
 
-        const { data, schedule } = posts[postIndex];
+        console.log(posts[postIndex]);
+
+        const { data, schedule, _id } = posts[postIndex];
 
         for (let i = 0; i < data?.images?.length; i++) {
             data["images"][i] = {
@@ -135,7 +137,7 @@ const ScheduledPostList = () => {
             };
         }
 
-        dispatch(openModalWithProps("scheduledPostEditor", { data, schedule }));
+        dispatch(openModalWithProps("scheduledPostEditor", { data, schedule, id: _id }));
     }
 
     const deleteScheduledPosts = async () => {
