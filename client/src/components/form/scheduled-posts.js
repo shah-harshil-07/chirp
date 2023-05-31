@@ -65,7 +65,8 @@ const ScheduledPostList = () => {
     }
 
     const updateScheduledPostFileObjects = (base64ImgData, postIndex, imageIndex, fileName) => {
-        const contentType = "image/*", sliceSize = 512, _scheduledPostFileObjects = scheduledPostFileObjects;
+        const ext = fileName?.split('.')?.[1] ?? "jpg";
+        const contentType = `image/${ext}`, sliceSize = 512, _scheduledPostFileObjects = scheduledPostFileObjects;
         let byteChars = window.atob(base64ImgData), byteArrays = [];
 
         if (!_scheduledPostFileObjects[postIndex]) _scheduledPostFileObjects[postIndex] = [];
