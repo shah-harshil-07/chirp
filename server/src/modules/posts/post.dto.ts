@@ -37,7 +37,6 @@ interface ISchedule {
 export interface ScheduledPostDTO {
     data: ParsedPostDTO;
     timeoutId: string;
-    postTiming: number;
     schedule: ISchedule;
 }
 

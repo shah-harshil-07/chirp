@@ -1,6 +1,7 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, ObjectId } from "mongoose";
+import { SchedulerRegistry } from "@nestjs/schedule";
 
 import { Post, ScheduledPost } from "./post.schema";
 import { ParsedPostDTO, PostDTO, ScheduledPostDTO } from "./post.dto";
@@ -10,6 +11,7 @@ import { CommonService } from "../common/common.service";
 export class PostService {
     constructor(
         private readonly commonService: CommonService,
+        private schedulerRegistery: SchedulerRegistry,
         @InjectModel(Post.name) private readonly postModel: Model<Post>,
         @InjectModel(ScheduledPost.name) private readonly scheduledPostModel: Model<ScheduledPost>,
     ) { }
@@ -50,7 +52,11 @@ export class PostService {
 
     async deleteScheduledPost(postId: ObjectId): Promise<ScheduledPost> {
         try {
-            return this.scheduledPostModel.findByIdAndDelete(postId);
+            const post = await this.scheduledPostModel.findByIdAndDelete(postId);
+            const timeoutId = post?.timeoutId ?? '';
+            const jobMap = this.schedulerRegistery.getCronJobs();
+            if (jobMap.has(timeoutId)) this.schedulerRegistery.getCronJob(timeoutId).stop();
+            return post;
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();

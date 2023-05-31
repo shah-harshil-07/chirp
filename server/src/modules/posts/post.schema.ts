@@ -55,9 +55,6 @@ export class ScheduledPost {
     timeoutId: string;
 
     @Prop()
-    postTiming: number;
-
-    @Prop()
     schedule: Schedule;
 }
 

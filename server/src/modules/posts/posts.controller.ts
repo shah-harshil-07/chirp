@@ -3,6 +3,7 @@ import { FilesInterceptor } from "@nestjs/platform-express";
 import { SchedulerRegistry } from "@nestjs/schedule";
 import { createReadStream, existsSync } from "fs";
 import { join } from "path";
+import { CronJob } from "cron";
 import {
     Get,
     Put,
@@ -66,19 +67,20 @@ export class PostController {
             if (parsedData?.["schedule"]) {
                 const { year, month, dayOfMonth, hours, minutes } = parsedData["schedule"];
                 const scheduledDate = new Date(year, month, dayOfMonth, hours, minutes, 0, 0);
-                const scheduledMillis = scheduledDate.getTime(), currentMillis = Date.now();
-                const diffMillis = scheduledMillis - currentMillis, timeoutName = `post-${Date.now()}`;
-                const scheduleData = { data, timeoutId: timeoutName, postTiming: diffMillis, schedule: parsedData.schedule };
+                const timeoutName = `post-${Date.now()}`;
+                const scheduleData = { data, timeoutId: timeoutName, schedule: parsedData.schedule };
 
                 const scheduledPost = await this.postService.schedulePost(scheduleData);
 
-                if (scheduledPost && diffMillis > 0) {
-                    const timeoutFn = setTimeout(() => {
+                if (scheduledPost) {
+                    const job = new CronJob(scheduledDate, () => {
                         this.postService.deleteScheduledPost(scheduledPost["_id"]);
                         this.postService.create(data, _id);
-                    }, diffMillis);
+                    });
 
-                    this.schedulerRegistery.addTimeout(timeoutName, timeoutFn);
+                    this.schedulerRegistery.addCronJob(timeoutName, job);
+                    job.start();
+
                     return { success: true, message: "Post scheduled successfully." };
                 } else {
                     return { success: false, message: "Something went wrong!" };
@@ -103,28 +105,13 @@ export class PostController {
         return this.postService.delete(id);
     }
 
-    @Delete("scheduled/delete/:id")
-    @UseGuards(AuthGuard("jwt"))
-    @UseInterceptors(ResponseInterceptor)
-    async deleteScheduledPost(@Param() { id }: any): Promise<IResponseProps> {
-        try {
-            const post = await this.postService.deleteScheduledPostWithImages(id);
-            const timeoutAvailable = this.schedulerRegistery.getTimeout(post.timeoutId);
-            if (timeoutAvailable) this.schedulerRegistery.deleteTimeout(post.timeoutId);
-            return { success: true, message: "Scheduled post deleted successfully." };
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
-    }
-
     @Delete("scheduled/delete-many")
     @UseGuards(AuthGuard("jwt"))
     @UseInterceptors(ResponseInterceptor)
     async deleteMultipleScheduledPosts(@Body() postData: IScheduledPostIds): Promise<IResponseProps> {
         try {
-            const { postIds } = postData;
-            for (let i = 0; i < postIds.length; i++) this.deleteScheduledPost({ id:  postIds[i] });
+            const { postIds } = postData, deleteFn = this.postService.deleteScheduledPostWithImages;
+            for (let i = 0; i < postIds.length; i++) deleteFn(Object(postIds[i]));
             return { success: true, message: "Scheduled posts deleted successfully." };
         } catch (error) {
             console.log(error);
@@ -142,10 +129,7 @@ export class PostController {
         @UploadedFiles(parseFilePipeObj) images: Array<Express.Multer.File>
     ): Promise<IResponseProps> {
         try {
-            const post = await this.postService.deleteScheduledPostWithImages(id);
-            const timeoutId = post?.timeoutId ?? '';
-            const timeouts = this.schedulerRegistery.getTimeouts();
-            if (timeouts.includes(timeoutId)) this.schedulerRegistery.deleteTimeout(post.timeoutId);
+            await this.postService.deleteScheduledPostWithImages(id);
             return await this.create(req, postData, images);
         } catch (error) {
             console.log(error);
