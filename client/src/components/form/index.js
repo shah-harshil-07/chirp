@@ -48,7 +48,7 @@ const Form = ({
 
 		if (editUploadedFiles?.length) setUploadedFiles([...editUploadedFiles]);
 
-		if (editUploadedFileObjects?.length) setUploadedFileObjects([...editUploadedFiles]);
+		if (editUploadedFileObjects?.length) setUploadedFileObjects([...editUploadedFileObjects]);
 
 		if (editPollData) {
 			setShowPollCreator(true);
