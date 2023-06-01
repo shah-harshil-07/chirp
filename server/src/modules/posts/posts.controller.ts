@@ -67,12 +67,12 @@ export class PostController {
             if (parsedData?.["schedule"]) {
                 const { year, month, dayOfMonth, hours, minutes } = parsedData["schedule"];
                 const scheduledDate = new Date(year, month, dayOfMonth, hours, minutes, 0, 0);
-                const timeoutName = `post-${Date.now()}`;
+                const timeoutName = `post-${Date.now()}`, diffMillis = scheduledDate.getTime() - Date.now();
                 const scheduleData = { data, timeoutId: timeoutName, schedule: parsedData.schedule };
 
                 const scheduledPost = await this.postService.schedulePost(scheduleData);
 
-                if (scheduledPost) {
+                if (scheduledPost && diffMillis > 0) {
                     const job = new CronJob(scheduledDate, () => {
                         this.postService.deleteScheduledPost(scheduledPost["_id"]);
                         this.postService.create(data, _id);
@@ -83,7 +83,7 @@ export class PostController {
 
                     return { success: true, message: "Post scheduled successfully." };
                 } else {
-                    return { success: false, message: "Something went wrong!" };
+                    return { success: false, message: "You cannot schedule a post to send it to past." };
                 }
             }
 

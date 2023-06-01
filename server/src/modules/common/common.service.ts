@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { unlinkSync } from "fs";
+import { existsSync, unlinkSync } from "fs";
 
 import { OtpStore } from "./otp-store.schema";
 
@@ -26,11 +26,7 @@ export class CommonService {
     }
 
     public unlinkImage(dir: string, fileName: string): void {
-        try {
-            unlinkSync(`${dir}/${fileName}`);
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        const path = `${dir}/${fileName}`;
+        if (existsSync(path)) unlinkSync(path);
     }
 }

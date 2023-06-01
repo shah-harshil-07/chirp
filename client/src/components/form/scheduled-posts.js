@@ -46,17 +46,23 @@ const ScheduledPostList = () => {
                 if (!_scheduledPostImages[postIndex]) _scheduledPostImages[postIndex] = [];
 
                 promises.push(new Promise((res, rej) => {
-                    getBasePromise(image).then(imageResponse => {
-                        if (imageResponse?.data) {
-                            const base64ImgData = imageResponse.data;
-                            _scheduledPostImages[postIndex][imageIndex] = `data:image/*;charset=utf-8;base64,${base64ImgData}`
-                            updateScheduledPostFileObjects(base64ImgData, postIndex, imageIndex, image);
-                            setSchduledPostImages([..._scheduledPostImages]);
-                            res();
-                        } else {
+                    getBasePromise(image)
+                        .then(imageResponse => {
+                            if (imageResponse?.data) {
+                                const base64ImgData = imageResponse.data;
+                                _scheduledPostImages[postIndex][imageIndex] = `data:image/*;charset=utf-8;base64,${base64ImgData}`
+                                updateScheduledPostFileObjects(base64ImgData, postIndex, imageIndex, image);
+                                setSchduledPostImages([..._scheduledPostImages]);
+                                res();
+                            } else {
+                                rej();
+                            }
+                        })
+                        .catch(error => {
+                            console.log(error);
                             rej();
-                        }
-                    });
+                        })
+                    ;
                 }));
             });
         });
@@ -126,14 +132,20 @@ const ScheduledPostList = () => {
 
     const editScheduledPost = (e, postIndex) => {
         e.preventDefault(); e.stopPropagation();
-        const { data, schedule, _id } = posts[postIndex];
+        const { data, schedule, _id } = posts[postIndex], formattedImages = [];
 
         for (let i = 0; i < data?.images?.length; i++) {
-            data["images"][i] = {
-                image: scheduledPostImages[postIndex][i],
-                file: scheduledPostFileObjects[postIndex][i],
-            };
+            if (scheduledPostImages?.[postIndex]?.[i] && scheduledPostFileObjects?.[postIndex]?.[i]) {
+                const imageData = {
+                    image: scheduledPostImages[postIndex][i],
+                    file: scheduledPostFileObjects[postIndex][i],
+                };
+
+                formattedImages.push(imageData);
+            }
         }
+
+        data.images = formattedImages;
 
         dispatch(openModalWithProps("scheduledPostEditor", { data, schedule, id: _id }));
     }

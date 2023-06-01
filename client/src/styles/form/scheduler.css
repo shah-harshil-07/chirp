@@ -47,11 +47,11 @@
 }
 
 .scheduler-error-select {
-    border: 1px solid crimson;
+    border: 1px solid crimson !important;
 }
 
 .scheduler-error-select-label {
-    color: crimson;
+    color: crimson !important;
 }
 
 #scheduler-clear-text {
