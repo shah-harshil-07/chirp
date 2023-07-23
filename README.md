@@ -1,4 +1,3 @@
-# Whenever user uploads pics of more than 5MB. put up an error alert.
 # Change the success and error alert design. Current design looks very basic.
 # Put hover styles on the close button of Custom Modal.
 # Give a functionality of deleting an optional choice.

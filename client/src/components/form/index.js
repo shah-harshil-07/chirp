@@ -77,7 +77,16 @@ const Form = ({
 		} else {
 			for (let i = 0; i < files.length; i++) {
 				const fileObj = files[i];
-				if (!allowedFileTypes.includes(fileObj.type) || i > 3) break;
+
+				if (!allowedFileTypes.includes(fileObj.type) || i > 3) {
+					showError("Only jpg, jpeg & png type files are allowed.");
+					continue;
+				}
+
+				if (fileObj.size > (1024 * 1024 * 5)) {
+					showError("Uploaded file's size must not exceed 5MB.");
+					continue;
+				}
 
 				const reader = new FileReader();
 				reader.onload = e => {
