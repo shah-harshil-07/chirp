@@ -3,9 +3,9 @@ import "src/styles/login.css";
 
 import React, { useState, useEffect } from "react";
 import CIcon from "@coreui/icons-react";
-import { cibGoogle } from "@coreui/icons";
 import { useDispatch } from "react-redux";
 import { useGoogleLogin } from "@react-oauth/google";
+import { cibGoogle, cilLockLocked, cilLockUnlocked } from "@coreui/icons";
 
 import CustomModal from "./utilities/custom-modal";
 import { openModal, closeModal } from "src/redux/actions/modal";
@@ -20,6 +20,7 @@ const Login = () => {
 
     const [cred, setCred] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordLocked, setPasswordLocked] = useState(true);
     const [googleRegisteredUser, setGoogleRegisteredUser] = useState(null);
 
     const loginWithGoogle = useGoogleLogin({
@@ -56,7 +57,7 @@ const Login = () => {
         <>
             <h4 className="header">Sign in to Chirp</h4>
 
-            <div className="auth-box" onClick={() => loginWithGoogle()}>
+            <div className="auth-box" onClick={loginWithGoogle}>
                 <span className="d-flex justify-content-center align-items-center">
                     <CIcon icon={cibGoogle} id="google-signup-icon" />
                     <span id="google-signup-text">Sign in with google</span>
@@ -70,17 +71,26 @@ const Login = () => {
 
             <LabelledInput value={cred} handleChange={data => { setCred(data) }} header={"Email or Username"} />
 
-            <LabelledInput
-                value={password}
-                handleChange={data => { setPassword(data) }}
-                header={"Password"}
-                type={"password"}
-                extraClasses={"mt-3"}
-            />
+            <div className="position-relative">
+                <LabelledInput
+                    value={password}
+                    header={"Password"}
+                    extraClasses={"mt-3"}
+                    type={passwordLocked ? "password" : "text"}
+                    handleChange={data => { setPassword(data) }}
+                />
+
+                <CIcon
+                    size="sm"
+                    className="pwd-eye"
+                    onClick={() => { setPasswordLocked(!passwordLocked) }}
+                    icon={passwordLocked ? cilLockLocked : cilLockUnlocked}
+                />
+            </div>
 
             <div
-                className="auth-box"
                 id="login-next-box"
+                className="auth-box"
                 onClick={attemptLogin}
                 style={{ backgroundColor: (cred && password) ? "rgba(0, 0, 0, 1)" : "rgba(0, 0, 0, 0.5)" }}
             >

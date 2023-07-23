@@ -1,6 +1,8 @@
 import "src/styles/auth.css";
 import "src/styles/signup-steps/create-account.css";
 
+import CIcon from "@coreui/icons-react";
+import { cilLockLocked, cilLockUnlocked } from "@coreui/icons";
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
 import LabelledInput from "../utilities/labelled-input";
@@ -9,6 +11,8 @@ const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
     const initialData = { name: '', username: '', email: '', password: '', confirmPassword: '', noteChecked: false };
     const [data, setData] = useState(initialData);
     const [errors, setErrors] = useState(initialData);
+    const [passwordLocked, setPasswordLocked] = useState(true);
+    const [confirmPasswordLocked, setConfirmedPasswordLocked] = useState(true);
 
     useEffect(() => {
         handleDataChange(data);
@@ -58,23 +62,43 @@ const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
                 />
                 <p className="text-danger create-account-text">{errors["email"]}</p>
 
-                <LabelledInput
-                    type={"password"}
-                    extraClasses="mt-3"
-                    header={"Password"}
-                    value={data["password"]}
-                    handleChange={value => handleInputChange("password", value)}
-                />
-                <p className="text-danger create-account-text">{errors["password"]}</p>
+                <div className="position-relative">
+                    <LabelledInput
+                        extraClasses="mt-3"
+                        header={"Password"}
+                        value={data["password"]}
+                        type={passwordLocked ? "password" : "text"}
+                        handleChange={value => handleInputChange("password", value)}
+                    />
 
-                <LabelledInput
-                    type={"password"}
-                    extraClasses="mt-3"
-                    header={"Confirm Password"}
-                    value={data["confirmPassword"]}
-                    handleChange={value => handleInputChange("confirmPassword", value)}
-                />
-                <p className="text-danger create-account-text">{errors["confirmPassword"]}</p>
+                    <CIcon
+                        size="sm"
+                        className="pwd-eye"
+                        onClick={() => setPasswordLocked(!passwordLocked)}
+                        icon={passwordLocked ? cilLockLocked : cilLockUnlocked}
+                    />
+
+                    <p className="text-danger create-account-text">{errors["password"]}</p>
+                </div>
+
+                <div className="position-relative">
+                    <LabelledInput
+                        extraClasses="mt-3"
+                        header={"Confirm Password"}
+                        value={data["confirmPassword"]}
+                        type={confirmPasswordLocked ? "password" : "text"}
+                        handleChange={value => handleInputChange("confirmPassword", value)}
+                    />
+
+                    <CIcon
+                        size="sm"
+                        className="pwd-eye"
+                        icon={confirmPasswordLocked ? cilLockLocked : cilLockUnlocked}
+                        onClick={() => setConfirmedPasswordLocked(!confirmPasswordLocked)}
+                    />
+
+                    <p className="text-danger create-account-text">{errors["confirmPassword"]}</p>
+                </div>
 
                 <div style={{ marginTop: "38px" }}>
                     <input

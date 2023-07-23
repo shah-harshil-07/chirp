@@ -39,3 +39,11 @@
 .text-decoration-underline {
     text-decoration: underline;
 }
+
+.pwd-eye {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 18px;
+    right: 10px;
+}
