@@ -6,6 +6,5 @@
 # Give a functionality of deleting an optional choice.
 # Put an alert asking if user wants to delete scheduled posts when user presses the delete button.
 # When there are no posts, a 500 server error exception is thrown.
-# When posts are deleted, the API is not working properly. It shows success response, but the posts are not deleted from the database. And then when the API to get all the scheduled posts is called, a 500 server error exception is thrown.
-# Normal user registeration (without google sign up) is not working.
-# Create Account page in the user registeration has styling issues. The error messages must not overlap the below text input boxes.
+# When scheduled posts are deleted, the API is not working properly. It shows success response, but the posts are not deleted from the database. And then when the API to get all the scheduled posts is called, a 500 server error exception is thrown.
+# If I schedule a post from a particular account, I can see the same scheduled posts while using another account as well.
