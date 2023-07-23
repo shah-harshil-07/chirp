@@ -8,6 +8,9 @@ class Duration {
 
 class Schedule {
     @Prop()
+    userId: string;
+
+    @Prop()
     year: number;
 
     @Prop()
@@ -48,6 +51,9 @@ export class Post {
 
 @Schema({ collection: "ScheduledMessages" })
 export class ScheduledPost {
+    @Prop()
+    userId: string;
+
     @Prop()
     data: Post;
 

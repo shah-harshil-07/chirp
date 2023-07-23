@@ -40,9 +40,11 @@ export class PostController {
     @Get("scheduled/all")
     @UseGuards(AuthGuard("jwt"))
     @UseInterceptors(ResponseInterceptor)
-    async getScheduledPosts(): Promise<IResponseProps> {
+    async getScheduledPosts(@Req() req: any): Promise<IResponseProps> {
+        const { _id: userId } = req.user;
+
         try {
-            const data = await this.postService.getAllSchduledPosts();
+            const data = await this.postService.getAllSchduledPosts(userId);
             return { data, success: true, message: "Received all the scheduled posts successfully." };
         } catch (error) {
             console.log(error);
@@ -59,7 +61,7 @@ export class PostController {
         @UploadedFiles(parseFilePipeObj) images: Array<Express.Multer.File>
     ): Promise<IResponseProps> {
         try {
-            const { _id } = req.user;
+            const { _id: userId } = req.user;
             const fileNames = images.map(imageObj => imageObj.filename);
             const parsedData = JSON.parse(postData.data);
             const data = { text: parsedData.text, images: fileNames, poll: parsedData.poll ?? null };
@@ -70,12 +72,12 @@ export class PostController {
                 const timeoutName = `post-${Date.now()}`, diffMillis = scheduledDate.getTime() - Date.now();
                 const scheduleData = { data, timeoutId: timeoutName, schedule: parsedData.schedule };
 
-                const scheduledPost = await this.postService.schedulePost(scheduleData);
+                const scheduledPost = await this.postService.schedulePost(scheduleData, userId);
 
                 if (scheduledPost && diffMillis > 0) {
                     const job = new CronJob(scheduledDate, () => {
                         this.postService.deleteScheduledPost(scheduledPost["_id"]);
-                        this.postService.create(data, _id);
+                        this.postService.create(data, userId);
                     });
 
                     this.schedulerRegistery.addCronJob(timeoutName, job);
@@ -87,7 +89,7 @@ export class PostController {
                 }
             }
 
-            const post = await this.postService.create(data, _id);
+            const post = await this.postService.create(data, userId);
             return { success: true, message: "Post created successfully.", data: post };
         } catch (err) {
             console.log(err);

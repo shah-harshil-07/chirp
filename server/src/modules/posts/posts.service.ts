@@ -20,9 +20,9 @@ export class PostService {
         return this.postModel.find().exec();
     }
 
-    async getAllSchduledPosts(): Promise<ScheduledPost[]> {
+    async getAllSchduledPosts(userId: ObjectId): Promise<ScheduledPost[]> {
         try {
-            return this.scheduledPostModel.find().exec();
+            return this.scheduledPostModel.find({ userId }).exec();
         } catch (error) {
             console.log(error);
             throw new InternalServerErrorException();
@@ -30,7 +30,7 @@ export class PostService {
     }
 
     async create(postData: ParsedPostDTO, userId: ObjectId): Promise<Post> {
-        try {            
+        try {
             const mainData = { ...postData, userId, images: postData.images };
             const createdPost = new this.postModel(mainData);
             return createdPost.save();
@@ -40,9 +40,9 @@ export class PostService {
         }
     }
 
-    async schedulePost(postData: ScheduledPostDTO): Promise<ScheduledPost> {
-        try {            
-            const scheduledPost = new this.scheduledPostModel(postData);
+    async schedulePost(postData: ScheduledPostDTO, userId: ObjectId): Promise<ScheduledPost> {
+        try {
+            const scheduledPost = new this.scheduledPostModel({ ...postData, userId });
             return scheduledPost.save();
         } catch (error) {
             console.log(error);
