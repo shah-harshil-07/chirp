@@ -5,6 +5,8 @@ import React from "react";
 import CIcon from "@coreui/icons-react";
 import { cilHome, cilSettings, cilBookmark, cilUser, cilOptions } from "@coreui/icons";
 
+import { isUserLoggedIn } from "src/helpers";
+
 const LeftSidebar = () => {
     const logo = require("src/assets/logo-1.png");
     const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";
@@ -58,17 +60,21 @@ const LeftSidebar = () => {
 
                 <div id="left-sidebar-chirp-btn">Post</div>
 
-                <div className="row" id="left-sidebar-profile-container">
-                    <div id="profile-image-container">
-                        <img alt="logo" className="sidebar-profile-img" src={placeHolderImageSrc} />
-                    </div>
+                {
+                    isUserLoggedIn() && (
+                        <div className="row" id="left-sidebar-profile-container">
+                            <div id="profile-image-container">
+                                <img alt="logo" className="sidebar-profile-img" src={placeHolderImageSrc} />
+                            </div>
 
-                    <div style={{ fontSize: "19px" }}>
-                        &nbsp;Harshil Shah<br />@shah_harshil_07
-                    </div>
+                            <div style={{ fontSize: "19px" }}>
+                                &nbsp;Harshil Shah<br />@shah_harshil_07
+                            </div>
 
-                    <CIcon className="options-icon" style={{ marginLeft: "21px" }} icon={cilOptions} />
-                </div>
+                            <CIcon className="options-icon" style={{ marginLeft: "21px" }} icon={cilOptions} />
+                        </div>
+                    )
+                }
             </div>
         </div>
     )
