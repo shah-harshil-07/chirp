@@ -1,12 +1,13 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
-import { MailerService } from "@nestjs-modules/mailer";
-import { CommonService } from "../common/common.service";
-import { OtpStore } from "../common/otp-store.schema";
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
-import { GoogleAuthedUserDTO, LoggedInUserDTO, RegisteredGoogleAuthedUserDTO, RegisteredUserDTO, UserDTO } from "./users.dto";
+import { MailerService } from "@nestjs-modules/mailer";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
+
 import { UserModel } from "./users.schema";
+import { OtpStore } from "../common/otp-store.schema";
+import { CommonService } from "../common/common.service";
 import { ConfigService } from "../config/config.service";
+import { GoogleAuthedUserDTO, LoggedInUserDTO, RegisteredGoogleAuthedUserDTO, RegisteredUserDTO, UserDTO } from "./users.dto";
 
 @Injectable()
 export class UsersService {
@@ -21,16 +22,16 @@ export class UsersService {
     public async sendOtp(emailId: string, username: string): Promise<{ otpId: string }> {
         try {
             const otp = this.commonService.createFourDigitOtp();
-
             const otpId = await this.commonService.postOtp(otp);
+            const smtpConfig = this.configService.getConfigObj("smtp");
 
             await this.mailerService.sendMail({
                 to: emailId,
-                from: this.configService.getConfigObj("smtp").displayEmail,
-                replyTo: this.configService.getConfigObj("smtp").replyToEmail,
+                from: smtpConfig.displayEmail,
+                replyTo: smtpConfig.replyToEmail,
                 subject: "Email Verification",
                 template: "otp",
-                context: { username, otp }
+                context: { username, otp },
             });
 
             return { otpId };

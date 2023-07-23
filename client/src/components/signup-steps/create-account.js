@@ -36,43 +36,43 @@ const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
 
             <div className="position-relative">
                 <LabelledInput
+                    header={"Name"}
                     value={data["name"]}
                     handleChange={value => handleInputChange("name", value)}
-                    header={"Name"}
                 />
                 <p className="text-danger create-account-text">{errors["name"]}</p>
 
                 <LabelledInput
                     extraClasses="mt-3"
+                    header={"Username"}
                     value={data["username"]}
                     handleChange={value => handleInputChange("username", value)}
-                    header={"Username"}
                 />
                 <p className="text-danger create-account-text">{errors["username"]}</p>
 
                 <LabelledInput
+                    header={"Email"}
                     extraClasses="mt-3"
                     value={data["email"]}
                     handleChange={value => handleInputChange("email", value)}
-                    header={"Email"}
                 />
                 <p className="text-danger create-account-text">{errors["email"]}</p>
 
                 <LabelledInput
+                    type={"password"}
                     extraClasses="mt-3"
+                    header={"Password"}
                     value={data["password"]}
                     handleChange={value => handleInputChange("password", value)}
-                    header={"Password"}
-                    type={"password"}
                 />
                 <p className="text-danger create-account-text">{errors["password"]}</p>
 
                 <LabelledInput
+                    type={"password"}
                     extraClasses="mt-3"
+                    header={"Confirm Password"}
                     value={data["confirmPassword"]}
                     handleChange={value => handleInputChange("confirmPassword", value)}
-                    header={"Confirm Password"}
-                    type={"password"}
                 />
                 <p className="text-danger create-account-text">{errors["confirmPassword"]}</p>
 

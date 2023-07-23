@@ -10,6 +10,11 @@
     }
 }
 
+#animated-body {
+    animation-name: toggleCredModal;
+    animation-duration: 1.25s;
+}
+
 .create-account-input {
     margin-top: 38px;
     background-color: white;
@@ -28,5 +33,4 @@
 
 .create-account-text {
     font-size: 14px;
-    position: absolute;
 }
