@@ -63,13 +63,13 @@ export class PostService {
         }
     }
 
-    async deleteScheduledPostWithImages(postId: ObjectId): Promise<ScheduledPost> {
+    public deleteScheduledPostWithImages = async (postId: ObjectId): Promise<ScheduledPost> => {
         try {
             const post = await this.deleteScheduledPost(postId);
-            const images = post?.data?.images;
+            const images = post?.data?.images ?? [];
 
             if (images?.length) {
-                images?.forEach(image => {
+                images.forEach(image => {
                     this.commonService.unlinkImage("storage/post-images", image);
                 });
             }
