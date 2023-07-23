@@ -62,9 +62,9 @@ const CustomModal = ({
                 {
                     includeFooter && (
                         <div
-                            onClick={() => { if (!footerDisabled) footerAction(); }}
                             id="custom-modal-footer-box"
                             style={{ opacity: footerDisabled ? 0.5 : 1 }}
+                            onClick={() => { if (!footerDisabled) footerAction(); }}
                         >
                             <b>{footerText}</b>
                         </div>

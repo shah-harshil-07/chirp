@@ -23,17 +23,17 @@ const Register = () => {
         codeInput: '',
         createAccount: { name: '', username: '', email: '', password: '', confirmPassword: '', noteChecked: false },
     };
+
     const [bodyData, setBodyData] = useState(initialBodyData);
     const initialGoogleAuthedUserData = { name: '', email: '', googleId: '' };
-    const { showError, showSuccess } = useToaster();
+    const { showError, showSuccess } = useToaster(), createAccountRef = useRef(null), usernameInputRef = useRef(null);
 
     const openNextSignUpStep = () => {
         if (signUpStep === bodyJSXList.length - 1) applyFinalRegisteration();
         else setSignUpStep(signUpStep + 1);
     }
 
-    const createAccountRef = useRef(null);
-    const usernameInputRef = useRef(null);
+    let customFooterAction = openNextSignUpStep;
 
     const registerBodyJSX = (
         <>
@@ -51,7 +51,7 @@ const Register = () => {
                 <div className="or-div">or</div>
             </div>
 
-            <div className="auth-box" id="create-box" onClick={openNextSignUpStep}>
+            <div className="auth-box" id="create-box" onClick={customFooterAction}>
                 <span>Create Account</span>
             </div>
 
@@ -103,7 +103,6 @@ const Register = () => {
     const [googleRegisteredUser, setGoogleRegisteredUser] = useState(null);
     const [isGoogleAuthedUsernameValid, setIsGoogleAuthedUsernameValid] = useState(false);
     const [googleAuthedUser, setGoogleAuthedUser] = useState(initialGoogleAuthedUserData);
-    const [customFooterAction, setCustomFooterAction] = useState(() => () => openNextSignUpStep());
 
     useEffect(() => {
         if (signUpStep === bodyJSXList.length) {
@@ -392,7 +391,7 @@ const Register = () => {
         setFooterText("Set Username");
         setIncludeFooter(true);
         setDisplayOverflow(false);
-        setCustomFooterAction(() => () => registerGoogleAuthedUser());
+        customFooterAction = registerGoogleAuthedUser;
     }
 
     return (
