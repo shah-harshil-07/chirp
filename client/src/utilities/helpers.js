@@ -1,8 +1,8 @@
-import Login from "./components/login";
-import Register from "./components/register";
+import Login from "../components/login";
+import Register from "../components/register";
 import * as CONSTANTS from "./constants";
-import ScheduledPostList from "./components/form/scheduled-posts";
-import ScheduledPostEditor from "./components/form/scheduled-post-editor";
+import ScheduledPostList from "../components/form/scheduled-posts";
+import ScheduledPostEditor from "../components/form/scheduled-post-editor";
 
 const dayOfWeekOptions = [], hourOptions = [], minuteOptions = [], dayOfMonthOptions = [];
 for (let i = 0; i < 60; i++) {

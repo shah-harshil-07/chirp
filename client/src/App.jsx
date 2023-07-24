@@ -7,7 +7,7 @@ import Posts from "./components/posts";
 import Form from "./components/form";
 import AuthBar from "./components/auth-bar";
 import Toaster from "./components/utilities/toaster";
-import { isUserLoggedIn, modalConfig } from "./helpers";
+import { isUserLoggedIn, modalConfig } from "./utilities/helpers";
 import LeftSidebar from "./components/sidebar/left-sidebar";
 import RightSidebar from "./components/sidebar/right-sidebar";
 
