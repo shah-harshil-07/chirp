@@ -13,9 +13,11 @@
 
 #scheduler-header-close {
     font-size: 25px;
-    margin-left: 6px;
+    margin-left: 7.4px;
     border-radius: 30px;
     cursor: pointer;
+    display: flex;
+    justify-content: space-around;
 }
 
 #scheduler-header-close:hover {
