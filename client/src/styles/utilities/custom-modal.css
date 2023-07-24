@@ -55,8 +55,7 @@
 }
 
 .custom-close-btn {
-    font-size: larger;
-    margin-right: -10px;
+    font-size: 28px;
     cursor: pointer;
 }
 
@@ -64,8 +63,17 @@
     padding-right: 0px;
     height: fit-content;
     padding-left: 16px;
+}
+
+.custom-close-btn-container {
+    width: 100%;
     display: flex;
     justify-content: center;
+}
+
+.custom-close-btn-container:hover {
+    background-color: rgba(15, 20, 25, 0.1);
+    border-radius: 50px;
 }
 
 .custom-container-body {

@@ -41,13 +41,17 @@ const CustomModal = ({
                                     </div>
 
                                     <div className="col-sm-1 custom-close-div" onClick={closeCustomDialog}>
-                                        <span className="custom-close-btn">&times;</span>
+                                        <div className="custom-close-btn-container">
+                                            <span className="custom-close-btn">&times;</span>
+                                        </div>
                                     </div>
                                 </>
                             ) : (
                                 <div className="col-sm-12 pr-0">
-                                    <div className="col-sm-1 custom-close-div" style={{ float: "right" }} onClick={closeCustomDialog}>
-                                        <span className="custom-close-btn">&times;</span>
+                                    <div className="col-sm-1 custom-close-div float-right" onClick={closeCustomDialog}>
+                                        <div className="custom-close-btn-container">
+                                            <span className="custom-close-btn">&times;</span>
+                                        </div>
                                     </div>
                                 </div>
                             )

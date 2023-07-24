@@ -100,7 +100,7 @@ const Login = () => {
             <div className="bottom-text">
                 Don't have an account?
                 <span className="link-text" onClick={openRegisterDialog}>{` Sign up`}</span>
-                <span className="link-text" style={{ float: "right" }}>Forgot Password?</span>
+                <span className="link-text float-right">Forgot Password?</span>
             </div>
         </>
     );
