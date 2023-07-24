@@ -7,7 +7,7 @@ import { cilSend, cilCommentBubble, cilChart, cilThumbUp, cilBookmark } from "@c
 import moment from "moment";
 
 import API from "src/api";
-import * as Constants from "src/constants";
+import * as Constants from "src/utilities/constants";
 
 const Posts = () => {
 	const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";

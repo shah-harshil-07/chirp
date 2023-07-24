@@ -5,8 +5,8 @@ import { useDispatch } from "react-redux";
 
 import API from "src/api";
 import Form from "./index";
-import * as Constants from "src/constants";
 import CustomModal from "../utilities/custom-modal";
+import * as Constants from "src/utilities/constants";
 import useToaster from "src/custom-hooks/toaster-message";
 import { closeModal } from "src/redux/actions/modal";
 

@@ -1,7 +1,7 @@
 import EmojiPicker from "emoji-picker-react";
 import React, { useEffect, useLayoutEffect, useRef } from "react";
 
-import * as Helpers from "src/helpers";
+import * as Helpers from "src/utilities/helpers";
 
 const EmojiContainer = ({ handleEmojiSelect, handleClickOutside }) => {
     const containerRef = useRef(null);

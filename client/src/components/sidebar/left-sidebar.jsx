@@ -5,7 +5,7 @@ import React from "react";
 import CIcon from "@coreui/icons-react";
 import { cilHome, cilSettings, cilBookmark, cilUser, cilOptions } from "@coreui/icons";
 
-import { isUserLoggedIn } from "src/helpers";
+import { isUserLoggedIn } from "src/utilities/helpers";
 
 const LeftSidebar = () => {
     const logo = require("src/assets/logo-1.png");

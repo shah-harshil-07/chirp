@@ -3,8 +3,8 @@ import "src/styles/signup-steps/code-input.css";
 import React, { forwardRef, useImperativeHandle, useState } from "react";
 
 import LabelledInput from "../utilities/labelled-input";
-import * as Constants from "src/constants";
-import { validate } from "src/helpers";
+import * as Constants from "src/utilities/constants";
+import { validate } from "src/utilities/helpers";
 
 const UsernameInput = forwardRef(({ handleDataChange }, ref) => {
     const [username, setUsername] = useState('');

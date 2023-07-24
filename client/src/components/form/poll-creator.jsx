@@ -6,7 +6,7 @@ import { cilPlus } from "@coreui/icons";
 
 import LabelledInput from "../utilities/labelled-input";
 import CustomSelect from "../utilities/custom-select";
-import * as Helpers from "src/helpers";
+import * as Helpers from "src/utilities/helpers";
 
 const PollCreator = ({ closePollCreator, handleChoiceChange, editPollData }) => {
     const containerRef = useRef(null);

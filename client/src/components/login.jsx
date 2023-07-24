@@ -7,13 +7,13 @@ import { useDispatch } from "react-redux";
 import { useGoogleLogin } from "@react-oauth/google";
 import { cibGoogle, cilLockLocked, cilLockUnlocked } from "@coreui/icons";
 
-import CustomModal from "./utilities/custom-modal";
-import { openModal, closeModal } from "src/redux/actions/modal";
-import LabelledInput from "./utilities/labelled-input";
-import * as Constants from "src/constants";
 import API from "src/api";
+import CustomModal from "./utilities/custom-modal";
+import * as Constants from "src/utilities/constants";
+import LabelledInput from "./utilities/labelled-input";
 import { openToaster } from "src/redux/actions/toaster";
 import useToaster from "src/custom-hooks/toaster-message";
+import { openModal, closeModal } from "src/redux/actions/modal";
 
 const Login = () => {
     const { showError } = useToaster();

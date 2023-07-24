@@ -7,16 +7,16 @@ import { cibGoogle } from "@coreui/icons";
 import { useDispatch } from "react-redux";
 import { useGoogleLogin } from "@react-oauth/google";
 
-import CustomModal from "./utilities/custom-modal";
-import { openModal, closeModal } from "src/redux/actions/modal";
-import CreateAccount from "./signup-steps/create-account";
-import CodeInput from "./signup-steps/code-input";
-import { validate, getErrorMessage } from "src/helpers";
 import API from "src/api";
-import * as Constants from "src/constants";
+import CodeInput from "./signup-steps/code-input";
+import CustomModal from "./utilities/custom-modal";
+import * as Constants from "src/utilities/constants";
 import { openToaster } from "src/redux/actions/toaster";
 import UsernameInput from "./signup-steps/username-input";
+import CreateAccount from "./signup-steps/create-account";
 import useToaster from "src/custom-hooks/toaster-message";
+import { openModal, closeModal } from "src/redux/actions/modal";
+import { validate, getErrorMessage } from "src/utilities/helpers";
 
 const Register = () => {
     const initialBodyData = {
