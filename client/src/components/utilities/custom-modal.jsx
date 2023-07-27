@@ -30,7 +30,7 @@ const CustomModal = ({
         <div className="custom-modal">
             <div className={`custom-modal-content ${modalContentClasses}`}>
                 <header className="custom-header">
-                    <div className="row custom-header-box">
+                    <div className="row mr-0">
                         {
                             includeHeader ? (
                                 <>

@@ -13,6 +13,7 @@ import * as Constants from "src/utilities/constants";
 import useToaster from "src/custom-hooks/toaster-message";
 import { getMonthOptions, getWeekOptions } from "src/utilities/helpers";
 import { closeModal, openModalWithProps } from "src/redux/actions/modal";
+import Confirmation from "../utilities/confirmation";
 
 const ScheduledPostList = () => {
     const { showError, showSuccess } = useToaster();
@@ -26,6 +27,7 @@ const ScheduledPostList = () => {
     const [selectedPosts, setSelectedPosts] = useState(0);
     const [displayOverflow, setDisplayOverflow] = useState(false);
     const [scheduledPostImages, setSchduledPostImages] = useState([]);
+    const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
     const [scheduledPostFileObjects, setScheduledPostFileObjects] = useState([]);
 
     useEffect(() => {
@@ -61,8 +63,7 @@ const ScheduledPostList = () => {
                         .catch(error => {
                             console.log(error);
                             rej();
-                        })
-                    ;
+                        });
                 }));
             });
         });
@@ -71,8 +72,8 @@ const ScheduledPostList = () => {
     }
 
     const updateScheduledPostFileObjects = (base64ImgData, postIndex, imageIndex, fileName) => {
-        const ext = fileName?.split('.')?.[1] ?? "jpg";
-        const contentType = `image/${ext}`, sliceSize = 512, _scheduledPostFileObjects = scheduledPostFileObjects;
+        const ext = fileName?.split('.')?.[1] ?? "jpg", sliceSize = 512;
+        const contentType = `image/${ext}`, _scheduledPostFileObjects = scheduledPostFileObjects;
         let byteChars = window.atob(base64ImgData), byteArrays = [];
 
         if (!_scheduledPostFileObjects[postIndex]) _scheduledPostFileObjects[postIndex] = [];
@@ -151,20 +152,21 @@ const ScheduledPostList = () => {
     }
 
     const deleteScheduledPosts = async () => {
-        try {
-            const selectedPosts = posts.filter(post => post.selected);
-            const selectedPostIds = selectedPosts.map(post => post._id);
-            const data = { postIds: selectedPostIds };
-            const response = await API(Constants.DELETE, Constants.DELETE_SCHEDULED_POST_IMAGES, data, headerData);
-            const responseData = response.data;
-            if (responseData?.meta?.message) {
-                showSuccess(responseData.meta.message);
-                dispatch(closeModal());
-            }
-        } catch (error) {
-            console.log(error);
-            showError("Something went wrong!");
-        }
+        setOpenConfirmationDialog(true);
+        // try {
+        //     const selectedPosts = posts.filter(post => post.selected);
+        //     const selectedPostIds = selectedPosts.map(post => post._id);
+        //     const data = { postIds: selectedPostIds };
+        //     const response = await API(Constants.DELETE, Constants.DELETE_SCHEDULED_POST_IMAGES, data, headerData);
+        //     const responseData = response.data;
+        //     if (responseData?.meta?.message) {
+        //         showSuccess(responseData.meta.message);
+        //         dispatch(closeModal());
+        //     }
+        // } catch (error) {
+        //     console.log(error);
+        //     showError("Something went wrong!");
+        // }
     }
 
     const bodyJSX = (
@@ -264,7 +266,18 @@ const ScheduledPostList = () => {
     );
 
     return (
-        <CustomModal bodyJSX={bodyJSX} includeHeader={true} showLoader={showLoader} displayOverflow={displayOverflow} />
+        <>
+            <CustomModal bodyJSX={bodyJSX} includeHeader={true} showLoader={showLoader} displayOverflow={displayOverflow} />
+            {
+                openConfirmationDialog && (
+                    <Confirmation
+                        headingText={"Delete post"}
+                        handleCloseAction={() => { setOpenConfirmationDialog(false); }}
+                        message={"Are you sure you want to delete the scheduled post?"}
+                    />
+                )
+            }
+        </>
     );
 }
 
