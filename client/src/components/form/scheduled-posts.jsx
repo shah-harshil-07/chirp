@@ -16,8 +16,8 @@ import { closeModal, openModalWithProps } from "src/redux/actions/modal";
 import Confirmation from "../utilities/confirmation";
 
 const ScheduledPostList = () => {
-    const { showError, showSuccess } = useToaster();
     const dispatch = useDispatch();
+    const { showError, showSuccess } = useToaster();
     const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
     const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
     const placeHolderImgUrl = "https://abs.twimg.com/responsive-web/client-web/alarm-clock-400x200.v1.da96e5d9.png";
@@ -152,21 +152,20 @@ const ScheduledPostList = () => {
     }
 
     const deleteScheduledPosts = async () => {
-        setOpenConfirmationDialog(true);
-        // try {
-        //     const selectedPosts = posts.filter(post => post.selected);
-        //     const selectedPostIds = selectedPosts.map(post => post._id);
-        //     const data = { postIds: selectedPostIds };
-        //     const response = await API(Constants.DELETE, Constants.DELETE_SCHEDULED_POST_IMAGES, data, headerData);
-        //     const responseData = response.data;
-        //     if (responseData?.meta?.message) {
-        //         showSuccess(responseData.meta.message);
-        //         dispatch(closeModal());
-        //     }
-        // } catch (error) {
-        //     console.log(error);
-        //     showError("Something went wrong!");
-        // }
+        try {
+            const selectedPosts = posts.filter(post => post.selected);
+            const selectedPostIds = selectedPosts.map(post => post._id);
+            const data = { postIds: selectedPostIds };
+            const response = await API(Constants.DELETE, Constants.DELETE_SCHEDULED_POST_IMAGES, data, headerData);
+            const responseData = response.data;
+            if (responseData?.meta?.message) {
+                showSuccess(responseData.meta.message);
+                dispatch(closeModal());
+            }
+        } catch (error) {
+            console.log(error);
+            showError("Something went wrong!");
+        }
     }
 
     const bodyJSX = (
@@ -178,7 +177,7 @@ const ScheduledPostList = () => {
                     posts.length > 0 && (
                         <div className="col-md-4">
                             <button
-                                onClick={deleteScheduledPosts}
+                                onClick={() => { setOpenConfirmationDialog(true); }}
                                 className="btn btn-danger scheduled-post-delete-btn"
                                 style={{ opacity: selectedPosts > 0 ? '1' : "0.4" }}
                             >
@@ -207,7 +206,7 @@ const ScheduledPostList = () => {
                             <div className="scheduled-post-box w-75">
                                 <div className="h-50 position-relative">
                                     <CIcon icon={cilCalendarCheck} size="sm" className="action-icon" />
-                                    <span className="position-absolute" style={{ fontSize: "14px" }}>
+                                    <span className="position-absolute font-size-14">
                                         &nbsp;&nbsp;
                                         {
                                             `Will send on ${displayedDayOfWeek}, ${displayedMonth} ${dayOfMonth}, ${year} at
@@ -251,7 +250,7 @@ const ScheduledPostList = () => {
                                 }
                             </div>
                         </div>
-                    )
+                    );
                 }) : (
                     <div>
                         <img src={placeHolderImgUrl} alt="placeholder" className="w-100 h-70" />
@@ -272,8 +271,9 @@ const ScheduledPostList = () => {
                 openConfirmationDialog && (
                     <Confirmation
                         headingText={"Delete post"}
+                        handleConfirmAction={deleteScheduledPosts}
                         handleCloseAction={() => { setOpenConfirmationDialog(false); }}
-                        message={"Are you sure you want to delete the scheduled post?"}
+                        message={`Are you sure you want to delete the scheduled ${selectedPosts > 1 ? "posts" : "post"}?`}
                     />
                 )
             }
