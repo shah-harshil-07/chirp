@@ -354,7 +354,12 @@ const Register = () => {
             const responseData = response.data;
 
             if (responseData?.meta?.status && responseData?.meta?.message) {
-                if (responseData?.data?.token) localStorage.setItem("chirp-accessToken", responseData.data.token);
+                const { token, user: userDetails } = responseData?.data ?? {};
+                if (token && userDetails) {
+                    localStorage.setItem("chirp-accessToken", responseData.data.token);
+                    localStorage.setItem("chirp-userDetails", JSON.stringify(userDetails));
+                }
+
                 showSuccess(responseData.meta.message);
             } else if (responseData?.errors?.length) {
                 const message = responseData?.errors?.[0] ?? "Something went wrong!";

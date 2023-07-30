@@ -33,7 +33,7 @@ const App = () => {
 					<LeftSidebar />
 
 					<div>
-						{ isUserLoggedIn() && <Form currentId={currentId} setCurrentId={setCurrentId} /> }
+						{isUserLoggedIn() && <Form currentId={currentId} setCurrentId={setCurrentId} />}
 						<Posts />
 					</div>
 

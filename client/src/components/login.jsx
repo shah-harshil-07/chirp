@@ -24,8 +24,8 @@ const Login = () => {
     const [googleRegisteredUser, setGoogleRegisteredUser] = useState(null);
 
     const loginWithGoogle = useGoogleLogin({
-        onSuccess: response => { setGoogleRegisteredUser(response) },
-        onError: err => { console.log(err) },
+        onSuccess: response => { setGoogleRegisteredUser(response); },
+        onError: err => { console.log(err); },
     });
 
     useEffect(() => {
@@ -42,7 +42,9 @@ const Login = () => {
                         const name = response?.data?.name ?? '';
                         const email = response?.data?.email ?? '';
                         const googleId = response?.data?.id ?? '';
-                        checkGoogleAuthedUser({ name, email, googleId });
+                        const picture = response?.data?.picture ?? '';
+
+                        checkGoogleAuthedUser({ name, email, googleId, picture });
                     }
                 } catch (error) {
                     showError("Something went wrong!");
@@ -118,8 +120,12 @@ const Login = () => {
             if (responseData?.meta?.status && responseData?.data) {
                 type = "Success";
                 message = "User logged in successfully.";
-                const accessToken = responseData.data.token;
-                if (accessToken) localStorage.setItem("chirp-accessToken", accessToken);
+                const { token, user: userDetails } = responseData.data;
+
+                if (token && userDetails) {
+                    localStorage.setItem("chirp-accessToken", responseData.data.token);
+                    localStorage.setItem("chirp-userDetails", JSON.stringify(userDetails));
+                }
             } else if (responseData?.meta?.message) {
                 type = "Error";
                 message = responseData.meta.message;
@@ -149,9 +155,16 @@ const Login = () => {
             if (responseData?.meta?.status && responseData?.data) {
                 const userValid = responseData?.data?.userValid ?? false;
                 const token = responseData?.data?.accessToken ?? '';
+                const userData = responseData?.data?.userData ?? null;
+
                 const message = responseData?.meta?.message ?? "Something went wrong";
                 const type = userValid ? "Success" : "Error";
-                if (userValid && token) localStorage.setItem("chirp-accessToken", token);
+
+                if (userValid && token && userData) {
+                    localStorage.setItem("chirp-accessToken", token);
+                    localStorage.setItem("chirp-userDetails", JSON.stringify(userData));
+                }
+
                 dispatch(openToaster(type, message));
                 closeLoginDialog();
             } else {

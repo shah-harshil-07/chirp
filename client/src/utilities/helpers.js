@@ -56,6 +56,20 @@ export const isUserLoggedIn = () => {
     return localStorage.getItem("chirp-accessToken") ? true : false;
 }
 
+export const getUserDetails = () => {
+    const userData = localStorage.getItem("chirp-userDetails");
+    if (userData) {
+        const userDetails = JSON.parse(userData);
+        return {
+            name: userDetails?.name ?? '',
+            picture: userDetails?.picture ?? '',
+            username: userDetails?.username ?? '',
+        };
+    }
+
+    return null;
+}
+
 export const getDayOfWeekOptions = () => {
     return dayOfWeekOptions;
 }

@@ -115,7 +115,7 @@ export class UsersController {
             if (userObj) accessToken = this.authService.generateToken(userObj);
             const message = userObj ? "User logged in successfully!" : "Credentials are incorrect.";
 
-            const data = { userValid: userObj ? true : false };
+            const data = { userValid: userObj ? true : false, userData: userObj };
             if (accessToken) data["accessToken"] = accessToken;
             return { data, message, success: true };
         } catch (error) {
