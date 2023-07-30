@@ -33,13 +33,11 @@ const Register = () => {
         else setSignUpStep(signUpStep + 1);
     }
 
-    let customFooterAction = openNextSignUpStep;
-
     const registerBodyJSX = (
         <>
             <h4 className="header">Join Chirp today</h4>
 
-            <div className="auth-box" onClick={() => registerWithGoogle()}>
+            <div className="auth-box" onClick={() => { registerWithGoogle(); }}>
                 <span className="d-flex justify-content-center align-items-center">
                     <CIcon icon={cibGoogle} id="google-signup-icon" />
                     <span id="google-signup-text">Sign up with google</span>
@@ -51,7 +49,7 @@ const Register = () => {
                 <div className="or-div">or</div>
             </div>
 
-            <div className="auth-box" id="create-box" onClick={customFooterAction}>
+            <div className="auth-box" id="create-box" onClick={openNextSignUpStep}>
                 <span>Create Account</span>
             </div>
 
@@ -194,8 +192,9 @@ const Register = () => {
                         const name = response?.data?.name ?? '';
                         const email = response?.data?.email ?? '';
                         const googleId = response?.data?.id ?? '';
+                        const picture = response?.data?.picture ?? '';
 
-                        const userData = { name, email, googleId };
+                        const userData = { name, email, googleId, picture };
                         setGoogleAuthedUser({ ...userData });
                     }
                 } catch (error) {
@@ -213,9 +212,8 @@ const Register = () => {
     }, [isGoogleAuthedUsernameValid]);
 
     useEffect(() => {
-        if (googleAuthedUser.email && googleAuthedUser.name && googleAuthedUser.googleId) {
-            checkGoogleAuthedUser(googleAuthedUser);
-        }
+        const { email, name, googleId } = googleAuthedUser;
+        if (email && name && googleId) checkGoogleAuthedUser(googleAuthedUser);
         // eslint-disable-next-line
     }, [googleAuthedUser]);
 
@@ -382,7 +380,7 @@ const Register = () => {
         setBodyData({ ...bodyData, [key]: data });
     }
 
-    function showUserInputPage() {
+    const showUserInputPage = () => {
         const userInputBodyJSX = (
             <UsernameInput ref={usernameInputRef} handleDataChange={isValid => setIsGoogleAuthedUsernameValid(isValid)} />
         );
@@ -391,7 +389,6 @@ const Register = () => {
         setFooterText("Set Username");
         setIncludeFooter(true);
         setDisplayOverflow(false);
-        customFooterAction = registerGoogleAuthedUser;
     }
 
     return (
@@ -402,8 +399,8 @@ const Register = () => {
             footerText={footerText}
             includeFooter={includeFooter}
             footerDisabled={footerDisabled}
-            footerAction={customFooterAction}
             displayOverflow={displayOverflow}
+            footerAction={googleAuthedUser ? registerGoogleAuthedUser : openNextSignUpStep}
         />
     )
 }

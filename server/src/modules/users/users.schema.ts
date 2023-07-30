@@ -16,6 +16,9 @@ export class UserModel {
 
     @Prop()
     googleId: string;
+
+    @Prop()
+    picture: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserModel);

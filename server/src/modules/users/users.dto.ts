@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, Length, Matches } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, Length, Matches } from "class-validator";
 import { CustomMatch } from "src/decorators/validators";
 import * as Constants from "src/constants";
 
@@ -14,6 +14,9 @@ export class UserDTO {
     @IsNotEmpty()
     @IsEmail({}, { message: Constants.EMAIL_ERR_MESSAGE })
     email: string;
+
+    @IsString()
+    picture: string;
 }
 
 export class RegisteredUserDTO extends UserDTO {
