@@ -29,7 +29,7 @@ const monthOptions = [
     { value: 11, label: "December" }, // index: 11, days: 31
 ];
 
-const weekOptions = [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ];
+const weekOptions = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 const keyConfig = {
     password: { regex: CONSTANTS.PASSWORD_REGEX, negativeCase: true, errorMessage: CONSTANTS.PASSWORD_ERR_MESSAGE },
@@ -37,6 +37,8 @@ const keyConfig = {
     username: { regex: CONSTANTS.USERNAME_REGEX, negativeCase: false, errorMessage: CONSTANTS.USERNAME_ERR_MESSAGE },
     email: { regex: CONSTANTS.EMAIL_REGEX, negativeCase: true, errorMessage: CONSTANTS.EMAIL_ERR_MESSAGE },
 }
+
+const MAX_DISPLAY_LENGTH = 15;
 
 export const validate = (key, data) => {
     if (keyConfig?.[key]) {
@@ -57,14 +59,12 @@ export const isUserLoggedIn = () => {
 }
 
 export const getUserDetails = () => {
-    const userData = localStorage.getItem("chirp-userDetails");
+    const userData = localStorage.getItem("chirp-userDetails"), len = MAX_DISPLAY_LENGTH;
     if (userData) {
-        const userDetails = JSON.parse(userData);
-        return {
-            name: userDetails?.name ?? '',
-            picture: userDetails?.picture ?? '',
-            username: userDetails?.username ?? '',
-        };
+        let { name, picture, username } = JSON.parse(userData);
+        name = name.length > len ? `${name.slice(0, len)}...` : name;
+        username = username.length > len ? `${username.slice(0, len)}...` : username;
+        return { name, username, picture };
     }
 
     return null;

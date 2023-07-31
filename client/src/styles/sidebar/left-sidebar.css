@@ -83,7 +83,7 @@
 .left-sidebar-user-actionbar {
     z-index: 2;
     width: 100%;
-    bottom: 120px;
+    bottom: 80px;
     cursor: pointer;
     padding-top: 10px;
     position: absolute;
@@ -93,9 +93,19 @@
 }
 
 .left-sidebar-user-action {
-    padding-left: 15px;    
+    padding-left: 15px;
+    height: 30px;
+    padding-top: 2.5px;
 }
 
 .left-sidebar-user-action:hover {
     background-color: rgba(15, 20, 25, 0.1);
+}
+
+#left-sidebar-options-icon {
+    margin-left: -10px;
+}
+
+#left-sidebar-userbar-text {
+    font-size: 20px;
 }

@@ -120,10 +120,11 @@ const Login = () => {
             if (responseData?.meta?.status && responseData?.data) {
                 type = "Success";
                 message = "User logged in successfully.";
-                const { token, user: userDetails } = responseData.data;
+                let { token, user: userDetails } = responseData.data;
+                userDetails = { ...userDetails, picture: userData.picture };
 
                 if (token && userDetails) {
-                    localStorage.setItem("chirp-accessToken", responseData.data.token);
+                    localStorage.setItem("chirp-accessToken", token);
                     localStorage.setItem("chirp-userDetails", JSON.stringify(userDetails));
                 }
             } else if (responseData?.meta?.message) {

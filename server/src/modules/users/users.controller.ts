@@ -12,10 +12,10 @@ import {
 } from "./users.dto";
 
 interface IResponseProps {
-    data?: any,
-    errors?: any,
-    message: string,
-    success: boolean,
+    data?: any;
+    errors?: any;
+    message: string;
+    success: boolean;
 };
 
 @UseInterceptors(ResponseInterceptor)

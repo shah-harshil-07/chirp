@@ -84,42 +84,43 @@ const LeftSidebar = () => {
 
                 <div id="left-sidebar-chirp-btn">Post</div>
 
-                <div>
-                    {
-                        viewActionbar && (
-                            <div className="left-sidebar-user-actionbar" ref={actionbarRef}>
-                                <div className="left-sidebar-user-action" onClick={() => { setOpenLogoutConfirmation(true); }}>
-                                    <b>Log out {`@${userDetails?.username ?? ''}`}</b>
-                                </div>
+                {
+                    viewActionbar && (
+                        <div className="left-sidebar-user-actionbar" ref={actionbarRef}>
+                            <div
+                                className="left-sidebar-user-action"
+                                onClick={() => { setOpenLogoutConfirmation(true); }}
+                            >
+                                <b>Log out {`@${userDetails?.username ?? ''}`}</b>
                             </div>
-                        )
-                    }
-                    {
-                        isUserLoggedIn() && userDetails?.name && userDetails?.username && (
-                            <div className="row" id="left-sidebar-profile-container">
-                                <div id="profile-image-container">
-                                    <img
-                                        alt="logo"
-                                        className="sidebar-profile-img"
-                                        src={userDetails.picture ? userDetails.picture : placeHolderImageSrc}
-                                    />
-                                </div>
-
-                                <div style={{ fontSize: "19px" }}>
-                                    &nbsp;{userDetails?.name ?? ''}<br />{`@${userDetails?.username ?? ''}`}
-                                </div>
-
-                                <CIcon
-                                    icon={cilOptions}
-                                    ref={actionIconRef}
-                                    className="options-icon"
-                                    style={{ marginLeft: "21px" }}
-                                    onClick={() => { setViewActionbar(!viewActionbar); }}
+                        </div>
+                    )
+                }
+                {
+                    isUserLoggedIn() && userDetails?.name && userDetails?.username && (
+                        <div className="row" id="left-sidebar-profile-container">
+                            <div id="profile-image-container">
+                                <img
+                                    alt="user"
+                                    className="sidebar-profile-img"
+                                    src={userDetails.picture ? userDetails.picture : placeHolderImageSrc}
                                 />
                             </div>
-                        )
-                    }
-                </div>
+
+                            <div id="left-sidebar-userbar-text">
+                                &nbsp;{userDetails?.name ?? ''}<br />{`@${userDetails?.username ?? ''}`}
+                            </div>
+
+                            <CIcon
+                                icon={cilOptions}
+                                ref={actionIconRef}
+                                className="options-icon"
+                                id="left-sidebar-options-icon"
+                                onClick={() => { setViewActionbar(!viewActionbar); }}
+                            />
+                        </div>
+                    )
+                }
 
                 {
                     openLogoutConfirmation && (
