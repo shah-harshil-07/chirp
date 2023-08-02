@@ -17,7 +17,7 @@ export class PostService {
     ) { }
 
     async findAll(): Promise<Post[]> {
-        return this.postModel.find().exec();
+        return this.postModel.find().populate("userId", "name username picture").exec();
     }
 
     async getAllSchduledPosts(userId: ObjectId): Promise<ScheduledPost[]> {

@@ -1,4 +1,5 @@
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
+import mongoose from "mongoose";
 
 class Duration {
     days: number;
@@ -39,7 +40,7 @@ export class Post {
     @Prop()
     text: string;
 
-    @Prop()
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "UserModel" })
     userId: string;
 
     @Prop()
