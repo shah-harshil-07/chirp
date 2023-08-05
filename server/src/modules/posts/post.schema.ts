@@ -1,5 +1,6 @@
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
-import mongoose from "mongoose";
+import mongoose, { Date } from "mongoose";
+import { UserModel } from "../users/users.schema";
 
 class Duration {
     days: number;
@@ -37,17 +38,20 @@ class Poll {
 
 @Schema({ collection: "PostMessages" })
 export class Post {
-    @Prop()
+    @Prop({ required: true })
     text: string;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "UserModel" })
-    userId: string;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "UserModel", required: true })
+    user: UserModel;
 
     @Prop()
     images: Array<string>;
 
     @Prop()
     poll: Poll;
+
+    @Prop({ type: Date, required: true })
+    createdAt: Date;
 }
 
 @Schema({ collection: "ScheduledMessages" })

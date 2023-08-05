@@ -14,6 +14,14 @@ const Posts = () => {
 
 	const [posts, setPosts] = useState([]);
 
+	const durationData = [
+		{ key: "months", symbol: "mo" },
+		{ key: "days", symbol: 'd' },
+		{ key: "hours", symbol: 'h' },
+		{ key: "minutes", symbol: "min" },
+		{ key: "seconds", symbol: 's' },
+	];
+
 	useEffect(() => {
 		getPosts();
 	}, []);
@@ -29,21 +37,41 @@ const Posts = () => {
 		}
 	}
 
+	const getPostTiming = dateObj => {
+		const currentDate = Date.now();
+		let diff = moment(currentDate).diff(dateObj, "months");
+
+		for (let i = 0; i < durationData.length; i++) {
+			const { key, symbol } = durationData[i];
+			const diff = moment(currentDate).diff(dateObj, key);
+			if (diff > 0) {
+				return (symbol === "mo" && diff > 11)
+					? moment(currentDate).format("MMM D YYYY")
+					: (diff + symbol);
+			}
+		}
+
+		return diff;
+	}
+
 	return (
 		<div>
 			{
 				posts.map((post, index) => {
-					return (
+					const { name, username } = post.user ?? {};
+					return name && username ? (
 						<Card id="card" key={index}>
-							<img src={placeHolderImageSrc} id="user-image" alt="user" />
+							<img src={post?.user?.picture ?? placeHolderImageSrc} id="user-image" alt="user" />
+
 							<div id="card-body">
 								<div className="row mx-0">
-									<b>{post.creator}</b>
+									<b>{name}</b>&nbsp;
+									<span>{`@${username}`}</span>
 									<span><div id="seperator-container"><div id="seperator" /></div></span>
-									<span>{`${moment(post.createdAt).hours()}h`}</span>
+									<span>{getPostTiming(post.createdAt)}</span>
 								</div>
 
-								<div className="row mx-0"><div>{post.message}</div></div>
+								<div className="row mx-0"><div>{post?.text ?? ''}</div></div>
 
 								<div id="action-bar">
 									<CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
@@ -54,7 +82,9 @@ const Posts = () => {
 								</div>
 							</div>
 						</Card>
-					)
+					) : (
+						<></>
+					);
 				})
 			}
 		</div>

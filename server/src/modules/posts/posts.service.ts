@@ -17,7 +17,7 @@ export class PostService {
     ) { }
 
     async findAll(): Promise<Post[]> {
-        return this.postModel.find().populate("userId", "name username picture").exec();
+        return this.postModel.find().populate("user", "name username picture").exec();
     }
 
     async getAllSchduledPosts(userId: ObjectId): Promise<ScheduledPost[]> {
@@ -31,7 +31,7 @@ export class PostService {
 
     async create(postData: ParsedPostDTO, userId: ObjectId): Promise<Post> {
         try {
-            const mainData = { ...postData, userId, images: postData.images };
+            const mainData = { ...postData, user: userId, images: postData.images, createdAt: Date.now() };
             const createdPost = new this.postModel(mainData);
             return createdPost.save();
         } catch (error) {
