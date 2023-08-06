@@ -54,13 +54,57 @@ const Posts = () => {
 		return diff;
 	}
 
+	const vote = (postIndex, choiceIndex) => {
+		const _posts = posts;
+
+		if (_posts?.[postIndex]?.poll?.choices?.[choiceIndex]?.votes >= 0) {
+			_posts[postIndex].poll.choices[choiceIndex].votes += 1;
+		}
+
+		setPosts([..._posts]);
+	}
+
+	const getGradient = votePercent => {
+		return `linear-gradient(to right, #e9ecef ${votePercent}%, white ${votePercent}% 100%)`;
+	}
+
+	const getPollJSX = (pollData, postIndex) => {
+		const { choices } = pollData;
+		const totalVotes = choices.reduce((votesAcc, choiceObj) => {
+			return votesAcc += choiceObj.votes;
+		}, 0);
+
+		return (
+			<div className="mt-3 mb-3">
+				{
+					choices.map((choiceObj, choiceIndex) => {
+						const { label, votes } = choiceObj;
+						const votePercent = Math.ceil(votes/totalVotes * 100);
+
+						return (
+							<div
+								key={choiceIndex}
+								className="post-poll-bar"
+								onClick={() => { vote(postIndex, choiceIndex); }}
+								style={{ background: getGradient(votePercent) }}
+							>
+								{label ?? ''}
+							</div>
+						);
+					})
+				}
+			</div>
+		);
+	}
+
 	return (
 		<div>
 			{
-				posts.map((post, index) => {
+				posts.map((post, postIndex) => {
 					const { name, username } = post.user ?? {};
+
 					return name && username ? (
-						<Card id="card" key={index}>
+						<Card id="card" key={postIndex}>
 							<img src={post?.user?.picture ?? placeHolderImageSrc} id="user-image" alt="user" />
 
 							<div id="card-body">
@@ -73,21 +117,7 @@ const Posts = () => {
 
 								<div className="row mx-0"><div>{post?.text ?? ''}</div></div>
 
-								{
-									post?.poll?.choices && (
-										<div className="mt-3 mb-3">
-											{
-												post.poll.choices.map((choiceObj, choiceIndex) => {
-													return (
-														<div key={choiceIndex} className="post-poll-bar">
-															{choiceObj?.label ?? ''}
-														</div>
-													);
-												})
-											}
-										</div>
-									)
-								}
+								{post?.poll?.choices && getPollJSX(post.poll, postIndex)}
 
 								<div id="action-bar">
 									<CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />

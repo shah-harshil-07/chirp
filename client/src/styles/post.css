@@ -48,11 +48,13 @@
 .post-poll-bar {
     width: 95%;
     height: 50px;
-    border: 2px solid #e9ecef;
-    border-radius: 10px;
-    padding-left: 14px;
-    font-size: 20px;
     display: flex;
+    cursor: pointer;
+    font-size: 20px;
+    margin-top: 1rem;
+    padding-left: 14px;
+    border-radius: 10px;
     flex-direction: column;
     justify-content: center;
+    border: 2px solid #e9ecef;
 }
