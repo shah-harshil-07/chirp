@@ -73,6 +73,22 @@ const Posts = () => {
 
 								<div className="row mx-0"><div>{post?.text ?? ''}</div></div>
 
+								{
+									post?.poll?.choices && (
+										<div className="mt-3 mb-3">
+											{
+												post.poll.choices.map((choiceObj, choiceIndex) => {
+													return (
+														<div key={choiceIndex} className="post-poll-bar">
+															{choiceObj?.label ?? ''}
+														</div>
+													);
+												})
+											}
+										</div>
+									)
+								}
+
 								<div id="action-bar">
 									<CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
 									<CIcon title="Repost" icon={cilSend} className="chirp-action" />

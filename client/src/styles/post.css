@@ -44,3 +44,15 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+.post-poll-bar {
+    width: 95%;
+    height: 50px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding-left: 14px;
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

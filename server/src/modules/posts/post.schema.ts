@@ -28,9 +28,14 @@ class Schedule {
     minutes: number;
 }
 
+interface IPollData {
+    label: string;
+    votes: number;
+}
+
 class Poll {
     @Prop()
-    choices: string[];
+    choices: IPollData[];
 
     @Prop()
     duration: Duration;

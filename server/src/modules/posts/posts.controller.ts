@@ -66,6 +66,14 @@ export class PostController {
             const parsedData = JSON.parse(postData.data);
             const data = { text: parsedData.text, images: fileNames, poll: parsedData.poll ?? null };
 
+            if (data?.poll?.choices?.length) {
+                const choices = data.poll.choices.map((choice: string) => {
+                    return { label: choice, votes: 0 };
+                });
+
+                data.poll.choices = choices;
+            }
+
             if (parsedData?.["schedule"]) {
                 const { year, month, dayOfMonth, hours, minutes } = parsedData["schedule"];
                 const scheduledDate = new Date(year, month, dayOfMonth, hours, minutes, 0, 0);
