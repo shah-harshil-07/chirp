@@ -43,3 +43,8 @@ export interface ScheduledPostDTO {
 export interface IScheduledPostIds {
     postIds: string[];
 }
+
+export interface IVotingUserData {
+    postId: string;
+    choiceIndex: number;
+}

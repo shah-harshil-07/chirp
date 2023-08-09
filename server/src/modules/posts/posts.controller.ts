@@ -25,7 +25,7 @@ import { ResponseInterceptor } from "src/interceptors/response";
 import { IResponseProps } from "src/interceptors/interfaces";
 import { PostService } from "./posts.service";
 import { Post as UserPost } from "./post.schema";
-import { IScheduledPostIds, PostDTO } from "./post.dto";
+import { IScheduledPostIds, IVotingUserData, PostDTO } from "./post.dto";
 import { fileStorageConfigObj, parseFilePipeObj } from "./file.config";
 
 @Controller("posts")
@@ -72,6 +72,7 @@ export class PostController {
                 });
 
                 data.poll.choices = choices;
+                data.poll.users = [];
             }
 
             if (parsedData?.["schedule"]) {
@@ -113,6 +114,14 @@ export class PostController {
     @Delete("delete/:id")
     async delete(@Param() { id }: any): Promise<any> {
         return this.postService.delete(id);
+    }
+
+    @Post("poll/vote")
+    @UseGuards(AuthGuard("jwt"))
+    async votePoll(@Req() req: any, @Body() votingUserData: IVotingUserData) {
+        const { postId, choiceIndex } = votingUserData;
+        const { _id: userId } = req.user;
+        return this.postService.votePoll(userId, postId, choiceIndex);
     }
 
     @Delete("scheduled/delete-many")

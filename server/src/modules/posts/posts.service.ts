@@ -88,4 +88,22 @@ export class PostService {
     async delete(id: string): Promise<Post> {
         return this.postModel.findOneAndDelete({ _id: id });
     }
+
+    async votePoll(userId: string, postId: string, choiceIndex: number): Promise<Post> {
+        try {
+            const post = this.postModel.findOneAndUpdate(
+                { _id: postId },
+                { $set: { "poll.users.$[elem].choiceIndex": choiceIndex } },
+                {
+                    arrayFilters: [{ "elem.userId": userId }],
+                    returnNewDocument: true,
+                    upsert: true,
+                },
+            );
+
+            return post;
+        } catch (error) {
+            return null;
+        }
+    }
 }

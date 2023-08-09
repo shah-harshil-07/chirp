@@ -33,12 +33,20 @@ interface IPollData {
     votes: number;
 }
 
+interface IPollUserData {
+    userId: string;
+    choiceIndex: number;
+}
+
 class Poll {
     @Prop()
     choices: IPollData[];
 
     @Prop()
     duration: Duration;
+
+    @Prop()
+    users: IPollUserData[];
 }
 
 @Schema({ collection: "PostMessages" })
