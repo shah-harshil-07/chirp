@@ -118,10 +118,11 @@ export class PostController {
 
     @Post("poll/vote")
     @UseGuards(AuthGuard("jwt"))
-    async votePoll(@Req() req: any, @Body() votingUserData: IVotingUserData) {
+    async votePoll(@Req() req: any, @Body() votingUserData: IVotingUserData): Promise<IResponseProps> {
         const { postId, choiceIndex } = votingUserData;
         const { _id: userId } = req.user;
-        return this.postService.votePoll(userId, postId, choiceIndex);
+        const post = await this.postService.votePoll(userId, postId, choiceIndex);
+        return { success: true, message: "Poll voted successfully.", data: post };
     }
 
     @Delete("scheduled/delete-many")

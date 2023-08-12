@@ -91,19 +91,27 @@ export class PostService {
 
     async votePoll(userId: string, postId: string, choiceIndex: number): Promise<Post> {
         try {
-            const post = this.postModel.findOneAndUpdate(
-                { _id: postId },
-                { $set: { "poll.users.$[elem].choiceIndex": choiceIndex } },
-                {
-                    arrayFilters: [{ "elem.userId": userId }],
-                    returnNewDocument: true,
-                    upsert: true,
-                },
-            );
+            let newPost: Post;
+            const post = await this.postModel.findOne({ _id: postId, "poll.users.userId": userId }).exec();
 
-            return post;
+            if (post === null) {
+                newPost = await this.postModel.findByIdAndUpdate(
+                    postId,
+                    { $addToSet: { "poll.users": { userId, choiceIndex } } },
+                    { new: true }
+                );
+            } else {
+                newPost = await this.postModel.findByIdAndUpdate(
+                    postId,
+                    { $set: { "poll.users.$[elem].choiceIndex": 1 } },
+                    { arrayFilters: [{ "elem.userId": userId }], new: true }
+                );
+            }
+
+            return newPost;
         } catch (error) {
-            return null;
+            console.log(error);
+            throw new InternalServerErrorException();
         }
     }
 }
