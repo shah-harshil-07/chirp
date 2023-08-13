@@ -37,4 +37,5 @@ export const CREATE_POST = "posts/create";
 export const GET_SCHEDULED_POSTS = "posts/scheduled/all";
 export const GET_SCHEDULED_POST_IMAGE = "posts/scheduled/get-image";
 export const DELETE_SCHEDULED_POST_IMAGES = "posts/scheduled/delete-many";
-export const RESCHEDULE_POST = "posts/scheduled/reschedule"
+export const RESCHEDULE_POST = "posts/scheduled/reschedule";
+export const VOTE_POLL = "posts/poll/vote";

@@ -1,16 +1,18 @@
 import "src/styles/post.css";
 
-import React, { useEffect, useState } from "react";
-import { Card } from "@material-ui/core/";
-import CIcon from "@coreui/icons-react";
-import { cilSend, cilCommentBubble, cilChart, cilThumbUp, cilBookmark } from "@coreui/icons";
 import moment from "moment";
+import CIcon from "@coreui/icons-react";
+import { Card } from "@material-ui/core/";
+import React, { useEffect, useState } from "react";
+import { cilSend, cilCommentBubble, cilChart, cilThumbUp, cilBookmark } from "@coreui/icons";
 
 import API from "src/api";
 import * as Constants from "src/utilities/constants";
 
 const Posts = () => {
 	const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";
+	const userDetails = localStorage.getItem("chirp-userDetails");
+	const loggedInUserId = userDetails ? JSON.parse(userDetails)?._id ?? '' : '';
 
 	const [posts, setPosts] = useState([]);
 
@@ -56,39 +58,63 @@ const Posts = () => {
 
 	const vote = (postIndex, choiceIndex) => {
 		const _posts = posts;
+		const pollObj = _posts[postIndex].poll;
+		const { users, choices } = pollObj;
 
-		if (_posts?.[postIndex]?.poll?.choices?.[choiceIndex]?.votes >= 0) {
-			_posts[postIndex].poll.choices[choiceIndex].votes += 1;
+		if (loggedInUserId) {
+			const userIndex = users.findIndex(user => user.userId === loggedInUserId);
+			if (userIndex >= 0) {
+				const originalChoiceIndex = users[userIndex].choiceIndex;
+				users[userIndex].choiceIndex = choiceIndex;
+				choices[originalChoiceIndex].votes--;
+			}
 		}
 
+		choices[choiceIndex].votes++;
 		setPosts([..._posts]);
+
+		const data = { postId: posts[postIndex]._id, choiceIndex };
+		const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
+		API(Constants.POST, Constants.VOTE_POLL, data, headerData);
 	}
 
-	const getGradient = votePercent => {
-		return `linear-gradient(to right, #e9ecef ${votePercent}%, white ${votePercent}% 100%)`;
+	const getGradient = (votePercent, isVoted = false) => {
+		const bgColor = isVoted ? "#1DA1F2" : "#e9ecef";
+		return `linear-gradient(to right, ${bgColor} ${votePercent}%, white ${votePercent}% 100%)`;
 	}
 
 	const getPollJSX = (pollData, postIndex) => {
-		const { choices } = pollData;
-		const totalVotes = choices.reduce((votesAcc, choiceObj) => {
-			return votesAcc += choiceObj.votes;
-		}, 0);
+		const { choices, users } = pollData;
+		let votedIndex = -1, userIndex = -1;
+		const totalVotes = choices.reduce((votesAcc, { votes }) => votesAcc += votes, 0);
+
+		if (loggedInUserId) {
+			userIndex = users.findIndex(user => user.userId === loggedInUserId);
+			if (userIndex >= 0) votedIndex = users[userIndex]?.choiceIndex ?? -1;
+		}
 
 		return (
 			<div className="mt-3 mb-3">
 				{
 					choices.map((choiceObj, choiceIndex) => {
 						const { label, votes } = choiceObj;
-						const votePercent = Math.ceil(votes/totalVotes * 100);
+						const votePercent = Math.ceil(votes / totalVotes * 100);
+						const isVoted = (choiceIndex === votedIndex && users[userIndex].userId === loggedInUserId);
 
 						return (
 							<div
 								key={choiceIndex}
 								className="post-poll-bar"
+								style={{ background: getGradient(votePercent, isVoted) }}
 								onClick={() => { vote(postIndex, choiceIndex); }}
-								style={{ background: getGradient(votePercent) }}
 							>
 								{label ?? ''}
+
+								{
+									votedIndex >= 0 && (
+										<div className="post-vote-percent-label">{`${votePercent.toFixed(0)}%`}</div>
+									)
+								}
 							</div>
 						);
 					})

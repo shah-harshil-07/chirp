@@ -52,9 +52,15 @@
     cursor: pointer;
     font-size: 20px;
     margin-top: 1rem;
+    position: relative;
     padding-left: 14px;
     border-radius: 10px;
     flex-direction: column;
     justify-content: center;
     border: 2px solid #e9ecef;
+}
+
+.post-vote-percent-label {
+    position: absolute;
+    right: 10px;
 }

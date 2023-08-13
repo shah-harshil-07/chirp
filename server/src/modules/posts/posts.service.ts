@@ -103,7 +103,7 @@ export class PostService {
             } else {
                 newPost = await this.postModel.findByIdAndUpdate(
                     postId,
-                    { $set: { "poll.users.$[elem].choiceIndex": 1 } },
+                    { $set: { "poll.users.$[elem].choiceIndex": choiceIndex } },
                     { arrayFilters: [{ "elem.userId": userId }], new: true }
                 );
             }
