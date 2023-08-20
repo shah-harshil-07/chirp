@@ -8,10 +8,12 @@ import { cilSend, cilCommentBubble, cilChart, cilThumbUp, cilBookmark } from "@c
 
 import API from "src/api";
 import * as Constants from "src/utilities/constants";
+import useToaster from "src/custom-hooks/toaster-message";
 
 const Posts = () => {
 	const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";
 	const userDetails = localStorage.getItem("chirp-userDetails");
+	const { showError } = useToaster();
 	const loggedInUserId = userDetails ? JSON.parse(userDetails)?._id ?? '' : '';
 
 	const [posts, setPosts] = useState([]);
@@ -62,20 +64,29 @@ const Posts = () => {
 		const { users, choices } = pollObj;
 
 		if (loggedInUserId) {
+			let prevChoiceIndex;
 			const userIndex = users.findIndex(user => user.userId === loggedInUserId);
+
 			if (userIndex >= 0) {
-				const originalChoiceIndex = users[userIndex].choiceIndex;
+				prevChoiceIndex = users[userIndex].choiceIndex;
 				users[userIndex].choiceIndex = choiceIndex;
-				choices[originalChoiceIndex].votes--;
+				choices[prevChoiceIndex].votes--;
+			} else {
+				users.push({ choiceIndex, userId: loggedInUserId });
 			}
+
+			const data = { postId: posts[postIndex]._id, choiceIndex, prevChoiceIndex };
+			const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
+			API(Constants.POST, Constants.VOTE_POLL, data, headerData).catch(err => {
+				console.log(err);
+				showError("Something went wrong! Please refresh and try again!");
+			});
+
+			choices[choiceIndex].votes++;
+			setPosts([..._posts]);
+		} else {
+			showError("Please login to vote!");
 		}
-
-		choices[choiceIndex].votes++;
-		setPosts([..._posts]);
-
-		const data = { postId: posts[postIndex]._id, choiceIndex };
-		const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
-		API(Constants.POST, Constants.VOTE_POLL, data, headerData);
 	}
 
 	const getGradient = (votePercent, isVoted = false) => {
@@ -105,8 +116,8 @@ const Posts = () => {
 							<div
 								key={choiceIndex}
 								className="post-poll-bar"
-								style={{ background: getGradient(votePercent, isVoted) }}
 								onClick={() => { vote(postIndex, choiceIndex); }}
+								style={{ background: getGradient(votePercent, isVoted) }}
 							>
 								{label ?? ''}
 
