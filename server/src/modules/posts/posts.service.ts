@@ -89,7 +89,7 @@ export class PostService {
         return this.postModel.findOneAndDelete({ _id: id });
     }
 
-    async votePoll(userId: string, postId: string, choiceIndex: number): Promise<Post> {
+    async votePoll(userId: string, postId: string, choiceIndex: number, prevChoiceIndex: number): Promise<Post> {
         try {
             let newPost: Post;
             const post = await this.postModel.findOne({ _id: postId, "poll.users.userId": userId }).exec();
@@ -97,15 +97,28 @@ export class PostService {
             if (post === null) {
                 newPost = await this.postModel.findByIdAndUpdate(
                     postId,
-                    { $addToSet: { "poll.users": { userId, choiceIndex } } },
+                    {
+                        $addToSet: { "poll.users": { userId, choiceIndex } },
+                        $inc: { [`poll.choices.${choiceIndex}.votes`]: 1 }
+                    },
                     { new: true }
                 );
-            } else {
+            } else if (prevChoiceIndex >= 0) {
                 newPost = await this.postModel.findByIdAndUpdate(
                     postId,
-                    { $set: { "poll.users.$[elem].choiceIndex": choiceIndex } },
+                    {
+                        $set: {
+                            "poll.users.$[elem].choiceIndex": choiceIndex
+                        },
+                        $inc: {
+                            [`poll.choices.${choiceIndex}.votes`]: 1,
+                            [`poll.choices.${prevChoiceIndex}.votes`]: -1
+                        },
+                    },
                     { arrayFilters: [{ "elem.userId": userId }], new: true }
                 );
+            } else {
+                throw new InternalServerErrorException();
             }
 
             return newPost;

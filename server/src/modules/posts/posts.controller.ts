@@ -119,9 +119,9 @@ export class PostController {
     @Post("poll/vote")
     @UseGuards(AuthGuard("jwt"))
     async votePoll(@Req() req: any, @Body() votingUserData: IVotingUserData): Promise<IResponseProps> {
-        const { postId, choiceIndex } = votingUserData;
+        const { postId, choiceIndex, prevChoiceIndex } = votingUserData;
         const { _id: userId } = req.user;
-        const post = await this.postService.votePoll(userId, postId, choiceIndex);
+        const post = await this.postService.votePoll(userId, postId, +choiceIndex, prevChoiceIndex);
         return { success: true, message: "Poll voted successfully.", data: post };
     }
 

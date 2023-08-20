@@ -47,4 +47,5 @@ export interface IScheduledPostIds {
 export interface IVotingUserData {
     postId: string;
     choiceIndex: number;
+    prevChoiceIndex?: number;
 }
