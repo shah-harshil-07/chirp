@@ -7,16 +7,19 @@ import React, { useEffect, useState } from "react";
 import { cilSend, cilCommentBubble, cilChart, cilThumbUp, cilBookmark } from "@coreui/icons";
 
 import API from "src/api";
+import ImgHolder from "./form/img-holder";
 import * as Constants from "src/utilities/constants";
 import useToaster from "src/custom-hooks/toaster-message";
 
 const Posts = () => {
+	const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
 	const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";
 	const userDetails = localStorage.getItem("chirp-userDetails");
 	const { showError } = useToaster();
 	const loggedInUserId = userDetails ? JSON.parse(userDetails)?._id ?? '' : '';
 
 	const [posts, setPosts] = useState([]);
+	const [postImages, setPostImages] = useState([]);
 
 	const durationData = [
 		{ key: "months", symbol: "mo" },
@@ -32,13 +35,57 @@ const Posts = () => {
 
 	const getPosts = async () => {
 		try {
-			let _posts = [];
+			let _posts = [], images = [];
 			const response = await API(Constants.GET, Constants.GET_POSTS);
 			if (response?.data?.length) _posts = response.data;
+
+			_posts.forEach(postObj => {
+				const { images: postImages } = postObj;
+				images.push(postImages);
+			});
+
+			getPostImages(images);
 			setPosts([..._posts]);
 		} catch (error) {
 			console.log(error);
 		}
+	}
+
+	const getBasePromise = image => {
+        return API(Constants.GET, `${Constants.GET_POST_IMAGE}/${image}`, null, headerData);
+    }
+
+	const getPostImages = posts => {
+		const promises = [];
+
+		posts.forEach((post, postIndex) => {
+			post.forEach((image, imageIndex) => {
+				const _postImages = postImages;
+                if (!_postImages[postIndex]) _postImages[postIndex] = [];
+
+				promises.push(new Promise((res, rej) => {
+					getBasePromise(image)
+						.then(imageResponse => {
+							if (imageResponse?.data) {
+								const base64ImgData = imageResponse.data;
+                                const base64Prefix = "data:image/*;charset=utf-8;base64,";
+
+								_postImages[postIndex][imageIndex] = base64Prefix + base64ImgData;
+								setPostImages([..._postImages]);
+								res();
+							} else {
+								rej();
+							}
+						})
+						.catch(err => {
+							console.log(err);
+							rej();
+						});
+				}));
+			});
+		});
+
+		Promise.allSettled(promises);
 	}
 
 	const getPostTiming = dateObj => {
@@ -139,6 +186,7 @@ const Posts = () => {
 			{
 				posts.map((post, postIndex) => {
 					const { name, username } = post.user ?? {};
+					const images = postImages[postIndex];
 
 					return name && username ? (
 						<Card id="card" key={postIndex}>
@@ -155,6 +203,11 @@ const Posts = () => {
 								<div className="row mx-0"><div>{post?.text ?? ''}</div></div>
 
 								{post?.poll?.choices && getPollJSX(post.poll, postIndex)}
+								{
+									images?.length > 0 && (
+										<ImgHolder images={postImages[postIndex]} showActionButtons={false} />
+									)
+								}
 
 								<div id="action-bar">
 									<CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />

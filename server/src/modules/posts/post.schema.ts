@@ -1,6 +1,7 @@
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { Date } from "mongoose";
 import { UserModel } from "../users/users.schema";
+import { IPoll } from "./post.dto";
 
 class Duration {
     days: number;
@@ -49,6 +50,17 @@ class Poll {
     users: IPollUserData[];
 }
 
+class ParsedPost {
+    @Prop()
+    text: string;
+
+    @Prop()
+    images: string[];
+
+    @Prop({ type: "IPoll" })
+    poll: IPoll;
+}
+
 @Schema({ collection: "PostMessages" })
 export class Post {
     @Prop({ required: true })
@@ -73,7 +85,7 @@ export class ScheduledPost {
     userId: string;
 
     @Prop()
-    data: Post;
+    data: ParsedPost;
 
     @Prop()
     timeoutId: string;

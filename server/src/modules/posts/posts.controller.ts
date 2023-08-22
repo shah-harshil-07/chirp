@@ -157,7 +157,7 @@ export class PostController {
         }
     }
 
-    @Get("scheduled/get-image/:filename")
+    @Get("get-image/:filename")
     getScheduledPostImage(@Param() { filename }: any): StreamableFile {
         const path = join(process.cwd(), `storage/post-images/${filename}`);
 

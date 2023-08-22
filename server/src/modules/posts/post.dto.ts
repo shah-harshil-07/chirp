@@ -15,7 +15,7 @@ interface IDuration {
     minutes: number;
 }
 
-interface IPoll {
+export interface IPoll {
     choices: string[];
     duration: IDuration;
 }

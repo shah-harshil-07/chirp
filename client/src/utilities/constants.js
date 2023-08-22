@@ -34,8 +34,8 @@ export const REGISTER_GOOGLE_AUTHED_USER = "user/register-google-authed-user";
 export const LOGIN_WITH_GOOGLE_CRED = "user/login-with-google-cred";
 
 export const CREATE_POST = "posts/create";
+export const GET_POST_IMAGE = "posts/get-image";
 export const GET_SCHEDULED_POSTS = "posts/scheduled/all";
-export const GET_SCHEDULED_POST_IMAGE = "posts/scheduled/get-image";
 export const DELETE_SCHEDULED_POST_IMAGES = "posts/scheduled/delete-many";
 export const RESCHEDULE_POST = "posts/scheduled/reschedule";
 export const VOTE_POLL = "posts/poll/vote";

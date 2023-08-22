@@ -10,14 +10,16 @@ import API from "src/api";
 import ImgHolder from "./img-holder";
 import CustomModal from "../utilities/custom-modal";
 import * as Constants from "src/utilities/constants";
+import Confirmation from "../utilities/confirmation";
 import useToaster from "src/custom-hooks/toaster-message";
+import useImageConverter from "src/custom-hooks/image-converter";
 import { getMonthOptions, getWeekOptions } from "src/utilities/helpers";
 import { closeModal, openModalWithProps } from "src/redux/actions/modal";
-import Confirmation from "../utilities/confirmation";
 
 const ScheduledPostList = () => {
     const dispatch = useDispatch();
     const { showError, showSuccess } = useToaster();
+    const { getFileObjectFromBase64 } = useImageConverter();
     const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
     const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
     const placeHolderImgUrl = "https://abs.twimg.com/responsive-web/client-web/alarm-clock-400x200.v1.da96e5d9.png";
@@ -36,7 +38,7 @@ const ScheduledPostList = () => {
     }, []);
 
     const getBasePromise = image => {
-        return API(Constants.GET, `${Constants.GET_SCHEDULED_POST_IMAGE}/${image}`, null, headerData);
+        return API(Constants.GET, `${Constants.GET_POST_IMAGE}/${image}`, null, headerData);
     }
 
     const getScheduledPostImages = posts => {
@@ -52,7 +54,9 @@ const ScheduledPostList = () => {
                         .then(imageResponse => {
                             if (imageResponse?.data) {
                                 const base64ImgData = imageResponse.data;
-                                _scheduledPostImages[postIndex][imageIndex] = `data:image/*;charset=utf-8;base64,${base64ImgData}`
+                                const base64Prefix = "data:image/*;charset=utf-8;base64,";
+
+                                _scheduledPostImages[postIndex][imageIndex] = base64Prefix + base64ImgData;
                                 updateScheduledPostFileObjects(base64ImgData, postIndex, imageIndex, image);
                                 setSchduledPostImages([..._scheduledPostImages]);
                                 res();
@@ -72,21 +76,9 @@ const ScheduledPostList = () => {
     }
 
     const updateScheduledPostFileObjects = (base64ImgData, postIndex, imageIndex, fileName) => {
-        const ext = fileName?.split('.')?.[1] ?? "jpg", sliceSize = 512;
-        const contentType = `image/${ext}`, _scheduledPostFileObjects = scheduledPostFileObjects;
-        let byteChars = window.atob(base64ImgData), byteArrays = [];
-
-        if (!_scheduledPostFileObjects[postIndex]) _scheduledPostFileObjects[postIndex] = [];
-
-        for (let i = 0; i < byteChars.length; i += sliceSize) {
-            let slice = byteChars.slice(i, i + sliceSize), byteNumbers = Array(slice.length);
-            for (let j = 0; j < slice.length; j++) byteNumbers[j] = slice.charCodeAt(j);
-            let byteArray = new Uint8Array(byteNumbers);
-            byteArrays.push(byteArray);
-        }
-
-        let blob = new Blob(byteArrays, { type: contentType });
-        _scheduledPostFileObjects[postIndex][imageIndex] = new File([blob], fileName, { type: contentType });
+        const fileObj = getFileObjectFromBase64(base64ImgData, fileName);
+        let _scheduledPostFileObjects = scheduledPostFileObjects;
+        _scheduledPostFileObjects[postIndex][imageIndex] = fileObj;
         setScheduledPostFileObjects([..._scheduledPostFileObjects]);
     }
 
@@ -115,8 +107,8 @@ const ScheduledPostList = () => {
                 if (_posts.length > 2) setDisplayOverflow(true);
             }
         } catch (error) {
-            setShowLoader(false);
             console.log(error);
+            setShowLoader(false);
             showError("Something went wrong!");
         }
     }
@@ -209,8 +201,8 @@ const ScheduledPostList = () => {
                                     <span className="position-absolute font-size-14">
                                         &nbsp;&nbsp;
                                         {
-                                            `Will send on ${displayedDayOfWeek}, ${displayedMonth} ${dayOfMonth}, ${year} at
-					                        ${hours > 9 ? hours : `0${hours}`}:${minutes > 9 ? minutes : `0${minutes}`} hours`
+                                            `Will send on ${displayedDayOfWeek}, ${displayedMonth.slice(0, 3)} ${dayOfMonth},
+                                            ${year} at ${hours > 9 ? hours : `0${hours}`}:${minutes > 9 ? minutes : `0${minutes}`} hours`
                                         }
                                     </span>
                                 </div>
