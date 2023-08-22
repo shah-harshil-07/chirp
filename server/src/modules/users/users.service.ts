@@ -69,8 +69,7 @@ export class UsersService {
                 this
                     .userModel
                     .findOne({ $or: [{ email: userData.email }, { username: userData.username }] })
-                    .exec()
-                ;
+                    .exec();
 
             return userObj ? false : true;
         } catch (error) {

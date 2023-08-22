@@ -405,7 +405,7 @@ const Register = () => {
             includeFooter={includeFooter}
             footerDisabled={footerDisabled}
             displayOverflow={displayOverflow}
-            footerAction={googleAuthedUser ? registerGoogleAuthedUser : openNextSignUpStep}
+            footerAction={googleAuthedUser?.googleId ? registerGoogleAuthedUser : openNextSignUpStep}
         />
     )
 }
