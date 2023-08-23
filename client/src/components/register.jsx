@@ -334,15 +334,22 @@ const Register = () => {
         try {
             const response = await API(Constants.POST, Constants.REGISTER, data);
             setShowLoader(false);
-            closeRegisterDialog();
-            if (response?.data?.data?.token) localStorage.setItem("chirp-accessToken", response.data.data.token);
 
-            const type = response?.data?.meta?.status ? "Success" : "Error";
-            const message = type === "Success" ? response?.data?.meta?.message : response?.data?.error?.message ?? "Error";
+            const responseData = response.data;
+            if (responseData?.meta?.status && responseData?.meta?.message) {
+                closeRegisterDialog();
+                const { user: userDetails, token } = response?.data?.data ?? {};
+                if (token) localStorage.setItem("chirp-accessToken", token);
+                if (userDetails) localStorage.setItem("chirp-userDetails", JSON.stringify(userDetails));
+            }
+
+            const type = responseData?.meta?.status ? "Success" : "Error";
+            const message = type === "Success" ? responseData?.meta?.message : responseData?.error?.message ?? "Error";
             dispatch(openToaster(type, message));
         } catch (error) {
             console.log(error);
             setShowLoader(false);
+            showError("Something went wrong!");
         }
     }
 
