@@ -12,6 +12,7 @@ import { UsersModule } from "./users/users.module";
 import { CommonModule } from "./common/common.module";
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "./config/config.module";
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
 	imports: [
@@ -37,6 +38,7 @@ import { ConfigModule } from "./config/config.module";
 		CommonModule,
 		AuthModule,
 		ConfigModule,
+		CommentsModule,
 	],
 })
 export class AppModule { }
