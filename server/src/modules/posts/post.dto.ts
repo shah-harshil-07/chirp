@@ -1,12 +1,11 @@
-import { Optional } from "@nestjs/common";
-import { IsJSON } from "class-validator";
+import { IsJSON, IsOptional } from "class-validator";
 
 export class PostDTO {
     @IsJSON()
     data: string;
 
-    @Optional()
-    images: string[]
+    @IsOptional()
+    images: string[];
 }
 
 interface IDuration {
