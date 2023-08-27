@@ -14,7 +14,7 @@ export class CommentsController {
 
     @Post("store")
     @UseGuards(AuthGuard("jwt"))
-    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 5, fileStorageConfigObj))
+    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 2, fileStorageConfigObj))
     async store(
         @Req() req: any,
         @Body() commentData: CommentDTO,
