@@ -1,7 +1,7 @@
 import { CommentDTO } from "./comments.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { FilesInterceptor } from "@nestjs/platform-express";
-import { Body, Controller, InternalServerErrorException, Post, Req, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Post, Req, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
 
 import { CommentsService } from "./comments.service";
 import { IResponseProps } from "src/interceptors/interfaces";
@@ -14,28 +14,24 @@ export class CommentsController {
 
     @Post("store")
     @UseGuards(AuthGuard("jwt"))
-    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 2, fileStorageConfigObj))
+    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 4, fileStorageConfigObj))
     async store(
         @Req() req: any,
         @Body() commentData: CommentDTO,
         @UploadedFiles(parseFilePipeObj) images: Array<Express.Multer.File>
     ): Promise<IResponseProps> {
-        try {
-            const createdAt = new Date();
-            const { _id: userId } = req.user;
-            const fileNames = images.map(imageObj => imageObj.filename);
+        const createdAt = new Date();
+        const { _id: userId } = req.user;
+        const fileNames = images.map(imageObj => imageObj.filename);
+ 
+        const parsedCommentData = JSON.parse(commentData.data);
 
-            const parsedCommentData = JSON.parse(commentData.data);
-            const { text, postId } = parsedCommentData;
-            const parentCommentId = parsedCommentData?.parentCommentId ?? null;
+        const { text, postId } = parsedCommentData;
+        const parentCommentId = parsedCommentData?.parentCommentId ?? null;
 
-            const data = { text, postId, parentCommentId, userId, createdAt, images: fileNames };
-            const comment = await this.commentService.create(data);
+        const data = { text, postId, parentCommentId, userId, createdAt, images: fileNames };
+        const comment = await this.commentService.create(data);
 
-            return { success: true, message: "Comment stored successfully!", data: comment };
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        return { success: true, message: "Comment stored successfully!", data: comment };
     }
 }
