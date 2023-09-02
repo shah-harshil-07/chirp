@@ -16,3 +16,12 @@ export interface ICommentData {
     userId: string;
     images: string[];
 }
+
+export const validationParamList = {
+    store: {
+        commentData: {
+            text: "required|isString",
+            postId: "required|isString",
+        },
+    },
+}

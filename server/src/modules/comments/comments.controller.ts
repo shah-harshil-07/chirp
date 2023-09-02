@@ -1,12 +1,14 @@
-import { CommentDTO } from "./comments.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { FilesInterceptor } from "@nestjs/platform-express";
-import { BadRequestException, Body, Controller, Post, Req, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
+import { CommentDTO, validationParamList } from "./comments.dto";
+import { Body, Controller, Post, Req, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
 
 import { CommentsService } from "./comments.service";
 import { IResponseProps } from "src/interceptors/interfaces";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { fileStorageConfigObj, parseFilePipeObj } from "../posts/file.config";
+import { CustomBadRequestException } from "src/exception-handlers/400/handler";
+import { CustomValidatorsService } from "../custom-validators/custom-validators.service";
 
 @Controller("comments")
 export class CommentsController {
@@ -23,8 +25,12 @@ export class CommentsController {
         const createdAt = new Date();
         const { _id: userId } = req.user;
         const fileNames = images.map(imageObj => imageObj.filename);
- 
+
         const parsedCommentData = JSON.parse(commentData.data);
+        const validationObj = new CustomValidatorsService(validationParamList.store.commentData);
+        const { isValid, errors } = validationObj.validate(parsedCommentData);
+
+        if (!isValid) throw new CustomBadRequestException(errors);
 
         const { text, postId } = parsedCommentData;
         const parentCommentId = parsedCommentData?.parentCommentId ?? null;

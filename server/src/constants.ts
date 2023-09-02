@@ -11,3 +11,5 @@ export const PASSWORD_ERR_MESSAGE = "Must contain atleast 8 characters with atle
 export const NAME_ERR_MESSAGE = "Only letters are allowed in name field.";
 export const USERNAME_ERR_MESSAGE = "Only uppercase and lowercase letters, numbers and underscore are allowed in username field.";
 export const EMAIL_ERR_MESSAGE = "Email must be valid.";
+export const REQUIRED_ERR_MESSAGE = "The field input is required.";
+export const IS_STRING_ERR_MESSAGE = "The field value must be a string.";

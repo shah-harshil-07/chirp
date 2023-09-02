@@ -3,7 +3,7 @@ import { AppModule } from "./modules/app.module";
 import { ValidationPipe } from "@nestjs/common";
 import { InternalServerExceptionFilter } from "./exception-handlers/500";
 import { NotFoundExceptionFilter } from "./exception-handlers/404";
-import { BadRequestExceptionFilter } from "./exception-handlers/400";
+import { BadRequestExceptionFilter } from "./exception-handlers/400/filter";
 import { UnauthorizedExceptionFilter } from "./exception-handlers/401";
 import { UnprocessableEntityExceptionFilter } from "./exception-handlers/422";
 
