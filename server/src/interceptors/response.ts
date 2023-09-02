@@ -31,6 +31,8 @@ export class ResponseInterceptor implements NestInterceptor {
                     switch (err.name) {
                         case "CustomBadRequestException":
                             return new CustomBadRequestException(err);
+                        case "BadRequestException":
+                            return new CustomBadRequestException(err);
                         case "UnprocessableEntityException":
                             return new UnprocessableEntityException(err);
                         default:
