@@ -1,3 +1,7 @@
+:root {
+    --chirp-color: #1DA1F2
+}
+
 .float-left {
     float: left;
 }
@@ -51,4 +55,8 @@
 
 .font-size-14 {
     font-size: 14px;
+}
+
+.text-chirp-color {
+    color: var(--chirp-color);
 }

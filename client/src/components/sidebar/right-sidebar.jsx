@@ -4,10 +4,9 @@ import "src/styles/sidebar/right-sidebar.css";
 import React from "react";
 import CIcon from "@coreui/icons-react";
 import { cilOptions } from "@coreui/icons";
+import { placeHolderImageSrc } from "src/utilities/constants";
 
 const RightSidebar = () => {
-    const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";
-
     return (
         <div className="sidebar">
             <div id="right-sidebar-container">

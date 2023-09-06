@@ -2,6 +2,7 @@ import Login from "../components/login";
 import Register from "../components/register";
 import * as CONSTANTS from "./constants";
 import ScheduledPostList from "../components/form/scheduled-posts";
+import CommentEditor from "src/components/comments/comment-editor";
 import ScheduledPostEditor from "../components/form/scheduled-post-editor";
 
 const dayOfWeekOptions = [], hourOptions = [], minuteOptions = [], dayOfMonthOptions = [];
@@ -109,6 +110,7 @@ export const getWeekOptions = () => {
 export const modalConfig = {
     register: Register,
     login: Login,
+    commentEditor: CommentEditor,
     scheduledPosts: ScheduledPostList,
     scheduledPostEditor: ScheduledPostEditor,
 }

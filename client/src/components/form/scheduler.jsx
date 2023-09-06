@@ -4,12 +4,8 @@ import CIcon from "@coreui/icons-react";
 import { cilCalendar } from "@coreui/icons";
 import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
 
-import CustomSelect from "../utilities/custom-select";
 import * as Helpers from "src/utilities/helpers";
-
-const date = new Date();
-const presentYear = date.getFullYear(), monthIndex = date.getMonth();
-const dayOfMonthOptions = Helpers.getDayOfMonthOptions(monthIndex, presentYear);
+import CustomSelect from "../utilities/custom-select";
 
 const Scheduler = ({
     scheduleData,
@@ -21,6 +17,9 @@ const Scheduler = ({
     openScheduledPostList,
 }) => {
     const containerRef = useRef(null), defaultDate = new Date();
+    const date = new Date();
+    const presentYear = date.getFullYear(), monthIndex = date.getMonth();
+    const dayOfMonthOptions = Helpers.getDayOfMonthOptions(monthIndex, presentYear);
 
     const hourOptions = Helpers.getHourOptions();
     const minuteOptions = Helpers.getMinuteOptions();

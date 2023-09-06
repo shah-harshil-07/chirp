@@ -13,6 +13,8 @@ import EmojiContainer from "./emoji-container";
 import { openModal } from "src/redux/actions/modal";
 import * as Constants from "src/utilities/constants";
 import useToaster from "src/custom-hooks/toaster-message";
+import { placeHolderImageSrc } from "src/utilities/constants";
+import useImageConverter from "src/custom-hooks/image-converter";
 import { getMonthOptions, getWeekOptions } from "src/utilities/helpers";
 
 const Form = ({
@@ -27,8 +29,8 @@ const Form = ({
 	const dispatch = useDispatch();
 	const fileUploadRef = useRef(null), { showError, showSuccess } = useToaster();
 	const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
+	const { uploadImagesAction } = useImageConverter();
 
-	const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";
 	const allowedFileTypes = ["image/png", "image/jpg", "image/jpeg"];
 
 	const [text, setText] = useState('');
@@ -70,36 +72,48 @@ const Form = ({
 	}
 
 	const handleImageUpload = e => {
-		const files = e.target.files, _uploadedFiles = uploadedFiles, _uploadedFileObjects = uploadedFileObjects;
+		// const files = e.target.files, _uploadedFiles = uploadedFiles, _uploadedFileObjects = uploadedFileObjects;
 
-		if (files.length + uploadedFiles.length > 4) {
-			showError("More than 4 images are not allowed.");
-		} else {
-			for (let i = 0; i < files.length; i++) {
-				const fileObj = files[i];
+		// if (files.length + uploadedFiles.length > 4) {
+		// 	showError("More than 4 images are not allowed.");
+		// } else {
+		// 	for (let i = 0; i < files.length; i++) {
+		// 		const fileObj = files[i];
 
-				if (!allowedFileTypes.includes(fileObj.type) || i > 3) {
-					showError("Only jpg, jpeg & png type files are allowed.");
-					continue;
-				}
+		// 		if (!allowedFileTypes.includes(fileObj.type) || i > 3) {
+		// 			showError("Only jpg, jpeg & png type files are allowed.");
+		// 			continue;
+		// 		}
 
-				if (fileObj.size > (1024 * 1024 * 5)) {
-					showError("Uploaded file's size must not exceed 5MB.");
-					continue;
-				}
+		// 		if (fileObj.size > (1024 * 1024 * 5)) {
+		// 			showError("Uploaded file's size must not exceed 5MB.");
+		// 			continue;
+		// 		}
 
-				const reader = new FileReader();
-				reader.onload = e => {
-					_uploadedFiles.push(e.target.result);
-					_uploadedFileObjects.push(fileObj);
+		// 		const reader = new FileReader();
+		// 		reader.onload = e => {
+		// 			_uploadedFiles.push(e.target.result);
+		// 			_uploadedFileObjects.push(fileObj);
 
-					setUploadedFiles([..._uploadedFiles]);
-					setUploadedFileObjects([..._uploadedFileObjects]);
-				}
+		// 			setUploadedFiles([..._uploadedFiles]);
+		// 			setUploadedFileObjects([..._uploadedFileObjects]);
+		// 		}
 
-				reader.readAsDataURL(fileObj);
-			}
+		// 		reader.readAsDataURL(fileObj);
+		// 	}
+		// }
+
+		const _uploadedFiles = uploadedFiles, _uploadedFileObjects = uploadedFileObjects;
+
+		const readerLoadCallback = e => {
+			_uploadedFiles.push(e.target.result);
+			_uploadedFileObjects.push(fileObj);
+
+			setUploadedFiles([..._uploadedFiles]);
+			setUploadedFileObjects([..._uploadedFileObjects]);
 		}
+
+		uploadImagesAction(e, readerLoadCallback, _uploadedFiles);
 
 		resetFileCache();
 	}

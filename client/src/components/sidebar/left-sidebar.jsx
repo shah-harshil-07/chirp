@@ -5,12 +5,12 @@ import React, { useRef, useState } from "react";
 import CIcon from "@coreui/icons-react";
 import { cilHome, cilSettings, cilBookmark, cilUser, cilOptions } from "@coreui/icons";
 
-import { getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 import Confirmation from "../utilities/confirmation";
+import { placeHolderImageSrc } from "src/utilities/constants";
+import { getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const LeftSidebar = () => {
     const logo = require("src/assets/logo-1.png");
-    const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";
 
     const userDetails = getUserDetails(), actionbarRef = useRef(null), actionIconRef = useRef(null);
 
@@ -103,7 +103,7 @@ const LeftSidebar = () => {
                                 <img
                                     alt="user"
                                     className="sidebar-profile-img"
-                                    src={userDetails.picture ? userDetails.picture : placeHolderImageSrc}
+                                    src={userDetails.picture ?? placeHolderImageSrc}
                                 />
                             </div>
 

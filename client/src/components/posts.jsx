@@ -1,33 +1,28 @@
 import "src/styles/post.css";
 
-import moment from "moment";
 import CIcon from "@coreui/icons-react";
 import { Card } from "@material-ui/core/";
+import { useDispatch } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { cilSend, cilCommentBubble, cilChart, cilThumbUp, cilBookmark } from "@coreui/icons";
 
 import API from "src/api";
 import ImgHolder from "./form/img-holder";
+import { isUserLoggedIn } from "src/utilities/helpers";
 import * as Constants from "src/utilities/constants";
 import useToaster from "src/custom-hooks/toaster-message";
+import usePostServices from "src/custom-hooks/post-services";
+import { openModalWithProps } from "src/redux/actions/modal";
 
 const Posts = () => {
-	const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
-	const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";
+	const { getPostTiming } = usePostServices();
+	const { showError } = useToaster(), dispatch = useDispatch();
 	const userDetails = localStorage.getItem("chirp-userDetails");
-	const { showError } = useToaster();
 	const loggedInUserId = userDetails ? JSON.parse(userDetails)?._id ?? '' : '';
+	const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
 
 	const [posts, setPosts] = useState([]);
 	const [postImages, setPostImages] = useState([]);
-
-	const durationData = [
-		{ key: "months", symbol: "mo" },
-		{ key: "days", symbol: 'd' },
-		{ key: "hours", symbol: 'h' },
-		{ key: "minutes", symbol: "min" },
-		{ key: "seconds", symbol: 's' },
-	];
 
 	useEffect(() => {
 		getPosts();
@@ -87,23 +82,6 @@ const Posts = () => {
 		});
 
 		Promise.allSettled(promises);
-	}
-
-	const getPostTiming = dateObj => {
-		const currentDate = Date.now();
-		let diff = moment(currentDate).diff(dateObj, "months");
-
-		for (let i = 0; i < durationData.length; i++) {
-			const { key, symbol } = durationData[i];
-			const diff = moment(currentDate).diff(dateObj, key);
-			if (diff > 0) {
-				return (symbol === "mo" && diff > 11)
-					? moment(currentDate).format("MMM D YYYY")
-					: (diff + symbol);
-			}
-		}
-
-		return diff;
 	}
 
 	const vote = (postIndex, choiceIndex) => {
@@ -182,6 +160,11 @@ const Posts = () => {
 		);
 	}
 
+	const openCommentBox = post => {
+		if (isUserLoggedIn()) dispatch(openModalWithProps("commentEditor", post));
+		else showError("Please login to comment!");
+	}
+
 	return (
 		<div>
 			{
@@ -191,7 +174,7 @@ const Posts = () => {
 
 					return name && username ? (
 						<Card id="card" key={postIndex}>
-							<img src={post?.user?.picture ?? placeHolderImageSrc} id="user-image" alt="user" />
+							<img src={post?.user?.picture ?? Constants.placeHolderImageSrc} id="user-image" alt="user" />
 
 							<div id="card-body">
 								<div className="row mx-0">
@@ -211,7 +194,12 @@ const Posts = () => {
 								}
 
 								<div id="action-bar">
-									<CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
+									<CIcon
+										title="Reply"
+										icon={cilCommentBubble}
+										className="chirp-action"
+										onClick={() => { openCommentBox(post); }}
+									/>
 									<CIcon title="Repost" icon={cilSend} className="chirp-action" />
 									<CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
 									<CIcon title="Views" icon={cilChart} className="chirp-action" />
