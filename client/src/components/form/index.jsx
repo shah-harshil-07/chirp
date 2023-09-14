@@ -31,8 +31,6 @@ const Form = ({
 	const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
 	const { uploadImagesAction } = useImageConverter();
 
-	const allowedFileTypes = ["image/png", "image/jpg", "image/jpeg"];
-
 	const [text, setText] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [uploadedFileObjects, setUploadedFileObjects] = useState([]);
@@ -72,40 +70,9 @@ const Form = ({
 	}
 
 	const handleImageUpload = e => {
-		// const files = e.target.files, _uploadedFiles = uploadedFiles, _uploadedFileObjects = uploadedFileObjects;
-
-		// if (files.length + uploadedFiles.length > 4) {
-		// 	showError("More than 4 images are not allowed.");
-		// } else {
-		// 	for (let i = 0; i < files.length; i++) {
-		// 		const fileObj = files[i];
-
-		// 		if (!allowedFileTypes.includes(fileObj.type) || i > 3) {
-		// 			showError("Only jpg, jpeg & png type files are allowed.");
-		// 			continue;
-		// 		}
-
-		// 		if (fileObj.size > (1024 * 1024 * 5)) {
-		// 			showError("Uploaded file's size must not exceed 5MB.");
-		// 			continue;
-		// 		}
-
-		// 		const reader = new FileReader();
-		// 		reader.onload = e => {
-		// 			_uploadedFiles.push(e.target.result);
-		// 			_uploadedFileObjects.push(fileObj);
-
-		// 			setUploadedFiles([..._uploadedFiles]);
-		// 			setUploadedFileObjects([..._uploadedFileObjects]);
-		// 		}
-
-		// 		reader.readAsDataURL(fileObj);
-		// 	}
-		// }
-
 		const _uploadedFiles = uploadedFiles, _uploadedFileObjects = uploadedFileObjects;
 
-		const readerLoadCallback = e => {
+		const readerLoadCallback = (e, fileObj) => {
 			_uploadedFiles.push(e.target.result);
 			_uploadedFileObjects.push(fileObj);
 
@@ -243,7 +210,7 @@ const Form = ({
 					value={text}
 					className="special-input"
 					placeholder="What's happening?"
-					onChange={e => setText(e.target.value)}
+					onChange={e => { setText(e.target.value); }}
 				/>
 				{
 					showPollCreator && (
@@ -256,7 +223,7 @@ const Form = ({
 				}
 				<hr />
 
-				<ImgHolder removeImage={index => spliceImage(index)} images={uploadedFiles} />
+				<ImgHolder removeImage={index => { spliceImage(index); }} images={uploadedFiles} />
 
 				<div className={`${uploadedFiles.length > 0 ? "mt-3" : ''}`}>
 					<CIcon
@@ -281,11 +248,12 @@ const Form = ({
 						title="Emoji"
 						icon={cilSmile}
 						className="action-icon"
-						onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+						onClick={() => { setShowEmojiPicker(!showEmojiPicker); }}
 					/>
 					{
 						showEmojiPicker && (
 							<EmojiContainer
+								callbackKey={"form-emoji-bar"}
 								handleEmojiSelect={handleEmojiSelect}
 								handleClickOutside={() => { setShowEmojiPicker(false); }}
 							/>
@@ -304,6 +272,7 @@ const Form = ({
 					<CIcon
 						size="sm"
 						title="Schedule"
+						id="scheduler-icon"
 						className="action-icon"
 						icon={cilCalendarCheck}
 						onClick={() => { setShowScheduler(!showScheduler); }}

@@ -16,10 +16,11 @@ const CustomModal = ({
     includeFooter,
     footerDisabled,
     displayOverflow,
+    customFooterJSX,
     modalContentClasses,
 }) => {
-    const logo = require("src/assets/logo-1.png");
     const dispatch = useDispatch();
+    const logo = require("src/assets/logo-1.png");
     const overflowStyles = { overflow: "scroll", overflowX: "hidden", height: includeFooter ? "325px" : "80%" };
 
     const closeCustomDialog = () => {
@@ -64,7 +65,7 @@ const CustomModal = ({
                 </div>
 
                 {
-                    includeFooter && (
+                    includeFooter ? customFooterJSX ? customFooterJSX : (
                         <div
                             id="custom-modal-footer-box"
                             style={{ opacity: footerDisabled ? 0.5 : 1 }}
@@ -72,6 +73,8 @@ const CustomModal = ({
                         >
                             <b>{footerText}</b>
                         </div>
+                    ) : (
+                        <></>
                     )
                 }
             </div>

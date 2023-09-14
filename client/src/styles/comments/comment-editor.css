@@ -19,3 +19,9 @@
     margin-right: 5px;
     border-radius: 50%;
 }
+
+.comment-editor-body {
+    overflow-y: auto;
+    max-height: 370px;
+    height: 370px;
+}

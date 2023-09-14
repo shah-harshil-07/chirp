@@ -6,6 +6,7 @@ import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
 
 import * as Helpers from "src/utilities/helpers";
 import CustomSelect from "../utilities/custom-select";
+import useDocumentClickServices from "src/custom-hooks/document-services";
 
 const Scheduler = ({
     scheduleData,
@@ -20,6 +21,7 @@ const Scheduler = ({
     const date = new Date();
     const presentYear = date.getFullYear(), monthIndex = date.getMonth();
     const dayOfMonthOptions = Helpers.getDayOfMonthOptions(monthIndex, presentYear);
+    const { addDocumentClickCallback } = useDocumentClickServices();
 
     const hourOptions = Helpers.getHourOptions();
     const minuteOptions = Helpers.getMinuteOptions();
@@ -58,11 +60,8 @@ const Scheduler = ({
             }
         }
 
-        document.addEventListener("click", outsideClickFn);
-
-        return () => {
-            document.removeEventListener("click", outsideClickFn);
-        };
+        addDocumentClickCallback("scheduler", outsideClickFn);
+        // eslint-disable-next-line
     }, [handleClickOutside]);
 
     useEffect(() => {
@@ -142,7 +141,7 @@ const Scheduler = ({
     }
 
     return (
-        <div id="scheduler-box" ref={containerRef}>
+        <div id="scheduler-box" key={Date.now()} ref={containerRef}>
             <div id="scheduler-body">
                 <div className="row pl-2">
                     <div className="col-md-1" onClick={closeScheduler} id="scheduler-header-close">&times;</div>

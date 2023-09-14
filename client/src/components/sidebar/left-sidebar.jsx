@@ -1,8 +1,9 @@
 import "src/styles/sidebar/index.css";
 import "src/styles/sidebar/left-sidebar.css";
 
-import React, { useRef, useState } from "react";
 import CIcon from "@coreui/icons-react";
+import React, { useEffect, useRef, useState } from "react";
+import useDocumentClickServices from "src/custom-hooks/document-services";
 import { cilHome, cilSettings, cilBookmark, cilUser, cilOptions } from "@coreui/icons";
 
 import Confirmation from "../utilities/confirmation";
@@ -11,22 +12,32 @@ import { getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const LeftSidebar = () => {
     const logo = require("src/assets/logo-1.png");
+    const { addDocumentClickCallback } = useDocumentClickServices();
 
     const userDetails = getUserDetails(), actionbarRef = useRef(null), actionIconRef = useRef(null);
 
     const [viewActionbar, setViewActionbar] = useState(false);
     const [openLogoutConfirmation, setOpenLogoutConfirmation] = useState(false);
 
-    document.addEventListener("click", e => {
-        e.stopImmediatePropagation();
+    useEffect(() => {
+        const outsideClickFn = e => {
+            e.stopImmediatePropagation();
+            /* Above line will block all the event listeners of the element on which this event is invoked. The main difference
+            between stopPropagation and stopImmediatePropagation is that former will stop propagation to furthur up or down the
+            DOM tree. The latter will do the same but along with that it will also block all the event listeners but also prevents
+            other events on the same element from executing.*/
 
-        if (
-            !actionbarRef?.current?.contains(e.target) &&
-            !actionIconRef?.current?.contains(e.target)
-        ) {
-            setViewActionbar(false);
+            if (
+                !actionbarRef?.current?.contains(e.target) &&
+                !actionIconRef?.current?.contains(e.target)
+            ) {
+                setViewActionbar(false);
+            }
         }
-    });
+
+        addDocumentClickCallback("profile-bar", outsideClickFn);
+        // eslint-disable-next-line
+    }, []);
 
     const logoutUser = () => {
         localStorage.removeItem("chirp-accessToken");

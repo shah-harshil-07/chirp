@@ -2,9 +2,11 @@ import EmojiPicker from "emoji-picker-react";
 import React, { useEffect, useLayoutEffect, useRef } from "react";
 
 import * as Helpers from "src/utilities/helpers";
+import useDocumentClickServices from "src/custom-hooks/document-services";
 
-const EmojiContainer = ({ handleEmojiSelect, handleClickOutside }) => {
+const EmojiContainer = ({ callbackKey, handleEmojiSelect, handleClickOutside }) => {
     const containerRef = useRef(null);
+    const { addDocumentClickCallback } = useDocumentClickServices();
 
     useLayoutEffect(() => {
         const containerRect = containerRef?.current?.getBoundingClientRect() ?? null;
@@ -12,28 +14,26 @@ const EmojiContainer = ({ handleEmojiSelect, handleClickOutside }) => {
             const isContainerInViewport = Helpers.checkContainerInViewport(containerRect);
             if (!isContainerInViewport) containerRef.current.style.bottom = "87px";
         }
+
         // eslint-disable-next-line
     }, []);
 
     useEffect(() => {
         const outsideClickFn = e => {
-            if (containerRef.current && !containerRef.current.contains(e.target)) {
+            if (containerRef?.current && !containerRef.current.contains(e.target)) {
                 handleClickOutside();
             }
         };
 
-        document.addEventListener("click", outsideClickFn);
-
-        return () => {
-            document.removeEventListener("click", outsideClickFn);
-        };
+        addDocumentClickCallback(callbackKey, outsideClickFn);
+        // eslint-disable-next-line
     }, [handleClickOutside]);
 
     return (
         <div className="position-absolute" ref={containerRef} style={{ zIndex: '2' }}>
             <EmojiPicker lazyLoadEmojis={true} onEmojiClick={handleEmojiSelect} />
         </div>
-    )
+    );
 }
 
 export default EmojiContainer;

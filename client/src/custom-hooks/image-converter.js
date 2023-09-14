@@ -39,7 +39,7 @@ const useImageConverter = () => {
 				}
 
 				const reader = new FileReader();
-				reader.onload = onloadCallback;
+				reader.onload = e => { onloadCallback(e, fileObj); }
 				reader.readAsDataURL(fileObj);
 			}
 		}
