@@ -22,10 +22,7 @@ const LeftSidebar = () => {
     useEffect(() => {
         const outsideClickFn = e => {
             e.stopImmediatePropagation();
-            /* Above line will block all the event listeners of the element on which this event is invoked. The main difference
-            between stopPropagation and stopImmediatePropagation is that former will stop propagation to furthur up or down the
-            DOM tree. The latter will do the same but along with that it will also block all the event listeners but also prevents
-            other events on the same element from executing.*/
+            /* Above line will block all the event listeners of the element on which this event is invoked. The main difference between stopPropagation and stopImmediatePropagation is that former will stop propagation to furthur up or down the DOM tree. The latter will do the same but along with that it will not only block all the event listeners but also prevent other events on the same element from executing.*/
 
             if (
                 !actionbarRef?.current?.contains(e.target) &&

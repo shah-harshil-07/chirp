@@ -142,8 +142,8 @@ const Posts = () => {
 							<div
 								key={choiceIndex}
 								className="post-poll-bar"
-								onClick={() => { vote(postIndex, choiceIndex); }}
 								style={{ background: getGradient(votePercent, isVoted) }}
+								onClick={() => { if (!isVoted) vote(postIndex, choiceIndex); }}
 							>
 								{label ?? ''}
 
