@@ -4,8 +4,9 @@ import CIcon from "@coreui/icons-react";
 import { cilCalendar } from "@coreui/icons";
 import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
 
-import * as Helpers from "src/utilities/helpers";
 import CustomSelect from "../utilities/custom-select";
+import { checkContainerInViewport } from "src/utilities/helpers";
+import useDateOptionServices from "src/custom-hooks/date-options";
 import useDocumentClickServices from "src/custom-hooks/document-services";
 
 const Scheduler = ({
@@ -17,16 +18,25 @@ const Scheduler = ({
     handleClickOutside,
     openScheduledPostList,
 }) => {
-    const containerRef = useRef(null), defaultDate = new Date();
     const date = new Date();
+    const containerRef = useRef(null), defaultDate = new Date();
     const presentYear = date.getFullYear(), monthIndex = date.getMonth();
-    const dayOfMonthOptions = Helpers.getDayOfMonthOptions(monthIndex, presentYear);
     const { addDocumentClickCallback } = useDocumentClickServices();
 
-    const hourOptions = Helpers.getHourOptions();
-    const minuteOptions = Helpers.getMinuteOptions();
-    const monthOptions = Helpers.getMonthOptions();
-    const weekOptions = Helpers.getWeekOptions();
+    const {
+        getDayOfMonthOptions,
+        getHourOptions,
+        getMinuteOptions,
+        getMonthOptions,
+        getWeekOptions
+    } = useDateOptionServices();
+
+    const dayOfMonthOptions = getDayOfMonthOptions(monthIndex, presentYear);
+    const hourOptions = getHourOptions();
+    const minuteOptions = getMinuteOptions();
+    const monthOptions = getMonthOptions();
+    const weekOptions = getWeekOptions();
+
     const yearOptions = [
         { value: presentYear, label: presentYear },
         { value: presentYear + 1, label: presentYear + 1 }
@@ -47,7 +57,7 @@ const Scheduler = ({
     useLayoutEffect(() => {
         const containerRect = containerRef?.current?.getBoundingClientRect() ?? null;
         if (containerRect) {
-            const isContainerInViewport = Helpers.checkContainerInViewport(containerRect);
+            const isContainerInViewport = checkContainerInViewport(containerRect);
             if (!isContainerInViewport) containerRef.current.style.bottom = "87px";
         }
         // eslint-disable-next-line

@@ -13,13 +13,14 @@ import * as Constants from "src/utilities/constants";
 import Confirmation from "../utilities/confirmation";
 import useToaster from "src/custom-hooks/toaster-message";
 import useImageConverter from "src/custom-hooks/image-converter";
-import { getMonthOptions, getWeekOptions } from "src/utilities/helpers";
+import useDateOptionServices from "src/custom-hooks/date-options";
 import { closeModal, openModalWithProps } from "src/redux/actions/modal";
 
 const ScheduledPostList = () => {
     const dispatch = useDispatch();
     const { showError, showSuccess } = useToaster();
     const { getFileObjectFromBase64 } = useImageConverter();
+    const { getMonthOptions, getWeekOptions } = useDateOptionServices();
     const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
     const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
     const placeHolderImgUrl = "https://abs.twimg.com/responsive-web/client-web/alarm-clock-400x200.v1.da96e5d9.png";
@@ -191,8 +192,8 @@ const ScheduledPostList = () => {
                         <div
                             title="Delete"
                             key={postIndex}
-                            onClick={() => selectUnselectPost(postIndex)}
                             className="scheduled-post-container mt-3 mb-3"
+                            onClick={() => { selectUnselectPost(postIndex); }}
                             style={{ backgroundColor: postObj.selected ? "rgba(220, 53, 69, 0.4)" : "aliceblue" }}
                         >
                             <div className="scheduled-post-box w-75">
@@ -216,7 +217,7 @@ const ScheduledPostList = () => {
                                         <div className="ml-4">
                                             <button
                                                 className="scheduled-post-edit-btn"
-                                                onClick={e => editScheduledPost(e, postIndex)}
+                                                onClick={e => { editScheduledPost(e, postIndex); }}
                                             >
                                                 Edit
                                             </button>

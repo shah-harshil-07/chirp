@@ -1,7 +1,7 @@
 import EmojiPicker from "emoji-picker-react";
 import React, { useEffect, useLayoutEffect, useRef } from "react";
 
-import * as Helpers from "src/utilities/helpers";
+import { checkContainerInViewport } from "src/utilities/helpers";
 import useDocumentClickServices from "src/custom-hooks/document-services";
 
 const EmojiContainer = ({ callbackKey, handleEmojiSelect, handleClickOutside }) => {
@@ -11,7 +11,7 @@ const EmojiContainer = ({ callbackKey, handleEmojiSelect, handleClickOutside }) 
     useLayoutEffect(() => {
         const containerRect = containerRef?.current?.getBoundingClientRect() ?? null;
         if (containerRect) {
-            const isContainerInViewport = Helpers.checkContainerInViewport(containerRect);
+            const isContainerInViewport = checkContainerInViewport(containerRect);
             if (!isContainerInViewport) containerRef.current.style.bottom = "87px";
         }
 

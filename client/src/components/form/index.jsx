@@ -15,7 +15,7 @@ import * as Constants from "src/utilities/constants";
 import useToaster from "src/custom-hooks/toaster-message";
 import { placeHolderImageSrc } from "src/utilities/constants";
 import useImageConverter from "src/custom-hooks/image-converter";
-import { getMonthOptions, getWeekOptions } from "src/utilities/helpers";
+import useDateOptionServices from "src/custom-hooks/date-options";
 
 const Form = ({
 	editText,
@@ -28,6 +28,7 @@ const Form = ({
 }) => {
 	const dispatch = useDispatch(), textboxRef = useRef(null);
 	const fileUploadRef = useRef(null), { showError, showSuccess } = useToaster();
+	const { getMonthOptions, getWeekOptions } = useDateOptionServices();
 	const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
 	const { uploadImagesAction } = useImageConverter();
 

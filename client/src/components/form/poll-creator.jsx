@@ -4,15 +4,14 @@ import React, { useEffect, useRef, useState } from "react";
 import CIcon from "@coreui/icons-react";
 import { cilPlus } from "@coreui/icons";
 
-import LabelledInput from "../utilities/labelled-input";
 import CustomSelect from "../utilities/custom-select";
-import * as Helpers from "src/utilities/helpers";
+import LabelledInput from "../utilities/labelled-input";
+import useDateOptionServices from "src/custom-hooks/date-options";
 
 const PollCreator = ({ closePollCreator, handleChoiceChange, editPollData }) => {
     const containerRef = useRef(null);
-    const dayOfWeekOptions = Helpers.getDayOfWeekOptions();
-    const hourOptions = Helpers.getHourOptions();
-    const minuteOptions = Helpers.getMinuteOptions();
+    const { getDayOfWeekOptions, getHourOptions, getMinuteOptions } = useDateOptionServices();
+    const dayOfWeekOptions = getDayOfWeekOptions(), hourOptions = getHourOptions(), minuteOptions = getMinuteOptions();
     const minMinuteOptions = minuteOptions.slice(5, minuteOptions.length);
 
     const [choices, setChoices] = useState(['', '']);
@@ -124,7 +123,7 @@ const PollCreator = ({ closePollCreator, handleChoiceChange, editPollData }) => 
                             label={"Day"}
                             selectedValue={dayOfWeek}
                             options={dayOfWeekOptions}
-                            handleValueChange={dayOfWeekValue => handleDurationChanges("dayOfWeek", dayOfWeekValue)}
+                            handleValueChange={dayOfWeekValue => { handleDurationChanges("dayOfWeek", dayOfWeekValue); }}
                         />
                     </div>
 
@@ -133,7 +132,7 @@ const PollCreator = ({ closePollCreator, handleChoiceChange, editPollData }) => 
                             label={"Hours"}
                             selectedValue={hours}
                             options={hourOptions}
-                            handleValueChange={hourValue => handleDurationChanges("hour", hourValue)}
+                            handleValueChange={hourValue => { handleDurationChanges("hour", hourValue); }}
                         />
                     </div>
 
@@ -142,7 +141,7 @@ const PollCreator = ({ closePollCreator, handleChoiceChange, editPollData }) => 
                             label={"Minutes"}
                             selectedValue={minutes}
                             options={displayedMinuteOptions}
-                            handleValueChange={minuteValue => handleDurationChanges("minute", minuteValue)}
+                            handleValueChange={minuteValue => { handleDurationChanges("minute", minuteValue); }}
                         />
                     </div>
                 </div>
