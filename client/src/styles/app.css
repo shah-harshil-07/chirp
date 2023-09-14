@@ -57,6 +57,23 @@
     font-size: 14px;
 }
 
+.font-size-20 {
+    font-size: 20px;
+}
+
 .text-chirp-color {
     color: var(--chirp-color);
+}
+
+.chirp-button {
+    float: right;
+    background-color: #1DA1F2;
+    border-radius: 25px;
+    color: white;
+    border-color: #1DA1F2;
+    font-weight: bold;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 2px;
+    cursor: pointer;
 }

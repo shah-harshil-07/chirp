@@ -26,7 +26,7 @@ const Form = ({
 	editScheduleMode,
 	editScheduledPost
 }) => {
-	const dispatch = useDispatch();
+	const dispatch = useDispatch(), textboxRef = useRef(null);
 	const fileUploadRef = useRef(null), { showError, showSuccess } = useToaster();
 	const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
 	const { uploadImagesAction } = useImageConverter();
@@ -200,6 +200,11 @@ const Form = ({
 		dispatch(openModal("scheduledPosts"));
 	}
 
+	const handleTextChange = e => {
+		setText(e.target.value);
+		textboxRef.current.style.height = `${textboxRef.current.scrollHeight}px`;
+	}
+
 	return (
 		<form noValidate onSubmit={handleSubmit} className="mw-100">
 			<img src={placeHolderImageSrc} className="user-image" alt="user" />
@@ -208,9 +213,10 @@ const Form = ({
 				{isPostScheduled && schedulerData && (scheduleText())}
 				<textarea
 					value={text}
+					ref={textboxRef}
 					className="special-input"
+					onChange={handleTextChange}
 					placeholder="What's happening?"
-					onChange={e => { setText(e.target.value); }}
 				/>
 				{
 					showPollCreator && (
@@ -291,7 +297,11 @@ const Form = ({
 						)
 					}
 
-					<div id="chirp-button" style={{ opacity: isFormValid && text ? '1' : "0.4" }} onClick={createPost}>
+					<div
+						onClick={createPost}
+						className="chirp-button"
+						style={{ opacity: isFormValid && text ? '1' : "0.4" }}
+					>
 						{isPostScheduled ? "Schedule" : "Post"}
 					</div>
 				</div>

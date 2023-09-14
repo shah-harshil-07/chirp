@@ -6,7 +6,6 @@ const useDocumentClickServices = () => {
     const callbacks = useSelector(state => state.documents);
 
     const handleDocumentClick = e => {
-        console.log("document click event called!");
         callbacks.forEach(callback => { callback(e); });
     }
 

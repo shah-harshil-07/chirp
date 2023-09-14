@@ -29,19 +29,6 @@
     border-radius: 25px;
 }
 
-#chirp-button {
-    float: right;
-    background-color: #1DA1F2;
-    border-radius: 25px;
-    color: white;
-    border-color: #1DA1F2;
-    font-weight: bold;
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-top: 2px;
-    cursor: pointer;
-}
-
 .user-image {
     width: 40px;
     height: 40px;
