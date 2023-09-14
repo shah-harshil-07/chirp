@@ -6,6 +6,11 @@
     height: 100%;
 }
 
+#left-sidebar-super-container {
+    position: fixed;
+    margin-left: 19%;
+}
+
 #chirp-icon-container {
     width: 70px;
     border-radius: 50%;

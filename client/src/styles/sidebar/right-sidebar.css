@@ -1,5 +1,6 @@
 #right-sidebar-container {
     width: 330px;
+    position: fixed;
     margin-left: 30px;
 }
 
