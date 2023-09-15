@@ -165,6 +165,11 @@ const Posts = () => {
 		else showError("Please login to comment!");
 	}
 
+	const openRepostBox = post => {
+		if (isUserLoggedIn()) dispatch(openModalWithProps("repostEditor", post));
+		else showError("Please login to repost!");
+	}
+
 	return (
 		<div>
 			{
@@ -200,7 +205,12 @@ const Posts = () => {
 										className="chirp-action"
 										onClick={() => { openCommentBox(post); }}
 									/>
-									<CIcon title="Repost" icon={cilSend} className="chirp-action" />
+									<CIcon
+										icon={cilSend}
+										title="Repost"
+										className="chirp-action"
+										onClick={() => { openRepostBox(post); }}
+									/>
 									<CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
 									<CIcon title="Views" icon={cilChart} className="chirp-action" />
 									<CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />

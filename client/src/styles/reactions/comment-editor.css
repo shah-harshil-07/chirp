@@ -54,3 +54,9 @@
     bottom: 0px;
     left: 27px;
 }
+
+.comment-editor-footer-action {
+    position: absolute;
+    bottom: 25px;
+    right: 27px;
+}

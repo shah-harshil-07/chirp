@@ -1,4 +1,4 @@
-import "src/styles/comments/comment-editor.css";
+import "src/styles/reactions/comment-editor.css";
 
 import CIcon from "@coreui/icons-react";
 import React, { useRef, useState } from "react";
@@ -205,7 +205,13 @@ const CommentEditor = post => {
                 }
             </div>
 
-            <div onClick={createComment} className="chirp-button" style={{ opacity: text ? '1' : "0.4" }}>Comment</div>
+            <div
+                onClick={createComment}
+                style={{ opacity: text ? '1' : "0.4" }}
+                className="chirp-button comment-editor-footer-action"
+            >
+                Comment
+            </div>
         </div>
     );
 

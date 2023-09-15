@@ -130,19 +130,19 @@ const LeftSidebar = () => {
                             </div>
                         )
                     }
-
-                    {
-                        openLogoutConfirmation && (
-                            <Confirmation
-                                headingText={"Logout"}
-                                handleConfirmAction={logoutUser}
-                                message={`Are you sure you want to logout?`}
-                                handleCloseAction={() => { setOpenLogoutConfirmation(false); }}
-                            />
-                        )
-                    }
                 </div>
             </div>
+
+            {
+                openLogoutConfirmation && (
+                    <Confirmation
+                        headingText={"Logout"}
+                        handleConfirmAction={logoutUser}
+                        message={`Are you sure you want to logout?`}
+                        handleCloseAction={() => { setOpenLogoutConfirmation(false); }}
+                    />
+                )
+            }
         </div>
     );
 }
