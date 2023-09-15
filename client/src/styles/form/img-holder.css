@@ -30,3 +30,9 @@
 .max-height-200 {
     max-height: 200px;
 }
+
+.img-holder-body {
+    display: flex;
+    height: 100%;
+    width: 95%;
+}

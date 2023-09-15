@@ -9,7 +9,7 @@ import API from "src/api";
 import Scheduler from "./scheduler";
 import ImgHolder from "./img-holder";
 import PollCreator from "./poll-creator";
-import EmojiContainer from "./emoji-container";
+import EmojiContainer from "../utilities/emoji-container";
 import { openModal } from "src/redux/actions/modal";
 import * as Constants from "src/utilities/constants";
 import useToaster from "src/custom-hooks/toaster-message";

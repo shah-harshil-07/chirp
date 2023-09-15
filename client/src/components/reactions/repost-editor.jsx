@@ -1,9 +1,11 @@
-import React, { useRef, useState } from "react";
+import "src/styles/reactions/repost-editor.css";
 
 import CIcon from "@coreui/icons-react";
+import React, { useRef, useState } from "react";
 import { cilImage, cilSmile } from "@coreui/icons";
+
 import CustomModal from "../utilities/custom-modal";
-import EmojiContainer from "../form/emoji-container";
+import EmojiContainer from "../utilities/emoji-container";
 import usePostServices from "src/custom-hooks/post-services";
 import { placeHolderImageSrc } from "src/utilities/constants";
 import useImageConverter from "src/custom-hooks/image-converter";
@@ -48,7 +50,25 @@ const RepostEditor = post => {
 
     const bodyJSX = (
         <div className="comment-editor-body">
-            <div className="position-relative" style={{ position: "relative", border: "2.5px solid rgba(0,0,0,.1)", borderRadius: "25px" }}>
+            {/* <form noValidate onSubmit={repost} className="mw-100 mt-3">
+                <div className="comment-editor-form-body">
+                    <img src={userPictureUrl ?? placeHolderImageSrc} id="comment-editor-commenter-img" alt="user" />
+
+                    <div className="comment-editor-data-container">
+                        <textarea
+                            value={text}
+                            ref={textboxRef}
+                            onChange={handleTextChange}
+                            className="comment-editor-text-area"
+                            placeholder="Post your comment here!"
+                        />
+                        <br />
+                        <ImgHolder removeImage={index => { spliceImage(index); }} images={uploadedFiles} />
+                    </div>
+                </div>
+            </form> */}
+
+            <div className="repost-editor-post-body">
                 <img src={postCreator?.picture ?? placeHolderImageSrc} id="comment-editor-user-image" alt="post creator" />
 
                 <div id="comment-editor-card-body">

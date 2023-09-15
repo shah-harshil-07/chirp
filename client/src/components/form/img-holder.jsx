@@ -8,17 +8,17 @@ const ImgHolder = ({ images, removeImage, showActionButtons = true }) => {
             <div className="img-holder-remove-img-icon" onClick={() => removeImage(index)} style={{ right, top }}>
                 <span style={{ fontSize: "20px" }}>&times;</span>
             </div>
-        )
+        );
     }
 
     const editButton = (bottom = "6px", left = "21px") => {
         return (
             <div className="img-holder-edit-btn" style={{ bottom, left }}>Edit</div>
-        )
+        );
     }
 
     return (
-        <div className="d-flex h-100">
+        <div className="img-holder-body">
             {
                 images.length === 1 ? (
                     <div className="w-100 h-100 position-relative">
