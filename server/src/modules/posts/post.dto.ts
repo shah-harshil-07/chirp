@@ -23,6 +23,7 @@ export interface ParsedPostDTO {
     text: string;
     images: string[];
     poll: IPoll;
+    postId?: string;
 }
 
 interface ISchedule {

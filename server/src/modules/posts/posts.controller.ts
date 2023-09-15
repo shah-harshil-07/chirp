@@ -21,12 +21,12 @@ import {
     UnprocessableEntityException,
 } from "@nestjs/common";
 
-import { ResponseInterceptor } from "src/interceptors/response";
-import { IResponseProps } from "src/interceptors/interfaces";
 import { PostService } from "./posts.service";
 import { Post as UserPost } from "./post.schema";
-import { IScheduledPostIds, IVotingUserData, PostDTO } from "./post.dto";
+import { IResponseProps } from "src/interceptors/interfaces";
+import { ResponseInterceptor } from "src/interceptors/response";
 import { fileStorageConfigObj, parseFilePipeObj } from "./file.config";
+import { IScheduledPostIds, IVotingUserData, PostDTO } from "./post.dto";
 
 @Controller("posts")
 export class PostController {
@@ -65,6 +65,7 @@ export class PostController {
             const fileNames = images.map(imageObj => imageObj.filename);
             const parsedData = JSON.parse(postData.data);
             const data = { text: parsedData.text, images: fileNames, poll: parsedData.poll ?? null };
+            data["postId"] = parsedData.postId;
 
             if (data?.poll?.choices?.length) {
                 const choices = data.poll.choices.map((choice: string) => {

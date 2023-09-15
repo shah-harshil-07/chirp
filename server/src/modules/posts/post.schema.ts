@@ -77,6 +77,9 @@ export class Post {
 
     @Prop({ type: Date, required: true })
     createdAt: Date;
+
+    @Prop({ default: null })
+    postId: string;
 }
 
 @Schema({ collection: "ScheduledMessages" })
