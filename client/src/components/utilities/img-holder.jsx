@@ -1,4 +1,4 @@
-import "src/styles/form/img-holder.css";
+import "src/styles/utilities/img-holder.css";
 
 import React from "react";
 
