@@ -32,8 +32,8 @@ const Posts = () => {
 	const getPosts = async () => {
 		try {
 			let _posts = [], images = [];
-			const response = await API(Constants.GET, Constants.GET_POSTS);
-			if (response?.data?.length) _posts = response.data;
+			const { data: responseData } = await API(Constants.GET, Constants.GET_POSTS);
+			if (responseData?.data?.length) _posts = responseData.data;
 
 			_posts.forEach(postObj => {
 				const { images: postImages } = postObj;
@@ -48,8 +48,8 @@ const Posts = () => {
 	}
 
 	const getBasePromise = image => {
-        return API(Constants.GET, `${Constants.GET_POST_IMAGE}/${image}`, null, headerData);
-    }
+		return API(Constants.GET, `${Constants.GET_POST_IMAGE}/${image}`, null, headerData);
+	}
 
 	const getPostImages = posts => {
 		const promises = [];
@@ -57,14 +57,14 @@ const Posts = () => {
 		posts.forEach((post, postIndex) => {
 			post.forEach((image, imageIndex) => {
 				const _postImages = postImages;
-                if (!_postImages[postIndex]) _postImages[postIndex] = [];
+				if (!_postImages[postIndex]) _postImages[postIndex] = [];
 
 				promises.push(new Promise((res, rej) => {
 					getBasePromise(image)
 						.then(imageResponse => {
 							if (imageResponse?.data) {
 								const base64ImgData = imageResponse.data;
-                                const base64Prefix = "data:image/*;charset=utf-8;base64,";
+								const base64Prefix = "data:image/*;charset=utf-8;base64,";
 
 								_postImages[postIndex][imageIndex] = base64Prefix + base64ImgData;
 								setPostImages([..._postImages]);
