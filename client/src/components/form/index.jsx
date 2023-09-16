@@ -7,12 +7,12 @@ import { cilImage, cilSmile, cilList, cilCalendarCheck } from "@coreui/icons";
 
 import API from "src/api";
 import Scheduler from "./scheduler";
-import ImgHolder from "./img-holder";
 import PollCreator from "./poll-creator";
-import EmojiContainer from "../utilities/emoji-container";
+import ImgHolder from "../utilities/img-holder";
 import { openModal } from "src/redux/actions/modal";
 import * as Constants from "src/utilities/constants";
 import useToaster from "src/custom-hooks/toaster-message";
+import EmojiContainer from "../utilities/emoji-container";
 import { placeHolderImageSrc } from "src/utilities/constants";
 import useImageConverter from "src/custom-hooks/image-converter";
 import useDateOptionServices from "src/custom-hooks/date-options";

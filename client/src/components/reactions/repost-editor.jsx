@@ -1,10 +1,17 @@
-import "src/styles/reactions/repost-editor.css";
+import "src/styles/reactions/index.css";
 
 import CIcon from "@coreui/icons-react";
+import { useDispatch } from "react-redux";
 import React, { useRef, useState } from "react";
 import { cilImage, cilSmile } from "@coreui/icons";
 
+import API from "src/api";
+import ImgHolder from "../utilities/img-holder";
 import CustomModal from "../utilities/custom-modal";
+import * as Constants from "src/utilities/constants";
+import { closeModal } from "src/redux/actions/modal";
+import { getUserDetails } from "src/utilities/helpers";
+import useToaster from "src/custom-hooks/toaster-message";
 import EmojiContainer from "../utilities/emoji-container";
 import usePostServices from "src/custom-hooks/post-services";
 import { placeHolderImageSrc } from "src/utilities/constants";
@@ -12,9 +19,12 @@ import useImageConverter from "src/custom-hooks/image-converter";
 
 const RepostEditor = post => {
     const { createdAt, user: postCreator, _id: postId } = post;
+    const userDetails = getUserDetails() ?? {};
     const { name, username } = postCreator ?? {};
-    const fileUploadRef = useRef(null), bodyClasses = "mr-2 ml-2 mt-2";;
+    const { picture: userPictureUrl } = userDetails;
+    const { showError, showSuccess } = useToaster(), dispatch = useDispatch();
     const { uploadImagesAction } = useImageConverter(), { getPostTiming } = usePostServices();
+    const fileUploadRef = useRef(null), textboxRef = useRef(null), bodyClasses = "mr-2 ml-2 mt-2";
 
     const [text, setText] = useState('');
     const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -44,34 +54,71 @@ const RepostEditor = post => {
         setText(`${text}${e.emoji}`);
     }
 
-    const repost = () => {
-        console.log(postId);
+    const repost = async () => {
+        if (text) {
+            const data = { text, postId };
+            const formData = new FormData();
+            formData.append("data", JSON.stringify(data));
+
+            uploadedFileObjects.forEach(fileObj => { formData.append("images[]", fileObj); });
+
+            try {
+                const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
+                const response = await API(Constants.POST, Constants.CREATE_POST, formData, headerData);
+                const responseData = response.data;
+
+                const alert = responseData?.meta?.status ? showSuccess : showError;
+                const message = responseData?.meta?.message ?? '';
+                if (message) alert(message);
+            } catch (error) {
+                console.log(error);
+                showError("Something went wrong!");
+            }
+
+            dispatch(closeModal());
+        }
+    }
+
+    const handleTextChange = e => {
+        setText(e.target.value);
+        textboxRef.current.style.height = `${textboxRef.current.scrollHeight}px`;
+    }
+
+    const spliceImage = index => {
+        let _uploadedFiles = uploadedFiles, _uploadedFileObjects = uploadedFileObjects;
+
+        _uploadedFiles.splice(index, 1);
+        if (_uploadedFileObjects[index]) _uploadedFileObjects.splice(index, 1);
+
+        setUploadedFiles([..._uploadedFiles]);
+        setUploadedFileObjects([..._uploadedFileObjects]);
     }
 
     const bodyJSX = (
-        <div className="comment-editor-body">
-            {/* <form noValidate onSubmit={repost} className="mw-100 mt-3">
-                <div className="comment-editor-form-body">
-                    <img src={userPictureUrl ?? placeHolderImageSrc} id="comment-editor-commenter-img" alt="user" />
+        <div className="reaction-editor-body">
+            <form noValidate onSubmit={repost} className="mw-100 mt-3">
+                <div className="reaction-editor-form-body">
+                    <img src={userPictureUrl ?? placeHolderImageSrc} className="reaction-editor-commentor-img" alt="user" />
 
-                    <div className="comment-editor-data-container">
+                    <div className="reaction-editor-data-container">
                         <textarea
                             value={text}
                             ref={textboxRef}
+                            style={{ width: "95%" }}
                             onChange={handleTextChange}
-                            className="comment-editor-text-area"
+                            className="reaction-editor-text-area"
                             placeholder="Post your comment here!"
                         />
                         <br />
                         <ImgHolder removeImage={index => { spliceImage(index); }} images={uploadedFiles} />
                     </div>
                 </div>
-            </form> */}
+            </form>
 
-            <div className="repost-editor-post-body">
-                <img src={postCreator?.picture ?? placeHolderImageSrc} id="comment-editor-user-image" alt="post creator" />
+            <div id="repost-editor-post-body" style={uploadedFiles.length ? { marginTop: "10px" } : {}}>
+                <img src={postCreator?.picture ?? placeHolderImageSrc} className="reaction-editor-user-image" alt="post creator" />
 
-                <div id="comment-editor-card-body">
+                <div className="reaction-editor-card-body">
                     <div className="row mx-0">
                         <b className="font-size-20">{name}</b>&nbsp;
                         <span className="font-size-20">{`@${username}`}</span>
@@ -80,16 +127,14 @@ const RepostEditor = post => {
                     </div>
 
                     <div className="row mx-0 mt-3 font-size-20"><div>{post?.text?.slice(0, 40) ?? ''}</div></div>
-
-                    <p className="mt-3">Replying to <span className="text-chirp-color">{`@${username}`}</span></p>
                 </div>
             </div>
         </div>
     );
 
     const footerJSX = (
-        <div className="comment-editor-footer-body">
-            <div className="comment-editor-footer-icons">
+        <div className="reaction-editor-footer-body">
+            <div className="reaction-editor-footer-icons">
                 <CIcon
                     size="sm"
                     title="Image"
@@ -117,7 +162,7 @@ const RepostEditor = post => {
                 {
                     showEmojiPicker && (
                         <EmojiContainer
-                            callbackKey={"comment-emoji-bar"}
+                            callbackKey={"reaction-emoji-bar"}
                             handleEmojiSelect={handleEmojiSelect}
                             handleClickOutside={() => { setShowEmojiPicker(false); }}
                         />
@@ -128,7 +173,7 @@ const RepostEditor = post => {
             <div
                 onClick={repost}
                 style={{ opacity: text ? '1' : "0.4" }}
-                className="chirp-button comment-editor-footer-action"
+                className="chirp-button reaction-editor-footer-action"
             >
                 Repost
             </div>

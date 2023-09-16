@@ -1,4 +1,4 @@
-import "src/styles/reactions/comment-editor.css";
+import "src/styles/reactions/index.css";
 
 import CIcon from "@coreui/icons-react";
 import React, { useRef, useState } from "react";
@@ -6,7 +6,7 @@ import { cilImage, cilSmile } from "@coreui/icons";
 
 import API from "src/api";
 import { useDispatch } from "react-redux";
-import ImgHolder from "../form/img-holder";
+import ImgHolder from "../utilities/img-holder";
 import CustomModal from "../utilities/custom-modal";
 import * as Constants from "src/utilities/constants";
 import { closeModal } from "src/redux/actions/modal";
@@ -127,11 +127,11 @@ const CommentEditor = post => {
     }
 
     const bodyJSX = (
-        <div className="comment-editor-body">
+        <div className="reaction-editor-body">
             <div className="position-relative">
-                <img src={postCreator?.picture ?? placeHolderImageSrc} id="comment-editor-user-image" alt="post creator" />
+                <img src={postCreator?.picture ?? placeHolderImageSrc} className="reaction-editor-user-image" alt="post creator" />
 
-                <div id="comment-editor-card-body">
+                <div className="reaction-editor-card-body">
                     <div className="row mx-0">
                         <b className="font-size-20">{name}</b>&nbsp;
                         <span className="font-size-20">{`@${username}`}</span>
@@ -148,15 +148,15 @@ const CommentEditor = post => {
             </div>
 
             <form noValidate onSubmit={createComment} className="mw-100 mt-3">
-                <div className="comment-editor-form-body">
-                    <img src={userPictureUrl ?? placeHolderImageSrc} id="comment-editor-commenter-img" alt="user" />
+                <div className="reaction-editor-form-body">
+                    <img src={userPictureUrl ?? placeHolderImageSrc} className="reaction-editor-commentor-img" alt="user" />
 
-                    <div className="comment-editor-data-container">
+                    <div className="reaction-editor-data-container">
                         <textarea
                             value={text}
                             ref={textboxRef}
                             onChange={handleTextChange}
-                            className="comment-editor-text-area"
+                            className="reaction-editor-text-area"
                             placeholder="Post your comment here!"
                         />
                         <br />
@@ -168,8 +168,8 @@ const CommentEditor = post => {
     );
 
     const footerJSX = (
-        <div className="comment-editor-footer-body">
-            <div className="comment-editor-footer-icons">
+        <div className="reaction-editor-footer-body">
+            <div className="reaction-editor-footer-icons">
                 <CIcon
                     size="sm"
                     title="Image"
@@ -197,7 +197,7 @@ const CommentEditor = post => {
                 {
                     showEmojiPicker && (
                         <EmojiContainer
-                            callbackKey={"comment-emoji-bar"}
+                            callbackKey={"reaction-emoji-bar"}
                             handleEmojiSelect={handleEmojiSelect}
                             handleClickOutside={() => { setShowEmojiPicker(false); }}
                         />
@@ -208,7 +208,7 @@ const CommentEditor = post => {
             <div
                 onClick={createComment}
                 style={{ opacity: text ? '1' : "0.4" }}
-                className="chirp-button comment-editor-footer-action"
+                className="chirp-button reaction-editor-footer-action"
             >
                 Comment
             </div>

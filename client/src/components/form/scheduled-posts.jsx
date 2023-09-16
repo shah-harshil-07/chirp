@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 import { cilCalendarCheck, cilList } from "@coreui/icons";
 
 import API from "src/api";
-import ImgHolder from "./img-holder";
+import ImgHolder from "../utilities/img-holder";
 import CustomModal from "../utilities/custom-modal";
 import * as Constants from "src/utilities/constants";
 import Confirmation from "../utilities/confirmation";

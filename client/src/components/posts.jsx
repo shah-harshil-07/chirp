@@ -7,9 +7,9 @@ import React, { useEffect, useState } from "react";
 import { cilSend, cilCommentBubble, cilChart, cilThumbUp, cilBookmark } from "@coreui/icons";
 
 import API from "src/api";
-import ImgHolder from "./form/img-holder";
-import { isUserLoggedIn } from "src/utilities/helpers";
+import ImgHolder from "./utilities/img-holder";
 import * as Constants from "src/utilities/constants";
+import { isUserLoggedIn } from "src/utilities/helpers";
 import useToaster from "src/custom-hooks/toaster-message";
 import usePostServices from "src/custom-hooks/post-services";
 import { openModalWithProps } from "src/redux/actions/modal";
