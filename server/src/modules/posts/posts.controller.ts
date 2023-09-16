@@ -33,8 +33,10 @@ export class PostController {
     constructor(private readonly postService: PostService, private schedulerRegistery: SchedulerRegistry) { }
 
     @Get("all")
-    async index(): Promise<UserPost[]> {
-        return this.postService.findAll();
+    @UseInterceptors(ResponseInterceptor)
+    async index(): Promise<IResponseProps> {
+        const posts = await this.postService.findAll();
+        return { data: posts, success: true, message: "Received all the scheduled posts successfully." };
     }
 
     @Get("scheduled/all")

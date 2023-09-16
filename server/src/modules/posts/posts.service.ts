@@ -17,7 +17,17 @@ export class PostService {
     ) { }
 
     async findAll(): Promise<Post[]> {
-        return this.postModel.find().populate("user", "name username picture").exec();
+        return this
+            .postModel
+            .find()
+            .populate("user", "name username picture")
+            .populate("postId", "text images")
+            .lean() // converts document received by query into plain JS object.
+            .exec() // executes the query. Returns a promise.
+            .then(posts => {
+                posts.forEach(post => { post["post"] = post["postId"]; delete post.postId; });
+                return posts;
+            });
     }
 
     async getAllSchduledPosts(userId: ObjectId): Promise<ScheduledPost[]> {

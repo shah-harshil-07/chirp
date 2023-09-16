@@ -78,7 +78,7 @@ export class Post {
     @Prop({ type: Date, required: true })
     createdAt: Date;
 
-    @Prop({ default: null })
+    @Prop({ default: null, type: mongoose.Schema.Types.ObjectId, ref: "Post" })
     postId: string;
 }
 
