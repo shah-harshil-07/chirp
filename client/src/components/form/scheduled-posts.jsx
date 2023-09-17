@@ -12,16 +12,17 @@ import CustomModal from "../utilities/custom-modal";
 import * as Constants from "src/utilities/constants";
 import Confirmation from "../utilities/confirmation";
 import useToaster from "src/custom-hooks/toaster-message";
+import DateOptionServices from "src/custom-hooks/date-services";
 import useImageConverter from "src/custom-hooks/image-converter";
-import useDateOptionServices from "src/custom-hooks/date-options";
 import { closeModal, openModalWithProps } from "src/redux/actions/modal";
 
 const ScheduledPostList = () => {
     const dispatch = useDispatch();
     const { showError, showSuccess } = useToaster();
     const { getFileObjectFromBase64 } = useImageConverter();
-    const { getMonthOptions, getWeekOptions } = useDateOptionServices();
-    const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
+    const dateService = new DateOptionServices();
+    const monthOptions = dateService.getMonthOptions();
+    const weekOptions = dateService.getWeekOptions();
     const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
     const placeHolderImgUrl = "https://abs.twimg.com/responsive-web/client-web/alarm-clock-400x200.v1.da96e5d9.png";
 

@@ -14,8 +14,8 @@ import * as Constants from "src/utilities/constants";
 import useToaster from "src/custom-hooks/toaster-message";
 import EmojiContainer from "../utilities/emoji-container";
 import { placeHolderImageSrc } from "src/utilities/constants";
+import DateOptionServices from "src/custom-hooks/date-services";
 import useImageConverter from "src/custom-hooks/image-converter";
-import useDateOptionServices from "src/custom-hooks/date-options";
 
 const Form = ({
 	editText,
@@ -26,11 +26,12 @@ const Form = ({
 	editScheduleMode,
 	editScheduledPost
 }) => {
+	const dateService = new DateOptionServices();
+	const weekOptions = dateService.getWeekOptions();
+	const monthOptions = dateService.getMonthOptions();
+	const { uploadImagesAction } = useImageConverter();
 	const dispatch = useDispatch(), textboxRef = useRef(null);
 	const fileUploadRef = useRef(null), { showError, showSuccess } = useToaster();
-	const { getMonthOptions, getWeekOptions } = useDateOptionServices();
-	const monthOptions = getMonthOptions(), weekOptions = getWeekOptions();
-	const { uploadImagesAction } = useImageConverter();
 
 	const [text, setText] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);

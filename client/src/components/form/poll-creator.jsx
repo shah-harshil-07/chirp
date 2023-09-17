@@ -6,12 +6,14 @@ import { cilPlus } from "@coreui/icons";
 
 import CustomSelect from "../utilities/custom-select";
 import LabelledInput from "../utilities/labelled-input";
-import useDateOptionServices from "src/custom-hooks/date-options";
+import DateOptionServices from "src/custom-hooks/date-services";
 
 const PollCreator = ({ closePollCreator, handleChoiceChange, editPollData }) => {
     const containerRef = useRef(null);
-    const { getDayOfWeekOptions, getHourOptions, getMinuteOptions } = useDateOptionServices();
-    const dayOfWeekOptions = getDayOfWeekOptions(), hourOptions = getHourOptions(), minuteOptions = getMinuteOptions();
+    const dateService = new DateOptionServices();
+    const dayOfWeekOptions = dateService.getDayOfWeekOptions();
+    const hourOptions = dateService.getHourOptions();
+    const minuteOptions = dateService.getMinuteOptions();
     const minMinuteOptions = minuteOptions.slice(5, minuteOptions.length);
 
     const [choices, setChoices] = useState(['', '']);

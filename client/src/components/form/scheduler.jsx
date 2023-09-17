@@ -5,8 +5,8 @@ import { cilCalendar } from "@coreui/icons";
 import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
 
 import CustomSelect from "../utilities/custom-select";
+import DateOptionServices from "src/custom-hooks/date-services";
 import { checkContainerInViewport } from "src/utilities/helpers";
-import useDateOptionServices from "src/custom-hooks/date-options";
 import useDocumentClickServices from "src/custom-hooks/document-services";
 
 const Scheduler = ({
@@ -19,23 +19,15 @@ const Scheduler = ({
     openScheduledPostList,
 }) => {
     const date = new Date();
+    const presentYear = date.getFullYear();
     const containerRef = useRef(null), defaultDate = new Date();
-    const presentYear = date.getFullYear(), monthIndex = date.getMonth();
     const { addDocumentClickCallback } = useDocumentClickServices();
 
-    const {
-        getDayOfMonthOptions,
-        getHourOptions,
-        getMinuteOptions,
-        getMonthOptions,
-        getWeekOptions
-    } = useDateOptionServices();
-
-    const hourOptions = getHourOptions();
-    const minuteOptions = getMinuteOptions();
-    const monthOptions = getMonthOptions();
-    const weekOptions = getWeekOptions();
-    const dayOfMonthOptions = getDayOfMonthOptions(monthIndex, presentYear);
+    const dateServiceObj = new DateOptionServices();
+    const hourOptions = dateServiceObj.getHourOptions();
+    const minuteOptions = dateServiceObj.getMinuteOptions();
+    const monthOptions = dateServiceObj.getMonthOptions();
+    const weekOptions = dateServiceObj.getWeekOptions();
 
     const yearOptions = [
         { value: presentYear, label: presentYear },
@@ -48,6 +40,7 @@ const Scheduler = ({
     const [isDateValid, setIsDateValid] = useState(true);
     const [month, setMonth] = useState(defaultDate.getMonth());
     const [hours, setHours] = useState(defaultDate.getHours());
+    const [dayOfMonthOptions, setDayOfMonthOptions] = useState([]);
     const [minutes, setMinutes] = useState(defaultDate.getMinutes());
     const [footerTextColor, setFooterTextColor] = useState("#1DA1F2");
     const [dayOfMonth, setDayOfMonth] = useState(defaultDate.getDate());
@@ -73,6 +66,14 @@ const Scheduler = ({
         addDocumentClickCallback("scheduler", outsideClickFn);
         // eslint-disable-next-line
     }, [handleClickOutside]);
+
+    useEffect(() => {
+        if (month >= 0 && year >= 0) {
+            const _dayOfMonthOptions = dateServiceObj.getDayOfMonthOptions(+month, +year);
+            setDayOfMonthOptions([..._dayOfMonthOptions]);
+        }
+        // eslint-disable-next-line
+    }, [month, year]);
 
     useEffect(() => {
         if (isPostScheduled && scheduleData) {
