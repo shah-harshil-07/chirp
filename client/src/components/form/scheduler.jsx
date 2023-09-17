@@ -31,11 +31,11 @@ const Scheduler = ({
         getWeekOptions
     } = useDateOptionServices();
 
-    const dayOfMonthOptions = getDayOfMonthOptions(monthIndex, presentYear);
     const hourOptions = getHourOptions();
     const minuteOptions = getMinuteOptions();
     const monthOptions = getMonthOptions();
     const weekOptions = getWeekOptions();
+    const dayOfMonthOptions = getDayOfMonthOptions(monthIndex, presentYear);
 
     const yearOptions = [
         { value: presentYear, label: presentYear },
@@ -44,15 +44,15 @@ const Scheduler = ({
 
     defaultDate.setDate(defaultDate.getDate() + 5);
 
-    const [footerTextColor, setFooterTextColor] = useState("#1DA1F2");
-    const [dayOfMonth, setDayOfMonth] = useState(defaultDate.getDate());
-    const [month, setMonth] = useState(defaultDate.getMonth());
-    const [displayedMonth, setDisplayedMonth] = useState(monthOptions[month].label);
-    const [displayedDayOfWeek, setDisplayedDayOfWeek] = useState(weekOptions[defaultDate.getDay()]);
     const [year, setYear] = useState(presentYear);
+    const [isDateValid, setIsDateValid] = useState(true);
+    const [month, setMonth] = useState(defaultDate.getMonth());
     const [hours, setHours] = useState(defaultDate.getHours());
     const [minutes, setMinutes] = useState(defaultDate.getMinutes());
-    const [isDateValid, setIsDateValid] = useState(true);
+    const [footerTextColor, setFooterTextColor] = useState("#1DA1F2");
+    const [dayOfMonth, setDayOfMonth] = useState(defaultDate.getDate());
+    const [displayedMonth, setDisplayedMonth] = useState(monthOptions[month]?.label ?? '');
+    const [displayedDayOfWeek, setDisplayedDayOfWeek] = useState(weekOptions[defaultDate.getDay()]);
 
     useLayoutEffect(() => {
         const containerRect = containerRef?.current?.getBoundingClientRect() ?? null;
@@ -78,9 +78,9 @@ const Scheduler = ({
         if (isPostScheduled && scheduleData) {
             setYear(scheduleData.year);
             setMonth(scheduleData.month);
-            setDayOfMonth(scheduleData.dayOfMonth);
             setHours(scheduleData.hours);
             setMinutes(scheduleData.minutes);
+            setDayOfMonth(scheduleData.dayOfMonth);
         }
         //eslint-disable-next-line
     }, [scheduleData]);
@@ -275,7 +275,7 @@ const Scheduler = ({
                 <span style={{ color: footerTextColor }} id="scheduler-footer-text">Scheduled Events</span>
             </div>
         </div>
-    )
+    );
 }
 
 export default Scheduler;

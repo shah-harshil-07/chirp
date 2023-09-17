@@ -1,18 +1,27 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const useDateOptionServices = () => {
-    const dayOfWeekOptions = [], hourOptions = [], minuteOptions = [], dayOfMonthOptions = [];
+    const [hourOptions, setHourOptions] = useState([]);
+    const [minuteOptions, setMinuteOptions] = useState([]);
+    const [dayOfWeekOptions, setDayOfWeekOptions] = useState([]);
+    const [baseDayOfMonthOptions, setBaseDayOfMonthOptions] = useState([]);
 
     useEffect(() => {
+        const _dayOfWeekOptions = [], _hourOptions = [], _minuteOptions = [], _baseDayOfMonthOptions = [];
+
         for (let i = 0; i < 60; i++) {
             const option = { value: i, label: i };
         
-            if (i < 8) dayOfWeekOptions.push(option);
-            if (i < 24) hourOptions.push(option);
-            if (i <= 28 && i > 0) dayOfMonthOptions.push(option);
-            minuteOptions.push(option);
+            if (i < 8) _dayOfWeekOptions.push(option);
+            if (i < 24) _hourOptions.push(option);
+            if (i <= 28 && i > 0) _baseDayOfMonthOptions.push(option);
+            _minuteOptions.push(option);
         }
-        // eslint-disable-next-line
+
+        setHourOptions([..._hourOptions]);
+        setMinuteOptions([..._minuteOptions]);
+        setDayOfWeekOptions([..._dayOfWeekOptions]);
+        setBaseDayOfMonthOptions([..._baseDayOfMonthOptions]);
     }, []);
 
     const monthOptions = [
@@ -53,8 +62,8 @@ const useDateOptionServices = () => {
     }
 
     const getDayOfMonthOptions = (monthIndex, year) => {
-        let upperLimit = 0;
-    
+        let upperLimit = 0, dayOfMonthOptions = [...baseDayOfMonthOptions];
+
         if (monthIndex === 1) {
             upperLimit = (year % 400 === 0 && year % 100 !== 0 && year % 4 === 0) ? 29 : 28;
         } else if (monthIndex <= 6) {
@@ -62,9 +71,9 @@ const useDateOptionServices = () => {
         } else {
             upperLimit = monthIndex % 2 !== 0 ? 31 : 30;
         }
-    
+
         for (let i = 29; i <= upperLimit; i++) dayOfMonthOptions.push({ value: i, label: i });
-    
+
         return dayOfMonthOptions;
     }
 
