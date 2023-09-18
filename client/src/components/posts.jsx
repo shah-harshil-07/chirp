@@ -196,10 +196,12 @@ const Posts = () => {
 			{
 				posts.map((post, postIndex) => {
 					const { post: parentPost } = post;
-					const { parentPostCreator, createdAt } = parentPost ?? {};
-					const { name, username } = post.user ?? {};
+					const { parentPostCreator, createdAt, user: parentPostUser } = parentPost ?? {};
+					const { name, username, picture } = post.user ?? {};
 					let parentPostImages = [], pureImages = [];
 					const images = postImages[postIndex];
+
+					const { name: parentName, username: parentUserName, picture: ParentPicture } = parentPostUser ?? {};
 
 					if (images?.length) {
 						images.forEach(image => {
@@ -210,7 +212,7 @@ const Posts = () => {
 
 					return name && username ? (
 						<Card id="card" key={postIndex}>
-							<img src={post?.user?.picture ?? Constants.placeHolderImageSrc} id="user-image" alt="user" />
+							<img src={picture ?? Constants.placeHolderImageSrc} id="user-image" alt="user" />
 
 							<div id="card-body">
 								<div className="row mx-0">
@@ -235,13 +237,13 @@ const Posts = () => {
 											<img
 												alt="post creator"
 												className="parent-post-user-img"
-												src={parentPostCreator?.picture ?? placeHolderImageSrc}
+												src={ParentPicture ?? placeHolderImageSrc}
 											/>
 
 											<div className="repost-body-content">
 												<div className="row mx-0">
-													<b className="font-size-16">{name}</b>&nbsp;
-													<span className="font-size-16">{`@${username}`}</span>
+													<b className="font-size-16">{parentName}</b>&nbsp;
+													<span className="font-size-16">{`@${parentUserName}`}</span>
 													<span>
 														<div className="seperator-container">
 															<div className="seperator" />
