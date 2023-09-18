@@ -36,7 +36,8 @@ const Posts = () => {
 			if (responseData?.data?.length) _posts = responseData.data;
 
 			_posts.forEach(postObj => {
-				const { images: postImages } = postObj;
+				const { images: postImages, post } = postObj;
+				if (post?.images?.length) postImages.push(post.images);
 				images.push(postImages);
 			});
 
@@ -51,33 +52,52 @@ const Posts = () => {
 		return API(Constants.GET, `${Constants.GET_POST_IMAGE}/${image}`, null, headerData);
 	}
 
-	const getPostImages = posts => {
+	const getPromise = (imageName, postIndex, imageIndex, _postImages, parentImageIndex) => {
+		return new Promise((res, rej) => {
+			getBasePromise(imageName)
+				.then(imageResponse => {
+					if (imageResponse?.data) {
+						const base64ImgData = imageResponse.data;
+						const base64Prefix = "data:image/*;charset=utf-8;base64,";
+						const imageData = base64Prefix + base64ImgData;
+
+						if (parentImageIndex >= 0) {
+							if (!_postImages[postIndex][imageIndex]) _postImages[postIndex][imageIndex] = [];
+							_postImages[postIndex][imageIndex][parentImageIndex] = imageData;
+						} else {
+							_postImages[postIndex][imageIndex] = imageData;
+						}
+
+						setPostImages([..._postImages]);
+						res();
+					} else {
+						rej();
+					}
+				})
+				.catch(err => {
+					console.log(err);
+					rej();
+				});
+		});
+	}
+
+	const getPostImages = postImageNameArr => {
 		const promises = [];
 
-		posts.forEach((post, postIndex) => {
-			post.forEach((image, imageIndex) => {
+		postImageNameArr.forEach((postImageNames, postIndex) => {
+			postImageNames.forEach((imageName, imageIndex) => {
 				const _postImages = postImages;
 				if (!_postImages[postIndex]) _postImages[postIndex] = [];
+				const params = [imageName, postIndex, imageIndex, _postImages];
 
-				promises.push(new Promise((res, rej) => {
-					getBasePromise(image)
-						.then(imageResponse => {
-							if (imageResponse?.data) {
-								const base64ImgData = imageResponse.data;
-								const base64Prefix = "data:image/*;charset=utf-8;base64,";
-
-								_postImages[postIndex][imageIndex] = base64Prefix + base64ImgData;
-								setPostImages([..._postImages]);
-								res();
-							} else {
-								rej();
-							}
-						})
-						.catch(err => {
-							console.log(err);
-							rej();
-						});
-				}));
+				if (Array.isArray(imageName)) {
+					imageName.forEach((image, imageIndex) => {
+						params[0] = image;
+						promises.push(getPromise(...params, imageIndex));
+					});
+				} else {
+					promises.push(getPromise(...params));
+				}
 			});
 		});
 
@@ -174,8 +194,18 @@ const Posts = () => {
 		<div>
 			{
 				posts.map((post, postIndex) => {
+					const { post: parentPost } = post;
 					const { name, username } = post.user ?? {};
 					const images = postImages[postIndex];
+					const parentPostImages = [];
+					if (images && Array.isArray(images[images.length - 1])) {
+						parentPostImages.push(...images[images.length - 1]);
+					}
+
+					if (postIndex == 4) {
+						console.log(images);
+						console.log(parentPost);
+					}
 
 					return name && username ? (
 						<Card id="card" key={postIndex}>
@@ -194,7 +224,7 @@ const Posts = () => {
 								{post?.poll?.choices && getPollJSX(post.poll, postIndex)}
 								{
 									images?.length > 0 && (
-										<ImgHolder images={postImages[postIndex]} showActionButtons={false} />
+										<ImgHolder images={images} showActionButtons={false} />
 									)
 								}
 
