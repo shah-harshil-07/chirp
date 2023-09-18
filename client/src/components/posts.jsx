@@ -195,12 +195,12 @@ const Posts = () => {
 		<div>
 			{
 				posts.map((post, postIndex) => {
-					const { post: parentPost } = post;
-					const { parentPostCreator, createdAt, user: parentPostUser } = parentPost ?? {};
+					const { post: parentPost, createdAt } = post;
 					const { name, username, picture } = post.user ?? {};
 					let parentPostImages = [], pureImages = [];
 					const images = postImages[postIndex];
-
+					
+					const { text: parentPostText, createdAt: parentCreatedAt, user: parentPostUser } = parentPost ?? {};
 					const { name: parentName, username: parentUserName, picture: ParentPicture } = parentPostUser ?? {};
 
 					if (images?.length) {
@@ -218,8 +218,8 @@ const Posts = () => {
 								<div className="row mx-0">
 									<b>{name}</b>&nbsp;
 									<span>{`@${username}`}</span>
-									<span><div className="seperator-container"><div id="seperator" /></div></span>
-									<span>{getPostTiming(post.createdAt)}</span>
+									<span><div className="seperator-container"><div className="seperator" /></div></span>
+									<span>{getPostTiming(createdAt)}</span>
 								</div>
 
 								<div className="row mx-0"><div>{post?.text ?? ''}</div></div>
@@ -249,11 +249,11 @@ const Posts = () => {
 															<div className="seperator" />
 														</div>
 													</span>
-													<span className="font-size-16">{getPostTiming(createdAt)}</span>
+													<span className="font-size-16">{getPostTiming(parentCreatedAt)}</span>
 												</div>
 
 												<div className="row mx-0 mt-1 font-size-16">
-													<div>{post?.text?.slice(0, 40) ?? ''}</div>
+													<div>{parentPostText?.slice(0, 40) ?? ''}</div>
 												</div>
 
 												{
