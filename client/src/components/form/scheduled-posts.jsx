@@ -11,6 +11,7 @@ import ImgHolder from "../utilities/img-holder";
 import CustomModal from "../utilities/custom-modal";
 import * as Constants from "src/utilities/constants";
 import Confirmation from "../utilities/confirmation";
+import { getCommonHeader } from "src/utilities/helpers";
 import useToaster from "src/custom-hooks/toaster-message";
 import DateOptionServices from "src/custom-hooks/date-services";
 import useImageConverter from "src/custom-hooks/image-converter";
@@ -18,12 +19,11 @@ import { closeModal, openModalWithProps } from "src/redux/actions/modal";
 
 const ScheduledPostList = () => {
     const dispatch = useDispatch();
-    const { showError, showSuccess } = useToaster();
-    const { getFileObjectFromBase64 } = useImageConverter();
     const dateService = new DateOptionServices();
-    const monthOptions = dateService.getMonthOptions();
+    const { showError, showSuccess } = useToaster();
     const weekOptions = dateService.getWeekOptions();
-    const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
+    const monthOptions = dateService.getMonthOptions();
+    const { getFileObjectFromBase64 } = useImageConverter(), headerData = getCommonHeader();
     const placeHolderImgUrl = "https://abs.twimg.com/responsive-web/client-web/alarm-clock-400x200.v1.da96e5d9.png";
 
     const [posts, setPosts] = useState([]);
@@ -87,7 +87,6 @@ const ScheduledPostList = () => {
     const getAllScheduledPosts = async () => {
         try {
             setShowLoader(true);
-            const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
             const response = await API(Constants.GET, Constants.GET_SCHEDULED_POSTS, null, headerData);
             setShowLoader(false);
 

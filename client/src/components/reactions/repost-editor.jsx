@@ -11,6 +11,7 @@ import CustomModal from "../utilities/custom-modal";
 import * as Constants from "src/utilities/constants";
 import { closeModal } from "src/redux/actions/modal";
 import { getUserDetails } from "src/utilities/helpers";
+import { getCommonHeader } from "src/utilities/helpers";
 import useToaster from "src/custom-hooks/toaster-message";
 import EmojiContainer from "../utilities/emoji-container";
 import usePostServices from "src/custom-hooks/post-services";
@@ -19,12 +20,12 @@ import useImageConverter from "src/custom-hooks/image-converter";
 
 const RepostEditor = post => {
     const { createdAt, user: postCreator, _id: postId } = post;
+    const headerData = getCommonHeader();
     const userDetails = getUserDetails() ?? {};
     const { name, username } = postCreator ?? {};
     const { picture: userPictureUrl } = userDetails;
     const { showError, showSuccess } = useToaster(), dispatch = useDispatch();
     const { uploadImagesAction } = useImageConverter(), { getPostTiming } = usePostServices();
-    const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
     const fileUploadRef = useRef(null), textboxRef = useRef(null), bodyClasses = "mr-2 ml-2 mt-2";
 
     const [text, setText] = useState('');
@@ -103,7 +104,6 @@ const RepostEditor = post => {
             uploadedFileObjects.forEach(fileObj => { formData.append("images[]", fileObj); });
 
             try {
-                const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
                 const response = await API(Constants.POST, Constants.CREATE_POST, formData, headerData);
                 const responseData = response.data;
 

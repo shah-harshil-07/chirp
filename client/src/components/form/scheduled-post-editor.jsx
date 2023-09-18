@@ -1,18 +1,19 @@
 import "src/styles/form/scheduled-post-editor.css";
 
-import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
 
 import API from "src/api";
 import Form from "./index";
 import CustomModal from "../utilities/custom-modal";
 import * as Constants from "src/utilities/constants";
-import useToaster from "src/custom-hooks/toaster-message";
 import { closeModal } from "src/redux/actions/modal";
+import { getCommonHeader } from "src/utilities/helpers";
+import useToaster from "src/custom-hooks/toaster-message";
 
 const ScheduledPostEditor = props => {
     const { showError, showSuccess } = useToaster();
-    const dispatch = useDispatch();
+    const dispatch = useDispatch(), headerData = getCommonHeader();
 
     const [editText, setEditText] = useState('');
     const [editUploadedFileObjects, setEditUploadedFileObjects] = useState([]);
@@ -40,7 +41,6 @@ const ScheduledPostEditor = props => {
     const editScheduledPost = async data => {
         try {
             if (postId) {
-                const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
                 const url = `${Constants.RESCHEDULE_POST}/${postId}`;
                 const response = await API(Constants.POST, url, data, headerData);
                 const responseData = response.data;

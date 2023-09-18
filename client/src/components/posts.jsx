@@ -10,17 +10,17 @@ import API from "src/api";
 import ImgHolder from "./utilities/img-holder";
 import * as Constants from "src/utilities/constants";
 import { isUserLoggedIn } from "src/utilities/helpers";
+import { getCommonHeader } from "src/utilities/helpers";
 import useToaster from "src/custom-hooks/toaster-message";
 import usePostServices from "src/custom-hooks/post-services";
 import { openModalWithProps } from "src/redux/actions/modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
 
 const Posts = () => {
-	const { getPostTiming } = usePostServices();
 	const { showError } = useToaster(), dispatch = useDispatch();
 	const userDetails = localStorage.getItem("chirp-userDetails");
+	const { getPostTiming } = usePostServices(), headerData = getCommonHeader();
 	const loggedInUserId = userDetails ? JSON.parse(userDetails)?._id ?? '' : '';
-	const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
 
 	const [posts, setPosts] = useState([]);
 	const [postImages, setPostImages] = useState([]);
@@ -123,7 +123,6 @@ const Posts = () => {
 			}
 
 			const data = { postId: posts[postIndex]._id, choiceIndex, prevChoiceIndex };
-			const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
 			API(Constants.POST, Constants.VOTE_POLL, data, headerData).catch(err => {
 				console.log(err);
 				showError("Something went wrong! Please refresh and try again!");
