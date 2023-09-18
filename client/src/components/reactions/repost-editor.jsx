@@ -2,7 +2,7 @@ import "src/styles/reactions/index.css";
 
 import CIcon from "@coreui/icons-react";
 import { useDispatch } from "react-redux";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { cilImage, cilSmile } from "@coreui/icons";
 
 import API from "src/api";
@@ -24,12 +24,52 @@ const RepostEditor = post => {
     const { picture: userPictureUrl } = userDetails;
     const { showError, showSuccess } = useToaster(), dispatch = useDispatch();
     const { uploadImagesAction } = useImageConverter(), { getPostTiming } = usePostServices();
+    const headerData = { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
     const fileUploadRef = useRef(null), textboxRef = useRef(null), bodyClasses = "mr-2 ml-2 mt-2";
 
     const [text, setText] = useState('');
     const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [parentPostImages, setParentPostImages] = useState([]);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [uploadedFileObjects, setUploadedFileObjects] = useState([]);
+
+    useEffect(() => {
+        const { images } = post;
+        if (images?.length) getParentPostImages(images);
+        // eslint-disable-next-line
+    }, [post]);
+
+    const getParentPostImages = postImages => {
+        const promises = [];
+
+        postImages.forEach(imageName => {
+            const _parentPostImages = parentPostImages;
+            const promise = new Promise((res, rej) => {
+                API(Constants.GET, `${Constants.GET_POST_IMAGE}/${imageName}`, null, headerData)
+                    .then(imageResponse => {
+                        if (imageResponse?.data) {
+                            const base64ImgData = imageResponse.data;
+                            const base64Prefix = "data:image/*;charset=utf-8;base64,";
+                            const imageData = base64Prefix + base64ImgData;
+
+                            _parentPostImages.push(imageData);
+                            setParentPostImages([..._parentPostImages]);
+                            res();
+                        } else {
+                            rej();
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        rej();
+                    });
+            });
+
+            promises.push(promise);
+        });
+
+        Promise.allSettled(promises);
+    }
 
     const resetFileCache = () => {
         fileUploadRef.current.value = '';
@@ -131,6 +171,8 @@ const RepostEditor = post => {
                     </div>
 
                     <div className="row mx-0 mt-3 font-size-20"><div>{post?.text?.slice(0, 40) ?? ''}</div></div>
+
+                    {parentPostImages?.length > 0 && <ImgHolder images={parentPostImages} showActionButtons={false} />}
                 </div>
             </div>
         </div>
