@@ -60,12 +60,3 @@
     bottom: 25px;
     right: 27px;
 }
-
-#repost-editor-post-body {
-    width: 86%;
-    float: right;
-    margin-right: 27px;
-    position: relative;
-    border-radius: 25px;
-    border: 0.1px solid rgba(0,0,0,.3);
-}

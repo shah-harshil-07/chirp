@@ -18,19 +18,6 @@
     margin-top: 10px;
 }
 
-#seperator-container {
-    width: 24px;
-    height: 24px;
-    padding: 8px;
-}
-
-#seperator {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: grey;
-}
-
 .chirp-action {
     width: 20px;
     height: 20px;
@@ -63,4 +50,18 @@
 .post-vote-percent-label {
     position: absolute;
     right: 10px;
+}
+
+.parent-post-user-img {
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    margin-left: 5px;
+    margin-top: 5px;
+    border-radius: 50%;
+}
+
+.repost-body-content {
+    margin-left: 50px;
+    margin-top: 10px;
 }

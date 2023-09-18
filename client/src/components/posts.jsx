@@ -13,6 +13,7 @@ import { isUserLoggedIn } from "src/utilities/helpers";
 import useToaster from "src/custom-hooks/toaster-message";
 import usePostServices from "src/custom-hooks/post-services";
 import { openModalWithProps } from "src/redux/actions/modal";
+import { placeHolderImageSrc } from "src/utilities/constants";
 
 const Posts = () => {
 	const { getPostTiming } = usePostServices();
@@ -195,16 +196,16 @@ const Posts = () => {
 			{
 				posts.map((post, postIndex) => {
 					const { post: parentPost } = post;
+					const { parentPostCreator, createdAt } = parentPost ?? {};
 					const { name, username } = post.user ?? {};
+					let parentPostImages = [], pureImages = [];
 					const images = postImages[postIndex];
-					const parentPostImages = [];
-					if (images && Array.isArray(images[images.length - 1])) {
-						parentPostImages.push(...images[images.length - 1]);
-					}
 
-					if (postIndex == 4) {
-						console.log(images);
-						console.log(parentPost);
+					if (images?.length) {
+						images.forEach(image => {
+							if (Array.isArray(image)) parentPostImages = [...image];
+							else if (image) pureImages.push(image);
+						});
 					}
 
 					return name && username ? (
@@ -215,7 +216,7 @@ const Posts = () => {
 								<div className="row mx-0">
 									<b>{name}</b>&nbsp;
 									<span>{`@${username}`}</span>
-									<span><div id="seperator-container"><div id="seperator" /></div></span>
+									<span><div className="seperator-container"><div id="seperator" /></div></span>
 									<span>{getPostTiming(post.createdAt)}</span>
 								</div>
 
@@ -223,8 +224,43 @@ const Posts = () => {
 
 								{post?.poll?.choices && getPollJSX(post.poll, postIndex)}
 								{
-									images?.length > 0 && (
-										<ImgHolder images={images} showActionButtons={false} />
+									pureImages?.length > 0 && (
+										<ImgHolder images={pureImages} showActionButtons={false} />
+									)
+								}
+
+								{
+									parentPost && (
+										<div className="repost-body">
+											<img
+												alt="post creator"
+												className="parent-post-user-img"
+												src={parentPostCreator?.picture ?? placeHolderImageSrc}
+											/>
+
+											<div className="repost-body-content">
+												<div className="row mx-0">
+													<b className="font-size-16">{name}</b>&nbsp;
+													<span className="font-size-16">{`@${username}`}</span>
+													<span>
+														<div className="seperator-container">
+															<div className="seperator" />
+														</div>
+													</span>
+													<span className="font-size-16">{getPostTiming(createdAt)}</span>
+												</div>
+
+												<div className="row mx-0 mt-1 font-size-16">
+													<div>{post?.text?.slice(0, 40) ?? ''}</div>
+												</div>
+
+												{
+													parentPostImages?.length > 0 && (
+														<ImgHolder images={parentPostImages} showActionButtons={false} />
+													)
+												}
+											</div>
+										</div>
 									)
 								}
 

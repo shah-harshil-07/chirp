@@ -115,14 +115,18 @@ const RepostEditor = post => {
                 </div>
             </form>
 
-            <div id="repost-editor-post-body" style={uploadedFiles.length ? { marginTop: "10px" } : {}}>
-                <img src={postCreator?.picture ?? placeHolderImageSrc} className="reaction-editor-user-image" alt="post creator" />
+            <div className="repost-body" style={uploadedFiles.length ? { marginTop: "10px" } : {}}>
+                <img
+                    alt="post creator"
+                    className="reaction-editor-user-image"
+                    src={postCreator?.picture ?? placeHolderImageSrc}
+                />
 
                 <div className="reaction-editor-card-body">
                     <div className="row mx-0">
                         <b className="font-size-20">{name}</b>&nbsp;
                         <span className="font-size-20">{`@${username}`}</span>
-                        <span><div className="mt-1" id="seperator-container"><div id="seperator" /></div></span>
+                        <span><div className="mt-1 seperator-container"><div className="seperator" /></div></span>
                         <span className="font-size-20">{getPostTiming(createdAt)}</span>
                     </div>
 

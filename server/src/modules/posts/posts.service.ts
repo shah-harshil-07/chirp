@@ -21,7 +21,7 @@ export class PostService {
             .postModel
             .find()
             .populate("user", "name username picture")
-            .populate("postId", "text images")
+            .populate("postId", "text images createdAt")
             .lean() // converts document received by query into plain JS object.
             .exec() // executes the query. Returns a promise.
             .then(posts => {
