@@ -26,6 +26,7 @@ export class PostService {
                 select: "text images createdAt",
                 populate: { path: "user", select: "name username picture" }
             })
+            .sort("-createdAt")
             .lean() // converts document received by query into plain JS object.
             .exec() // executes the query. Returns a promise.
             .then(posts => {
