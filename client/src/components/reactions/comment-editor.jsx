@@ -143,7 +143,12 @@ const CommentEditor = post => {
                         <span className="font-size-20">{getPostTiming(createdAt)}</span>
                     </div>
 
-                    <div className="row mx-0 mt-3 font-size-20"><div>{post?.text?.slice(0, 40) ?? ''}</div></div>
+                    <div className="row mx-0 mt-3 font-size-20">
+                        <div>
+                            {post?.text?.slice(0, 100) ?? ''}
+                            {(post?.text?.length > 100) && (<a href="https://google.com">...Read more</a>)}
+                        </div>
+                    </div>
 
                     {poll?.choices && pollJSX(poll)}
 

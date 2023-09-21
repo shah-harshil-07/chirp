@@ -198,7 +198,7 @@ const Posts = () => {
 					const { name, username, picture } = post.user ?? {};
 					let parentPostImages = [], pureImages = [];
 					const images = postImages[postIndex];
-					
+
 					const { text: parentPostText, createdAt: parentCreatedAt, user: parentPostUser } = parentPost ?? {};
 					const { name: parentName, username: parentUserName, picture: ParentPicture } = parentPostUser ?? {};
 
@@ -232,7 +232,10 @@ const Posts = () => {
 
 								{
 									parentPost && (
-										<div className="repost-body">
+										<div
+											className="repost-body"
+											style={{ marginRight: "20px", marginTop: pureImages.length ? "10px" : '0' }}
+										>
 											<img
 												alt="post creator"
 												className="parent-post-user-img"
