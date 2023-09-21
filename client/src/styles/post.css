@@ -22,6 +22,7 @@
     width: 20px;
     height: 20px;
     cursor: pointer;
+    color: rgb(83, 100, 113);
 }
 
 .action-bar {
@@ -67,6 +68,7 @@
 }
 
 .post-reaction-data {
-    position: absolute;
     left: 25px;
+    color: rgb(83, 100, 113);
+    position: absolute;
 }

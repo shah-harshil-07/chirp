@@ -276,7 +276,7 @@ const Posts = () => {
 											className="chirp-action"
 											onClick={() => { openCommentBox(post); }}
 										/>
-										<span className="post-reaction-data">{comments}</span>
+										<span className="post-reaction-data">{comments ?? 0}</span>
 									</span>
 
 									<span className="position-relative">
@@ -286,22 +286,22 @@ const Posts = () => {
 											className="chirp-action"
 											onClick={() => { openRepostBox(post); }}
 										/>
-										<span className="post-reaction-data">{reposts}</span>
+										<span className="post-reaction-data">{reposts ?? 0}</span>
 									</span>
 
 									<span className="position-relative">
 										<CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
-										<span className="post-reaction-data">{likes}</span>
+										<span className="post-reaction-data">{likes ?? 0}</span>
 									</span>
 
 									<span className="position-relative">
 										<CIcon title="Views" icon={cilChart} className="chirp-action" />
-										<span className="post-reaction-data">{views}</span>
+										<span className="post-reaction-data">{views ?? 0}</span>
 									</span>
 
 									<span className="position-relative">
 										<CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
-										<span className="post-reaction-data">{saved}</span>
+										<span className="post-reaction-data">{saved ?? 0}</span>
 									</span>
 								</div>
 							</div>
