@@ -194,7 +194,7 @@ const Posts = () => {
 		<div>
 			{
 				posts.map((post, postIndex) => {
-					const { post: parentPost, createdAt } = post;
+					const { post: parentPost, createdAt, likes, reposts, comments, views, saved } = post;
 					const { name, username, picture } = post.user ?? {};
 					let parentPostImages = [], pureImages = [];
 					const images = postImages[postIndex];
@@ -268,22 +268,41 @@ const Posts = () => {
 									)
 								}
 
-								<div id="action-bar">
-									<CIcon
-										title="Reply"
-										icon={cilCommentBubble}
-										className="chirp-action"
-										onClick={() => { openCommentBox(post); }}
-									/>
-									<CIcon
-										icon={cilSend}
-										title="Repost"
-										className="chirp-action"
-										onClick={() => { openRepostBox(post); }}
-									/>
-									<CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
-									<CIcon title="Views" icon={cilChart} className="chirp-action" />
-									<CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
+								<div className="action-bar">
+									<span className="position-relative">
+										<CIcon
+											title="Reply"
+											icon={cilCommentBubble}
+											className="chirp-action"
+											onClick={() => { openCommentBox(post); }}
+										/>
+										<span className="post-reaction-data">{comments}</span>
+									</span>
+
+									<span className="position-relative">
+										<CIcon
+											icon={cilSend}
+											title="Repost"
+											className="chirp-action"
+											onClick={() => { openRepostBox(post); }}
+										/>
+										<span className="post-reaction-data">{reposts}</span>
+									</span>
+
+									<span className="position-relative">
+										<CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
+										<span className="post-reaction-data">{likes}</span>
+									</span>
+
+									<span className="position-relative">
+										<CIcon title="Views" icon={cilChart} className="chirp-action" />
+										<span className="post-reaction-data">{views}</span>
+									</span>
+
+									<span className="position-relative">
+										<CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
+										<span className="post-reaction-data">{saved}</span>
+									</span>
 								</div>
 							</div>
 						</Card>

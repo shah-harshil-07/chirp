@@ -24,7 +24,7 @@
     cursor: pointer;
 }
 
-#action-bar {
+.action-bar {
     display: flex;
     justify-content: space-around;
     margin-left: -45px;
@@ -64,4 +64,9 @@
 .repost-body-content {
     margin-left: 50px;
     margin-top: 10px;
+}
+
+.post-reaction-data {
+    position: absolute;
+    left: 25px;
 }
