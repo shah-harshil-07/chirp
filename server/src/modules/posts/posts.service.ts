@@ -142,4 +142,11 @@ export class PostService {
             throw new InternalServerErrorException();
         }
     }
+
+    async changeLikeCount(postId: string, mode: string): Promise<Post> {
+        let newPost: Post;
+        const likes = mode === "add" ? 1 : mode === "remove" ? -1 : 0;
+        newPost = await this.postModel.findByIdAndUpdate(postId, { $inc: { likes } }, { new: true });
+        return newPost;
+    }
 }

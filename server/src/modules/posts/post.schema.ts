@@ -80,6 +80,21 @@ export class Post {
 
     @Prop({ default: null, type: mongoose.Schema.Types.ObjectId, ref: "Post" })
     postId: string;
+
+    @Prop({ default: 0 })
+    comments: number;
+
+    @Prop({ default: 0 })
+    reposts: number;
+
+    @Prop({ default: 0 })
+    likes: number;
+
+    @Prop({ default: 0 })
+    views: number;
+
+    @Prop({ default: 0 })
+    saved: number;
 }
 
 @Schema({ collection: "ScheduledMessages" })

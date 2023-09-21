@@ -4,7 +4,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { CommentsController } from "./comments.controller";
 import { CommentsService } from "./comments.service";
 import { Comments, CommentsSchema } from "./comments.schema";
-import { CustomValidatorsModule } from "../custom-validators/custom-validators.module";
+import { CustomValidatorsModule } from "../../custom-validators/custom-validators.module";
 
 @Module({
 	imports: [

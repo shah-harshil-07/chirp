@@ -12,7 +12,8 @@ import { UsersModule } from "./users/users.module";
 import { CommonModule } from "./common/common.module";
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "./config/config.module";
-import { CommentsModule } from './comments/comments.module';
+import { CommentsModule } from './reactions/comments/comments.module';
+import { LikesModule } from './reactions/likes/likes.module';
 
 @Module({
 	imports: [
@@ -39,6 +40,7 @@ import { CommentsModule } from './comments/comments.module';
 		AuthModule,
 		ConfigModule,
 		CommentsModule,
+		LikesModule,
 	],
 })
 export class AppModule { }

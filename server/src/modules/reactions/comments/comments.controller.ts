@@ -6,9 +6,9 @@ import { Body, Controller, Post, Req, UploadedFiles, UseGuards, UseInterceptors 
 import { CommentsService } from "./comments.service";
 import { IResponseProps } from "src/interceptors/interfaces";
 import { ResponseInterceptor } from "src/interceptors/response";
-import { fileStorageConfigObj, parseFilePipeObj } from "../posts/file.config";
 import { CustomBadRequestException } from "src/exception-handlers/400/handler";
-import { CustomValidatorsService } from "../custom-validators/custom-validators.service";
+import { fileStorageConfigObj, parseFilePipeObj } from "../../posts/file.config";
+import { CustomValidatorsService } from "../../custom-validators/custom-validators.service";
 
 @Controller("comments")
 export class CommentsController {
