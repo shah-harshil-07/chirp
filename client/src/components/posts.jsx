@@ -269,40 +269,55 @@ const Posts = () => {
 								}
 
 								<div className="action-bar">
-									<span className="position-relative">
-										<CIcon
-											title="Reply"
-											icon={cilCommentBubble}
-											className="chirp-action"
-											onClick={() => { openCommentBox(post); }}
-										/>
+									<div className="d-inline-flex">
+										<div className="reply-icon">
+											<CIcon
+												title="Reply"
+												icon={cilCommentBubble}
+												className="chirp-action"
+												onClick={() => { openCommentBox(post); }}
+											/>
+										</div>
+
 										<span className="post-reaction-data">{comments ?? 0}</span>
-									</span>
+									</div>
 
-									<span className="position-relative">
-										<CIcon
-											icon={cilSend}
-											title="Repost"
-											className="chirp-action"
-											onClick={() => { openRepostBox(post); }}
-										/>
+									<div className="d-inline-flex">
+										<div className="reply-icon">
+											<CIcon
+												icon={cilSend}
+												title="Repost"
+												className="chirp-action"
+												onClick={() => { openRepostBox(post); }}
+											/>
+										</div>
+
 										<span className="post-reaction-data">{reposts ?? 0}</span>
-									</span>
+									</div>
 
-									<span className="position-relative">
-										<CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
+									<div className="d-inline-flex">
+										<div className="reply-icon">
+											<CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
+										</div>
+
 										<span className="post-reaction-data">{likes ?? 0}</span>
-									</span>
+									</div>
 
-									<span className="position-relative">
-										<CIcon title="Views" icon={cilChart} className="chirp-action" />
+									<div className="d-inline-flex">
+										<div className="reply-icon">
+											<CIcon title="Views" icon={cilChart} className="chirp-action" />
+										</div>
+
 										<span className="post-reaction-data">{views ?? 0}</span>
-									</span>
+									</div>
 
-									<span className="position-relative">
-										<CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
+									<div className="d-inline-flex">
+										<div className="reply-icon">
+											<CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
+										</div>
+
 										<span className="post-reaction-data">{saved ?? 0}</span>
-									</span>
+									</div>
 								</div>
 							</div>
 						</Card>

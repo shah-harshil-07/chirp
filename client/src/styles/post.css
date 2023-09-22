@@ -29,7 +29,6 @@
     display: flex;
     justify-content: space-around;
     margin-left: -45px;
-    margin-top: 10px;
     margin-bottom: 10px;
 }
 
@@ -68,7 +67,18 @@
 }
 
 .post-reaction-data {
-    left: 25px;
+    padding-top: 20%;
+    margin-left: 10px;
     color: rgb(83, 100, 113);
-    position: absolute;
+}
+
+.reply-icon {
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+    border-radius: 50%;
+}
+
+.reply-icon:hover {
+    background-color: rgba(29, 161, 242, 0.3);
 }
