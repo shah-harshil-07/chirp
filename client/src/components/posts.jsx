@@ -233,8 +233,8 @@ const Posts = () => {
 								{
 									parentPost && (
 										<div
-											className="repost-body"
-											style={{ marginRight: "20px", marginTop: pureImages.length ? "10px" : '0' }}
+											className="post-list-repost-body repost-body"
+											style={{ marginTop: pureImages.length ? "10px" : '0' }}
 										>
 											<img
 												alt="post creator"
@@ -269,52 +269,52 @@ const Posts = () => {
 								}
 
 								<div className="action-bar">
-									<div className="d-inline-flex">
-										<div className="reply-icon">
+									<div className="reaction-icon-container reply-container">
+										<span className="reply-icon">
 											<CIcon
 												title="Reply"
 												icon={cilCommentBubble}
 												className="chirp-action"
 												onClick={() => { openCommentBox(post); }}
 											/>
-										</div>
+										</span>
 
 										<span className="post-reaction-data">{comments ?? 0}</span>
 									</div>
 
-									<div className="d-inline-flex">
-										<div className="reply-icon">
+									<div className="reaction-icon-container repost-container">
+										<span className="reply-icon">
 											<CIcon
 												icon={cilSend}
 												title="Repost"
 												className="chirp-action"
 												onClick={() => { openRepostBox(post); }}
 											/>
-										</div>
+										</span>
 
 										<span className="post-reaction-data">{reposts ?? 0}</span>
 									</div>
 
-									<div className="d-inline-flex">
-										<div className="reply-icon">
+									<div className="reaction-icon-container like-container">
+										<span className="reply-icon">
 											<CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
-										</div>
+										</span>
 
 										<span className="post-reaction-data">{likes ?? 0}</span>
 									</div>
 
-									<div className="d-inline-flex">
-										<div className="reply-icon">
+									<div className="reaction-icon-container views-container">
+										<span className="reply-icon">
 											<CIcon title="Views" icon={cilChart} className="chirp-action" />
-										</div>
+										</span>
 
 										<span className="post-reaction-data">{views ?? 0}</span>
 									</div>
 
-									<div className="d-inline-flex">
-										<div className="reply-icon">
+									<div className="reaction-icon-container saved-container">
+										<span className="reply-icon">
 											<CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
-										</div>
+										</span>
 
 										<span className="post-reaction-data">{saved ?? 0}</span>
 									</div>
