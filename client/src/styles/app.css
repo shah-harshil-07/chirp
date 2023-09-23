@@ -17,7 +17,7 @@
 
 #app-container {
     display: grid;
-    grid-template-columns: 35% 500px 30%;
+    grid-template-columns: 30% 600px 30%;
 }
 
 .rounded-10 {

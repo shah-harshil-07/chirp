@@ -269,27 +269,17 @@ const Posts = () => {
 								}
 
 								<div className="action-bar">
-									<div className="reaction-icon-container reply-container">
+									<div className="reaction-icon-container reply-container" onClick={() => { openCommentBox(post); }}>
 										<span className="reply-icon">
-											<CIcon
-												title="Reply"
-												icon={cilCommentBubble}
-												className="chirp-action"
-												onClick={() => { openCommentBox(post); }}
-											/>
+											<CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
 										</span>
 
 										<span className="post-reaction-data">{comments ?? 0}</span>
 									</div>
 
-									<div className="reaction-icon-container repost-container">
+									<div className="reaction-icon-container repost-container" onClick={() => { openRepostBox(post); }}>
 										<span className="reply-icon">
-											<CIcon
-												icon={cilSend}
-												title="Repost"
-												className="chirp-action"
-												onClick={() => { openRepostBox(post); }}
-											/>
+											<CIcon icon={cilSend} title="Repost" className="chirp-action" />
 										</span>
 
 										<span className="post-reaction-data">{reposts ?? 0}</span>
