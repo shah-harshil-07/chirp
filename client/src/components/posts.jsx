@@ -38,7 +38,7 @@ const Posts = () => {
 			if (responseData?.data?.length) _posts = responseData.data;
 
 			_posts.forEach(postObj => {
-				postObj["isLiked"] = false;
+				postObj["isLiked"] = null;
 				const { images: postImages, post } = postObj;
 				if (post?.images?.length) postImages.push(post.images);
 				images.push(postImages);
@@ -46,6 +46,7 @@ const Posts = () => {
 
 			getPostImages(images);
 			setPosts([..._posts]);
+			if (isUserLoggedIn()) getPostLikes(_posts);
 		} catch (error) {
 			console.log(error);
 		}
@@ -105,6 +106,21 @@ const Posts = () => {
 		});
 
 		Promise.allSettled(promises);
+	}
+
+	const getPostLikes = async posts => {
+		const data = { postIds: posts.map(post => post._id) };
+		const { data: likedPostData } = await API(Constants.POST, Constants.GET_POST_LIKES, data, headerData);
+
+		const _posts = posts, likedPosts = likedPostData?.data ?? [];
+		const likedPostIds = likedPosts.map(post => post.postId);
+
+		_posts.forEach(postObj => {
+			const { _id: id } = postObj;
+			postObj["isLiked"] = likedPostIds.includes(id);
+		});
+
+		setPosts([..._posts]);
 	}
 
 	const vote = (postIndex, choiceIndex) => {
@@ -192,14 +208,18 @@ const Posts = () => {
 		else showError("Please login to repost!");
 	}
 
-	const triggerLikeAction = async postId => {
+	const triggerLikeAction = async postIndex => {
 		if (isUserLoggedIn()) {
-			// API(Constants.POST, `${Constants.LIKE_POST}/${postId}`, null, headerData).then(response => {
-			// 	console.log(response.data);
-			// });
-			const _posts = posts;
-			_posts.forEach(post => { if (post._id === postId) post.isLiked = !post.isLiked; });
-			setPosts([..._posts]);
+			const _posts = posts, postObj = posts[postIndex];
+			const { _id: postId, isLiked } = postObj;
+			console.log("postObj earlier => ", postObj);
+
+			if (!isLiked) {
+				API(Constants.POST, `${Constants.LIKE_POST}/${postId}`, null, headerData);
+				postObj["likes"]++; postObj["isLiked"] = true;
+				console.log("postObj later => ", postObj);
+				setPosts([..._posts]);
+			}
 		} else {
 			showError("Please login to like!");
 		}
@@ -209,7 +229,7 @@ const Posts = () => {
 		<div>
 			{
 				posts.map((post, postIndex) => {
-					const { post: parentPost, createdAt, likes, reposts, comments, views, saved, _id: id, isLiked } = post;
+					const { post: parentPost, createdAt, likes, reposts, comments, views, saved, isLiked } = post;
 					const { name, username, picture } = post.user ?? {};
 					let parentPostImages = [], pureImages = [];
 					const images = postImages[postIndex];
@@ -300,7 +320,10 @@ const Posts = () => {
 										<span className="post-reaction-data">{reposts ?? 0}</span>
 									</div>
 
-									<div onClick={() => { triggerLikeAction(id); }} className="reaction-icon-container like-container">
+									<div
+										className="reaction-icon-container like-container"
+										onClick={() => { if (isLiked != null) triggerLikeAction(postIndex); }}
+									>
 										<span className="reply-icon" style={isLiked ? { paddingTop: "6px" } : {}}>
 											{
 												!isLiked ? (
@@ -311,7 +334,12 @@ const Posts = () => {
 											}
 										</span>
 
-										<span className="post-reaction-data">{likes ?? 0}</span>
+										<span
+											className="post-reaction-data"
+											style={{ color: isLiked ? "var(--liked-color)" : "var(--unliked-color)" }}
+										>
+											{likes ?? 0}
+										</span>
 									</div>
 
 									<div className="reaction-icon-container views-container">

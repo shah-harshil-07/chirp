@@ -1,3 +1,5 @@
+
+
 #card {
     position: relative;
     border-bottom: 2px solid #80808057;
@@ -74,7 +76,7 @@
 .post-reaction-data {
     padding-top: 20%;
     margin-left: 10px;
-    color: rgb(83, 100, 113);
+    color: var(--unreacted-color);
 }
 
 .reply-icon {
@@ -110,7 +112,7 @@
 }
 
 .like-container:hover span:nth-child(2) {
-    color: rgba(249, 24, 128, 1);
+    color: var(--liked-color);
 }
 
 .views-container:hover span:nth-child(1) {
