@@ -17,6 +17,7 @@ import { openModalWithProps } from "src/redux/actions/modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
 
 const Posts = () => {
+	const likeIcon = require("src/assets/like.png");
 	const { showError } = useToaster(), dispatch = useDispatch();
 	const userDetails = localStorage.getItem("chirp-userDetails");
 	const { getPostTiming } = usePostServices(), headerData = getCommonHeader();
@@ -37,6 +38,7 @@ const Posts = () => {
 			if (responseData?.data?.length) _posts = responseData.data;
 
 			_posts.forEach(postObj => {
+				postObj["isLiked"] = false;
 				const { images: postImages, post } = postObj;
 				if (post?.images?.length) postImages.push(post.images);
 				images.push(postImages);
@@ -190,17 +192,30 @@ const Posts = () => {
 		else showError("Please login to repost!");
 	}
 
+	const triggerLikeAction = async postId => {
+		if (isUserLoggedIn()) {
+			// API(Constants.POST, `${Constants.LIKE_POST}/${postId}`, null, headerData).then(response => {
+			// 	console.log(response.data);
+			// });
+			const _posts = posts;
+			_posts.forEach(post => { if (post._id === postId) post.isLiked = !post.isLiked; });
+			setPosts([..._posts]);
+		} else {
+			showError("Please login to like!");
+		}
+	}
+
 	return (
 		<div>
 			{
 				posts.map((post, postIndex) => {
-					const { post: parentPost, createdAt, likes, reposts, comments, views, saved } = post;
+					const { post: parentPost, createdAt, likes, reposts, comments, views, saved, _id: id, isLiked } = post;
 					const { name, username, picture } = post.user ?? {};
 					let parentPostImages = [], pureImages = [];
 					const images = postImages[postIndex];
 
 					const { text: parentPostText, createdAt: parentCreatedAt, user: parentPostUser } = parentPost ?? {};
-					const { name: parentName, username: parentUserName, picture: ParentPicture } = parentPostUser ?? {};
+					const { name: parentName, username: parentUserName, picture: parentPicture } = parentPostUser ?? {};
 
 					if (images?.length) {
 						images.forEach(image => {
@@ -239,7 +254,7 @@ const Posts = () => {
 											<img
 												alt="post creator"
 												className="parent-post-user-img"
-												src={ParentPicture ?? placeHolderImageSrc}
+												src={parentPicture ?? placeHolderImageSrc}
 											/>
 
 											<div className="repost-body-content">
@@ -285,9 +300,15 @@ const Posts = () => {
 										<span className="post-reaction-data">{reposts ?? 0}</span>
 									</div>
 
-									<div className="reaction-icon-container like-container">
-										<span className="reply-icon">
-											<CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
+									<div onClick={() => { triggerLikeAction(id); }} className="reaction-icon-container like-container">
+										<span className="reply-icon" style={isLiked ? { paddingTop: "6px" } : {}}>
+											{
+												!isLiked ? (
+													<CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
+												) : (
+													<img width="20" height="20" src={String(likeIcon)} alt="like" />
+												)
+											}
 										</span>
 
 										<span className="post-reaction-data">{likes ?? 0}</span>

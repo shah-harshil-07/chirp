@@ -13,7 +13,6 @@ export class LikesController {
     @UseGuards(AuthGuard("jwt"))
     @UseInterceptors(ResponseInterceptor)
     async addLike(@Req() req: any, @Param() { postId }: LikesDTO): Promise<any> {
-        console.log(req);
         const { _id: userId } = req.user;
         const data = { userId, postId };
         const likeData = await this.likesService.addLike(data);
