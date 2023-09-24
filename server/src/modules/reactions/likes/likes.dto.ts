@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString, isArray } from "class-validator";
 
 export class LikesDTO {
     @IsNotEmpty()
@@ -9,4 +9,8 @@ export class LikesDTO {
 export interface LikesData {
     userId: string;
     postId: string;
+}
+
+export interface IPostInfo {
+    postIds: string[];
 }
