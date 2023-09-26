@@ -4,20 +4,22 @@ import { Injectable, InternalServerErrorException, UseInterceptors } from "@nest
 
 import { Comments } from "./comments.schema";
 import { ICommentData } from "./comments.dto";
+import { PostService } from "src/modules/posts/posts.service";
 import { ResponseInterceptor } from "src/interceptors/response";
 
 @Injectable()
 export class CommentsService {
-    constructor(@InjectModel(Comments.name) private readonly commentModel: Model<Comments>) { }
+    constructor(
+        private readonly postService: PostService,
+        @InjectModel(Comments.name) private readonly commentModel: Model<Comments>,
+    ) { }
 
     @UseInterceptors(ResponseInterceptor)
     async create(commentData: ICommentData): Promise<Comments> {
-        try {
-            const createdComment = new this.commentModel(commentData);
-            return createdComment.save();
-        } catch (error: any) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        const createdComment = new this.commentModel(commentData);
+        const isReactionAdded = await this.postService.addReaction(commentData.postId, "comments");
+
+        if (!isReactionAdded) throw new InternalServerErrorException();
+        else return createdComment.save();
     }
 }
