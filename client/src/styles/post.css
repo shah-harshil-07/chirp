@@ -1,5 +1,3 @@
-
-
 #card {
     position: relative;
     border-bottom: 2px solid #80808057;
@@ -92,23 +90,23 @@
 }
 
 .reply-container:hover span:nth-child(1) {
-    background-color: rgba(29, 161, 242, 0.3);
+    background-color: var(--reply-bg-color);
 }
 
 .reply-container:hover span:nth-child(2) {
-    color: rgba(29, 161, 242, 1);
+    color: var(--reply-color);
 }
 
 .repost-container:hover span:nth-child(1) {
-    background-color: rgba(0, 186, 124, 0.3);
+    background-color: var(--repost-bg-color);
 }
 
 .repost-container:hover span:nth-child(2) {
-    color: rgba(0, 186, 124, 1);
+    color: var(--repost-color);
 }
 
 .like-container:hover span:nth-child(1) {
-    background-color: rgba(249, 24, 128, 0.3);
+    background-color: var(--liked-bg-color);
 }
 
 .like-container:hover span:nth-child(2) {
@@ -116,17 +114,17 @@
 }
 
 .views-container:hover span:nth-child(1) {
-    background-color: rgba(29, 155, 240, 0.3);
+    background-color: var(--viewed-bg-color);
 }
 
 .views-container:hover span:nth-child(2) {
-    color: rgba(29, 155, 240, 1);
+    color: var(--viewed-color);
 }
 
 .saved-container:hover span:nth-child(1) {
-    background-color: rgba(125, 15, 209, 0.3);
+    background-color: var(--saved-bg-color);
 }
 
 .saved-container:hover span:nth-child(2) {
-    color: rgba(125, 15, 209, 1);
+    color: var(--saved-color);
 }

@@ -336,7 +336,7 @@ const Posts = () => {
 
 										<span
 											className="post-reaction-data"
-											style={{ color: isLiked ? "var(--liked-color)" : "var(--unliked-color)" }}
+											style={isLiked ? { color: "var(--liked-color)" } : {}}
 										>
 											{likes ?? 0}
 										</span>
