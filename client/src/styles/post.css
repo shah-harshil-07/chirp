@@ -26,8 +26,8 @@
 }
 
 .post-list-repost-body {
-    width: 96%;
-    margin-right: 20px;
+    width: 95%;
+    margin-right: 26px;
 }
 
 .action-bar {
@@ -74,7 +74,7 @@
 .post-reaction-data {
     padding-top: 20%;
     margin-left: 10px;
-    color: rgb(83, 100, 113);
+    color: var(--unreacted-color);
 }
 
 .reply-icon {
@@ -89,10 +89,42 @@
     cursor: pointer;
 }
 
-.reaction-icon-container:hover span:nth-child(1) {
-    background-color: rgba(29, 161, 242, 0.3);
+.reply-container:hover span:nth-child(1) {
+    background-color: var(--reply-bg-color);
 }
 
-.reaction-icon-container:hover span:nth-child(2) {
-    color: rgba(29, 161, 242, 1);
+.reply-container:hover span:nth-child(2) {
+    color: var(--reply-color);
+}
+
+.repost-container:hover span:nth-child(1) {
+    background-color: var(--repost-bg-color);
+}
+
+.repost-container:hover span:nth-child(2) {
+    color: var(--repost-color);
+}
+
+.like-container:hover span:nth-child(1) {
+    background-color: var(--liked-bg-color);
+}
+
+.like-container:hover span:nth-child(2) {
+    color: var(--liked-color);
+}
+
+.views-container:hover span:nth-child(1) {
+    background-color: var(--viewed-bg-color);
+}
+
+.views-container:hover span:nth-child(2) {
+    color: var(--viewed-color);
+}
+
+.saved-container:hover span:nth-child(1) {
+    background-color: var(--saved-bg-color);
+}
+
+.saved-container:hover span:nth-child(2) {
+    color: var(--saved-color);
 }

@@ -44,7 +44,7 @@ const LeftSidebar = () => {
     }
 
     return (
-        <div className="sidebar">
+        <div className="sidebar" id="left-sidebar-main">
             <div id="left-sidebar-super-container">
                 <div id="left-sidebar-container">
                     <div id="chirp-icon-container">

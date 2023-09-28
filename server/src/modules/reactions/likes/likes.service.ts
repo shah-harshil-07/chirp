@@ -21,4 +21,9 @@ export class LikesService {
         const addedLike = new this.likesModal(likesData);
         return addedLike.save();
     }
+
+    @UseInterceptors(ResponseInterceptor)
+    async checkLikes(userId: string, postIds: string[]): Promise<Likes[]> {
+        return this.likesModal.find({ userId, postId: { $in: postIds } }).exec();
+    }
 }

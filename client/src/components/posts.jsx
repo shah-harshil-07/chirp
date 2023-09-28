@@ -17,6 +17,7 @@ import { openModalWithProps } from "src/redux/actions/modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
 
 const Posts = () => {
+	const likeIcon = require("src/assets/like.png");
 	const { showError } = useToaster(), dispatch = useDispatch();
 	const userDetails = localStorage.getItem("chirp-userDetails");
 	const { getPostTiming } = usePostServices(), headerData = getCommonHeader();
@@ -37,6 +38,7 @@ const Posts = () => {
 			if (responseData?.data?.length) _posts = responseData.data;
 
 			_posts.forEach(postObj => {
+				postObj["isLiked"] = null;
 				const { images: postImages, post } = postObj;
 				if (post?.images?.length) postImages.push(post.images);
 				images.push(postImages);
@@ -44,6 +46,7 @@ const Posts = () => {
 
 			getPostImages(images);
 			setPosts([..._posts]);
+			if (isUserLoggedIn()) getPostLikes(_posts);
 		} catch (error) {
 			console.log(error);
 		}
@@ -103,6 +106,21 @@ const Posts = () => {
 		});
 
 		Promise.allSettled(promises);
+	}
+
+	const getPostLikes = async posts => {
+		const data = { postIds: posts.map(post => post._id) };
+		const { data: likedPostData } = await API(Constants.POST, Constants.GET_POST_LIKES, data, headerData);
+
+		const _posts = posts, likedPosts = likedPostData?.data ?? [];
+		const likedPostIds = likedPosts.map(post => post.postId);
+
+		_posts.forEach(postObj => {
+			const { _id: id } = postObj;
+			postObj["isLiked"] = likedPostIds.includes(id);
+		});
+
+		setPosts([..._posts]);
 	}
 
 	const vote = (postIndex, choiceIndex) => {
@@ -190,17 +208,34 @@ const Posts = () => {
 		else showError("Please login to repost!");
 	}
 
+	const triggerLikeAction = async postIndex => {
+		if (isUserLoggedIn()) {
+			const _posts = posts, postObj = posts[postIndex];
+			const { _id: postId, isLiked } = postObj;
+			console.log("postObj earlier => ", postObj);
+
+			if (!isLiked) {
+				API(Constants.POST, `${Constants.LIKE_POST}/${postId}`, null, headerData);
+				postObj["likes"]++; postObj["isLiked"] = true;
+				console.log("postObj later => ", postObj);
+				setPosts([..._posts]);
+			}
+		} else {
+			showError("Please login to like!");
+		}
+	}
+
 	return (
 		<div>
 			{
 				posts.map((post, postIndex) => {
-					const { post: parentPost, createdAt, likes, reposts, comments, views, saved } = post;
+					const { post: parentPost, createdAt, likes, reposts, comments, views, saved, isLiked } = post;
 					const { name, username, picture } = post.user ?? {};
 					let parentPostImages = [], pureImages = [];
 					const images = postImages[postIndex];
 
 					const { text: parentPostText, createdAt: parentCreatedAt, user: parentPostUser } = parentPost ?? {};
-					const { name: parentName, username: parentUserName, picture: ParentPicture } = parentPostUser ?? {};
+					const { name: parentName, username: parentUserName, picture: parentPicture } = parentPostUser ?? {};
 
 					if (images?.length) {
 						images.forEach(image => {
@@ -239,7 +274,7 @@ const Posts = () => {
 											<img
 												alt="post creator"
 												className="parent-post-user-img"
-												src={ParentPicture ?? placeHolderImageSrc}
+												src={parentPicture ?? placeHolderImageSrc}
 											/>
 
 											<div className="repost-body-content">
@@ -269,38 +304,42 @@ const Posts = () => {
 								}
 
 								<div className="action-bar">
-									<div className="reaction-icon-container reply-container">
+									<div className="reaction-icon-container reply-container" onClick={() => { openCommentBox(post); }}>
 										<span className="reply-icon">
-											<CIcon
-												title="Reply"
-												icon={cilCommentBubble}
-												className="chirp-action"
-												onClick={() => { openCommentBox(post); }}
-											/>
+											<CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
 										</span>
 
 										<span className="post-reaction-data">{comments ?? 0}</span>
 									</div>
 
-									<div className="reaction-icon-container repost-container">
+									<div className="reaction-icon-container repost-container" onClick={() => { openRepostBox(post); }}>
 										<span className="reply-icon">
-											<CIcon
-												icon={cilSend}
-												title="Repost"
-												className="chirp-action"
-												onClick={() => { openRepostBox(post); }}
-											/>
+											<CIcon icon={cilSend} title="Repost" className="chirp-action" />
 										</span>
 
 										<span className="post-reaction-data">{reposts ?? 0}</span>
 									</div>
 
-									<div className="reaction-icon-container like-container">
-										<span className="reply-icon">
-											<CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
+									<div
+										className="reaction-icon-container like-container"
+										onClick={() => { if (isLiked != null) triggerLikeAction(postIndex); }}
+									>
+										<span className="reply-icon" style={isLiked ? { paddingTop: "6px" } : {}}>
+											{
+												!isLiked ? (
+													<CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
+												) : (
+													<img width="20" height="20" src={String(likeIcon)} alt="like" />
+												)
+											}
 										</span>
 
-										<span className="post-reaction-data">{likes ?? 0}</span>
+										<span
+											className="post-reaction-data"
+											style={isLiked ? { color: "var(--liked-color)" } : {}}
+										>
+											{likes ?? 0}
+										</span>
 									</div>
 
 									<div className="reaction-icon-container views-container">

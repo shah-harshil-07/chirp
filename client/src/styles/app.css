@@ -1,5 +1,18 @@
 :root {
-    --chirp-color: #1DA1F2
+    --chirp-color: #1DA1F2;
+    --unreacted-color: rgb(83, 100, 113);
+
+    --liked-color: rgba(249, 24, 128, 1);
+    --reply-color: rgba(29, 161, 242, 1);
+    --repost-color: rgba(0, 186, 124, 1);
+    --viewed-color: rgba(29, 155, 240, 1);
+    --saved-color: rgba(125, 15, 209, 1);
+
+    --liked-bg-color: rgba(249, 24, 128, 0.3);
+    --reply-bg-color: rgba(29, 161, 242, 0.3);
+    --repost-bg-color: rgba(0, 186, 124, 0.3);
+    --viewed-bg-color: rgba(29, 155, 240, 0.3);
+    --saved-bg-color: rgba(125, 15, 209, 0.3);
 }
 
 .float-left {
@@ -17,7 +30,7 @@
 
 #app-container {
     display: grid;
-    grid-template-columns: 35% 500px 30%;
+    grid-template-columns: 30% 600px 30%;
 }
 
 .rounded-10 {

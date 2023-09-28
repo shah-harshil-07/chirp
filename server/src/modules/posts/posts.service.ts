@@ -1,11 +1,12 @@
 import { Model, ObjectId } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { SchedulerRegistry } from "@nestjs/schedule";
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, UseInterceptors } from "@nestjs/common";
 
 import { Post, ScheduledPost } from "./post.schema";
 import { CommonService } from "../common/common.service";
 import { ParsedPostDTO, PostDTO, ScheduledPostDTO } from "./post.dto";
+import { ResponseInterceptor } from "src/interceptors/response";
 
 @Injectable()
 export class PostService {
@@ -144,9 +145,20 @@ export class PostService {
     }
 
     async changeLikeCount(postId: string, mode: string): Promise<Post> {
-        let newPost: Post;
         const likes = mode === "add" ? 1 : mode === "remove" ? -1 : 0;
-        newPost = await this.postModel.findByIdAndUpdate(postId, { $inc: { likes } }, { new: true });
+        const newPost = await this.postModel.findByIdAndUpdate(postId, { $inc: { likes } }, { new: true });
         return newPost;
+    }
+
+    async addReaction(postId: string, reactionMode: string): Promise<boolean> {
+        const post = await this.postModel.findOne({ _id: postId });
+        post[reactionMode]++;
+
+        if (post.isModified()) {
+            post.save();
+            return true;
+        } else {
+            throw new InternalServerErrorException();
+        }
     }
 }

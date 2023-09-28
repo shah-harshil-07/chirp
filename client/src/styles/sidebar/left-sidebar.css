@@ -1,3 +1,8 @@
+#left-sidebar-main {
+    display: flex;
+    justify-content: flex-end;
+}
+
 #left-sidebar-container {
     position: relative;
     width: 300px;
