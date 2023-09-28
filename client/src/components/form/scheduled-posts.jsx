@@ -80,6 +80,7 @@ const ScheduledPostList = () => {
     const updateScheduledPostFileObjects = (base64ImgData, postIndex, imageIndex, fileName) => {
         const fileObj = getFileObjectFromBase64(base64ImgData, fileName);
         let _scheduledPostFileObjects = scheduledPostFileObjects;
+        if (!_scheduledPostFileObjects?.[postIndex]) _scheduledPostFileObjects[postIndex] = [];
         _scheduledPostFileObjects[postIndex][imageIndex] = fileObj;
         setScheduledPostFileObjects([..._scheduledPostFileObjects]);
     }
