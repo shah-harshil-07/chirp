@@ -13,7 +13,7 @@ import { CommonModule } from "./common/common.module";
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "./config/config.module";
 import { CommentsModule } from './reactions/comments/comments.module';
-import { LikesModule } from './reactions/likes/likes.module';
+import { LikesModule } from './reactions/savesAndLikes/savesAndLikes.module';
 
 @Module({
 	imports: [
