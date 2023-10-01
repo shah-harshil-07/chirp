@@ -17,7 +17,9 @@ import { openModalWithProps } from "src/redux/actions/modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
 
 const Posts = () => {
+	const availableMutedActions = ["like", "save"];
 	const likeIcon = require("src/assets/like.png");
+	const savedIcon = require("src/assets/saved-filled.png");
 	const { showError } = useToaster(), dispatch = useDispatch();
 	const userDetails = localStorage.getItem("chirp-userDetails");
 	const { getPostTiming } = usePostServices(), headerData = getCommonHeader();
@@ -46,7 +48,7 @@ const Posts = () => {
 
 			getPostImages(images);
 			setPosts([..._posts]);
-			if (isUserLoggedIn()) getPostLikes(_posts);
+			if (isUserLoggedIn()) getPostLikesAndSaves(_posts);
 		} catch (error) {
 			console.log(error);
 		}
@@ -108,16 +110,17 @@ const Posts = () => {
 		Promise.allSettled(promises);
 	}
 
-	const getPostLikes = async posts => {
+	const getPostLikesAndSaves = async posts => {
 		const data = { postIds: posts.map(post => post._id) };
-		const { data: likedPostData } = await API(Constants.POST, Constants.GET_POST_LIKES, data, headerData);
+		const { data: reactionData } = await API(Constants.POST, Constants.GET_POST_LIKES_AND_SAVES, data, headerData);
 
-		const _posts = posts, likedPosts = likedPostData?.data ?? [];
-		const likedPostIds = likedPosts.map(post => post.postId);
+		const _posts = posts, reactedPosts = reactionData?.data ?? [];
 
 		_posts.forEach(postObj => {
 			const { _id: id } = postObj;
-			postObj["isLiked"] = likedPostIds.includes(id);
+			const reactedPostObj = reactedPosts.find(post => post.postId === id) ?? null;
+			postObj["isLiked"] = reactedPostObj?.liked ?? false;
+			postObj["isSaved"] = reactedPostObj?.saved ?? false;
 		});
 
 		setPosts([..._posts]);
@@ -208,20 +211,39 @@ const Posts = () => {
 		else showError("Please login to repost!");
 	}
 
-	const triggerLikeAction = async postIndex => {
-		if (isUserLoggedIn()) {
-			const _posts = posts, postObj = posts[postIndex];
-			const { _id: postId, isLiked } = postObj;
-			console.log("postObj earlier => ", postObj);
+	const triggerMutedReaction = async (postIndex, action) => {
+		if (availableMutedActions.includes(action)) {
+			if (isUserLoggedIn()) {
+				const _posts = posts, postObj = posts[postIndex];
+				const { _id: postId, isLiked, isSaved } = postObj;
+				const data = { postId, reaction: '' }; let mode, url;
 
-			if (!isLiked) {
-				API(Constants.POST, `${Constants.LIKE_POST}/${postId}`, null, headerData);
-				postObj["likes"]++; postObj["isLiked"] = true;
-				console.log("postObj later => ", postObj);
-				setPosts([..._posts]);
+				switch (action) {
+					case "like":
+						data["reaction"] = "liked";
+						mode = isLiked ? "remove" : "add";
+						url = isLiked ? Constants.REMOVE_SAVES_LIKES : Constants.ADD_SAVES_LIKES;
+						postObj["isLiked"] = mode === "add";
+						postObj["likes"] += mode === "add" ? 1 : -1;
+						break;
+					case "save":
+						data["reaction"] = "saved";
+						mode = isSaved ? "remove" : "add";
+						url = isSaved ? Constants.REMOVE_SAVES_LIKES : Constants.ADD_SAVES_LIKES;
+						postObj["isSaved"] = mode === "add";
+						postObj["saved"] += mode === "add" ? 1 : -1;
+						break;
+					default:
+						break;
+				}
+
+				if (data["reaction"] && mode && url) {
+					API(Constants.POST, url, data, headerData);
+					setPosts([..._posts]);
+				}
+			} else {
+				showError("Please login to like!");
 			}
-		} else {
-			showError("Please login to like!");
 		}
 	}
 
@@ -229,7 +251,7 @@ const Posts = () => {
 		<div>
 			{
 				posts.map((post, postIndex) => {
-					const { post: parentPost, createdAt, likes, reposts, comments, views, saved, isLiked } = post;
+					const { post: parentPost, createdAt, likes, reposts, comments, views, saved, isLiked, isSaved } = post;
 					const { name, username, picture } = post.user ?? {};
 					let parentPostImages = [], pureImages = [];
 					const images = postImages[postIndex];
@@ -304,7 +326,10 @@ const Posts = () => {
 								}
 
 								<div className="action-bar">
-									<div className="reaction-icon-container reply-container" onClick={() => { openCommentBox(post); }}>
+									<div
+										onClick={() => { openCommentBox(post); }}
+										className="reaction-icon-container reply-container"
+									>
 										<span className="reply-icon">
 											<CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
 										</span>
@@ -312,7 +337,10 @@ const Posts = () => {
 										<span className="post-reaction-data">{comments ?? 0}</span>
 									</div>
 
-									<div className="reaction-icon-container repost-container" onClick={() => { openRepostBox(post); }}>
+									<div
+										onClick={() => { openRepostBox(post); }}
+										className="reaction-icon-container repost-container"
+									>
 										<span className="reply-icon">
 											<CIcon icon={cilSend} title="Repost" className="chirp-action" />
 										</span>
@@ -322,14 +350,14 @@ const Posts = () => {
 
 									<div
 										className="reaction-icon-container like-container"
-										onClick={() => { if (isLiked != null) triggerLikeAction(postIndex); }}
+										onClick={() => { triggerMutedReaction(postIndex, "like"); }}
 									>
 										<span className="reply-icon" style={isLiked ? { paddingTop: "6px" } : {}}>
 											{
-												!isLiked ? (
-													<CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
-												) : (
+												isLiked ? (
 													<img width="20" height="20" src={String(likeIcon)} alt="like" />
+												) : (
+													<CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
 												)
 											}
 										</span>
@@ -350,12 +378,26 @@ const Posts = () => {
 										<span className="post-reaction-data">{views ?? 0}</span>
 									</div>
 
-									<div className="reaction-icon-container saved-container">
-										<span className="reply-icon">
-											<CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
+									<div
+										className="reaction-icon-container saved-container"
+										onClick={() => { triggerMutedReaction(postIndex, "save"); }}
+									>
+										<span className="reply-icon" style={isSaved ? { paddingTop: "6px" } : {}}>
+											{
+												isSaved ? (
+													<img width="20" height="20" src={String(savedIcon)} alt="like" />
+												) : (
+													<CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
+												)
+											}
 										</span>
 
-										<span className="post-reaction-data">{saved ?? 0}</span>
+										<span
+											className="post-reaction-data"
+											style={isSaved ? { color: "var(--saved-color)" } : {}}
+										>
+											{saved ?? 0}
+										</span>
 									</div>
 								</div>
 							</div>

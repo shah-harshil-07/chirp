@@ -32,15 +32,15 @@ export class SavesLikesService {
         const attribute = reaction === "liked" ? "saved" : "liked";
 
         let reactionDoc = await this.savesLikesModal.findOne({ postId, userId });
+
         if (reactionDoc?.[attribute]) {
             reactionDoc[reaction] = false;
+            reactionDoc.save();
         } else if (reactionDoc) {
             await reactionDoc.deleteOne();
-            reactionDoc.save();
         }
     }
 
-    @UseInterceptors(ResponseInterceptor)
     async checkLikes(userId: string, postIds: string[]): Promise<SavesAndLikes[]> {
         return this.savesLikesModal.find({ userId, postId: { $in: postIds } }).exec();
     }

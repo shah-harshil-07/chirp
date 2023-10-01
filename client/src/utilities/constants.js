@@ -43,7 +43,8 @@ export const GET_SCHEDULED_POSTS = "posts/scheduled/all";
 export const DELETE_SCHEDULED_POST_IMAGES = "posts/scheduled/delete-many";
 export const RESCHEDULE_POST = "posts/scheduled/reschedule";
 export const VOTE_POLL = "posts/poll/vote";
-export const LIKE_POST = "likes/add";
-export const GET_POST_LIKES = "likes/check-likes";
+export const ADD_SAVES_LIKES = "saves-likes/add";
+export const REMOVE_SAVES_LIKES = "saves-likes/remove";
+export const GET_POST_LIKES_AND_SAVES = "saves-likes/check";
 
 export const CREATE_COMMENT = "comments/store";

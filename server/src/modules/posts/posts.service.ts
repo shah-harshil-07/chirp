@@ -17,22 +17,40 @@ export class PostService {
     ) { }
 
     async findAll(): Promise<Post[]> {
-        return this
-            .postModel
-            .find()
-            .populate("user", "name username picture")
-            .populate({
-                path: "postId",
-                select: "text images createdAt",
-                populate: { path: "user", select: "name username picture" }
-            })
-            .sort("-createdAt")
-            .lean() // converts document received by query into plain JS object.
-            .exec() // executes the query. Returns a promise.
-            .then(posts => {
-                posts.forEach(post => { post["post"] = post["postId"]; delete post.postId; });
-                return posts;
-            });
+        await this.postModel.updateMany({}, { $inc: { views: 1 } });
+
+        return this.postModel.aggregate([
+            { $lookup: { from: "Users", localField: "user", foreignField: "_id", as: "user" } },
+            { $unwind: "$user" },
+            { $lookup: { from: "PostMessages", localField: "postId", foreignField: "_id", as: "post" } },
+            { $unwind: { path: "$post", preserveNullAndEmptyArrays: true } },
+            { $lookup: { from: "Users", localField: "post.user", foreignField: "_id", as: "post.user" } },
+            { $unwind: { path: "$post.user", preserveNullAndEmptyArrays: true } },
+            { $sort: { createdAt: -1 } },
+            {
+                $project: {
+                    "_id": 1,
+                    "text": 1,
+                    "poll": 1,
+                    "postId": 1,
+                    "images": 1,
+                    "likes": 1,
+                    "saved": 1,
+                    "views": 1,
+                    "reposts": 1,
+                    "comments": 1,
+                    "createdAt": 1,
+                    "user.name": 1,
+                    "user.username": 1,
+                    "user.picture": 1,
+                    "post.text": 1,
+                    "post.images": 1,
+                    "post.user.name": 1,
+                    "post.user.username": 1,
+                    "post.user.picture": 1,
+                }
+            },
+        ]);
     }
 
     async getAllSchduledPosts(userId: ObjectId): Promise<ScheduledPost[]> {
@@ -45,14 +63,11 @@ export class PostService {
     }
 
     async create(postData: ParsedPostDTO, userId: ObjectId): Promise<Post> {
-        try {
-            const mainData = { ...postData, user: userId, images: postData.images, createdAt: Date.now() };
-            const createdPost = new this.postModel(mainData);
-            return createdPost.save();
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        const { postId } = postData;
+        const mainData = { ...postData, user: userId, images: postData.images, createdAt: Date.now() };
+        if (postId) await this.postModel.findByIdAndUpdate(postId, { $inc: { reposts: 1 } });
+        const createdPost = new this.postModel(mainData);
+        return createdPost.save();
     }
 
     async schedulePost(postData: ScheduledPostDTO, userId: ObjectId): Promise<ScheduledPost> {
@@ -150,7 +165,10 @@ export class PostService {
                 attribute = "likes";
                 break;
             case "saved":
-                attribute = "saves";
+                attribute = "saved";
+                break;
+            case "commented":
+                attribute = "comments";
                 break;
             default:
                 throw new InternalServerErrorException();
@@ -160,17 +178,5 @@ export class PostService {
         const count = mode === "add" ? 1 : mode === "remove" ? -1 : 0;
         const newPost = await this.postModel.findByIdAndUpdate(postId, { $inc: { [attribute]: count } }, { new: true });
         return newPost;
-    }
-
-    async addReaction(postId: string, reactionMode: string): Promise<boolean> {
-        const post = await this.postModel.findOne({ _id: postId });
-        post[reactionMode]++;
-
-        if (post.isModified()) {
-            post.save();
-            return true;
-        } else {
-            throw new InternalServerErrorException();
-        }
     }
 }

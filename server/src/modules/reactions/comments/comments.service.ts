@@ -16,8 +16,9 @@ export class CommentsService {
 
     @UseInterceptors(ResponseInterceptor)
     async create(commentData: ICommentData): Promise<Comments> {
+        const { postId } = commentData;
         const createdComment = new this.commentModel(commentData);
-        const isReactionAdded = await this.postService.addReaction(commentData.postId, "comments");
+        const isReactionAdded = await this.postService.changeReactionCount(postId, "commented", "add");
 
         if (!isReactionAdded) throw new InternalServerErrorException();
         else return createdComment.save();
