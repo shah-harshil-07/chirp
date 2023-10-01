@@ -288,7 +288,7 @@ const Posts = () => {
 								}
 
 								{
-									parentPost && (
+									parentPostUser && (
 										<div
 											className="post-list-repost-body repost-body"
 											style={{ marginTop: pureImages.length ? "10px" : '0' }}
