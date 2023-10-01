@@ -242,7 +242,7 @@ const Posts = () => {
 					setPosts([..._posts]);
 				}
 			} else {
-				showError("Please login to like!");
+				showError(`Please login to ${action}!`);
 			}
 		}
 	}
