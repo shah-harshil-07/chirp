@@ -222,22 +222,22 @@ const Posts = () => {
 					case "like":
 						data["reaction"] = "liked";
 						mode = isLiked ? "remove" : "add";
-						url = isLiked ? Constants.REMOVE_SAVES_LIKES : Constants.ADD_SAVES_LIKES;
 						postObj["isLiked"] = mode === "add";
 						postObj["likes"] += mode === "add" ? 1 : -1;
+						url = isLiked ? Constants.REMOVE_SAVES_LIKES : Constants.ADD_SAVES_LIKES;
 						break;
 					case "save":
 						data["reaction"] = "saved";
 						mode = isSaved ? "remove" : "add";
-						url = isSaved ? Constants.REMOVE_SAVES_LIKES : Constants.ADD_SAVES_LIKES;
 						postObj["isSaved"] = mode === "add";
 						postObj["saved"] += mode === "add" ? 1 : -1;
+						url = isSaved ? Constants.REMOVE_SAVES_LIKES : Constants.ADD_SAVES_LIKES;
 						break;
 					default:
 						break;
 				}
 
-				if (data["reaction"] && mode && url) {
+				if (data?.reaction && mode && url) {
 					API(Constants.POST, url, data, headerData);
 					setPosts([..._posts]);
 				}
