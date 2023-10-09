@@ -5,4 +5,4 @@ import modal from "./modal";
 import toaster from "./toaster";
 import documents from "./documents";
 
-export const reducers = combineReducers({ posts, modal, toaster, documents });
+export const reducer = combineReducers({ posts, modal, toaster, documents });
