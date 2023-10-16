@@ -9,7 +9,7 @@ import API from "src/api";
 import Scheduler from "./scheduler";
 import PollCreator from "./poll-creator";
 import ImgHolder from "../utilities/img-holder";
-import { openModal } from "src/redux/actions/modal";
+import { openModal } from "src/redux/reducers/modal";
 import * as Constants from "src/utilities/constants";
 import { getCommonHeader } from "src/utilities/helpers";
 import useToaster from "src/custom-hooks/toaster-message";
@@ -200,7 +200,7 @@ const Form = ({
 
 	const openScheduledPostList = () => {
 		setShowScheduler(false);
-		dispatch(openModal("scheduledPosts"));
+		dispatch(openModal({ type: "scheduledPosts" }));
 	}
 
 	const handleTextChange = e => {

@@ -13,7 +13,7 @@ import { isUserLoggedIn } from "src/utilities/helpers";
 import { getCommonHeader } from "src/utilities/helpers";
 import useToaster from "src/custom-hooks/toaster-message";
 import usePostServices from "src/custom-hooks/post-services";
-import { openModalWithProps } from "src/redux/actions/modal";
+import { openModalWithProps } from "src/redux/reducers/modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
 
 const Posts = () => {
@@ -202,12 +202,12 @@ const Posts = () => {
 	}
 
 	const openCommentBox = post => {
-		if (isUserLoggedIn()) dispatch(openModalWithProps("commentEditor", post));
+		if (isUserLoggedIn()) dispatch(openModalWithProps({ type: "commentEditor", props: post }));
 		else showError("Please login to comment!");
 	}
 
 	const openRepostBox = post => {
-		if (isUserLoggedIn()) dispatch(openModalWithProps("repostEditor", post));
+		if (isUserLoggedIn()) dispatch(openModalWithProps({ type: "repostEditor", props: post }));
 		else showError("Please login to repost!");
 	}
 

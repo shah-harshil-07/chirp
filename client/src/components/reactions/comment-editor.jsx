@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 import ImgHolder from "../utilities/img-holder";
 import CustomModal from "../utilities/custom-modal";
 import * as Constants from "src/utilities/constants";
-import { closeModal } from "src/redux/actions/modal";
+import { closeModal } from "src/redux/reducers/modal";
 import { getUserDetails } from "src/utilities/helpers";
 import { getCommonHeader } from "src/utilities/helpers";
 import useToaster from "src/custom-hooks/toaster-message";

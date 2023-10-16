@@ -4,7 +4,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 
 import Loader from "./loader";
-import { closeModal } from "src/redux/actions/modal";
+import { closeModal } from "src/redux/reducers/modal";
 
 const CustomModal = ({
     bodyJSX,

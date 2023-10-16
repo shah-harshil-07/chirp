@@ -1,11 +1,19 @@
-export const openModal = type => async dispatch => {
-    dispatch({ type: "MODAL", payload: { type, open: true } });
-}
+function openModal(state, { payload }) {
+    state.open = true;
+    state.type = payload.type;
+};
 
-export const closeModal = () => async dispatch => {
-    dispatch({ type: "MODAL", payload: { type: '', open: false } });
-}
+function closeModal(state) {
+    state.open = false;
+    state.type = '';
+};
 
-export const openModalWithProps = (type, props) => async dispatch => {
-    dispatch({ type: "MODAL", payload: { type, props, open: true } });
-}
+function openModalWithProps(state, { payload }) {
+    state.open = true;
+    const { props, type } = payload;
+    state.type = type;
+    state.props = props;
+};
+
+const actions = { openModal, closeModal, openModalWithProps };
+export default actions;

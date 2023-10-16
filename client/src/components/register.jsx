@@ -15,7 +15,7 @@ import { openToaster } from "src/redux/actions/toaster";
 import UsernameInput from "./signup-steps/username-input";
 import CreateAccount from "./signup-steps/create-account";
 import useToaster from "src/custom-hooks/toaster-message";
-import { openModal, closeModal } from "src/redux/actions/modal";
+import { openModal, closeModal } from "src/redux/reducers/modal";
 import { validate, getErrorMessage } from "src/utilities/helpers";
 
 const Register = () => {
@@ -385,7 +385,7 @@ const Register = () => {
     }
 
     function openLoginDialog() {
-        dispatch(openModal("login"));
+        dispatch(openModal({ type: "login" }));
     }
 
     function handleBodyDataChange(key, data) {

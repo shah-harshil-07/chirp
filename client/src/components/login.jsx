@@ -13,7 +13,7 @@ import * as Constants from "src/utilities/constants";
 import LabelledInput from "./utilities/labelled-input";
 import { openToaster } from "src/redux/actions/toaster";
 import useToaster from "src/custom-hooks/toaster-message";
-import { openModal, closeModal } from "src/redux/actions/modal";
+import { openModal, closeModal } from "src/redux/reducers/modal";
 
 const Login = () => {
     const { showError } = useToaster();
@@ -141,7 +141,7 @@ const Login = () => {
     }
 
     function openRegisterDialog() {
-        dispatch(openModal("register"));
+        dispatch(openModal({ type: "register" }));
     }
 
     function closeLoginDialog() {

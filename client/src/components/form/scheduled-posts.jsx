@@ -15,7 +15,7 @@ import { getCommonHeader } from "src/utilities/helpers";
 import useToaster from "src/custom-hooks/toaster-message";
 import DateOptionServices from "src/custom-hooks/date-services";
 import useImageConverter from "src/custom-hooks/image-converter";
-import { closeModal, openModalWithProps } from "src/redux/actions/modal";
+import { closeModal, openModalWithProps } from "src/redux/reducers/modal";
 
 const ScheduledPostList = () => {
     const dispatch = useDispatch();
@@ -142,7 +142,7 @@ const ScheduledPostList = () => {
 
         data.images = formattedImages;
 
-        dispatch(openModalWithProps("scheduledPostEditor", { data, schedule, id: _id }));
+        dispatch(openModalWithProps({ type: "scheduledPostEditor", props: { data, schedule, id: _id } }));
     }
 
     const deleteScheduledPosts = async () => {

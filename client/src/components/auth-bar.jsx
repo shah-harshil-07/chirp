@@ -3,13 +3,13 @@ import "src/styles/auth-bar.css";
 import React from "react";
 import { useDispatch } from "react-redux";
 
-import { openModal } from "src/redux/actions/modal";
+import { openModal } from "src/redux/reducers/modal";
 
 const AuthBar = () => {
     const dispatch = useDispatch();
 
     const openAuthDialog = type => {
-        dispatch(openModal(type));
+        dispatch(openModal({ type }));
     }
 
     return (
@@ -20,11 +20,11 @@ const AuthBar = () => {
             </div>
 
             <div id="auth-box">
-                <div className="auth-btn" id="signup-btn" onClick={() => openAuthDialog("register")}>
+                <div className="auth-btn" id="signup-btn" onClick={() => { openAuthDialog("register"); }}>
                     <span className="btn-text">Sign up</span>
                 </div>
 
-                <div className="auth-btn" id="login-btn" onClick={() => openAuthDialog("login")}>
+                <div className="auth-btn" id="login-btn" onClick={() => { openAuthDialog("login"); }}>
                     <span className="btn-text">Log in</span>
                 </div>
             </div>
