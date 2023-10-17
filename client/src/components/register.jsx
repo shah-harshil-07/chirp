@@ -11,7 +11,7 @@ import API from "src/api";
 import CodeInput from "./signup-steps/code-input";
 import CustomModal from "./utilities/custom-modal";
 import * as Constants from "src/utilities/constants";
-import { openToaster } from "src/redux/actions/toaster";
+import { openToaster } from "src/redux/reducers/toaster";
 import UsernameInput from "./signup-steps/username-input";
 import CreateAccount from "./signup-steps/create-account";
 import useToaster from "src/custom-hooks/toaster-message";
@@ -345,7 +345,8 @@ const Register = () => {
 
             const type = responseData?.meta?.status ? "Success" : "Error";
             const message = type === "Success" ? responseData?.meta?.message : responseData?.error?.message ?? "Error";
-            dispatch(openToaster(type, message));
+            // dispatch(openToaster(type, message));
+            dispatch(openToaster({ messageObj: { type, message } }));
         } catch (error) {
             console.log(error);
             setShowLoader(false);

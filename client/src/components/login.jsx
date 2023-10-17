@@ -11,7 +11,7 @@ import API from "src/api";
 import CustomModal from "./utilities/custom-modal";
 import * as Constants from "src/utilities/constants";
 import LabelledInput from "./utilities/labelled-input";
-import { openToaster } from "src/redux/actions/toaster";
+import { openToaster } from "src/redux/reducers/toaster";
 import useToaster from "src/custom-hooks/toaster-message";
 import { openModal, closeModal } from "src/redux/reducers/modal";
 
@@ -132,7 +132,8 @@ const Login = () => {
                 message = responseData.meta.message;
             }
 
-            dispatch(openToaster(type, message));
+            // dispatch(openToaster(type, message));
+            dispatch(openToaster({ messageObj: { type, message } }));
         } catch (error) {
             console.log(error);
             showError("Something went wrong!");
