@@ -6,12 +6,10 @@ const useToaster = () => {
     const dispatch = useDispatch();
 
     const showSuccess = message => {
-        // dispatch(openToaster("Success", message));
         dispatch(openToaster({ messageObj: { message, type: "Success" } }));
     }
 
     const showError = message => {
-        // dispatch(openToaster("Error", message));
         dispatch(openToaster({ messageObj: { message, type: "Error" } }));
     }
 

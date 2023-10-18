@@ -132,7 +132,6 @@ const Login = () => {
                 message = responseData.meta.message;
             }
 
-            // dispatch(openToaster(type, message));
             dispatch(openToaster({ messageObj: { type, message } }));
         } catch (error) {
             console.log(error);
@@ -167,7 +166,7 @@ const Login = () => {
                     localStorage.setItem("chirp-userDetails", JSON.stringify(userData));
                 }
 
-                dispatch(openToaster(type, message));
+                dispatch(openToaster({ messageObj: { type, message } }));
                 closeLoginDialog();
             } else {
                 const errorMessage = responseData?.error?.message ?? "Something went wrong!";
@@ -181,9 +180,7 @@ const Login = () => {
         closeLoginDialog();
     }
 
-    return (
-        <CustomModal bodyJSX={loginBodyJSX} includeFooter={false} includeHeader={true} />
-    )
+    return <CustomModal bodyJSX={loginBodyJSX} includeFooter={false} includeHeader={true} />;
 }
 
 export default Login;

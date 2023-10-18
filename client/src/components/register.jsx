@@ -89,14 +89,14 @@ const Register = () => {
 
     const dispatch = useDispatch();
 
+    const [otpId, setOtpId] = useState('');
+    const [bodyKey, setBodyKey] = useState('');
     const [bodyJSX, setBodyJSX] = useState(<></>);
     const [signUpStep, setSignUpStep] = useState(0);
-    const [includeFooter, setIncludeFooter] = useState(false);
     const [footerText, setFooterText] = useState('');
-    const [bodyKey, setBodyKey] = useState('');
-    const [footerDisabled, setFooterDisabled] = useState(true);
-    const [otpId, setOtpId] = useState('');
     const [showLoader, setShowLoader] = useState(false);
+    const [includeFooter, setIncludeFooter] = useState(false);
+    const [footerDisabled, setFooterDisabled] = useState(true);
     const [displayOverflow, setDisplayOverflow] = useState(false);
     const [googleRegisteredUser, setGoogleRegisteredUser] = useState(null);
     const [isGoogleAuthedUsernameValid, setIsGoogleAuthedUsernameValid] = useState(false);
@@ -345,7 +345,6 @@ const Register = () => {
 
             const type = responseData?.meta?.status ? "Success" : "Error";
             const message = type === "Success" ? responseData?.meta?.message : responseData?.error?.message ?? "Error";
-            // dispatch(openToaster(type, message));
             dispatch(openToaster({ messageObj: { type, message } }));
         } catch (error) {
             console.log(error);
@@ -415,7 +414,7 @@ const Register = () => {
             displayOverflow={displayOverflow}
             footerAction={googleAuthedUser?.googleId ? registerGoogleAuthedUser : openNextSignUpStep}
         />
-    )
+    );
 }
 
 export default Register;

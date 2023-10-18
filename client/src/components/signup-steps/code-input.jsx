@@ -48,8 +48,8 @@ const CodeInput = ({ email, handleDataChange, resendOtpMail }) => {
 
             <p
                 id="resend-mail-link"
-                style={{ opacity: seconds > 0 ? '0.5' : '1' }}
                 onClick={restartOtpVerification}
+                style={{ opacity: seconds > 0 ? "0.5" : '1' }}
             >
                 Resend email
             </p>

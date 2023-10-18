@@ -7,9 +7,9 @@ import Posts from "./components/posts";
 import Form from "./components/form";
 import AuthBar from "./components/auth-bar";
 import Toaster from "./components/utilities/toaster";
-import { isUserLoggedIn, modalConfig } from "./utilities/helpers";
 import LeftSidebar from "./components/sidebar/left-sidebar";
 import RightSidebar from "./components/sidebar/right-sidebar";
+import { isUserLoggedIn, modalConfig } from "./utilities/helpers";
 
 const App = () => {
 	const dialogState = useSelector(state => state.modal);
