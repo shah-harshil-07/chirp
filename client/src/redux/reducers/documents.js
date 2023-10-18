@@ -1,8 +1,13 @@
-export default (callbacks = (new Map()), action) => {
-    switch (action.type) {
-        case "DOCUMENT":
-            return action.payload;
-        default:
-            return callbacks;
-    }
-}
+import { createSlice } from "@reduxjs/toolkit";
+
+import documentActions from "src/redux/actions/documents";
+
+const name = "documents";
+const initialState = { callbackMap: new Map() };
+const reducers = { ...documentActions };
+
+const documentSlice = createSlice({ name, initialState, reducers });
+
+const { actions, reducer } = documentSlice;
+export const { setDocumentEventListeners } = actions;
+export default reducer;

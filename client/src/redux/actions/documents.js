@@ -1,3 +1,5 @@
-export const setDocumentEventListeners = (type, props) => async dispatch => {
-    dispatch({ type, payload: props });
-}
+export default {
+    setDocumentEventListeners(state, { payload }) {
+        state.callbackMap = payload.callbackMap;
+    },
+};

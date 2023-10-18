@@ -1,21 +1,29 @@
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setDocumentEventListeners } from "src/redux/actions/documents";
+
+import { setDocumentEventListeners } from "src/redux/reducers/documents";
 
 const useDocumentClickServices = () => {
-    const dispatch = useDispatch();
-    const callbacks = useSelector(state => state.documents);
+    const dispatch = useDispatch(), callbackState = useSelector(state => state.documents);
 
-    const handleDocumentClick = e => {
-        callbacks.forEach(callback => { callback(e); });
-    }
+    useEffect(() => {
+        const { callbackMap } = callbackState;
+
+        const handleDocumentClick = e => {
+            if (callbackMap) callbackMap.forEach(callback => { callback(e); });
+        };
+
+        document.addEventListener("click", handleDocumentClick);
+        return () => { document.removeEventListener("click", handleDocumentClick); };
+    }, [callbackState]);
 
     const addDocumentClickCallback = (key, callback) => {
-        callbacks.set(key, callback);
-        dispatch(setDocumentEventListeners("DOCUMENT", callbacks));
-    }
+        const newCallbackMap = new Map(callbackState.callbackMap);
+        newCallbackMap.set(key, callback);
+        dispatch(setDocumentEventListeners({ callbackMap: newCallbackMap }));
+    };
 
-    document.addEventListener("click", handleDocumentClick);
     return { addDocumentClickCallback };
-}
+};
 
 export default useDocumentClickServices;
