@@ -4,14 +4,20 @@ const origin = process.env.REACT_APP_SERVER_ORIGIN;
 const port = process.env.REACT_APP_SERVER_PORT;
 
 const API = async (method, baseUrl, data, headerData, isSpecialUrl) => {
-    const url = isSpecialUrl ? baseUrl : `${origin}:${port}/${baseUrl}`;
     const headers = headerData ?? {};
+    const validateStatus = status => status < 500;
+    const url = isSpecialUrl ? baseUrl : `${origin}:${port}/${baseUrl}`;
 
-    try {
-        return await axios({ url, data, method, headers });
-    } catch (error) {
-        throw new Error(error);
-    }
+    return new Promise((res, rej) => {
+        axios({ url, data, method, headers, validateStatus })
+            .then(response => {
+                res(response);
+            })
+            .catch(err => {
+                rej(err);
+                console.log(err.toJSON());
+            });
+    });
 }
 
 export default API;

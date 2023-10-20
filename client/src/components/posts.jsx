@@ -15,6 +15,7 @@ import useToaster from "src/custom-hooks/toaster-message";
 import usePostServices from "src/custom-hooks/post-services";
 import { openModalWithProps } from "src/redux/reducers/modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
+import { openToaster } from "src/redux/reducers/toaster";
 
 const Posts = () => {
 	const availableMutedActions = ["like", "save"];
@@ -126,7 +127,7 @@ const Posts = () => {
 		setPosts([..._posts]);
 	}
 
-	const vote = (postIndex, choiceIndex) => {
+	const vote = async (postIndex, choiceIndex) => {
 		const _posts = posts;
 		const pollObj = _posts[postIndex].poll;
 		const { users, choices } = pollObj;
@@ -144,10 +145,16 @@ const Posts = () => {
 			}
 
 			const data = { postId: posts[postIndex]._id, choiceIndex, prevChoiceIndex };
-			API(Constants.POST, Constants.VOTE_POLL, data, headerData).catch(err => {
-				console.log(err);
-				showError("Something went wrong! Please refresh and try again!");
-			});
+
+			API(Constants.POST, Constants.VOTE_POLL, data, headerData)
+				.then(response => {
+					const responseData = response?.data;
+					if (responseData?.meta) {
+						const { statusCode, message } = responseData.meta;
+						const type = statusCode >= 200 && statusCode < 300 ? "Success" : "Error";
+						dispatch(openToaster({ messageObj: { type, message } }));
+					}
+				});
 
 			choices[choiceIndex].votes++;
 			setPosts([..._posts]);
