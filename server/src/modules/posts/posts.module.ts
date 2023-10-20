@@ -1,3 +1,4 @@
+import * as moment from "moment";
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 
@@ -13,7 +14,10 @@ import { Post, PostSchema, ScheduledPost, ScheduledPostSchema } from "src/module
 		]),
 	],
 	controllers: [PostController],
-	providers: [PostService],
+	providers: [
+		PostService,
+		{ provide: "Moment", useValue: moment }
+	],
 	exports: [PostService]
 })
 export class PostModule { }

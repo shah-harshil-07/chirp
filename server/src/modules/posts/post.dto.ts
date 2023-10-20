@@ -8,7 +8,7 @@ export class PostDTO {
     images: string[];
 }
 
-interface IDuration {
+export interface IDuration {
     days: number;
     hours: number;
     minutes: number;

@@ -1,15 +1,17 @@
 import { Model, ObjectId } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { SchedulerRegistry } from "@nestjs/schedule";
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { Inject, Injectable, InternalServerErrorException } from "@nestjs/common";
 
 import { Post, ScheduledPost } from "./post.schema";
 import { CommonService } from "../common/common.service";
-import { ParsedPostDTO, PostDTO, ScheduledPostDTO } from "./post.dto";
+import { IDuration, ParsedPostDTO, PostDTO, ScheduledPostDTO } from "./post.dto";
+import { CustomUnprocessableEntityException } from "src/exception-handlers/422/handler";
 
 @Injectable()
 export class PostService {
     constructor(
+        @Inject("Moment") private moment: any,
         private readonly commonService: CommonService,
         private schedulerRegistery: SchedulerRegistry,
         @InjectModel(Post.name) private readonly postModel: Model<Post>,
@@ -119,43 +121,54 @@ export class PostService {
         return this.postModel.findOneAndDelete({ _id: id });
     }
 
-    async votePoll(userId: string, postId: string, choiceIndex: number, prevChoiceIndex: number): Promise<Post> {
-        try {
-            let newPost: Post;
-            const post = await this.postModel.findOne({ _id: postId, "poll.users.userId": userId }).exec();
+    private checkVoteTiming(creationDate: string, duration: IDuration): boolean {
+        const votingDate = this.moment(new Date());
+        const deadlineDate = this.moment(creationDate).add(duration);
+        const diff = deadlineDate.diff(votingDate);
+        return diff < 0;
+    }
 
-            if (post === null) {
-                newPost = await this.postModel.findByIdAndUpdate(
-                    postId,
-                    {
-                        $addToSet: { "poll.users": { userId, choiceIndex } },
-                        $inc: { [`poll.choices.${choiceIndex}.votes`]: 1 }
-                    },
-                    { new: true }
-                );
-            } else if (prevChoiceIndex >= 0) {
-                newPost = await this.postModel.findByIdAndUpdate(
-                    postId,
-                    {
-                        $set: {
-                            "poll.users.$[elem].choiceIndex": choiceIndex
-                        },
-                        $inc: {
-                            [`poll.choices.${choiceIndex}.votes`]: 1,
-                            [`poll.choices.${prevChoiceIndex}.votes`]: -1
-                        },
-                    },
-                    { arrayFilters: [{ "elem.userId": userId }], new: true }
-                );
-            } else {
-                throw new InternalServerErrorException();
+    async votePoll(userId: string, postId: string, choiceIndex: number, prevChoiceIndex: number): Promise<Post> {
+        let newPost: Post;
+        const post = await this.postModel.findOne({ _id: postId, "poll.users.userId": userId }).exec();
+
+        if (post === null) {
+            newPost = await this.postModel.findByIdAndUpdate(
+                postId,
+                {
+                    $addToSet: { "poll.users": { userId, choiceIndex } },
+                    $inc: { [`poll.choices.${choiceIndex}.votes`]: 1 }
+                },
+                { new: true }
+            );
+        } else if (prevChoiceIndex >= 0) {
+            const { createdAt, poll } = post;
+            const creationDate = JSON.parse(JSON.stringify(createdAt));
+            const hasDurationPassed = this.checkVoteTiming(creationDate, poll.duration);
+
+            if (hasDurationPassed) {
+                const message = "the voting duration has passed for this poll!";
+                throw new CustomUnprocessableEntityException({ message });
             }
 
-            return newPost;
-        } catch (error) {
-            console.log(error);
+            newPost = await this.postModel.findByIdAndUpdate(
+                postId,
+                {
+                    $set: {
+                        "poll.users.$[elem].choiceIndex": choiceIndex
+                    },
+                    $inc: {
+                        [`poll.choices.${choiceIndex}.votes`]: 1,
+                        [`poll.choices.${prevChoiceIndex}.votes`]: -1
+                    },
+                },
+                { arrayFilters: [{ "elem.userId": userId }], new: true }
+            );
+        } else {
             throw new InternalServerErrorException();
         }
+
+        return newPost;
     }
 
     async changeReactionCount(postId: string, reaction: string, mode: string): Promise<Post> {

@@ -1,9 +1,17 @@
 import { Observable, throwError } from "rxjs";
 import { catchError, map } from "rxjs/operators";
-import { NestInterceptor, ExecutionContext, CallHandler, InternalServerErrorException, Injectable, BadRequestException, UnprocessableEntityException, HttpException } from "@nestjs/common";
+import {
+    Injectable,
+    CallHandler,
+    NestInterceptor,
+    ExecutionContext,
+    InternalServerErrorException,
+    UnprocessableEntityException,
+} from "@nestjs/common";
 
 import { CustomBadRequestException } from "src/exception-handlers/400/handler";
 import { IResponse, IResponseProps, IErrorProps, ISuccessProps } from "./interfaces";
+import { CustomUnprocessableEntityException } from "src/exception-handlers/422/handler";
 
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
@@ -35,6 +43,8 @@ export class ResponseInterceptor implements NestInterceptor {
                             return new CustomBadRequestException(err);
                         case "UnprocessableEntityException":
                             return new UnprocessableEntityException(err);
+                        case "CustomUnprocessableEntityException":
+                            return new CustomUnprocessableEntityException(err);
                         default:
                             return new InternalServerErrorException(err);
                     }
