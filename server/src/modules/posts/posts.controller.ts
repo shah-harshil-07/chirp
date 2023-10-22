@@ -109,16 +109,6 @@ export class PostController {
         }
     }
 
-    @Put("update/:id")
-    async update(@Body() postData: PostDTO, @Param() { id }: any): Promise<UserPost> {
-        return this.postService.update(postData, id);
-    }
-
-    @Delete("delete/:id")
-    async delete(@Param() { id }: any): Promise<any> {
-        return this.postService.delete(id);
-    }
-
     @Post("poll/vote")
     @UseGuards(AuthGuard("jwt"))
     async votePoll(@Req() req: any, @Body() votingUserData: IVotingUserData): Promise<IResponseProps> {

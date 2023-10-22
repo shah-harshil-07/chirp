@@ -113,14 +113,6 @@ export class PostService {
         }
     }
 
-    async update(postData: PostDTO, id: string): Promise<Post> {
-        return this.postModel.findOneAndUpdate({ _id: id }, postData);
-    }
-
-    async delete(id: string): Promise<Post> {
-        return this.postModel.findOneAndDelete({ _id: id });
-    }
-
     private checkVoteTiming(creationDate: string, duration: IDuration): boolean {
         const votingDate = this.moment(new Date());
         const deadlineDate = this.moment(creationDate).add(duration);
