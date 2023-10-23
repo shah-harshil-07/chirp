@@ -9,15 +9,7 @@ import DateOptionServices from "src/custom-hooks/date-services";
 import { checkContainerInViewport } from "src/utilities/helpers";
 import useDocumentClickServices from "src/custom-hooks/document-services";
 
-const Scheduler = ({
-    scheduleData,
-    clearSchedule,
-    closeScheduler,
-    isPostScheduled,
-    confirmSchedule,
-    handleClickOutside,
-    openScheduledPostList,
-}) => {
+const Scheduler = ({ scheduleData, clearSchedule, closeScheduler, isPostScheduled, confirmSchedule, openScheduledPostList }) => {
     const date = new Date();
     const presentYear = date.getFullYear();
     const containerRef = useRef(null), defaultDate = new Date();
@@ -59,13 +51,13 @@ const Scheduler = ({
     useEffect(() => {
         const outsideClickFn = e => {
             if (containerRef.current && !containerRef.current.contains(e.target)) {
-                handleClickOutside();
+                closeScheduler();
             }
         }
 
         addDocumentClickCallback("scheduler", outsideClickFn);
         // eslint-disable-next-line
-    }, [handleClickOutside]);
+    }, [closeScheduler]);
 
     useEffect(() => {
         if (month >= 0 && year >= 0) {

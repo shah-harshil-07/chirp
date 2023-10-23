@@ -11,12 +11,12 @@ import PollCreator from "./poll-creator";
 import ImgHolder from "../utilities/img-holder";
 import { openModal } from "src/redux/reducers/modal";
 import * as Constants from "src/utilities/constants";
-import { getCommonHeader } from "src/utilities/helpers";
 import useToaster from "src/custom-hooks/toaster-message";
 import EmojiContainer from "../utilities/emoji-container";
 import { placeHolderImageSrc } from "src/utilities/constants";
 import DateOptionServices from "src/custom-hooks/date-services";
 import useImageConverter from "src/custom-hooks/image-converter";
+import { getCommonHeader, getUserDetails } from "src/utilities/helpers";
 
 const Form = ({
 	editText,
@@ -27,6 +27,7 @@ const Form = ({
 	editScheduleMode,
 	editScheduledPost
 }) => {
+	const userDetails = getUserDetails();
 	const headerData = getCommonHeader();
 	const dateService = new DateOptionServices();
 	const weekOptions = dateService.getWeekOptions();
@@ -210,7 +211,12 @@ const Form = ({
 
 	return (
 		<form noValidate onSubmit={handleSubmit} className="mw-100">
-			<img src={placeHolderImageSrc} className="user-image" alt="user" />
+			<img
+				alt="user"
+				className="user-image"
+				src={ userDetails?.picture ?? placeHolderImageSrc }
+				onError={e => { e.target.src = placeHolderImageSrc }}
+			/>
 
 			<div className="form-action-container">
 				{isPostScheduled && schedulerData && (scheduleText())}
@@ -295,7 +301,6 @@ const Form = ({
 								confirmSchedule={confirmPostSchedule}
 								openScheduledPostList={openScheduledPostList}
 								closeScheduler={() => { setShowScheduler(false); }}
-								handleClickOutside={() => { setShowScheduler(false); }}
 							/>
 						)
 					}
