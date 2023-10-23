@@ -16,10 +16,10 @@ const PollCreator = ({ closePollCreator, handleChoiceChange, editPollData }) => 
     const minuteOptions = dateService.getMinuteOptions();
     const minMinuteOptions = minuteOptions.slice(5, minuteOptions.length);
 
-    const [choices, setChoices] = useState(['', '']);
-    const [dayOfWeek, setDayOfWeek] = useState(1);
     const [hours, setHours] = useState(0);
     const [minutes, setMinutes] = useState(0);
+    const [dayOfWeek, setDayOfWeek] = useState(1);
+    const [choices, setChoices] = useState(['', '']);
     const [displayedMinuteOptions, setDisplayedMinuteOptions] = useState(minuteOptions);
 
     useEffect(() => {
@@ -83,6 +83,12 @@ const PollCreator = ({ closePollCreator, handleChoiceChange, editPollData }) => 
         }
     }
 
+    const removeChoice = index => {
+        const _choices = [...choices];
+        _choices.splice(index, 1);
+        setChoices([..._choices]);
+    }
+
     return (
         <div id="poll-creator-box" ref={containerRef}>
             <div id="poll-choices-box">
@@ -94,8 +100,11 @@ const PollCreator = ({ closePollCreator, handleChoiceChange, editPollData }) => 
                             <React.Fragment key={choiceIndex}>
                                 <div className="d-flex position-relative">
                                     {
-                                        choiceIndex > 1 && (
-                                            <div className="poll-creator-choice-delete-div">
+                                        choices.length > 2 && (
+                                            <div
+                                                className="poll-creator-choice-delete-div"
+                                                onClick={() => { removeChoice(choiceIndex); }}
+                                            >
                                                 <CIcon icon={cilMinus} size="sm" />
                                             </div>
                                         )
@@ -112,14 +121,14 @@ const PollCreator = ({ closePollCreator, handleChoiceChange, editPollData }) => 
 
                                     {
                                         choiceIndex === n - 1 && choiceIndex < 3 && (
-                                            <div className="add-choice-icon" onClick={e => addChoice(e)}>
+                                            <div className="add-choice-icon" onClick={addChoice}>
                                                 <CIcon icon={cilPlus} size="sm" />
                                             </div>
                                         )
                                     }
                                 </div>
                             </React.Fragment>
-                        )
+                        );
                     })
                 }
             </div>
@@ -161,7 +170,7 @@ const PollCreator = ({ closePollCreator, handleChoiceChange, editPollData }) => 
                 <div className="poll-box-item" id="remove-poll-item" onClick={closePollCreator}>Remove Poll</div>
             </div>
         </div>
-    )
+    );
 }
 
 export default PollCreator;

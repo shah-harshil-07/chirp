@@ -9,7 +9,14 @@ import DateOptionServices from "src/custom-hooks/date-services";
 import { checkContainerInViewport } from "src/utilities/helpers";
 import useDocumentClickServices from "src/custom-hooks/document-services";
 
-const Scheduler = ({ scheduleData, clearSchedule, closeScheduler, isPostScheduled, confirmSchedule, openScheduledPostList }) => {
+const Scheduler = ({
+    scheduleData,
+    clearSchedule,
+    closeScheduler,
+    isPostScheduled,
+    confirmSchedule,
+    openScheduledPostList,
+}) => {
     const date = new Date();
     const presentYear = date.getFullYear();
     const containerRef = useRef(null), defaultDate = new Date();
