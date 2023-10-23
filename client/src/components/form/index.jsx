@@ -37,16 +37,16 @@ const Form = ({
 	const fileUploadRef = useRef(null), { showError, showSuccess } = useToaster();
 
 	const [text, setText] = useState('');
+	const [pollData, setPollData] = useState(null);
+	const [isFormValid, setIsFormValid] = useState(true);
 	const [uploadedFiles, setUploadedFiles] = useState([]);
-	const [uploadedFileObjects, setUploadedFileObjects] = useState([]);
+	const [schedulerData, setSchedulerData] = useState(null);
+	const [showScheduler, setShowScheduler] = useState(false);
+	const [isPostScheduled, setIsPostScheduled] = useState(false);
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 	const [showPollCreator, setShowPollCreator] = useState(false);
-	const [showScheduler, setShowScheduler] = useState(false);
-	const [pollData, setPollData] = useState(null);
 	const [scheduledPollData, setScheduledPollData] = useState(null);
-	const [isPostScheduled, setIsPostScheduled] = useState(false);
-	const [schedulerData, setSchedulerData] = useState(null);
-	const [isFormValid, setIsFormValid] = useState(true);
+	const [uploadedFileObjects, setUploadedFileObjects] = useState([]);
 
 	useEffect(() => {
 		if (editText) setText(editText);

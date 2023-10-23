@@ -1,8 +1,8 @@
 import "src/styles/form/poll-creator.css";
 
-import React, { useEffect, useRef, useState } from "react";
 import CIcon from "@coreui/icons-react";
-import { cilPlus } from "@coreui/icons";
+import { cilMinus, cilPlus } from "@coreui/icons";
+import React, { useEffect, useRef, useState } from "react";
 
 import CustomSelect from "../utilities/custom-select";
 import LabelledInput from "../utilities/labelled-input";
@@ -31,7 +31,7 @@ const PollCreator = ({ closePollCreator, handleChoiceChange, editPollData }) => 
     useEffect(() => {
         if (editPollData) {
             const { choices, duration } = editPollData;
-            if (choices?.length) setChoices([ ...choices ]);
+            if (choices?.length) setChoices([...choices]);
             if (duration) {
                 const { days, hours, minutes } = duration;
                 setDayOfWeek(days >= 0 ? days : 1);
@@ -93,6 +93,14 @@ const PollCreator = ({ closePollCreator, handleChoiceChange, editPollData }) => 
                         return (
                             <React.Fragment key={choiceIndex}>
                                 <div className="d-flex position-relative">
+                                    {
+                                        choiceIndex > 1 && (
+                                            <div className="poll-creator-choice-delete-div">
+                                                <CIcon icon={cilMinus} size="sm" />
+                                            </div>
+                                        )
+                                    }
+
                                     <span id="poll-creator-text-limit">{`${choice.length} / 25`}</span>
 
                                     <LabelledInput
