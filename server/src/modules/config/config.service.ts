@@ -1,14 +1,18 @@
 import { Injectable } from "@nestjs/common";
 
+interface IAnyObject {
+    [key: string]: string;
+}
+
 @Injectable()
 export class ConfigService {
-    private databaseConfig: any = {
+    private databaseConfig: IAnyObject = {
         port: process.env.PORT,
         connectionUrl: process.env.CONNECTION_URL,
         dbName: process.env.DB_NAME,
     };
 
-    private smtpConfig: any = {
+    private smtpConfig: IAnyObject = {
         host: process.env.SMTP_HOST,
         port: process.env.SMTP_PORT,
         user: process.env.SMTP_USER,
@@ -18,11 +22,18 @@ export class ConfigService {
         replyToEmail: process.env.REPLY_TO_EMAIL_ADDR,
     };
 
-    private jwtConfig: any = {
+    private jwtConfig: IAnyObject = {
         secret: process.env.JWT_SECRET_KEY,
     };
 
-    public getConfigObj(key: string): any {
+    private loggingColorConfig: IAnyObject = {
+        route: "yellow",
+        error: "redBright",
+        warning: "cyanBright",
+        dependencies: "green",
+    };
+
+    public getConfigObj(key: string): IAnyObject {
         switch (key) {
             case "database":
                 return this.databaseConfig;
@@ -33,5 +44,9 @@ export class ConfigService {
             default:
                 return null;
         }
+    }
+
+    public getLoggingColorConfig(): IAnyObject {
+        return this.loggingColorConfig;
     }
 }

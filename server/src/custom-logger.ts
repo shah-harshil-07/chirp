@@ -1,13 +1,15 @@
 import * as chalk from "chalk";
 import {  LoggerService } from "@nestjs/common";
 
+import { ConfigService } from "./modules/config/config.service";
+
 export class CustomLogger implements LoggerService {
-    private colorConfig = {
-        route: "yellow",
-        error: "redBright",
-        warning: "cyanBright",
-        dependencies: "green",
-    };
+    private colorConfig: any;
+
+    constructor() {
+        const configObj = new ConfigService();
+        this.colorConfig = configObj.getLoggingColorConfig();
+    }
 
     public log(message: string) {
         let color: string;

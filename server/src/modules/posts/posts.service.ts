@@ -5,7 +5,7 @@ import { Inject, Injectable, InternalServerErrorException } from "@nestjs/common
 
 import { Post, ScheduledPost } from "./post.schema";
 import { CommonService } from "../common/common.service";
-import { IDuration, ParsedPostDTO, PostDTO, ScheduledPostDTO } from "./post.dto";
+import { IDuration, ParsedPostDTO, ScheduledPostDTO } from "./post.dto";
 import { CustomUnprocessableEntityException } from "src/exception-handlers/422/handler";
 
 @Injectable()
@@ -47,6 +47,7 @@ export class PostService {
                     "user.picture": 1,
                     "post.text": 1,
                     "post.images": 1,
+                    "post.createdAt": 1,
                     "post.user.name": 1,
                     "post.user.username": 1,
                     "post.user.picture": 1,
@@ -56,12 +57,7 @@ export class PostService {
     }
 
     async getAllSchduledPosts(userId: ObjectId): Promise<ScheduledPost[]> {
-        try {
-            return this.scheduledPostModel.find({ userId }).exec();
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        return this.scheduledPostModel.find({ userId }).exec();
     }
 
     async create(postData: ParsedPostDTO, userId: ObjectId): Promise<Post> {
@@ -73,44 +69,23 @@ export class PostService {
     }
 
     async schedulePost(postData: ScheduledPostDTO, userId: ObjectId): Promise<ScheduledPost> {
-        try {
-            const scheduledPost = new this.scheduledPostModel({ ...postData, userId });
-            return scheduledPost.save();
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        const scheduledPost = new this.scheduledPostModel({ ...postData, userId });
+        return scheduledPost.save();
     }
 
     async deleteScheduledPost(postId: ObjectId): Promise<ScheduledPost> {
-        try {
-            const post = await this.scheduledPostModel.findByIdAndDelete(postId);
-            const timeoutId = post?.timeoutId ?? '';
-            const jobMap = this.schedulerRegistery.getCronJobs();
-            if (jobMap.has(timeoutId)) this.schedulerRegistery.getCronJob(timeoutId).stop();
-            return post;
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        const post = await this.scheduledPostModel.findByIdAndDelete(postId);
+        const timeoutId = post?.timeoutId ?? '';
+        const jobMap = this.schedulerRegistery.getCronJobs();
+        if (jobMap.has(timeoutId)) this.schedulerRegistery.getCronJob(timeoutId).stop();
+        return post;
     }
 
     public deleteScheduledPostWithImages = async (postId: ObjectId): Promise<ScheduledPost> => {
-        try {
-            const post = await this.deleteScheduledPost(postId);
-            const images = post?.data?.images ?? [];
-
-            if (images?.length) {
-                images.forEach(image => {
-                    this.commonService.unlinkImage("storage/post-images", image);
-                });
-            }
-
-            return post;
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        const post = await this.deleteScheduledPost(postId);
+        const images = post?.data?.images ?? [];
+        images.forEach(image => { this.commonService.unlinkImage("storage/post-images", image); });
+        return post;
     }
 
     private checkVoteTiming(creationDate: string, duration: IDuration): boolean {

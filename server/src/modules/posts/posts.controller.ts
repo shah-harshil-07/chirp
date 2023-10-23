@@ -1,12 +1,11 @@
+import { join } from "path";
+import { CronJob } from "cron";
 import { AuthGuard } from "@nestjs/passport";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { SchedulerRegistry } from "@nestjs/schedule";
 import { createReadStream, existsSync } from "fs";
-import { join } from "path";
-import { CronJob } from "cron";
 import {
     Get,
-    Put,
     Req,
     Body,
     Post,
