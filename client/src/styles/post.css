@@ -132,9 +132,9 @@
 }
 
 .post-card:hover {
-    background-color: rgba(15, 20, 25, 0.1);
+    background-color: rgba(15, 20, 25, 0.05);
 }
 
 .post-list-repost-body:hover {
-    background-color: rgba(15, 20, 25, 0.1);
+    background-color: rgba(15, 20, 25, 0.05);
 }
