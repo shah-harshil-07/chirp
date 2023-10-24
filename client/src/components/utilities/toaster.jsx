@@ -6,18 +6,30 @@ import { useDispatch } from "react-redux";
 import { closeToaster } from "src/redux/reducers/toaster";
 
 const Toaster = ({ type, message }) => {
+    let icon, bgColor;
+    const tickIcon = require("src/assets/tick.png");
+    const dangerIcon = require("src/assets/danger.png");
+
     const dispatch = useDispatch();
-    const bgColor = (type === "Success")
-        ? "rgb(12, 237, 19, 0.65)"
-        : (type === "Error")
-            ? "rgb(235, 14, 51, 0.75)"
-            : "rgb(29, 161, 242, 0.75)"
-    ;
+
+    switch (type) {
+        case "Success":
+            bgColor = "green";
+            icon = tickIcon;
+            break;
+        case "Error":
+            bgColor = "red";
+            icon = dangerIcon;
+            break;
+        default:
+            break;
+    }
 
     useEffect(() => {
         setTimeout(() => {
             closeToasterDialog();
-        }, 5000);
+        }, 4990);
+
         // eslint-disable-next-line
     }, []);
 
@@ -25,17 +37,22 @@ const Toaster = ({ type, message }) => {
         dispatch(closeToaster());
     }
 
-    return (
-        <div id="toaster-container" style={{ backgroundColor: bgColor }}>
-            <b>{type}</b>
+    return icon && bgColor ? (
+        <div className="toast-container">
+            <div className="toast-inner-container">
+                <div className="toast-body">
+                    <div><img src={icon} width={20} height={20} /></div>
+                    <div style={{ width: "100%", textAlign: "center" }}>{message}</div>
+                </div>
 
-            <div id="toaster-close-container" onClick={closeToasterDialog}>
-                <span id="toaster-close">&times;</span>
+                <button onClick={closeToasterDialog} className="toast-close-btn">&times;</button>
+
+                <div className="toast-progressbar" style={{ backgroundColor: bgColor }} />
             </div>
-
-            <div>{message}</div>
         </div>
-    )
+    ) : (
+        <></>
+    );
 }
 
 export default Toaster;
