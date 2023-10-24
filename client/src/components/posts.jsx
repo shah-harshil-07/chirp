@@ -274,10 +274,10 @@ const Posts = () => {
 					}
 
 					return name && username ? (
-						<Card id="card" key={postIndex}>
-							<img src={picture ?? Constants.placeHolderImageSrc} id="user-image" alt="user" />
+						<Card className="post-card" key={postIndex}>
+							<img src={picture ?? Constants.placeHolderImageSrc} className="post-user-image" alt="user" />
 
-							<div id="card-body">
+							<div className="post-card-body">
 								<div className="row mx-0">
 									<b>{name}</b>&nbsp;
 									<span>{`@${username}`}</span>

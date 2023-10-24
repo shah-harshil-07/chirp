@@ -41,7 +41,7 @@ const Toaster = ({ type, message }) => {
         <div className="toast-container">
             <div className="toast-inner-container">
                 <div className="toast-body">
-                    <div><img src={icon} width={20} height={20} /></div>
+                    <div><img src={icon} width={20} height={20} alt="icon" /></div>
                     <div style={{ width: "100%", textAlign: "center" }}>{message}</div>
                 </div>
 
