@@ -1,0 +1,17 @@
+.sidebar {
+    height: 100vh;
+}
+
+.sidebar-profile-img {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    border-radius: 35px;
+}
+
+.options-icon {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    transform: rotate(270deg);
+}

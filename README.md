@@ -1,2 +1,1 @@
-This repository contains code of a social media web application like twitter. It has features like infinite scrolling, user based likes, posts and comments,
-trending page, etc.
+# Change the success and error alert design. Current design looks very basic.

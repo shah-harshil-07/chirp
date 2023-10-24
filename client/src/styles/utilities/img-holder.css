@@ -1,0 +1,38 @@
+.img-holder-remove-img-icon {
+    width: 30px;
+    height: 30px;
+    color: whitesmoke;
+    background-color: black;
+    padding-left: 9px;
+    border-radius: 20px;
+    position: absolute;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.img-holder-edit-btn {
+    padding-left: 15px;
+    height: 34px;
+    width: 60px;
+    padding-top: 5px;
+    background-color: black;
+    color: whitesmoke;
+    padding-bottom: 5px;
+    border-radius: 20px;
+    cursor: pointer;
+    position: absolute;
+}
+
+.max-height-400 {
+    max-height: 400px;
+}
+
+.max-height-200 {
+    max-height: 200px;
+}
+
+.img-holder-body {
+    display: flex;
+    height: 100%;
+    width: 95%;
+}

@@ -1,0 +1,120 @@
+:root {
+    --chirp-color: #1DA1F2;
+    --unreacted-color: rgb(83, 100, 113);
+
+    --liked-color: rgba(249, 24, 128, 1);
+    --reply-color: rgba(29, 161, 242, 1);
+    --repost-color: rgba(0, 186, 124, 1);
+    --viewed-color: rgba(29, 155, 240, 1);
+    --saved-color: rgba(125, 15, 209, 1);
+
+    --liked-bg-color: rgba(249, 24, 128, 0.3);
+    --reply-bg-color: rgba(29, 161, 242, 0.3);
+    --repost-bg-color: rgba(0, 186, 124, 0.3);
+    --viewed-bg-color: rgba(29, 155, 240, 0.3);
+    --saved-bg-color: rgba(125, 15, 209, 0.3);
+}
+
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+#app-header {
+    font-weight: bold;
+    text-align: center;
+}
+
+#app-container {
+    display: grid;
+    grid-template-columns: 30% 600px 30%;
+}
+
+.rounded-10 {
+    border-radius: 10px;
+}
+
+.object-fit-cover {
+    object-fit: cover;
+}
+
+.common-custom-btn {
+    padding-left: 10px;
+    height: 34px;
+    padding-right: 10px;
+    padding-top: 5px;
+    background-color: black;
+    color: whitesmoke;
+    padding-bottom: 5px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.text-decoration-underline {
+    text-decoration: underline;
+}
+
+.pwd-eye {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 18px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.font-size-14 {
+    font-size: 14px;
+}
+
+.font-size-20 {
+    font-size: 20px;
+}
+
+.text-chirp-color {
+    color: var(--chirp-color);
+}
+
+.chirp-button {
+    float: right;
+    background-color: #1DA1F2;
+    border-radius: 25px;
+    color: white;
+    border-color: #1DA1F2;
+    font-weight: bold;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 2px;
+    cursor: pointer;
+}
+
+.repost-body {
+    width: 86%;
+    float: right;
+    margin-right: 27px;
+    position: relative;
+    border-radius: 25px;
+    border: 0.1px solid rgba(0,0,0,.3);
+    margin-bottom: 10px;
+    padding-bottom: 15px;
+}
+
+.font-size-16 {
+    font-size: 16px;
+}
+
+.seperator-container {
+    width: 24px;
+    height: 24px;
+    padding: 8px;
+}
+
+.seperator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: grey;
+}

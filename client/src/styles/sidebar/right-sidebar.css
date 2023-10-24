@@ -1,0 +1,103 @@
+#right-sidebar-container {
+    width: 330px;
+    position: fixed;
+    margin-left: 30px;
+}
+
+.right-sidebar-searchbox {
+    background-color: rgb(247 249 249);
+    height: 50px;
+    padding-left: 30px;
+    border-radius: 40px;
+}
+
+#trending-section {
+    border: 2px solid;
+    margin-top: 40px;
+    border-radius: 20px;
+    background-color: rgb(247 249 249);
+    border-color: rgb(247 249 249);
+}
+
+.trending-section-margin-text {
+    margin-top: 10px;
+    font-size: 14px;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+}
+
+.trending-section-margin-text:hover {
+    background-color: rgb(200, 206, 206);
+}
+
+#trending-section-show-more {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 14px;
+    color: #1DA1F2;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+}
+
+#trending-section-show-more:hover {
+    background-color: rgb(200, 206, 206);
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+}
+
+.right-sidebar-section-header {
+    padding-top: 10px;
+    font-size: 18px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#who-to-follow-section {
+    border: 2px solid;
+    margin-top: 40px;
+    border-radius: 20px;
+    background-color: rgb(247 249 249);
+    border-color: rgb(247 249 249);
+    cursor: pointer;
+}
+
+.who-to-follow-user-div {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    height: 70px;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.who-to-follow-user-div:hover {
+    background-color: rgb(200, 206, 206);
+}
+
+.user-div-img-container {
+    margin-left: 10px;
+    height: 100%;
+    width: 50px;
+    border-radius: 35px;
+}
+
+#who-to-follow-show-more {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 10px;
+    font-size: 14px;
+    color: #1DA1F2;
+    cursor: pointer;
+}
+
+#who-to-follow-show-more:hover {
+    background-color: rgb(200, 206, 206);
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+}
+
+.who-to-follow-user-details {
+    font-size: 16px;
+    width: 58%;
+}

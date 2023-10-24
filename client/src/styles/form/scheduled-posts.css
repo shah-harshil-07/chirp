@@ -1,0 +1,37 @@
+.scheduled-post-box {
+    height: 75px;
+    padding-top: 5px;
+    flex-direction: column;
+}
+
+.scheduled-post-container {
+    display: flex;
+    cursor: pointer;
+    height: 107px;
+}
+
+.scheduled-post-container:hover {
+    border-width: 2px;
+    border-style: solid;
+    height: 107px;
+    border-color: rgba(220, 53, 69, 0.4);
+}
+
+.scheduled-post-delete-btn {
+    border-radius: 30px;
+    float: right;
+}
+
+.scheduled-post-edit-btn {
+    background-color: black;
+    color: white;
+    width: 55px;
+    border-radius: 25px;
+    border-style: none;
+    cursor: pointer;
+}
+
+#scheduled-post-placeholder-text {
+    text-align: center;
+    color: rgb(83, 100, 113);
+}

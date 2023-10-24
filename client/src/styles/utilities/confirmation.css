@@ -1,0 +1,112 @@
+@keyframes toggleConfirmationModal {
+    0% {
+        top: 240px;
+    }
+
+    100% {
+        top: 300px;
+    }
+}
+
+.confirmation-modal {
+    z-index: 3;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.confirmation-content {
+    margin: auto;
+    background-color: #fff;
+    position: relative;
+    padding: 0;
+    outline: 0;
+    width: 400px;
+    padding-bottom: 10px;
+    top: 300px;
+    animation: toggleConfirmationModal 0.75s linear;
+    border-radius: 25px;
+}
+
+.confirmation-header {
+    padding-top: 0.01em;
+    padding-bottom: 0.01em;
+    padding-right: 8px;
+    padding-left: 16px;
+    padding-top: 4px;
+    height: 30px;
+}
+
+.confirmation-text-content {
+    margin-top: 25px;
+    padding-left: 23px;
+    padding-right: 10px;
+}
+
+.confirmation-message {
+    color: rgb(83, 100, 113);
+}
+
+.confirmation-close-div {
+    display: flex;
+    cursor: pointer;
+    padding-left: 0px;
+    padding-right: 0px;
+    justify-content: space-around;
+}
+
+.confirmation-close-btn-container {
+    width: 60%;
+    display: flex;
+    justify-content: center;
+}
+
+.confirmation-close-btn-container:hover {
+    background-color: rgba(15, 20, 25, 0.1);
+    border-radius: 50px;
+}
+
+.confirmation-header-text {
+    padding-top: 5px;
+    padding-left: 23px;
+    padding-right: 0px;
+    font-size: 25px;
+}
+
+.confirmation-confirm {
+    background-color: rgb(244, 33, 46);
+    color: white;
+    font-weight: bold;
+    width: 70%;
+    height: 40px;
+    border-radius: 33px;
+    text-align: center;
+    padding-top: 8px;
+    margin-left: 16%;
+    cursor: pointer;
+}
+
+.confirmation-confirm:hover {
+    background-color: rgb(244, 33, 46, 0.7);
+}
+
+.confirmation-cancel {
+    background-color: white;
+    color: black;
+    font-weight: bold;
+    width: 70%;
+    height: 40px;
+    border-radius: 33px;
+    text-align: center;
+    padding-top: 8px;
+    margin-left: 16%;
+    cursor: pointer;
+    border: 1px solid rgb(207, 217, 222);
+}
+
+.confirmation-cancel:hover {
+    background-color: whitesmoke;
+}

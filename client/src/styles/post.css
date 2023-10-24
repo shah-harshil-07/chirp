@@ -1,0 +1,130 @@
+#card {
+    position: relative;
+    border-bottom: 2px solid #80808057;
+    border-radius: 0;
+}
+
+#user-image {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+    margin-top: 10px;
+    border-radius: 50%;
+}
+
+#card-body {
+    margin-left: 50px;
+    margin-top: 10px;
+}
+
+.chirp-action {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    color: rgb(83, 100, 113);
+}
+
+.post-list-repost-body {
+    width: 95%;
+    margin-right: 26px;
+}
+
+.action-bar {
+    display: flex;
+    justify-content: space-around;
+    margin-left: -45px;
+    margin-bottom: 10px;
+}
+
+.post-poll-bar {
+    width: 95%;
+    height: 50px;
+    display: flex;
+    cursor: pointer;
+    font-size: 20px;
+    margin-top: 1rem;
+    position: relative;
+    padding-left: 14px;
+    border-radius: 10px;
+    flex-direction: column;
+    justify-content: center;
+    border: 2px solid #e9ecef;
+}
+
+.post-vote-percent-label {
+    position: absolute;
+    right: 10px;
+}
+
+.parent-post-user-img {
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    margin-left: 5px;
+    margin-top: 5px;
+    border-radius: 50%;
+}
+
+.repost-body-content {
+    margin-left: 50px;
+    margin-top: 10px;
+}
+
+.post-reaction-data {
+    padding-top: 20%;
+    margin-left: 10px;
+    color: var(--unreacted-color);
+}
+
+.reply-icon {
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+    border-radius: 50%;
+}
+
+.reaction-icon-container {
+    display: inline-flex;
+    cursor: pointer;
+}
+
+.reply-container:hover span:nth-child(1) {
+    background-color: var(--reply-bg-color);
+}
+
+.reply-container:hover span:nth-child(2) {
+    color: var(--reply-color);
+}
+
+.repost-container:hover span:nth-child(1) {
+    background-color: var(--repost-bg-color);
+}
+
+.repost-container:hover span:nth-child(2) {
+    color: var(--repost-color);
+}
+
+.like-container:hover span:nth-child(1) {
+    background-color: var(--liked-bg-color);
+}
+
+.like-container:hover span:nth-child(2) {
+    color: var(--liked-color);
+}
+
+.views-container:hover span:nth-child(1) {
+    background-color: var(--viewed-bg-color);
+}
+
+.views-container:hover span:nth-child(2) {
+    color: var(--viewed-color);
+}
+
+.saved-container:hover span:nth-child(1) {
+    background-color: var(--saved-bg-color);
+}
+
+.saved-container:hover span:nth-child(2) {
+    color: var(--saved-color);
+}

@@ -1,0 +1,55 @@
+#auth-bar {
+    position: fixed;
+    bottom: 0%;
+    width: 100%;
+    background-color: #1DA1F2;
+    height: 60px;
+    display: block;
+    width: -webkit-fill-available;
+    padding-top: 6px;
+}
+
+#auth-box {
+    margin-right: 14%;
+    margin-top: -35px;
+}
+
+.auth-btn {
+    float: right;
+    border-radius: 25px;
+    border: 1px solid;
+    font-weight: bold;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+    padding-bottom: 5px;
+}
+
+#login-btn {
+    background-color: #1DA1F2;
+    color: white;
+}
+
+#signup-btn {
+    background-color: white;
+    color: #000000;
+    border-color: #1DA1F2;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.btn-text {
+    font-size: 13px;
+}
+
+#top-text {
+    font-weight: bolder;
+    font-size: 20px;
+    color: white;
+}
+
+#bottom-text {
+    font-size: 13px;
+    color: white;
+    margin-top: -28px;
+}

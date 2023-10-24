@@ -1,0 +1,162 @@
+import { Model, ObjectId } from "mongoose";
+import { InjectModel } from "@nestjs/mongoose";
+import { SchedulerRegistry } from "@nestjs/schedule";
+import { Inject, Injectable, InternalServerErrorException } from "@nestjs/common";
+
+import { Post, ScheduledPost } from "./post.schema";
+import { CommonService } from "../common/common.service";
+import { IDuration, ParsedPostDTO, ScheduledPostDTO } from "./post.dto";
+import { CustomUnprocessableEntityException } from "src/exception-handlers/422/handler";
+
+@Injectable()
+export class PostService {
+    constructor(
+        @Inject("Moment") private moment: any,
+        private readonly commonService: CommonService,
+        private schedulerRegistery: SchedulerRegistry,
+        @InjectModel(Post.name) private readonly postModel: Model<Post>,
+        @InjectModel(ScheduledPost.name) private readonly scheduledPostModel: Model<ScheduledPost>,
+    ) { }
+
+    async findAll(): Promise<Post[]> {
+        await this.postModel.updateMany({}, { $inc: { views: 1 } });
+
+        return this.postModel.aggregate([
+            { $lookup: { from: "Users", localField: "user", foreignField: "_id", as: "user" } },
+            { $unwind: "$user" },
+            { $lookup: { from: "PostMessages", localField: "postId", foreignField: "_id", as: "post" } },
+            { $unwind: { path: "$post", preserveNullAndEmptyArrays: true } },
+            { $lookup: { from: "Users", localField: "post.user", foreignField: "_id", as: "post.user" } },
+            { $unwind: { path: "$post.user", preserveNullAndEmptyArrays: true } },
+            { $sort: { createdAt: -1 } },
+            {
+                $project: {
+                    "_id": 1,
+                    "text": 1,
+                    "poll": 1,
+                    "postId": 1,
+                    "images": 1,
+                    "likes": 1,
+                    "saved": 1,
+                    "views": 1,
+                    "reposts": 1,
+                    "comments": 1,
+                    "createdAt": 1,
+                    "user.name": 1,
+                    "user.username": 1,
+                    "user.picture": 1,
+                    "post.text": 1,
+                    "post.images": 1,
+                    "post.createdAt": 1,
+                    "post.user.name": 1,
+                    "post.user.username": 1,
+                    "post.user.picture": 1,
+                }
+            },
+        ]);
+    }
+
+    async getAllSchduledPosts(userId: ObjectId): Promise<ScheduledPost[]> {
+        return this.scheduledPostModel.find({ userId }).exec();
+    }
+
+    async create(postData: ParsedPostDTO, userId: ObjectId): Promise<Post> {
+        const { postId } = postData;
+        const mainData = { ...postData, user: userId, images: postData.images, createdAt: Date.now() };
+        if (postId) await this.postModel.findByIdAndUpdate(postId, { $inc: { reposts: 1 } });
+        const createdPost = new this.postModel(mainData);
+        return createdPost.save();
+    }
+
+    async schedulePost(postData: ScheduledPostDTO, userId: ObjectId): Promise<ScheduledPost> {
+        const scheduledPost = new this.scheduledPostModel({ ...postData, userId });
+        return scheduledPost.save();
+    }
+
+    async deleteScheduledPost(postId: ObjectId): Promise<ScheduledPost> {
+        const post = await this.scheduledPostModel.findByIdAndDelete(postId);
+        const timeoutId = post?.timeoutId ?? '';
+        const jobMap = this.schedulerRegistery.getCronJobs();
+        if (jobMap.has(timeoutId)) this.schedulerRegistery.getCronJob(timeoutId).stop();
+        return post;
+    }
+
+    public deleteScheduledPostWithImages = async (postId: ObjectId): Promise<ScheduledPost> => {
+        const post = await this.deleteScheduledPost(postId);
+        const images = post?.data?.images ?? [];
+        images.forEach(image => { this.commonService.unlinkImage("storage/post-images", image); });
+        return post;
+    }
+
+    private checkVoteTiming(creationDate: string, duration: IDuration): boolean {
+        const votingDate = this.moment(new Date());
+        const deadlineDate = this.moment(creationDate).add(duration);
+        const diff = deadlineDate.diff(votingDate);
+        return diff < 0;
+    }
+
+    async votePoll(userId: string, postId: string, choiceIndex: number, prevChoiceIndex: number): Promise<Post> {
+        let newPost: Post;
+        const post = await this.postModel.findOne({ _id: postId, "poll.users.userId": userId }).exec();
+
+        if (post === null) {
+            newPost = await this.postModel.findByIdAndUpdate(
+                postId,
+                {
+                    $addToSet: { "poll.users": { userId, choiceIndex } },
+                    $inc: { [`poll.choices.${choiceIndex}.votes`]: 1 }
+                },
+                { new: true }
+            );
+        } else if (prevChoiceIndex >= 0) {
+            const { createdAt, poll } = post;
+            const creationDate = JSON.parse(JSON.stringify(createdAt));
+            const hasDurationPassed = this.checkVoteTiming(creationDate, poll.duration);
+
+            if (hasDurationPassed) {
+                const message = "the voting duration has passed for this poll!";
+                throw new CustomUnprocessableEntityException({ message });
+            }
+
+            newPost = await this.postModel.findByIdAndUpdate(
+                postId,
+                {
+                    $set: {
+                        "poll.users.$[elem].choiceIndex": choiceIndex
+                    },
+                    $inc: {
+                        [`poll.choices.${choiceIndex}.votes`]: 1,
+                        [`poll.choices.${prevChoiceIndex}.votes`]: -1
+                    },
+                },
+                { arrayFilters: [{ "elem.userId": userId }], new: true }
+            );
+        } else {
+            throw new InternalServerErrorException();
+        }
+
+        return newPost;
+    }
+
+    async changeReactionCount(postId: string, reaction: string, mode: string): Promise<Post> {
+        let attribute: string;
+        switch (reaction) {
+            case "liked":
+                attribute = "likes";
+                break;
+            case "saved":
+                attribute = "saved";
+                break;
+            case "commented":
+                attribute = "comments";
+                break;
+            default:
+                throw new InternalServerErrorException();
+
+        }
+
+        const count = mode === "add" ? 1 : mode === "remove" ? -1 : 0;
+        const newPost = await this.postModel.findByIdAndUpdate(postId, { $inc: { [attribute]: count } }, { new: true });
+        return newPost;
+    }
+}

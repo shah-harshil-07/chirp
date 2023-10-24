@@ -1,0 +1,71 @@
+.auth-box {
+    width: 100%;
+    height: 35px;
+    border: 1px solid black;
+    border-radius: 20px;
+    padding-left: 12px;
+    padding-right: 12px;
+    cursor: pointer;
+}
+
+.auth-box:hover {
+    opacity: 0.5;
+}
+
+#google-signup-icon {
+    width: 17px;
+    height: 17px;
+    margin-top: 6px;
+}
+
+#google-signup-text {
+    margin-left: 7px;
+    margin-top: 5.5px;
+}
+
+.or-box {
+    width: 100%;
+    position: relative;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.or-div {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    top: -13px;
+    left: 227px;
+    background-color: white;
+    text-align: center;
+}
+
+.bottom-text {
+    margin-top: 45px;
+    font-size: 15px;
+}
+
+.input-text {
+    width: 100%;
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid rgb(113, 108, 108);
+    padding-left: 10px;
+    border-color: rgb(232, 229, 229);
+}
+
+.input-text:hover {
+    border: 1px solid rgb(113, 108, 108);
+    outline: none;
+}
+
+.header {
+    margin-top: -20px;
+    font-weight: bold;
+}
+
+.link-text {
+    color: #1DA1F2;
+    cursor: pointer;
+}
+

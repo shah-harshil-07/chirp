@@ -1,0 +1,63 @@
+#scheduler-box {
+    border: 1px solid rgba(29, 161, 242, 0.6);
+    position: absolute;
+    z-index: 2;
+    background-color: white;
+    width: 462px;
+    border-radius: 20px;
+}
+
+#scheduler-body {
+    border-bottom: 1px solid rgba(29, 161, 242, 0.6);
+}
+
+#scheduler-header-close {
+    font-size: 25px;
+    margin-left: 7.4px;
+    border-radius: 30px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-around;
+}
+
+#scheduler-header-close:hover {
+    background-color: rgba(15, 20, 25, 0.1);
+}
+
+#scheduler-timezone-text {
+    font-size: 15px;
+}
+
+#scheduler-timezone-value-text {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#scheduler-footer-text {
+    font-weight: bold;
+    font-size: 17px;
+}
+
+#scheduler-footer {
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    cursor: pointer;
+}
+
+#scheduler-footer:hover {
+    background-color: rgba(29, 161, 242, 0.6);
+}
+
+.scheduler-error-select {
+    border: 1px solid crimson !important;
+}
+
+.scheduler-error-select-label {
+    color: crimson !important;
+}
+
+#scheduler-clear-text {
+    font-size: 18px;
+    margin-top: 8px;
+    cursor: pointer;
+}
