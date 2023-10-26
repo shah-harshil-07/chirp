@@ -1,7 +1,7 @@
 import React from "react";
 
-import App from "./App";
-import Dashboard from "./dashbard";
+const App = React.lazy(() => import("src/App"));
+const Dashboard = React.lazy(() => import("src/dashbard"));
 
 const routes = [
     {
