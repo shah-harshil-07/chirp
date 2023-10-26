@@ -1,10 +1,9 @@
 import "src/styles/app.css";
 
-import React, { useState } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
+import { Outlet } from "react-router-dom";
 
-import Posts from "./components/posts";
-import Form from "./components/form";
 import AuthBar from "./components/auth-bar";
 import Toaster from "./components/utilities/toaster";
 import LeftSidebar from "./components/sidebar/left-sidebar";
@@ -14,8 +13,6 @@ import { isUserLoggedIn, modalConfig } from "./utilities/helpers";
 const App = () => {
 	const dialogState = useSelector(state => state.modal);
 	const toasterState = useSelector(state => state.toaster);
-
-	const [currentId, setCurrentId] = useState(0);
 
 	const getDialog = () => {
 		const Dialog = modalConfig?.[dialogState.type] ?? <></>, props = dialogState.props ?? {};
@@ -28,17 +25,7 @@ const App = () => {
 
 			<div>
 				<p id="app-header">Home</p>
-
-				<div id="app-container">
-					<LeftSidebar />
-
-					<div>
-						{isUserLoggedIn() && <Form currentId={currentId} setCurrentId={setCurrentId} />}
-						<Posts />
-					</div>
-
-					<RightSidebar />
-				</div>
+				<div id="app-container"><LeftSidebar /><Outlet /><RightSidebar /></div>
 			</div>
 
 			{!isUserLoggedIn() && <AuthBar />}
