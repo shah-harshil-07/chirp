@@ -23,4 +23,14 @@ export class CommentsService {
         if (!isReactionAdded) throw new InternalServerErrorException();
         else return createdComment.save();
     }
+
+    @UseInterceptors(ResponseInterceptor)
+    async list(postId: string): Promise<any> {
+        const commentList = await this.commentModel.aggregate([
+            { $match: { postId } },
+            { $lookup: { from: "Users", localField: "userId", foreignField: "_id", as: "user" } },
+        ]);
+
+        return commentList;
+    }
 }

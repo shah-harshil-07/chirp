@@ -3,6 +3,7 @@ import "src/styles/post.css";
 import CIcon from "@coreui/icons-react";
 import { Card } from "@material-ui/core/";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { cilSend, cilCommentBubble, cilChart, cilThumbUp, cilBookmark } from "@coreui/icons";
 
@@ -18,6 +19,7 @@ import { placeHolderImageSrc } from "src/utilities/constants";
 import { openToaster } from "src/redux/reducers/toaster";
 
 const Posts = () => {
+	const navigate = useNavigate();
 	const availableMutedActions = ["like", "save"];
 	const likeIcon = require("src/assets/like.png");
 	const savedIcon = require("src/assets/saved-filled.png");
@@ -127,7 +129,8 @@ const Posts = () => {
 		setPosts([..._posts]);
 	}
 
-	const vote = async (postIndex, choiceIndex) => {
+	const vote = async (e, postIndex, choiceIndex) => {
+		e.stopPropagation();
 		const _posts = posts;
 		const pollObj = _posts[postIndex].poll;
 		const { users, choices } = pollObj;
@@ -191,7 +194,7 @@ const Posts = () => {
 								key={choiceIndex}
 								className="post-poll-bar"
 								style={{ background: getGradient(votePercent, isVoted) }}
-								onClick={() => { if (!isVoted) vote(postIndex, choiceIndex); }}
+								onClick={e => { if (!isVoted) vote(e, postIndex, choiceIndex); }}
 							>
 								{label ?? ''}
 
@@ -254,11 +257,16 @@ const Posts = () => {
 		}
 	}
 
+	const moveToCommentList = postId => {
+		navigate(`/post/${postId}`);
+	}
+
 	return (
 		<div>
 			{
 				posts.map((post, postIndex) => {
-					const { post: parentPost, createdAt, likes, reposts, comments, views, saved, isLiked, isSaved } = post;
+					const { post: parentPost, createdAt, isLiked, isSaved, _id: postId } = post;
+					const { likes, reposts, comments, views, saved, } = post;
 					const { name, username, picture } = post.user ?? {};
 					let parentPostImages = [], pureImages = [];
 					const images = postImages[postIndex];
@@ -274,7 +282,7 @@ const Posts = () => {
 					}
 
 					return name && username ? (
-						<Card className="post-card" key={postIndex}>
+						<Card className="post-card" key={postId} onClick={() => { moveToCommentList(postId); }}>
 							<img src={picture ?? Constants.placeHolderImageSrc} className="post-user-image" alt="user" />
 
 							<div className="post-card-body">

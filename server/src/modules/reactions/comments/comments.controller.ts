@@ -1,7 +1,7 @@
 import { AuthGuard } from "@nestjs/passport";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { CommentDTO, validationParamList } from "./comments.dto";
-import { Body, Controller, Post, Req, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Req, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
 
 import { CommentsService } from "./comments.service";
 import { IResponseProps } from "src/interceptors/interfaces";
@@ -39,5 +39,13 @@ export class CommentsController {
         const comment = await this.commentService.create(data);
 
         return { success: true, message: "Comment stored successfully!", data: comment };
+    }
+
+    @Get("all/:postId")
+    @UseGuards(AuthGuard("jwt"))
+    @UseInterceptors(ResponseInterceptor)
+    async list(@Param() { postId }: any): Promise<any> {
+        const commentList = await this.commentService.list(postId);
+        return { success: true, message: "Comment list fetched successfully.", data: commentList };
     }
 }

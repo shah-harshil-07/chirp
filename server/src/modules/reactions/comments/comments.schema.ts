@@ -1,4 +1,8 @@
+import mongoose from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+
+import { Post } from "src/modules/posts/post.schema";
+import { UserModel } from "src/modules/users/users.schema";
 
 @Schema({ collection: "Comments" })
 export class Comments {
@@ -8,14 +12,14 @@ export class Comments {
     @Prop({ required: true })
     createdAt: Date;
 
-    @Prop({ required: true })
-    postId: string;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "PostModel", required: true })
+    postId: Post;
 
     @Prop({ default: null })
     parentCommentId: string | null;
 
-    @Prop({ required: true })
-    userId: string;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "UserModel", required: true })
+    userId: UserModel;
 
     @Prop()
     images: string[];
