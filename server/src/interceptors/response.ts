@@ -9,6 +9,7 @@ import {
     UnprocessableEntityException,
 } from "@nestjs/common";
 
+import { CustomLogger } from "src/custom-logger";
 import { CustomBadRequestException } from "src/exception-handlers/400/handler";
 import { IResponse, IResponseProps, IErrorProps, ISuccessProps } from "./interfaces";
 import { CustomUnprocessableEntityException } from "src/exception-handlers/422/handler";
@@ -34,6 +35,8 @@ export class ResponseInterceptor implements NestInterceptor {
             }),
             catchError((err: Error) => {
                 return throwError(() => {
+                    const logger = new CustomLogger();
+                    logger.error(err.message);
                     console.log(err);
 
                     switch (err.name) {

@@ -27,8 +27,7 @@ export class CommentsService {
     @UseInterceptors(ResponseInterceptor)
     async list(postId: string): Promise<any> {
         const commentList = await this.commentModel.aggregate([
-            { $match: { postId } },
-            { $lookup: { from: "Users", localField: "userId", foreignField: "_id", as: "user" } },
+            { $match: { $expr: { $eq: ["$postId", { $toObjectId: postId }] } } }
         ]);
 
         return commentList;

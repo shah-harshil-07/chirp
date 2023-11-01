@@ -12,14 +12,14 @@ export class Comments {
     @Prop({ required: true })
     createdAt: Date;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "PostModel", required: true })
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "Post", required: true })
     postId: Post;
 
     @Prop({ default: null })
     parentCommentId: string | null;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "UserModel", required: true })
-    userId: UserModel;
+    userId: string;
 
     @Prop()
     images: string[];

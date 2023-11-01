@@ -15,7 +15,7 @@ export class CustomLogger implements LoggerService {
         let color: string;
 
         for (const searchKey in this.colorConfig) {
-            const index = message.search(searchKey);
+            const index = message.search(new RegExp(searchKey, 'i'));
             if (index >= 0) {
                 color = this.colorConfig[searchKey];
                 break;
