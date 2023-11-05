@@ -1,5 +1,7 @@
 import { IsJSON, IsOptional } from "class-validator";
 
+import { Post } from "src/modules/posts/post.schema";
+
 export class CommentDTO {
     @IsJSON()
     data: string;
@@ -24,4 +26,25 @@ export const validationParamList = {
             postId: "required|isString",
         },
     },
+}
+
+export interface ICommentList {
+    post: Post,
+    comments: Array<CommentDataDTO>,
+}
+
+interface CommentDataDTO {
+    text: string;
+    createdAt: string;
+    userId: string;
+    images: string[];
+    user: CommentUserData;
+}
+
+interface CommentUserData {
+    name: string;
+    username: string;
+    email: string;
+    googleId: string;
+    picture: string;
 }

@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 import { Post } from "src/modules/posts/post.schema";
-import { UserModel } from "src/modules/users/users.schema";
 
 @Schema({ collection: "Comments" })
 export class Comments {

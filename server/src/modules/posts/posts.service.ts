@@ -1,14 +1,16 @@
 import { Model, ObjectId } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { SchedulerRegistry } from "@nestjs/schedule";
-import { Inject, Injectable, InternalServerErrorException } from "@nestjs/common";
+import { Inject, Injectable, InternalServerErrorException, UseInterceptors } from "@nestjs/common";
 
 import { Post, ScheduledPost } from "./post.schema";
 import { CommonService } from "../common/common.service";
+import { ResponseInterceptor } from "src/interceptors/response";
 import { IDuration, ParsedPostDTO, ScheduledPostDTO } from "./post.dto";
 import { CustomUnprocessableEntityException } from "src/exception-handlers/422/handler";
 
 @Injectable()
+@UseInterceptors(ResponseInterceptor)
 export class PostService {
     constructor(
         @Inject("Moment") private moment: any,
@@ -152,11 +154,26 @@ export class PostService {
                 break;
             default:
                 throw new InternalServerErrorException();
-
         }
 
         const count = mode === "add" ? 1 : mode === "remove" ? -1 : 0;
         const newPost = await this.postModel.findByIdAndUpdate(postId, { $inc: { [attribute]: count } }, { new: true });
         return newPost;
+    }
+
+    async getDetails(postId: string): Promise<Post> {
+        return await this
+            .postModel
+            .findById(postId)
+            .populate("user", "_id name username")
+            .populate({
+                path: "postId",
+                select: "_id text user poll",
+                populate: {
+                    path: "user",
+                    select: "_id name username",
+                },
+            })
+            .exec();
     }
 }

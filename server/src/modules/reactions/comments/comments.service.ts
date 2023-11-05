@@ -3,7 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Injectable, InternalServerErrorException, UseInterceptors } from "@nestjs/common";
 
 import { Comments } from "./comments.schema";
-import { ICommentData } from "./comments.dto";
+import { ICommentData, ICommentList } from "./comments.dto";
 import { PostService } from "src/modules/posts/posts.service";
 import { ResponseInterceptor } from "src/interceptors/response";
 
@@ -25,11 +25,15 @@ export class CommentsService {
     }
 
     @UseInterceptors(ResponseInterceptor)
-    async list(postId: string): Promise<any> {
+    async list(postId: string): Promise<ICommentList> {
+        const postData = await this.postService.getDetails(postId);
+
         const commentList = await this.commentModel.aggregate([
-            { $match: { $expr: { $eq: ["$postId", { $toObjectId: postId }] } } }
+            { $match: { $expr: { $eq: ["$postId", { $toObjectId: postId }] } } },
+            { $lookup: { from: "Users", localField: "userId", foreignField: "_id", as: "user" } },
+            { $unwind: "$user" },
         ]);
 
-        return commentList;
+        return { post: postData, comments: commentList };
     }
 }
