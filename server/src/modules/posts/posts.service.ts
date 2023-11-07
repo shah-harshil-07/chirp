@@ -162,7 +162,7 @@ export class PostService {
     }
 
     async getDetails(postId: string): Promise<Post> {
-        return await this
+        const postData = await this
             .postModel
             .findById(postId)
             .populate("user", "_id name username")
@@ -174,6 +174,11 @@ export class PostService {
                     select: "_id name username",
                 },
             })
+            .lean()
             .exec();
+
+        postData["post"] = postData["postId"];
+        delete postData["postId"];
+        return postData;
     }
 }
