@@ -15,8 +15,8 @@ export class SavesAndLikesController {
     @UseInterceptors(ResponseInterceptor)
     async addReaction(@Req() req: any, @Body() savesLikesReqData: SavesLikesDTO): Promise<IResponseProps> {
         const { _id: userId } = req.user;
-        const { postId, reaction } = savesLikesReqData;
-        const data = { userId, postId, reaction };
+        const { postId, reaction, postType } = savesLikesReqData;
+        const data = { userId, postId, reaction, postType };
         const reationData = await this.savesLikesService.addReaction(data);
         const attribute = reaction.slice(0, reaction.length - 2) + 'd';
         return { success: true, message: `post ${attribute} successfully!`, data: reationData };
@@ -27,8 +27,8 @@ export class SavesAndLikesController {
     @UseInterceptors(ResponseInterceptor)
     async removeReaction(@Req() req: any, @Body() savesLikesReqData: SavesLikesDTO): Promise<IResponseProps> {
         const { _id: userId } = req.user;
-        const { postId, reaction } = savesLikesReqData;
-        const data = { userId, postId, reaction };
+        const { postId, reaction, postType } = savesLikesReqData;
+        const data = { userId, postId, reaction, postType };
         await this.savesLikesService.removeReaction(data);
         const attribute = reaction.slice(0, reaction.length - 1);
         return { success: true, message: `${attribute} removed successfully!` };

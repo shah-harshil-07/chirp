@@ -22,6 +22,15 @@ export class Comments {
 
     @Prop()
     images: string[];
+
+    @Prop({ default: 0 })
+    comments: number;
+
+    @Prop({ default: 0 })
+    likes: number;
+
+    @Prop({ default: 0 })
+    saved: number;
 }
 
 export const CommentsSchema = SchemaFactory.createForClass(Comments);

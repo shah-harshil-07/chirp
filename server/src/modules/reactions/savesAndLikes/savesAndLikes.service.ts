@@ -8,6 +8,7 @@ import { PostService } from "src/modules/posts/posts.service";
 import { ResponseInterceptor } from "src/interceptors/response";
 
 @Injectable()
+@UseInterceptors(ResponseInterceptor)
 export class SavesLikesService {
     constructor(
         private readonly postService: PostService,

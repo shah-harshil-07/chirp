@@ -36,4 +36,25 @@ export class CommentsService {
 
         return { post: postData, comments: commentList };
     }
+
+    @UseInterceptors(ResponseInterceptor)
+    async changeReactionCount(commentId: string, reaction: string, mode: string): Promise<Comments> {
+        let attribute: string;
+        switch (reaction) {
+            case "liked":
+                attribute = "likes";
+                break;
+            case "saved":
+                attribute = "saved";
+                break;
+            case "commented":
+                attribute = "comments";
+                break;
+            default:
+                throw new InternalServerErrorException();
+        }
+
+        const count = mode === "add" ? 1 : mode === "remove" ? -1 : 0;
+        return await this.commentModel.findByIdAndUpdate(commentId, { $inc: { [attribute]: count } }, { new: true });
+    }
 }
