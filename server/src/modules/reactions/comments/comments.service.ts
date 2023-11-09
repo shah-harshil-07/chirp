@@ -1,6 +1,6 @@
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
-import { Inject, Injectable, InternalServerErrorException, UseInterceptors } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, UseInterceptors } from "@nestjs/common";
 
 import { Comments } from "./comments.schema";
 import { ICommentData, ICommentList } from "./comments.dto";

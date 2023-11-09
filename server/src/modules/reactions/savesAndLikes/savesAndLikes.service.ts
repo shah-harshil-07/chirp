@@ -1,23 +1,37 @@
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
-import { Injectable, UseInterceptors } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, UseInterceptors } from "@nestjs/common";
 
 import { SavesLikesData } from "./savesAndLikes.dto";
 import { SavesAndLikes } from "./savesAndLikes.schema";
 import { PostService } from "src/modules/posts/posts.service";
 import { ResponseInterceptor } from "src/interceptors/response";
+import { CommentsService } from "src/modules/reactions/comments/comments.service";
 
 @Injectable()
 @UseInterceptors(ResponseInterceptor)
 export class SavesLikesService {
     constructor(
         private readonly postService: PostService,
+        private readonly commentsService: CommentsService,
         @InjectModel(SavesAndLikes.name) private readonly savesLikesModal: Model<SavesAndLikes>,
     ) { }
 
+    getService(postType: string): PostService | CommentsService {
+        switch (postType) {
+            case "post":
+                return this.postService;
+            case "comment":
+                return this.commentsService;
+            default:
+                throw new InternalServerErrorException();
+        }
+    }
+
     async addReaction(savesLikesData: SavesLikesData): Promise<SavesAndLikes> {
-        const { postId, userId, reaction } = savesLikesData;
-        await this.postService.changeReactionCount(postId, reaction, "add");
+        const { postId, userId, reaction, postType } = savesLikesData;
+        const service = this.getService(postType);
+        await service.changeReactionCount(postId, reaction, "add");
 
         let reactionDoc = await this.savesLikesModal.findOne({ postId, userId });
 
@@ -28,8 +42,9 @@ export class SavesLikesService {
     }
 
     async removeReaction(savesLikesData: SavesLikesData): Promise<void> {
-        const { postId, userId, reaction } = savesLikesData;
-        await this.postService.changeReactionCount(postId, reaction, "remove");
+        const { postId, userId, reaction, postType } = savesLikesData;
+        const service = this.getService(postType);
+        await service.changeReactionCount(postId, reaction, "remove");
         const attribute = reaction === "liked" ? "saved" : "liked";
 
         let reactionDoc = await this.savesLikesModal.findOne({ postId, userId });

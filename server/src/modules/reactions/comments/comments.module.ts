@@ -19,6 +19,7 @@ import { CustomValidatorsModule } from "../../custom-validators/custom-validator
 		]),
 	],
 	controllers: [CommentsController],
-	providers: [CommentsService, CustomValidatorsModule, ConfigService]
+	providers: [CommentsService, CustomValidatorsModule, ConfigService],
+	exports: [CommentsService],
 })
 export class CommentsModule { }

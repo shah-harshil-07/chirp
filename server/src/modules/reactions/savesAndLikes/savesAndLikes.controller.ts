@@ -40,6 +40,6 @@ export class SavesAndLikesController {
     async checkReactions(@Req() req: any, @Body() postData: IPostInfo): Promise<IResponseProps> {
         const { _id: userId } = req.user;
         const reactionData = await this.savesLikesService.checkLikes(userId, postData.postIds);
-        return { success: true, message: "Likes checked successfully!", data: reactionData };
+        return { success: true, message: "Likes & saves checked successfully!", data: reactionData };
     }
 }
