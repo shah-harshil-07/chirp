@@ -4,6 +4,11 @@ interface IAnyObject {
     [key: string]: string;
 }
 
+interface IReactionConfigData {
+    count: number;
+    attribute: string | null;
+}
+
 @Injectable()
 export class ConfigService {
     private databaseConfig: IAnyObject = {
@@ -48,5 +53,23 @@ export class ConfigService {
 
     public getLoggingColorConfig(): IAnyObject {
         return this.loggingColorConfig;
+    }
+
+    public getReactionConfig(reaction: string, mode: string): IReactionConfigData {
+        let attribute = null;
+        switch (reaction) {
+            case "liked":
+                attribute = "likes";
+                break;
+            case "saved":
+                attribute = "saved";
+                break;
+            case "commented":
+                attribute = "comments";
+                break;
+        }
+
+        const count = mode === "add" ? 1 : mode === "remove" ? -1 : 0;
+        return { attribute, count };
     }
 }

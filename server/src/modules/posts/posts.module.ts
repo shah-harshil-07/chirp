@@ -4,10 +4,13 @@ import { MongooseModule } from "@nestjs/mongoose";
 
 import { PostService } from "./posts.service";
 import { PostController } from "./posts.controller";
+import { ConfigModule } from "src/modules/config/config.module";
+import { ConfigService } from "src/modules/config/config.service";
 import { Post, PostSchema, ScheduledPost, ScheduledPostSchema } from "src/modules/posts/post.schema";
 
 @Module({
 	imports: [
+		ConfigModule,
 		MongooseModule.forFeature([
 			{ name: Post.name, schema: PostSchema },
 			{ name: ScheduledPost.name, schema: ScheduledPostSchema },
@@ -16,7 +19,8 @@ import { Post, PostSchema, ScheduledPost, ScheduledPostSchema } from "src/module
 	controllers: [PostController],
 	providers: [
 		PostService,
-		{ provide: "Moment", useValue: moment }
+		ConfigService,
+		{ provide: "Moment", useValue: moment },
 	],
 	exports: [PostService]
 })

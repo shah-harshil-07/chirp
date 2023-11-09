@@ -1,16 +1,18 @@
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
-import { Injectable, InternalServerErrorException, UseInterceptors } from "@nestjs/common";
+import { Inject, Injectable, InternalServerErrorException, UseInterceptors } from "@nestjs/common";
 
 import { Comments } from "./comments.schema";
 import { ICommentData, ICommentList } from "./comments.dto";
 import { PostService } from "src/modules/posts/posts.service";
 import { ResponseInterceptor } from "src/interceptors/response";
+import { ConfigService } from "src/modules/config/config.service";
 
 @Injectable()
 export class CommentsService {
     constructor(
         private readonly postService: PostService,
+        private readonly configService: ConfigService,
         @InjectModel(Comments.name) private readonly commentModel: Model<Comments>,
     ) { }
 
@@ -39,22 +41,7 @@ export class CommentsService {
 
     @UseInterceptors(ResponseInterceptor)
     async changeReactionCount(commentId: string, reaction: string, mode: string): Promise<Comments> {
-        let attribute: string;
-        switch (reaction) {
-            case "liked":
-                attribute = "likes";
-                break;
-            case "saved":
-                attribute = "saved";
-                break;
-            case "commented":
-                attribute = "comments";
-                break;
-            default:
-                throw new InternalServerErrorException();
-        }
-
-        const count = mode === "add" ? 1 : mode === "remove" ? -1 : 0;
+        const { attribute, count } = this.configService.getReactionConfig(reaction, mode);
         return await this.commentModel.findByIdAndUpdate(commentId, { $inc: { [attribute]: count } }, { new: true });
     }
 }

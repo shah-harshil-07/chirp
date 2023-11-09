@@ -6,6 +6,7 @@ import { Inject, Injectable, InternalServerErrorException, UseInterceptors } fro
 import { Post, ScheduledPost } from "./post.schema";
 import { CommonService } from "../common/common.service";
 import { ResponseInterceptor } from "src/interceptors/response";
+import { ConfigService } from "src/modules/config/config.service";
 import { IDuration, ParsedPostDTO, ScheduledPostDTO } from "./post.dto";
 import { CustomUnprocessableEntityException } from "src/exception-handlers/422/handler";
 
@@ -15,6 +16,7 @@ export class PostService {
     constructor(
         @Inject("Moment") private moment: any,
         private readonly commonService: CommonService,
+        private readonly configService: ConfigService,
         private schedulerRegistery: SchedulerRegistry,
         @InjectModel(Post.name) private readonly postModel: Model<Post>,
         @InjectModel(ScheduledPost.name) private readonly scheduledPostModel: Model<ScheduledPost>,
@@ -141,24 +143,8 @@ export class PostService {
     }
 
     async changeReactionCount(postId: string, reaction: string, mode: string): Promise<Post> {
-        let attribute: string;
-        switch (reaction) {
-            case "liked":
-                attribute = "likes";
-                break;
-            case "saved":
-                attribute = "saved";
-                break;
-            case "commented":
-                attribute = "comments";
-                break;
-            default:
-                throw new InternalServerErrorException();
-        }
-
-        const count = mode === "add" ? 1 : mode === "remove" ? -1 : 0;
-        const newPost = await this.postModel.findByIdAndUpdate(postId, { $inc: { [attribute]: count } }, { new: true });
-        return newPost;
+        const { attribute, count } = this.configService.getReactionConfig(reaction, mode);
+        return await this.postModel.findByIdAndUpdate(postId, { $inc: { [attribute]: count } }, { new: true });
     }
 
     async getDetails(postId: string): Promise<Post> {
