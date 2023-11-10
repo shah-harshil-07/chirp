@@ -29,7 +29,6 @@
 .post-list-repost-body {
     width: 95%;
     margin-right: 26px;
-    background-color: #ffff;
 }
 
 .action-bar {
@@ -132,7 +131,7 @@
 }
 
 .post-card:hover {
-    background-color: rgba(15, 20, 25, 0.05);
+    background-color: rgba(15, 20, 25, 0.03);
 }
 
 .post-list-repost-body:hover {

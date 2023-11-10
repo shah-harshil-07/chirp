@@ -12,11 +12,11 @@ import ImgHolder from "./utilities/img-holder";
 import * as Constants from "src/utilities/constants";
 import { isUserLoggedIn } from "src/utilities/helpers";
 import { getCommonHeader } from "src/utilities/helpers";
+import { openToaster } from "src/redux/reducers/toaster";
 import useToaster from "src/custom-hooks/toaster-message";
 import usePostServices from "src/custom-hooks/post-services";
 import { openModalWithProps } from "src/redux/reducers/modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
-import { openToaster } from "src/redux/reducers/toaster";
 
 const Posts = () => {
 	const navigate = useNavigate();
@@ -211,22 +211,25 @@ const Posts = () => {
 		);
 	}
 
-	const openCommentBox = post => {
+	const openCommentBox = (e, post) => {
+		e.stopPropagation();
 		if (isUserLoggedIn()) dispatch(openModalWithProps({ type: "commentEditor", props: post }));
 		else showError("Please login to comment!");
 	}
 
-	const openRepostBox = post => {
+	const openRepostBox = (e, post) => {
+		e.stopPropagation();
 		if (isUserLoggedIn()) dispatch(openModalWithProps({ type: "repostEditor", props: post }));
 		else showError("Please login to repost!");
 	}
 
-	const triggerMutedReaction = async (postIndex, action) => {
+	const triggerMutedReaction = async (e, postIndex, action) => {
+		e.stopPropagation();
 		if (availableMutedActions.includes(action)) {
 			if (isUserLoggedIn()) {
 				const _posts = posts, postObj = posts[postIndex];
 				const { _id: postId, isLiked, isSaved } = postObj;
-				const data = { postId, reaction: '' }; let mode, url;
+				const data = { postId, postType: "post", reaction: '' }; let mode, url;
 
 				switch (action) {
 					case "like":
@@ -342,7 +345,7 @@ const Posts = () => {
 
 								<div className="action-bar">
 									<div
-										onClick={() => { openCommentBox(post); }}
+										onClick={e => { openCommentBox(e, post); }}
 										className="reaction-icon-container reply-container"
 									>
 										<span className="reply-icon">
@@ -353,7 +356,7 @@ const Posts = () => {
 									</div>
 
 									<div
-										onClick={() => { openRepostBox(post); }}
+										onClick={e => { openRepostBox(e, post); }}
 										className="reaction-icon-container repost-container"
 									>
 										<span className="reply-icon">
@@ -365,7 +368,7 @@ const Posts = () => {
 
 									<div
 										className="reaction-icon-container like-container"
-										onClick={() => { triggerMutedReaction(postIndex, "like"); }}
+										onClick={e => { triggerMutedReaction(e, postIndex, "like"); }}
 									>
 										<span className="reply-icon" style={isLiked ? { paddingTop: "6px" } : {}}>
 											{
@@ -395,7 +398,7 @@ const Posts = () => {
 
 									<div
 										className="reaction-icon-container saved-container"
-										onClick={() => { triggerMutedReaction(postIndex, "save"); }}
+										onClick={e => { triggerMutedReaction(e, postIndex, "save"); }}
 									>
 										<span className="reply-icon" style={isSaved ? { paddingTop: "6px" } : {}}>
 											{

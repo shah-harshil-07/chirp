@@ -1,2 +1,1 @@
 # After logging out from a user id, if I login to different userId, I don't directly see the form. I have to hard refresh in order to see. it.
-# If I click on any reaction, I get redirected to post detail page.
