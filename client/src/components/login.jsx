@@ -1,9 +1,9 @@
 import "src/styles/auth.css";
 import "src/styles/login.css";
 
-import React, { useState, useEffect } from "react";
 import CIcon from "@coreui/icons-react";
 import { useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import { cibGoogle, cilLockLocked, cilLockUnlocked } from "@coreui/icons";
 
@@ -133,6 +133,7 @@ const Login = () => {
             }
 
             dispatch(openToaster({ messageObj: { type, message } }));
+            window.location.reload();
         } catch (error) {
             console.log(error);
             showError("Something went wrong!");
@@ -168,6 +169,7 @@ const Login = () => {
 
                 dispatch(openToaster({ messageObj: { type, message } }));
                 closeLoginDialog();
+                window.location.reload();
             } else {
                 const errorMessage = responseData?.error?.message ?? "Something went wrong!";
                 showError(errorMessage);
