@@ -388,7 +388,7 @@ const Posts = () => {
 										</span>
 									</div>
 
-									<div className="reaction-icon-container views-container">
+									<div className="reaction-icon-container views-container" onClick={e => { e.stopPropagation(); }}>
 										<span className="reply-icon">
 											<CIcon title="Views" icon={cilChart} className="chirp-action" />
 										</span>
