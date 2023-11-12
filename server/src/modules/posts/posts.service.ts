@@ -151,20 +151,23 @@ export class PostService {
         const postData = await this
             .postModel
             .findById(postId)
-            .populate("user", "_id name username")
+            .populate("user", "_id name username picture")
             .populate({
                 path: "postId",
-                select: "_id text user poll",
+                select: "_id text user poll createdAt",
                 populate: {
                     path: "user",
-                    select: "_id name username",
+                    select: "_id name username picture",
                 },
             })
             .lean()
-            .exec();
+            .exec();        
 
-        postData["post"] = postData["postId"];
-        delete postData["postId"];
+        if (postData) {
+            postData["parentPost"] = postData?.postId ?? null;
+            if (postData?.postId) delete postData.postId;
+        }
+
         return postData;
     }
 }

@@ -1,0 +1,1 @@
+# If I scroll down and then vote for a poll, the response alert message appears on the top of the page, but I have to scroll up to see the message.

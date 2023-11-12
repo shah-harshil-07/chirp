@@ -57,9 +57,7 @@ const Posts = () => {
 		}
 	}
 
-	const getBasePromise = image => {
-		return API(Constants.GET, `${Constants.GET_POST_IMAGE}/${image}`, null, headerData);
-	}
+	const getBasePromise = image => API(Constants.GET, `${Constants.GET_POST_IMAGE}/${image}`, null, headerData);
 
 	const getPromise = (imageName, postIndex, imageIndex, _postImages, parentImageIndex) => {
 		return new Promise((res, rej) => {

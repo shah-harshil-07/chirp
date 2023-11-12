@@ -48,3 +48,4 @@ export const REMOVE_SAVES_LIKES = "saves-likes/remove";
 export const GET_POST_LIKES_AND_SAVES = "saves-likes/check";
 
 export const CREATE_COMMENT = "comments/store";
+export const COMMENT_LIST = "comments/all";

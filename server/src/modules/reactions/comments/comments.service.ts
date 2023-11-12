@@ -34,6 +34,20 @@ export class CommentsService {
             { $match: { $expr: { $eq: ["$postId", { $toObjectId: postId }] } } },
             { $lookup: { from: "Users", localField: "userId", foreignField: "_id", as: "user" } },
             { $unwind: "$user" },
+            {
+                $project: {
+                    "text": 1,
+                    "createdAt": 1,
+                    "postId": 1,
+                    "images": 1,
+                    "comments": 1,
+                    "likes": 1,
+                    "saved": 1,
+                    "user.name": 1,
+                    "user.username": 1,
+                    "user.picture": 1,
+                }
+            }
         ]);
 
         return { post: postData, comments: commentList };
