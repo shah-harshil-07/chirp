@@ -1,14 +1,14 @@
 import { AuthGuard } from "@nestjs/passport";
 import { FilesInterceptor } from "@nestjs/platform-express";
-import { CommentDTO, validationParamList } from "./comments.dto";
 import { Body, Controller, Get, Param, Post, Req, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
 
 import { CommentsService } from "./comments.service";
 import { IResponseProps } from "src/interceptors/interfaces";
 import { ResponseInterceptor } from "src/interceptors/response";
+import { CommentDTO, validationParamList } from "./comments.dto";
 import { CustomBadRequestException } from "src/exception-handlers/400/handler";
-import { fileStorageConfigObj, parseFilePipeObj } from "../../posts/file.config";
-import { CustomValidatorsService } from "../../custom-validators/custom-validators.service";
+import { fileStorageConfigObj, parseFilePipeObj } from "src/modules/posts/file.config";
+import { CustomValidatorsService } from "src/modules/custom-validators/custom-validators.service";
 
 @Controller("comments")
 export class CommentsController {
