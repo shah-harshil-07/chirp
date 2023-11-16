@@ -3,11 +3,12 @@ import React, { useEffect, useState } from "react";
 
 import API from "src/api";
 import CIcon from "@coreui/icons-react";
+import { cilBookmark, cilChart, cilThumbUp } from "@coreui/icons";
+
 import * as Constants from "src/utilities/constants";
 import useToaster from "src/custom-hooks/toaster-message";
 import ImgHolder from "src/components/utilities/img-holder";
 import usePostServices from "src/custom-hooks/post-services";
-import { cilBookmark, cilChart, cilThumbUp } from "@coreui/icons";
 import { getCommonHeader, isUserLoggedIn } from "src/utilities/helpers";
 
 const CommentList = ({ commentList }) => {
@@ -24,7 +25,10 @@ const CommentList = ({ commentList }) => {
             setComments([...commentList]);
             const imageNames = commentList.map(comment => comment.images);
             getCommentImages(imageNames, commentList);
+            if (isUserLoggedIn()) getCommentLikesAndSaves(commentList);
         }
+
+        // eslint-disable-next-line
     }, [commentList]);
 
     const getPromise = (imageName, commentIndex, imageIndex, _comments) => {
@@ -60,12 +64,29 @@ const CommentList = ({ commentList }) => {
         Promise.allSettled(promises);
     }
 
+    const getCommentLikesAndSaves = async comments => {
+        const payload = { postIds: comments.map(comment => comment.id) };
+		const { data: reactionData } = await API(Constants.POST, Constants.GET_POST_LIKES_AND_SAVES, payload, headerData);
+
+		const _comments = [...comments], reactedPosts = reactionData?.data ?? [];
+
+		_comments.forEach(commentObj => {
+			const { id } = commentObj;
+			const reactedPostObj = reactedPosts.find(post => post.postId === id) ?? null;
+			commentObj["isLiked"] = reactedPostObj?.liked ?? false;
+			commentObj["isSaved"] = reactedPostObj?.saved ?? false;
+		});
+
+		setComments([..._comments]);
+	}
+
     const triggerMutedReaction = async (e, commentIndex, action) => {
         e.stopPropagation();
         if (isUserLoggedIn()) {
+            console.log(comments, commentIndex);
             const _comments = comments, commentObj = comments[commentIndex];
-			const { _id: postId, isLiked, isSaved } = commentObj;
-            const data = { postId, postType: "post", reaction: '' }; let mode, url;
+			const { id: postId, isLiked, isSaved } = commentObj;
+            const data = { postId, postType: "comment", reaction: '' }; let mode, url;
 
             switch (action) {
                 case "like":
@@ -126,7 +147,7 @@ const CommentList = ({ commentList }) => {
                                 <div className="action-bar">
                                     <div
                                         className="reaction-icon-container like-container"
-                                        onClick={e => { triggerMutedReaction(e, "like"); }}
+                                        onClick={e => { triggerMutedReaction(e, commentIndex, "like"); }}
                                     >
                                         <span className="reply-icon" style={commentObj?.isLiked ? { paddingTop: "6px" } : {}}>
                                             {
@@ -148,7 +169,7 @@ const CommentList = ({ commentList }) => {
 
                                     <div
                                         className="reaction-icon-container saved-container"
-                                        onClick={e => { triggerMutedReaction(e, "save"); }}
+                                        onClick={e => { triggerMutedReaction(e, commentIndex, "save"); }}
                                     >
                                         <span className="reply-icon" style={false ? { paddingTop: "6px" } : {}}>
                                             {
