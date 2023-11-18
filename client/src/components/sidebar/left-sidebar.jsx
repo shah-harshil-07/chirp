@@ -6,11 +6,13 @@ import React, { useEffect, useRef, useState } from "react";
 import useDocumentClickServices from "src/custom-hooks/document-services";
 import { cilHome, cilSettings, cilBookmark, cilUser, cilOptions } from "@coreui/icons";
 
+import { useNavigate } from "react-router-dom";
 import Confirmation from "../utilities/confirmation";
 import { placeHolderImageSrc } from "src/utilities/constants";
 import { getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const LeftSidebar = () => {
+    const navigate = useNavigate();
     const logo = require("src/assets/logo-1.png");
     const { addDocumentClickCallback } = useDocumentClickServices();
 
@@ -43,6 +45,10 @@ const LeftSidebar = () => {
         window.location.reload();
     }
 
+    const moveToDashboard = () => {
+        navigate('/');
+    }
+
     return (
         <div className="sidebar" id="left-sidebar-main">
             <div id="left-sidebar-super-container">
@@ -51,7 +57,7 @@ const LeftSidebar = () => {
                         <img alt="logo" width="40px" height="40px" src={String(logo)} />
                     </div>
 
-                    <div className="row left-sidebar-link">
+                    <div className="row left-sidebar-link" onClick={moveToDashboard}>
                         <div className="col-sm-3 px-4 align-self-center">
                             <CIcon width={30} height={30} icon={cilHome} />
                         </div>

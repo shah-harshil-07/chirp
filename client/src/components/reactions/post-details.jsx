@@ -9,6 +9,7 @@ import { cilBookmark, cilChart, cilCommentBubble, cilSend, cilThumbUp } from "@c
 
 import API from "src/api";
 import ReplyBox from "./reply-box";
+import CommentList from "./comment-list";
 import * as Constants from "src/utilities/constants";
 import { openToaster } from "src/redux/reducers/toaster";
 import useToaster from "src/custom-hooks/toaster-message";
@@ -16,7 +17,6 @@ import ImgHolder from "src/components/utilities/img-holder";
 import usePostServices from "src/custom-hooks/post-services";
 import { openModalWithProps } from "src/redux/reducers/modal";
 import { getCommonHeader, isUserLoggedIn } from "src/utilities/helpers";
-import CommentList from "./comment-list";
 
 const PostDetails = () => {
     const headerData = getCommonHeader();
@@ -92,6 +92,7 @@ const PostDetails = () => {
                     images: commentObj?.images ?? [],
                     likes: commentObj?.likes ?? 0,
                     saved: commentObj?.saved ?? 0,
+                    views: commentObj?.views ?? 0,
                     text: commentObj?.text ?? '',
                     id: commentObj?._id ?? commentIndex,
                     user: {
@@ -418,7 +419,7 @@ const PostDetails = () => {
                 </div>
             </Card>
 
-            <ReplyBox username={postDetails?.user?.username} />
+            <ReplyBox postId={postId} username={postDetails?.user?.username} />
 
             <CommentList commentList={commentList} />
         </div>

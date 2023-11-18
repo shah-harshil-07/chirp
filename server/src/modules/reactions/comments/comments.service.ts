@@ -30,6 +30,8 @@ export class CommentsService {
     async list(postId: string): Promise<ICommentList> {
         const postData = await this.postService.getDetails(postId);
 
+        await this.commentModel.updateMany({}, { $inc: { views: 1 } });
+
         const commentList = await this.commentModel.aggregate([
             { $match: { $expr: { $eq: ["$postId", { $toObjectId: postId }] } } },
             { $lookup: { from: "Users", localField: "userId", foreignField: "_id", as: "user" } },
@@ -43,6 +45,7 @@ export class CommentsService {
                     "comments": 1,
                     "likes": 1,
                     "saved": 1,
+                    "views": 1,
                     "user.name": 1,
                     "user.username": 1,
                     "user.picture": 1,

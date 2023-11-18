@@ -1,16 +1,22 @@
 import React, { useRef, useState } from "react";
 
-import * as Constants from "src/utilities/constants";
-import ImgHolder from "../utilities/img-holder";
 import CIcon from "@coreui/icons-react";
 import { cilImage, cilSmile } from "@coreui/icons";
-import useImageConverter from "src/custom-hooks/image-converter";
+
+import API from "src/api";
+import ImgHolder from "../utilities/img-holder";
+import * as Constants from "src/utilities/constants";
+import { getCommonHeader } from "src/utilities/helpers";
+import useToaster from "src/custom-hooks/toaster-message";
 import EmojiContainer from "../utilities/emoji-container";
+import useImageConverter from "src/custom-hooks/image-converter";
 
-const ReplyBox = ({ username }) => {
-    const fileUploadRef = useRef(null);
+const ReplyBox = ({ username, postId }) => {
+    const { showError, showSuccess } = useToaster();
     const { uploadImagesAction } = useImageConverter();
+    const fileUploadRef = useRef(null), headerData = getCommonHeader();
 
+    const [text, setText] = useState('');
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [uploadedFileObjects, setUploadedFileObjects] = useState([]);
@@ -46,11 +52,31 @@ const ReplyBox = ({ username }) => {
     }
 
     const handleEmojiSelect = e => {
-        console.log(e);
+        setText(`${text}${e.emoji}`);
     }
 
-    const postComment = () => {
+    const postComment = async () => {
+        if (text) {
+            const data = { text, postId };
+            const formData = new FormData();
+            formData.append("data", JSON.stringify(data));
 
+            uploadedFileObjects.forEach(fileObj => { formData.append("images[]", fileObj); });
+
+            try {
+                const response = await API(Constants.POST, Constants.CREATE_COMMENT, formData, headerData);
+                const responseData = response.data;
+
+                const alert = responseData?.meta?.status ? showSuccess : showError;
+                const message = responseData?.meta?.message ?? '';
+                if (message) alert(message);
+
+                window.location.reload();
+            } catch (error) {
+                console.log(error);
+                showError("Something went wrong!");
+            }
+        }
     }
 
     return (
@@ -73,9 +99,11 @@ const ReplyBox = ({ username }) => {
                 />
 
                 <textarea
+                    value={text}
                     className="special-input"
-                    style={{ marginLeft: "70px" }}
                     placeholder="Post your reply"
+                    style={{ marginLeft: "70px" }}
+                    onChange={e => { setText(e.target.value); }}
                 />
             </div>
 
@@ -118,7 +146,9 @@ const ReplyBox = ({ username }) => {
                         )
                     }
 
-                    <div onClick={postComment} className="chirp-button">Reply</div>
+                    <div onClick={postComment} style={{ opacity: text ? '1' : "0.4" }} className="chirp-button">
+                        Reply
+                    </div>
                 </div>
             </div>
         </>
