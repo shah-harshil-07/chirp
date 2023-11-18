@@ -15,18 +15,17 @@ import { getCommonHeader } from "src/utilities/helpers";
 import { openToaster } from "src/redux/reducers/toaster";
 import useToaster from "src/custom-hooks/toaster-message";
 import usePostServices from "src/custom-hooks/post-services";
-import { openModalWithProps } from "src/redux/reducers/modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
 
 const Posts = () => {
 	const navigate = useNavigate();
-	const availableMutedActions = ["like", "save"];
+	const headerData = getCommonHeader();
 	const likeIcon = require("src/assets/like.png");
 	const savedIcon = require("src/assets/saved-filled.png");
 	const { showError } = useToaster(), dispatch = useDispatch();
 	const userDetails = localStorage.getItem("chirp-userDetails");
-	const { getPostTiming } = usePostServices(), headerData = getCommonHeader();
 	const loggedInUserId = userDetails ? JSON.parse(userDetails)?._id ?? '' : '';
+	const { getPostTiming, createPollJSX, handleMutedReaction, openCommentBox, openRepostBox } = usePostServices();
 
 	const [posts, setPosts] = useState([]);
 	const [postImages, setPostImages] = useState([]);
@@ -164,98 +163,28 @@ const Posts = () => {
 		}
 	}
 
-	const getGradient = (votePercent, isVoted = false) => {
-		const bgColor = isVoted ? "#1DA1F2" : "#e9ecef";
-		return `linear-gradient(to right, ${bgColor} ${votePercent}%, white ${votePercent}% 100%)`;
-	}
-
 	const getPollJSX = (pollData, postIndex) => {
-		const { choices, users } = pollData;
-		let votedIndex = -1, userIndex = -1;
-		const totalVotes = choices.reduce((votesAcc, { votes }) => votesAcc += votes, 0);
-
-		if (loggedInUserId) {
-			userIndex = users.findIndex(user => user.userId === loggedInUserId);
-			if (userIndex >= 0) votedIndex = users[userIndex]?.choiceIndex ?? -1;
-		}
-
-		return (
-			<div className="mt-3 mb-3">
-				{
-					choices.map((choiceObj, choiceIndex) => {
-						const { label, votes } = choiceObj;
-						const votePercent = Math.ceil(votes / totalVotes * 100);
-						const isVoted = (choiceIndex === votedIndex && users[userIndex].userId === loggedInUserId);
-
-						return (
-							<div
-								key={choiceIndex}
-								className="post-poll-bar"
-								style={{ background: getGradient(votePercent, isVoted) }}
-								onClick={e => { if (!isVoted) vote(e, postIndex, choiceIndex); }}
-							>
-								{label ?? ''}
-
-								{
-									votedIndex >= 0 && (
-										<div className="post-vote-percent-label">{`${votePercent.toFixed(0)}%`}</div>
-									)
-								}
-							</div>
-						);
-					})
-				}
-			</div>
-		);
-	}
-
-	const openCommentBox = (e, post) => {
-		e.stopPropagation();
-		if (isUserLoggedIn()) dispatch(openModalWithProps({ type: "commentEditor", props: post }));
-		else showError("Please login to comment!");
-	}
-
-	const openRepostBox = (e, post) => {
-		e.stopPropagation();
-		if (isUserLoggedIn()) dispatch(openModalWithProps({ type: "repostEditor", props: post }));
-		else showError("Please login to repost!");
+		return createPollJSX(pollData, (e, choiceIndex) => { vote(e, postIndex, choiceIndex); });
 	}
 
 	const triggerMutedReaction = async (e, postIndex, action) => {
 		e.stopPropagation();
-		if (availableMutedActions.includes(action)) {
-			if (isUserLoggedIn()) {
-				const _posts = posts, postObj = posts[postIndex];
-				const { _id: postId, isLiked, isSaved } = postObj;
-				const data = { postId, postType: "post", reaction: '' }; let mode, url;
+		const _posts = posts, postObj = posts[postIndex];
 
-				switch (action) {
-					case "like":
-						data["reaction"] = "liked";
-						mode = isLiked ? "remove" : "add";
-						postObj["isLiked"] = mode === "add";
-						postObj["likes"] += mode === "add" ? 1 : -1;
-						url = isLiked ? Constants.REMOVE_SAVES_LIKES : Constants.ADD_SAVES_LIKES;
-						break;
-					case "save":
-						data["reaction"] = "saved";
-						mode = isSaved ? "remove" : "add";
-						postObj["isSaved"] = mode === "add";
-						postObj["saved"] += mode === "add" ? 1 : -1;
-						url = isSaved ? Constants.REMOVE_SAVES_LIKES : Constants.ADD_SAVES_LIKES;
-						break;
-					default:
-						break;
-				}
-
-				if (data?.reaction && mode && url) {
-					API(Constants.POST, url, data, headerData);
-					setPosts([..._posts]);
-				}
-			} else {
-				showError(`Please login to ${action}!`);
-			}
+		const handleLikeAction = mode => {
+			postObj["isLiked"] = mode === "add";
+			postObj["likes"] += mode === "add" ? 1 : -1;
+			setPosts([..._posts]);
 		}
+
+		const handleSaveAction = mode => {
+			postObj["isSaved"] = mode === "add";
+			postObj["saved"] += mode === "add" ? 1 : -1;
+			setPosts([..._posts]);
+		}
+
+		const postData = { ...postObj, postId: postObj._id };
+		handleMutedReaction(action, postData, handleLikeAction, handleSaveAction);
 	}
 
 	const moveToCommentList = postId => {

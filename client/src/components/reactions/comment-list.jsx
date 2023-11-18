@@ -6,17 +6,15 @@ import CIcon from "@coreui/icons-react";
 import { cilBookmark, cilChart, cilThumbUp } from "@coreui/icons";
 
 import * as Constants from "src/utilities/constants";
-import useToaster from "src/custom-hooks/toaster-message";
 import ImgHolder from "src/components/utilities/img-holder";
 import usePostServices from "src/custom-hooks/post-services";
 import { getCommonHeader, isUserLoggedIn } from "src/utilities/helpers";
 
 const CommentList = ({ commentList }) => {
-    const { showError } = useToaster();
     const headerData = getCommonHeader();
-    const { getPostTiming } = usePostServices();
     const likeIcon = require("src/assets/like.png");
     const savedIcon = require("src/assets/saved-filled.png");
+    const { getPostTiming, handleMutedReaction } = usePostServices();
 
     const [comments, setComments] = useState([]);
 
@@ -82,38 +80,22 @@ const CommentList = ({ commentList }) => {
 
     const triggerMutedReaction = async (e, commentIndex, action) => {
         e.stopPropagation();
-        if (isUserLoggedIn()) {
-            console.log(comments, commentIndex);
-            const _comments = comments, commentObj = comments[commentIndex];
-			const { id: postId, isLiked, isSaved } = commentObj;
-            const data = { postId, postType: "comment", reaction: '' }; let mode, url;
+        const _comments = comments, commentObj = comments[commentIndex];
 
-            switch (action) {
-                case "like":
-                    data["reaction"] = "liked";
-                    mode = isLiked ? "remove" : "add";
-                    commentObj["isLiked"] = mode === "add";
-                    commentObj["likes"] += mode === "add" ? 1 : -1;
-                    url = isLiked ? Constants.REMOVE_SAVES_LIKES : Constants.ADD_SAVES_LIKES;
-                    break;
-                case "save":
-                    data["reaction"] = "saved";
-                    mode = isSaved ? "remove" : "add";
-                    commentObj["isSaved"] = mode === "add";
-                    commentObj["saved"] += mode === "add" ? 1 : -1;
-                    url = isSaved ? Constants.REMOVE_SAVES_LIKES : Constants.ADD_SAVES_LIKES;
-                    break;
-                default:
-                    break;
-            }
+		const handleLikeAction = mode => {
+			commentObj["isLiked"] = mode === "add";
+			commentObj["likes"] += mode === "add" ? 1 : -1;
+			setComments([..._comments]);
+		}
 
-            if (data?.reaction && mode && url) {
-                API(Constants.POST, url, data, headerData);
-                setComments([..._comments]);
-            }
-        } else {
-            showError(`Please login to ${action}!`);
-        }
+		const handleSaveAction = mode => {
+			commentObj["isSaved"] = mode === "add";
+			commentObj["saved"] += mode === "add" ? 1 : -1;
+			setComments([..._comments]);
+		}
+
+		const commentData = { ...commentObj, postId: commentObj.id, postType: "comment" };
+		handleMutedReaction(action, commentData, handleLikeAction, handleSaveAction);
     }
 
     return (

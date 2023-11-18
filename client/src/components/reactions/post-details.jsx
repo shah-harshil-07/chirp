@@ -1,4 +1,5 @@
 import "src/styles/post.css";
+import "src/styles/reactions/post-details.css";
 
 import CIcon from "@coreui/icons-react";
 import { Card } from "@material-ui/core";
@@ -13,20 +14,19 @@ import CommentList from "./comment-list";
 import * as Constants from "src/utilities/constants";
 import { openToaster } from "src/redux/reducers/toaster";
 import useToaster from "src/custom-hooks/toaster-message";
+import { getCommonHeader,  } from "src/utilities/helpers";
 import ImgHolder from "src/components/utilities/img-holder";
 import usePostServices from "src/custom-hooks/post-services";
-import { openModalWithProps } from "src/redux/reducers/modal";
-import { getCommonHeader, isUserLoggedIn } from "src/utilities/helpers";
 
 const PostDetails = () => {
+    const { postId } = useParams();
     const headerData = getCommonHeader();
-    const availableMutedActions = ["like", "save"];
     const likeIcon = require("src/assets/like.png");
     const savedIcon = require("src/assets/saved-filled.png");
     const dispatch = useDispatch(), { showError } = useToaster();
     const userDetails = localStorage.getItem("chirp-userDetails");
-    const { postId } = useParams(), { getPostTiming } = usePostServices();
     const loggedInUserId = userDetails ? JSON.parse(userDetails)?._id ?? '' : '';
+    const { getPostTiming, createPollJSX, handleMutedReaction, openCommentBox, openRepostBox } = usePostServices();
 
     const [commentList, setCommentList] = useState([]);
     const [postDetails, setPostDetails] = useState(null);
@@ -169,61 +169,8 @@ const PostDetails = () => {
         }
     }
 
-    const getGradient = (votePercent, isVoted = false) => {
-        const bgColor = isVoted ? "#1DA1F2" : "#e9ecef";
-        return `linear-gradient(to right, ${bgColor} ${votePercent}%, white ${votePercent}% 100%)`;
-    }
-
     const getPollJSX = (pollData, postId) => {
-        const { choices, users } = pollData;
-        let votedIndex = -1, userIndex = -1;
-        const totalVotes = choices.reduce((votesAcc, { votes }) => votesAcc += votes, 0);
-
-        if (loggedInUserId) {
-            userIndex = users.findIndex(user => user.userId === loggedInUserId);
-            if (userIndex >= 0) votedIndex = users[userIndex]?.choiceIndex ?? -1;
-        }
-
-        return (
-            <div className="mt-3 mb-3">
-                {
-                    choices.map((choiceObj, choiceIndex) => {
-                        const { label, votes } = choiceObj;
-                        const votePercent = Math.ceil(votes / totalVotes * 100);
-                        const isVoted = (choiceIndex === votedIndex && users[userIndex].userId === loggedInUserId);
-
-                        return (
-                            <div
-                                key={choiceIndex}
-                                className="post-poll-bar"
-                                style={{ background: getGradient(votePercent, isVoted) }}
-                                onClick={e => { if (!isVoted) vote(e, postId, choiceIndex, pollData); }}
-                            >
-                                {label ?? ''}
-
-                                {
-                                    votedIndex >= 0 && (
-                                        <div className="post-vote-percent-label">{`${votePercent.toFixed(0)}%`}</div>
-                                    )
-                                }
-                            </div>
-                        );
-                    })
-                }
-            </div>
-        );
-    }
-
-    const openCommentBox = e => {
-        e.stopPropagation();
-        if (isUserLoggedIn()) dispatch(openModalWithProps({ type: "commentEditor", props: postDetails }));
-        else showError("Please login to comment!");
-    }
-
-    const openRepostBox = e => {
-        e.stopPropagation();
-        if (isUserLoggedIn()) dispatch(openModalWithProps({ type: "repostEditor", props: postDetails }));
-        else showError("Please login to repost!");
+        return createPollJSX(pollData, (e, choiceIndex) => { vote(e, postId, choiceIndex, pollData); });
     }
 
     const getPostLikesAndSaves = async post => {
@@ -241,43 +188,27 @@ const PostDetails = () => {
 
     const triggerMutedReaction = async (e, action) => {
         e.stopPropagation();
-        if (availableMutedActions.includes(action)) {
-            if (isUserLoggedIn()) {
-                const postObj = { ...postDetails };
-                const { id: postId } = postObj;
-                let _isPostLiked = isPostLiked, _isPostSaved = isPostSaved;
-                const data = { postId, postType: "post", reaction: '' }; let mode, url;
 
-                switch (action) {
-                    case "like":
-                        data["reaction"] = "liked";
-                        mode = isPostLiked ? "remove" : "add";
-                        _isPostLiked = mode === "add";
-                        postObj["likes"] += mode === "add" ? 1 : -1;
-                        url = isPostLiked ? Constants.REMOVE_SAVES_LIKES : Constants.ADD_SAVES_LIKES;
-                        break;
-                    case "save":
-                        data["reaction"] = "saved";
-                        mode = isPostSaved ? "remove" : "add";
-                        _isPostSaved = mode === "add";
-                        postObj["saved"] += mode === "add" ? 1 : -1;
-                        url = isPostSaved ? Constants.REMOVE_SAVES_LIKES : Constants.ADD_SAVES_LIKES;
-                        break;
-                    default:
-                        break;
-                }
+        const postData = { postId: postDetails.id, isLiked: isPostLiked, isSaved: isPostSaved };
+        let _isPostLiked = isPostLiked, _isPostSaved = isPostSaved, postObj = { ...postDetails };
 
-                setIsPostLiked(_isPostLiked);
-                setIsPostSaved(_isPostSaved);
+        const handleLikeAction = mode => {
+            _isPostLiked = mode === "add";
+            postObj["likes"] += mode === "add" ? 1 : -1;
 
-                if (data?.reaction && mode && url) {
-                    API(Constants.POST, url, data, headerData);
-                    setPostDetails({ ...postObj });
-                }
-            } else {
-                showError(`Please login to ${action}!`);
-            }
+            setIsPostLiked(_isPostLiked);
+            setPostDetails({ ...postObj });
         }
+
+        const handleSaveAction = mode => {
+            _isPostSaved = mode === "add";
+            postObj["saved"] += mode === "add" ? 1 : -1;
+
+            setIsPostSaved(_isPostSaved);
+            setPostDetails({ ...postObj });
+        }
+
+        handleMutedReaction(action, postData, handleLikeAction, handleSaveAction);
     }
 
     return (
@@ -285,8 +216,7 @@ const PostDetails = () => {
             <Card className="post-card">
                 <img
                     alt="user"
-                    className="post-user-image"
-                    style={{ width: "50px", height: "50px" }}
+                    className="post-detail-user-image"
                     src={postDetails?.picture ?? Constants.placeHolderImageSrc}
                 />
 
@@ -348,7 +278,7 @@ const PostDetails = () => {
                     }
 
                     <div className="action-bar">
-                        <div onClick={openCommentBox} className="reaction-icon-container reply-container">
+                        <div onClick={e => { openCommentBox(e, postDetails); }} className="reaction-icon-container reply-container">
                             <span className="reply-icon">
                                 <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
                             </span>
@@ -356,7 +286,7 @@ const PostDetails = () => {
                             <span className="post-reaction-data">{postDetails?.comments ?? 0}</span>
                         </div>
 
-                        <div onClick={openRepostBox} className="reaction-icon-container repost-container">
+                        <div onClick={e => { openRepostBox(e, postDetails); }} className="reaction-icon-container repost-container">
                             <span className="reply-icon">
                                 <CIcon icon={cilSend} title="Repost" className="chirp-action" />
                             </span>
