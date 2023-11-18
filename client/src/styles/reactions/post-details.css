@@ -32,6 +32,12 @@
     color: var(--unreacted-color);
 }
 
+.post-detail-card {
+    cursor: pointer;
+    border-radius: 0;
+    position: relative;
+}
+
 #reply-box-username {
     margin-top: 10px;
     margin-left: 45px;

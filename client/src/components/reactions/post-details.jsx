@@ -213,11 +213,11 @@ const PostDetails = () => {
 
     return (
         <div>
-            <Card className="post-card">
+            <Card className="post-detail-card">
                 <img
                     alt="user"
                     className="post-detail-user-image"
-                    src={postDetails?.picture ?? Constants.placeHolderImageSrc}
+                    src={postDetails?.user?.picture ?? Constants.placeHolderImageSrc}
                 />
 
                 <div className="post-detail-body">
