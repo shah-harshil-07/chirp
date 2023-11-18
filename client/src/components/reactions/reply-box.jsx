@@ -83,7 +83,7 @@ const ReplyBox = ({ username, postId }) => {
         <>
             {
                 username && (
-                    <div style={{ marginLeft: "45px", marginTop: "10px" }}>
+                    <div id="reply-box-username">
                         Replying to
                         <span className="text-chirp-color">{` @${username}`}</span>
                     </div>
@@ -93,9 +93,8 @@ const ReplyBox = ({ username, postId }) => {
             <div className="d-flex">
                 <img
                     alt="user"
-                    className="post-user-image"
+                    className="post-detail-user-image"
                     src={Constants.placeHolderImageSrc}
-                    style={{ width: "50px", height: "50px" }}
                 />
 
                 <textarea

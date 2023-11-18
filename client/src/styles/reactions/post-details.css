@@ -6,3 +6,33 @@
     position: absolute;
     border-radius: 50%;
 }
+
+.post-detail-body {
+    margin-left: 70px;
+    margin-top: 20px;
+}
+
+.post-detail-parent-user-img {
+    width: 45px;
+    height: 45px;
+    margin-top: 5px;
+    margin-left: 5px;
+    position: absolute;
+    border-radius: 50%;
+}
+
+.post-detail-repost-body-content {
+    margin-left: 60px;
+    margin-top: 10px;
+}
+
+.post-detail-reaction-data {
+    padding-top: 13%;
+    margin-left: 10px;
+    color: var(--unreacted-color);
+}
+
+#reply-box-username {
+    margin-top: 10px;
+    margin-left: 45px;
+}

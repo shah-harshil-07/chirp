@@ -220,15 +220,15 @@ const PostDetails = () => {
                     src={postDetails?.picture ?? Constants.placeHolderImageSrc}
                 />
 
-                <div className="post-card-body" style={{ marginLeft: "70px", marginTop: "20px" }}>
-                    <div className="row mx-0" style={{ fontSize: "18px" }}>
+                <div className="post-detail-body">
+                    <div className="row mx-0 font-size-18">
                         <b>{postDetails?.user?.name ?? ''}</b>&nbsp;
                         <span>{`@${postDetails?.user?.username ?? ''}`}</span>
                         <span><div className="seperator-container"><div className="seperator" /></div></span>
                         <span>{getPostTiming(postDetails?.createdAt ?? null)}</span>
                     </div>
 
-                    <div className="row mx-0" style={{ fontSize: "20px" }}><div>{postDetails?.text ?? ''}</div></div>
+                    <div className="row mx-0 font-size-20"><div>{postDetails?.text ?? ''}</div></div>
 
                     {postDetails?.poll?.choices && getPollJSX(postDetails.poll, postDetails.id)}
                     {
@@ -245,13 +245,12 @@ const PostDetails = () => {
                             >
                                 <img
                                     alt="post creator"
-                                    className="parent-post-user-img"
-                                    style={{ width: "45px", height: "45px" }}
+                                    className="post-detail-parent-user-img"
                                     src={postDetails?.parentPostDetails?.user?.picture ?? Constants.placeHolderImageSrc}
                                 />
 
-                                <div className="repost-body-content" style={{ marginLeft: "60px" }}>
-                                    <div className="row mx-0" style={{ fontSize: "18px" }}>
+                                <div className="post-detail-repost-body-content">
+                                    <div className="row mx-0 font-size-19">
                                         <b>{postDetails?.parentPostDetails?.user?.name ?? ''}</b>&nbsp;
 
                                         <span>{`@${postDetails?.parentPostDetails?.user?.username ?? ''}`}</span>
@@ -263,7 +262,7 @@ const PostDetails = () => {
                                         <span>{getPostTiming(postDetails?.parentPostDetails?.createdAt)}</span>
                                     </div>
 
-                                    <div style={{ fontSize: "20px" }} className="row mx-0 mt-1 font-size-16">
+                                    <div className="row mx-0 mt-1 font-size-20">
                                         <div>{postDetails?.parentPostDetails?.text?.slice(0, 40) ?? ''}</div>
                                     </div>
 
@@ -321,7 +320,7 @@ const PostDetails = () => {
                                 <CIcon title="Views" icon={cilChart} className="chirp-action" />
                             </span>
 
-                            <span style={{ paddingTop: "13%" }} className="post-reaction-data">{postDetails?.views ?? 0}</span>
+                            <span className="post-detail-reaction-data">{postDetails?.views ?? 0}</span>
                         </div>
 
                         <div

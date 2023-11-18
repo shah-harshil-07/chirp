@@ -109,20 +109,19 @@ const CommentList = ({ commentList }) => {
                         <Card className="mt-3" key={commentIndex}>
                             <img
                                 alt="user"
-                                className="post-user-image"
-                                style={{ width: "50px", height: "50px" }}
+                                className="post-detail-user-image"
                                 src={picture ?? Constants.placeHolderImageSrc}
                             />
 
-                            <div className="post-card-body" style={{ marginLeft: "70px", marginTop: "20px" }}>
-                                <div className="row mx-0" style={{ fontSize: "18px" }}>
+                            <div className="post-detail-body">
+                                <div className="row mx-0 font-size-18">
                                     <b>{name ?? ''}</b>&nbsp;
                                     {username && <span>{`@${username}`}</span>}
                                     <span><div className="seperator-container"><div className="seperator" /></div></span>
                                     <span>{getPostTiming(createdAt)}</span>
                                 </div>
 
-                                <div className="row mx-0" style={{ fontSize: "20px" }}><div>{text ?? ''}</div></div>
+                                <div className="row mx-0 font-size-20"><div>{text ?? ''}</div></div>
 
                                 {images?.length > 0 && <ImgHolder images={images} showActionButtons={false} />}
 
