@@ -25,7 +25,14 @@ const Posts = () => {
 	const { showError } = useToaster(), dispatch = useDispatch();
 	const userDetails = localStorage.getItem("chirp-userDetails");
 	const loggedInUserId = userDetails ? JSON.parse(userDetails)?._id ?? '' : '';
-	const { getPostTiming, createPollJSX, handleMutedReaction, openCommentBox, openRepostBox } = usePostServices();
+	const {
+		getPostTiming,
+		createPollJSX,
+		openRepostBox,
+		openCommentBox,
+		handleMutedReaction,
+		getImageFetchingPromise,
+	} = usePostServices();
 
 	const [posts, setPosts] = useState([]);
 	const [postImages, setPostImages] = useState([]);
@@ -56,35 +63,19 @@ const Posts = () => {
 		}
 	}
 
-	const getBasePromise = image => API(Constants.GET, `${Constants.GET_POST_IMAGE}/${image}`, null, headerData);
-
 	const getPromise = (imageName, postIndex, imageIndex, _postImages, parentImageIndex) => {
-		return new Promise((res, rej) => {
-			getBasePromise(imageName)
-				.then(imageResponse => {
-					if (imageResponse?.data) {
-						const base64ImgData = imageResponse.data;
-						const base64Prefix = "data:image/*;charset=utf-8;base64,";
-						const imageData = base64Prefix + base64ImgData;
+		const successCallback = imageData => {
+			if (parentImageIndex >= 0) {
+				if (!_postImages[postIndex][imageIndex]) _postImages[postIndex][imageIndex] = [];
+				_postImages[postIndex][imageIndex][parentImageIndex] = imageData;
+			} else {
+				_postImages[postIndex][imageIndex] = imageData;
+			}
 
-						if (parentImageIndex >= 0) {
-							if (!_postImages[postIndex][imageIndex]) _postImages[postIndex][imageIndex] = [];
-							_postImages[postIndex][imageIndex][parentImageIndex] = imageData;
-						} else {
-							_postImages[postIndex][imageIndex] = imageData;
-						}
+			setPostImages([..._postImages]);
+		}
 
-						setPostImages([..._postImages]);
-						res();
-					} else {
-						rej();
-					}
-				})
-				.catch(err => {
-					console.log(err);
-					rej();
-				});
-		});
+		return getImageFetchingPromise(imageName, successCallback);
 	}
 
 	const getPostImages = postImageNameArr => {

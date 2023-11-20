@@ -136,7 +136,24 @@ const usePostServices = () => {
         else showError("Please login to repost!");
     }
 
-    return { getPostTiming, createPollJSX, handleMutedReaction, openCommentBox, openRepostBox };
+    const getImageFetchingPromise = (imageName, updatingStateCallback) => {
+        return new Promise((res, rej) => {
+            API(Constants.GET, `${Constants.GET_POST_IMAGE}/${imageName}`, null, headerData)
+                .then(imageResponse => {
+                    const base64ImgData = imageResponse.data;
+                    const base64Prefix = "data:image/*;charset=utf-8;base64,";
+                    const imageData = base64Prefix + base64ImgData;
+                    updatingStateCallback(imageData);
+                    res();
+                })
+                .catch(err => {
+                    console.log(err);
+                    rej();
+                });
+        });
+    }
+
+    return { getPostTiming, createPollJSX, handleMutedReaction, openCommentBox, openRepostBox, getImageFetchingPromise };
 }
 
 export default usePostServices;

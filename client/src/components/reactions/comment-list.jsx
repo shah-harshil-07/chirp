@@ -14,7 +14,7 @@ const CommentList = ({ commentList }) => {
     const headerData = getCommonHeader();
     const likeIcon = require("src/assets/like.png");
     const savedIcon = require("src/assets/saved-filled.png");
-    const { getPostTiming, handleMutedReaction } = usePostServices();
+    const { getPostTiming, handleMutedReaction, getImageFetchingPromise } = usePostServices();
 
     const [comments, setComments] = useState([]);
 
@@ -30,72 +30,62 @@ const CommentList = ({ commentList }) => {
     }, [commentList]);
 
     const getPromise = (imageName, commentIndex, imageIndex, _comments) => {
-        return new Promise((res, rej) => {
-            API(Constants.GET, `${Constants.GET_POST_IMAGE}/${imageName}`, null, headerData)
-                .then(imageResponse => {
-                    const base64ImgData = imageResponse.data;
-                    const base64Prefix = "data:image/*;charset=utf-8;base64,";
-                    const imageData = base64Prefix + base64ImgData;
+        const successCallback = imageData => {
+            if (!_comments?.[commentIndex]?.images) _comments[commentIndex]["images"] = [];
+            _comments[commentIndex]["images"][imageIndex] = imageData;
+            setComments([..._comments]);
+        }
 
-                    if (!_comments?.[commentIndex]?.images) _comments[commentIndex]["images"] = [];
-                    _comments[commentIndex]["images"][imageIndex] = imageData;
-                    setComments([..._comments]);
-                    res();
-                })
-                .catch(err => {
-                    console.log(err);
-                    rej();
-                });
-        });
+        return getImageFetchingPromise(imageName, successCallback);
     }
 
     const getCommentImages = (imageNameSuperList, comments) => {
         const promises = [];
 
         imageNameSuperList.forEach((imageNames, commentIndex) => {
-			imageNames.forEach((imageName, imageIndex) => {
-				const params = [imageName, commentIndex, imageIndex, comments];
+            imageNames.forEach((imageName, imageIndex) => {
+                const params = [imageName, commentIndex, imageIndex, comments];
                 promises.push(getPromise(...params));
-			});
-		});
+            });
+        });
 
         Promise.allSettled(promises);
     }
 
     const getCommentLikesAndSaves = async comments => {
         const payload = { postIds: comments.map(comment => comment.id) };
-		const { data: reactionData } = await API(Constants.POST, Constants.GET_POST_LIKES_AND_SAVES, payload, headerData);
+        const { data: reactionData } = await API(Constants.POST, Constants.GET_POST_LIKES_AND_SAVES, payload, headerData);
 
-		const _comments = [...comments], reactedPosts = reactionData?.data ?? [];
+        const _comments = [...comments], reactedPosts = reactionData?.data ?? [];
 
-		_comments.forEach(commentObj => {
-			const { id } = commentObj;
-			const reactedPostObj = reactedPosts.find(post => post.postId === id) ?? null;
-			commentObj["isLiked"] = reactedPostObj?.liked ?? false;
-			commentObj["isSaved"] = reactedPostObj?.saved ?? false;
-		});
+        _comments.forEach(commentObj => {
+            const { id } = commentObj;
+            const reactedPostObj = reactedPosts.find(post => post.postId === id) ?? null;
+            commentObj["isLiked"] = reactedPostObj?.liked ?? false;
+            commentObj["isSaved"] = reactedPostObj?.saved ?? false;
+        });
 
-		setComments([..._comments]);
-	}
+        setComments([..._comments]);
+    }
 
     const triggerMutedReaction = async (e, commentIndex, action) => {
         e.stopPropagation();
         const _comments = comments, commentObj = comments[commentIndex];
 
-		const handleLikeAction = mode => {
-			commentObj["isLiked"] = mode === "add";
-			commentObj["likes"] += mode === "add" ? 1 : -1;
-			setComments([..._comments]);
-		}
+        const handleLikeAction = mode => {
+            commentObj["isLiked"] = mode === "add";
+            commentObj["likes"] += mode === "add" ? 1 : -1;
+            setComments([..._comments]);
+        }
 
-		const handleSaveAction = mode => {
-			commentObj["isSaved"] = mode === "add";
-			commentObj["saved"] += mode === "add" ? 1 : -1;
-			setComments([..._comments]);
-		}
+        const handleSaveAction = mode => {
+            commentObj["isSaved"] = mode === "add";
+            commentObj["saved"] += mode === "add" ? 1 : -1;
+            setComments([..._comments]);
+        }
 
-		const commentData = { ...commentObj, postId: commentObj.id, postType: "comment" };
-		handleMutedReaction(action, commentData, handleLikeAction, handleSaveAction);
+        const commentData = { ...commentObj, postId: commentObj.id, postType: "comment" };
+        handleMutedReaction(action, commentData, handleLikeAction, handleSaveAction);
     }
 
     return (

@@ -13,8 +13,8 @@ import ReplyBox from "./reply-box";
 import CommentList from "./comment-list";
 import * as Constants from "src/utilities/constants";
 import { openToaster } from "src/redux/reducers/toaster";
+import { getCommonHeader, } from "src/utilities/helpers";
 import useToaster from "src/custom-hooks/toaster-message";
-import { getCommonHeader,  } from "src/utilities/helpers";
 import ImgHolder from "src/components/utilities/img-holder";
 import usePostServices from "src/custom-hooks/post-services";
 
@@ -26,7 +26,14 @@ const PostDetails = () => {
     const dispatch = useDispatch(), { showError } = useToaster();
     const userDetails = localStorage.getItem("chirp-userDetails");
     const loggedInUserId = userDetails ? JSON.parse(userDetails)?._id ?? '' : '';
-    const { getPostTiming, createPollJSX, handleMutedReaction, openCommentBox, openRepostBox } = usePostServices();
+    const {
+        getPostTiming,
+        createPollJSX,
+        openRepostBox,
+        openCommentBox,
+        handleMutedReaction,
+        getImageFetchingPromise,
+    } = usePostServices();
 
     const [commentList, setCommentList] = useState([]);
     const [postDetails, setPostDetails] = useState(null);
@@ -110,24 +117,14 @@ const PostDetails = () => {
     }
 
     const getPromise = (imageName, imageIndex) => {
-        return new Promise((res, rej) => {
-            API(Constants.GET, `${Constants.GET_POST_IMAGE}/${imageName}`, null, headerData)
-                .then(imageResponse => {
-                    const base64ImgData = imageResponse.data;
-                    const base64Prefix = "data:image/*;charset=utf-8;base64,";
-                    const imageData = base64Prefix + base64ImgData;
+        const successCallback = imageData => {
+            const _postDetails = { ...postDetails };
+            if (!_postDetails?.images) _postDetails["images"] = [];
+            _postDetails.images[imageIndex] = imageData;
+            setPostDetails({ ..._postDetails });
+        };
 
-                    const _postDetails = { ...postDetails };
-                    if (!_postDetails?.images) _postDetails["images"] = [];
-                    _postDetails.images[imageIndex] = imageData;
-                    setPostDetails({ ..._postDetails });
-                    res();
-                })
-                .catch(err => {
-                    console.log(err);
-                    rej();
-                });
-        });
+        return getImageFetchingPromise(imageName, successCallback);
     }
 
     const getPostImages = postImageNames => {
