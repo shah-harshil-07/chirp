@@ -42,6 +42,7 @@ const LeftSidebar = () => {
         localStorage.removeItem("chirp-accessToken");
         localStorage.removeItem("chirp-userDetails");
         setOpenLogoutConfirmation(false);
+        navigate('/');
         window.location.reload();
     }
 

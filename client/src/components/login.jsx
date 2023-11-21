@@ -3,6 +3,7 @@ import "src/styles/login.css";
 
 import CIcon from "@coreui/icons-react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import { cibGoogle, cilLockLocked, cilLockUnlocked } from "@coreui/icons";
@@ -16,7 +17,7 @@ import useToaster from "src/custom-hooks/toaster-message";
 import { openModal, closeModal } from "src/redux/reducers/modal";
 
 const Login = () => {
-    const { showError } = useToaster();
+    const navigate = useNavigate(), { showError } = useToaster();
 
     const [cred, setCred] = useState('');
     const [password, setPassword] = useState('');
@@ -133,7 +134,7 @@ const Login = () => {
             }
 
             dispatch(openToaster({ messageObj: { type, message } }));
-            window.location.reload();
+            setTimeout(() => { navigate(0); }, 5000);
         } catch (error) {
             console.log(error);
             showError("Something went wrong!");
@@ -169,7 +170,7 @@ const Login = () => {
 
                 dispatch(openToaster({ messageObj: { type, message } }));
                 closeLoginDialog();
-                window.location.reload();
+                navigate(0);
             } else {
                 const errorMessage = responseData?.error?.message ?? "Something went wrong!";
                 showError(errorMessage);

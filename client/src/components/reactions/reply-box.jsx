@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 
 import CIcon from "@coreui/icons-react";
+import { useNavigate } from "react-router-dom";
 import { cilImage, cilSmile } from "@coreui/icons";
 
 import API from "src/api";
@@ -12,6 +13,7 @@ import EmojiContainer from "../utilities/emoji-container";
 import useImageConverter from "src/custom-hooks/image-converter";
 
 const ReplyBox = ({ username, postId }) => {
+    const navigate = useNavigate();
     const { showError, showSuccess } = useToaster();
     const { uploadImagesAction } = useImageConverter();
     const fileUploadRef = useRef(null), headerData = getCommonHeader();
@@ -71,7 +73,7 @@ const ReplyBox = ({ username, postId }) => {
                 const message = responseData?.meta?.message ?? '';
                 if (message) alert(message);
 
-                window.location.reload();
+                setTimeout(() => { navigate(0); }, 5000);
             } catch (error) {
                 console.log(error);
                 showError("Something went wrong!");

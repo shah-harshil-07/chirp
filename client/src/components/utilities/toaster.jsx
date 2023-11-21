@@ -26,10 +26,7 @@ const Toaster = ({ type, message }) => {
     }
 
     useEffect(() => {
-        setTimeout(() => {
-            closeToasterDialog();
-        }, 4990);
-
+        setTimeout(() => { closeToasterDialog(); }, 4990);
         // eslint-disable-next-line
     }, []);
 
