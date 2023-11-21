@@ -42,12 +42,12 @@ const LeftSidebar = () => {
         localStorage.removeItem("chirp-accessToken");
         localStorage.removeItem("chirp-userDetails");
         setOpenLogoutConfirmation(false);
-        navigate('/');
+        navigate('/', { preventScrollReset: false });
         window.location.reload();
     }
 
     const moveToDashboard = () => {
-        navigate('/');
+        navigate('/', { preventScrollReset: false });
     }
 
     return (

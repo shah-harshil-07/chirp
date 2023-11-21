@@ -356,7 +356,7 @@ const PostDetails = () => {
 
             {
                 isUserLoggedIn() ? (
-                    <ReplyBox postId={postId} username={postDetails?.user?.username} />
+                    <ReplyBox postId={postId} username={postDetails?.user?.username} picture={postDetails?.user?.picture} />
                 ) : (
                     <div id="post-detail-seperator"><div className="seperator" /></div>
                 )

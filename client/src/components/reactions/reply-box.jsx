@@ -12,7 +12,7 @@ import useToaster from "src/custom-hooks/toaster-message";
 import EmojiContainer from "../utilities/emoji-container";
 import useImageConverter from "src/custom-hooks/image-converter";
 
-const ReplyBox = ({ username, postId }) => {
+const ReplyBox = ({ username, postId, picture }) => {
     const navigate = useNavigate();
     const { showError, showSuccess } = useToaster();
     const { uploadImagesAction } = useImageConverter();
@@ -49,7 +49,6 @@ const ReplyBox = ({ username, postId }) => {
         }
 
         uploadImagesAction(e, readerLoadCallback, _uploadedFiles);
-
         resetFileCache();
     }
 
@@ -96,7 +95,7 @@ const ReplyBox = ({ username, postId }) => {
                 <img
                     alt="user"
                     className="post-detail-user-image"
-                    src={Constants.placeHolderImageSrc}
+                    src={picture ?? Constants.placeHolderImageSrc}
                 />
 
                 <textarea
