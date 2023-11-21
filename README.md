@@ -4,5 +4,6 @@
 # In left sidebar, on clicking on "Home", the page must be redirected to home page. If the page is already home page, it must be reloaded.
 # In twitter, when I click on post detail, beneath the post content, I can see the timing of post creation along with total views. Imitate it.
 # Add a back button in post detail page.
-# None of the post details or comments to the post are visible to end user after logging out.
 # When logged out user enters post detail page, the reply box must not appear.
+# When I go from post list to the post detail page or vice versa, the scroll must be at the top.
+# In reply box section, user's image must be displayed.

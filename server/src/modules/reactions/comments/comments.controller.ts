@@ -42,7 +42,6 @@ export class CommentsController {
     }
 
     @Get("all/:postId")
-    @UseGuards(AuthGuard("jwt"))
     @UseInterceptors(ResponseInterceptor)
     async list(@Param() { postId }: any): Promise<any> {
         const commentList = await this.commentService.list(postId);

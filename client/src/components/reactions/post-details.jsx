@@ -13,10 +13,10 @@ import ReplyBox from "./reply-box";
 import CommentList from "./comment-list";
 import * as Constants from "src/utilities/constants";
 import { openToaster } from "src/redux/reducers/toaster";
-import { getCommonHeader, } from "src/utilities/helpers";
 import useToaster from "src/custom-hooks/toaster-message";
 import ImgHolder from "src/components/utilities/img-holder";
 import usePostServices from "src/custom-hooks/post-services";
+import { getCommonHeader, isUserLoggedIn } from "src/utilities/helpers";
 
 const PostDetails = () => {
     const { postId } = useParams();
@@ -49,8 +49,8 @@ const PostDetails = () => {
     useEffect(() => {
         if (initialDetailsUpdated) {
             setInitialDetailsUpdated(false);
-            getPostLikesAndSaves(postDetails);
             getPostImages(postDetails.images);
+            if (isUserLoggedIn()) getPostLikesAndSaves(postDetails);
         }
 
         // eslint-disable-next-line
@@ -265,7 +265,10 @@ const PostDetails = () => {
 
                                     {
                                         postDetails?.parentPostDetails?.images?.length > 0 && (
-                                            <ImgHolder images={postDetails?.parentPostDetails?.images} showActionButtons={false} />
+                                            <ImgHolder
+                                                showActionButtons={false}
+                                                images={postDetails?.parentPostDetails?.images}
+                                            />
                                         )
                                     }
                                 </div>
@@ -274,7 +277,10 @@ const PostDetails = () => {
                     }
 
                     <div className="action-bar">
-                        <div onClick={e => { openCommentBox(e, postDetails); }} className="reaction-icon-container reply-container">
+                        <div
+                            onClick={e => { openCommentBox(e, postDetails); }}
+                            className="reaction-icon-container reply-container"
+                        >
                             <span className="reply-icon">
                                 <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
                             </span>
@@ -282,7 +288,10 @@ const PostDetails = () => {
                             <span className="post-reaction-data">{postDetails?.comments ?? 0}</span>
                         </div>
 
-                        <div onClick={e => { openRepostBox(e, postDetails); }} className="reaction-icon-container repost-container">
+                        <div
+                            onClick={e => { openRepostBox(e, postDetails); }}
+                            className="reaction-icon-container repost-container"
+                        >
                             <span className="reply-icon">
                                 <CIcon icon={cilSend} title="Repost" className="chirp-action" />
                             </span>
@@ -345,7 +354,13 @@ const PostDetails = () => {
                 </div>
             </Card>
 
-            <ReplyBox postId={postId} username={postDetails?.user?.username} />
+            {
+                isUserLoggedIn() ? (
+                    <ReplyBox postId={postId} username={postDetails?.user?.username} />
+                ) : (
+                    <div id="post-detail-seperator"><div className="seperator" /></div>
+                )
+            }
 
             <CommentList commentList={commentList} />
         </div>
