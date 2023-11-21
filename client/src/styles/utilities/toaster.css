@@ -4,7 +4,7 @@
     left: 30px;
     padding: 4px;
     width: 320px;
-    position: absolute;
+    position: fixed;
     box-sizing: border-box;
     background-color: #ffff;
     animation: openToaster 0.12s linear;
