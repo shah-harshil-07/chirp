@@ -50,3 +50,28 @@
     margin-top: 10px;
     margin-left: 45px;
 }
+
+#post-detail-header {
+    display: flex;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#post-detail-heading-icon {
+    width: 45px;
+    height: 45px;
+    padding: 10px;
+    border-radius: 50%;
+}
+
+#post-detail-heading-text {
+    width: 100%;
+    font-weight: bold;
+    text-align: center;
+}
+
+#post-detail-heading-icon:hover {
+    cursor: pointer;
+    background-color: rgba(15, 20, 25, 0.1);
+}

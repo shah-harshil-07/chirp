@@ -23,10 +23,7 @@ const App = () => {
 		<>
 			{getDialog()}
 
-			<div>
-				<p id="app-header">Home</p>
-				<div id="app-container"><LeftSidebar /><Outlet /><RightSidebar /></div>
-			</div>
+			<div id="app-container"><LeftSidebar /><Outlet /><RightSidebar /></div>
 
 			{!isUserLoggedIn() && <AuthBar />}
 

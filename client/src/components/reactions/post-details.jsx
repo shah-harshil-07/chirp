@@ -4,9 +4,9 @@ import "src/styles/reactions/post-details.css";
 import CIcon from "@coreui/icons-react";
 import { Card } from "@material-ui/core";
 import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import { cilBookmark, cilChart, cilCommentBubble, cilSend, cilThumbUp } from "@coreui/icons";
+import { cilArrowLeft, cilBookmark, cilChart, cilCommentBubble, cilSend, cilThumbUp } from "@coreui/icons";
 
 import API from "src/api";
 import ReplyBox from "./reply-box";
@@ -19,6 +19,7 @@ import usePostServices from "src/custom-hooks/post-services";
 import { getCommonHeader, isUserLoggedIn } from "src/utilities/helpers";
 
 const PostDetails = () => {
+    const navigate = useNavigate();
     const { postId } = useParams();
     const headerData = getCommonHeader();
     const likeIcon = require("src/assets/like.png");
@@ -208,8 +209,20 @@ const PostDetails = () => {
         handleMutedReaction(action, postData, handleLikeAction, handleSaveAction);
     }
 
+    const moveToHomePage = () => {
+        navigate('/');
+    }
+
     return (
         <div>
+            <div id="post-detail-header">
+                <div id="post-detail-heading-icon" onClick={moveToHomePage}>
+                    <CIcon width={20} height={20} size="sm" icon={cilArrowLeft} />
+                </div>
+
+                <div id="post-detail-heading-text">Comments</div>
+            </div>
+
             <Card className="post-detail-card">
                 <img
                     alt="user"
