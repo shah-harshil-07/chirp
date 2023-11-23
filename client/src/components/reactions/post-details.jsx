@@ -6,7 +6,7 @@ import { Card } from "@material-ui/core";
 import { useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import { cilArrowLeft, cilBookmark, cilChart, cilCommentBubble, cilSend, cilThumbUp } from "@coreui/icons";
+import { cilArrowLeft, cilBookmark, cilCommentBubble, cilSend, cilThumbUp } from "@coreui/icons";
 
 import API from "src/api";
 import ReplyBox from "./reply-box";
@@ -33,6 +33,7 @@ const PostDetails = () => {
         openRepostBox,
         openCommentBox,
         handleMutedReaction,
+        getFormattedPostTiming,
         getImageFetchingPromise,
     } = usePostServices();
 
@@ -224,20 +225,20 @@ const PostDetails = () => {
             </div>
 
             <Card className="post-detail-card">
-                <img
-                    alt="user"
-                    className="post-detail-user-image"
-                    src={postDetails?.user?.picture ?? Constants.placeHolderImageSrc}
-                />
+                <div className="post-detail-card-header">
+                    <img
+                        alt="user"
+                        className="post-detail-card-header-image"
+                        src={postDetails?.user?.picture ?? Constants.placeHolderImageSrc}
+                    />
+
+                    <div className="post-detail-card-header-text">
+                        <div><b>{postDetails?.user?.name ?? ''}</b></div>
+                        <div>{`@${postDetails?.user?.username ?? ''}`}</div>
+                    </div>
+                </div>
 
                 <div className="post-detail-body">
-                    <div className="row mx-0 font-size-18">
-                        <b>{postDetails?.user?.name ?? ''}</b>&nbsp;
-                        <span>{`@${postDetails?.user?.username ?? ''}`}</span>
-                        <span><div className="seperator-container"><div className="seperator" /></div></span>
-                        <span>{getPostTiming(postDetails?.createdAt ?? null)}</span>
-                    </div>
-
                     <div className="row mx-0 font-size-20"><div>{postDetails?.text ?? ''}</div></div>
 
                     {postDetails?.poll?.choices && getPollJSX(postDetails.poll, postDetails.id)}
@@ -289,6 +290,11 @@ const PostDetails = () => {
                         )
                     }
 
+                    <div>
+                        {getFormattedPostTiming(postDetails?.createdAt ?? null)}&nbsp;&nbsp;
+                        {postDetails?.views >= 0 && <span><b>{postDetails.views} Views</b></span>}
+                    </div>
+
                     <div className="action-bar">
                         <div
                             onClick={e => { openCommentBox(e, postDetails); }}
@@ -332,14 +338,6 @@ const PostDetails = () => {
                             >
                                 {postDetails?.likes ?? 0}
                             </span>
-                        </div>
-
-                        <div className="reaction-icon-container views-container" onClick={e => { e.stopPropagation(); }}>
-                            <span className="reply-icon">
-                                <CIcon title="Views" icon={cilChart} className="chirp-action" />
-                            </span>
-
-                            <span className="post-detail-reaction-data">{postDetails?.views ?? 0}</span>
                         </div>
 
                         <div

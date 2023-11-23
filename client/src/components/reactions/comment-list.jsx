@@ -103,7 +103,7 @@ const CommentList = ({ commentList }) => {
                                 src={picture ?? Constants.placeHolderImageSrc}
                             />
 
-                            <div className="post-detail-body">
+                            <div id="comment-container">
                                 <div className="row mx-0 font-size-18">
                                     <b>{name ?? ''}</b>&nbsp;
                                     {username && <span>{`@${username}`}</span>}

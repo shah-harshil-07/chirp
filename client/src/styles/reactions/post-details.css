@@ -7,9 +7,30 @@
     border-radius: 50%;
 }
 
+.post-detail-card-header-image {
+    top: 12px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    border-radius: 50%;
+}
+
+.post-detail-card-header {
+    width: 100%;
+    height: 70px;
+    position: relative;
+}
+
+.post-detail-card-header-text {
+    top: 16px;
+    left: 80px;
+    position: absolute;
+}
+
 .post-detail-body {
-    margin-left: 70px;
-    margin-top: 20px;
+    margin-top: 5px;
+    margin-left: 15px;
 }
 
 .post-detail-parent-user-img {
@@ -35,6 +56,12 @@
 .post-detail-card {
     cursor: pointer;
     border-radius: 0;
+    position: relative;
+}
+
+.post-detail-card-header {
+    width: 100%;
+    height: 70px;
     position: relative;
 }
 
@@ -74,4 +101,9 @@
 #post-detail-heading-icon:hover {
     cursor: pointer;
     background-color: rgba(15, 20, 25, 0.1);
+}
+
+#comment-container {
+    margin-top: 20px;
+    margin-left: 70px;
 }

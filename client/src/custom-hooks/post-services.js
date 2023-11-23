@@ -23,6 +23,7 @@ const usePostServices = () => {
 	];
 
     const getPostTiming = dateObj => {
+        console.log(dateObj);
         if (dateObj) {
             const currentDate = Date.now();
             let diff = moment(currentDate).diff(dateObj, "months");
@@ -153,7 +154,19 @@ const usePostServices = () => {
         });
     }
 
-    return { getPostTiming, createPollJSX, handleMutedReaction, openCommentBox, openRepostBox, getImageFetchingPromise };
+    const getFormattedPostTiming = dateObj => {
+        return dateObj ? moment(dateObj).format("hhA MMM. Do, YYYY") : null;
+    }
+
+    return {
+        getPostTiming,
+        createPollJSX,
+        openRepostBox,
+        openCommentBox,
+        handleMutedReaction,
+        getFormattedPostTiming,
+        getImageFetchingPromise,
+    };
 }
 
 export default usePostServices;
