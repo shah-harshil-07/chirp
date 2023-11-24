@@ -23,7 +23,6 @@ const usePostServices = () => {
 	];
 
     const getPostTiming = dateObj => {
-        console.log(dateObj);
         if (dateObj) {
             const currentDate = Date.now();
             let diff = moment(currentDate).diff(dateObj, "months");

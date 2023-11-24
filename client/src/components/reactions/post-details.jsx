@@ -44,6 +44,7 @@ const PostDetails = () => {
     const [initialDetailsUpdated, setInitialDetailsUpdated] = useState(false);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         if (postId) getCommentList();
         // eslint-disable-next-line
     }, []);
