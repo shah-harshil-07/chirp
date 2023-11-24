@@ -18,8 +18,7 @@ export class SavesAndLikesController {
         const { postId, reaction, postType } = savesLikesReqData;
         const data = { userId, postId, reaction, postType };
         const reationData = await this.savesLikesService.addReaction(data);
-        const attribute = reaction.slice(0, reaction.length - 2) + 'd';
-        return { success: true, message: `post ${attribute} successfully!`, data: reationData };
+        return { success: true, message: `post ${reaction} successfully!`, data: reationData };
     }
 
     @Post("remove")

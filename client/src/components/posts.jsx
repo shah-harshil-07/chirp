@@ -38,6 +38,7 @@ const Posts = () => {
 	const [postImages, setPostImages] = useState([]);
 
 	useEffect(() => {
+		window.scrollTo(0, 0);
 		getPosts();
 		// eslint-disable-next-line
 	}, []);
