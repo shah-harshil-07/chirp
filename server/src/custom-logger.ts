@@ -9,6 +9,7 @@ export class CustomLogger implements LoggerService {
     constructor() {
         const configObj = new ConfigService();
         this.colorConfig = configObj.getLoggingColorConfig();
+        this.printMessage("cyan", "Welcome to Chirp!");
     }
 
     public log(message: string) {

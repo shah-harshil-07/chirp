@@ -208,14 +208,14 @@ const Posts = () => {
 							<img src={picture ?? Constants.placeHolderImageSrc} className="post-user-image" alt="user" />
 
 							<div className="post-card-body">
-								<div className="row mx-0">
+								<div className="row mx-3">
 									<b>{name}</b>&nbsp;
 									<span>{`@${username}`}</span>
 									<span><div className="seperator-container"><div className="seperator" /></div></span>
 									<span>{getPostTiming(createdAt)}</span>
 								</div>
 
-								<div className="row mx-0"><div>{post?.text ?? ''}</div></div>
+								<div className="row mx-3"><div>{post?.text ?? ''}</div></div>
 
 								{post?.poll?.choices && getPollJSX(post.poll, postIndex)}
 								{
