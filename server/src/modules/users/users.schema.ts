@@ -12,6 +12,24 @@ export class UserModel {
     email: string;
 
     @Prop()
+    bio: string;
+
+    @Prop()
+    website: string;
+
+    @Prop({ default: null })
+    dateOfBirth: Date;
+
+    @Prop()
+    location: string;
+
+    @Prop({ default: 0 })
+    followers: number;
+
+    @Prop({ default: 0 })
+    following: number;
+
+    @Prop()
     password: string;
 
     @Prop()
