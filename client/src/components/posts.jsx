@@ -16,6 +16,7 @@ import { openToaster } from "src/redux/reducers/toaster";
 import useToaster from "src/custom-hooks/toaster-message";
 import usePostServices from "src/custom-hooks/post-services";
 import { placeHolderImageSrc } from "src/utilities/constants";
+import { closeDetailsCard, openDetailsCard } from "src/redux/reducers/user-details";
 
 const Posts = () => {
 	const navigate = useNavigate();
@@ -183,6 +184,18 @@ const Posts = () => {
 		navigate(`/post/${postId}`, { preventScrollReset: false });
 	}
 
+	const openUserCard = (e, userDetails) => {
+		e.stopPropagation();
+		const imgRect = e.target.getBoundingClientRect();
+		const coordinates = { left: imgRect.left - 130, top: window.scrollY + imgRect.bottom + 10 };
+		dispatch(openDetailsCard({ ...userDetails, coordinates }));
+	}
+
+	const closeUserCard = e => {
+		e.stopPropagation();
+		dispatch(closeDetailsCard());
+	}
+
 	return (
 		<div>
 			{
@@ -205,7 +218,13 @@ const Posts = () => {
 
 					return name && username ? (
 						<Card className="post-card" key={postId} onClick={() => { moveToCommentList(postId); }}>
-							<img src={picture ?? Constants.placeHolderImageSrc} className="post-user-image" alt="user" />
+							<img
+								alt="user"
+								className="post-user-image"
+								onMouseLeave={closeUserCard}
+								src={picture ?? Constants.placeHolderImageSrc}
+								onMouseOver={e => { openUserCard(e, post?.user); }}
+							/>
 
 							<div className="post-card-body">
 								<div className="row mx-3">
