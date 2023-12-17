@@ -262,8 +262,10 @@ const Posts = () => {
 										>
 											<img
 												alt="post creator"
+												onMouseOut={closeUserCard}
 												className="parent-post-user-img"
 												src={parentPicture ?? placeHolderImageSrc}
+												onMouseOver={e => { openUserCard(e, parentPostUser); }}
 											/>
 
 											<div className="repost-body-content">
