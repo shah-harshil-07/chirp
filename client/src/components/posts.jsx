@@ -193,7 +193,18 @@ const Posts = () => {
 
 	const closeUserCard = e => {
 		e.stopPropagation();
-		dispatch(closeDetailsCard());
+		let clientX = 0, clientY = 0;
+		document.addEventListener("mousemove", e => {
+			clientX = e.clientX;
+			clientY = e.clientY;
+		});
+
+		setTimeout(() => {
+			const currentHoveredElement = document.elementFromPoint(clientX, clientY);
+			const pointerContainsCard = document.getElementById("user-card-body")?.contains(currentHoveredElement);
+			if (!pointerContainsCard) dispatch(closeDetailsCard());
+			document.removeEventListener("mousemove", () => { });
+		}, 2000);
 	}
 
 	return (
@@ -221,7 +232,7 @@ const Posts = () => {
 							<img
 								alt="user"
 								className="post-user-image"
-								onMouseLeave={closeUserCard}
+								onMouseOut={closeUserCard}
 								src={picture ?? Constants.placeHolderImageSrc}
 								onMouseOver={e => { openUserCard(e, post?.user); }}
 							/>

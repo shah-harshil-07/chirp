@@ -1,61 +1,46 @@
 import "src/styles/utilities/user-card.css";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { placeHolderImageSrc } from "src/utilities/constants";
 import { checkContainerInViewport } from "src/utilities/helpers";
+import { closeDetailsCard } from "src/redux/reducers/user-details";
 
 const UserCard = () => {
     const cardRef = useRef(null);
+    const dispatch = useDispatch();
     const userDetailState = useSelector(state => state.userDetails);
     const userData = userDetailState?.data ?? {};
-    var { left, top } = userData?.coordinates ?? {};
+    let { left, top } = userData?.coordinates ?? {};
 
-    const [cardY, setCardY] = useState(undefined);
-    const [cardX, setCardX] = useState(undefined);
-    const [reduxTop, setReduxTop] = useState(undefined);
-    const [reduxLeft, setReduxLeft] = useState(undefined);
-    const [positionUpdated, setPositionUpdated] = useState(false);
+    const [finalTop, setFinalTop] = useState(top);
+    const [finalLeft, setFinalLeft] = useState(left);
 
     useEffect(() => {
-        setReduxTop(top);
-        setReduxLeft(left);
-        setPositionUpdated(false);
-        console.log("left right change called!");
+        setFinalTop(top);
+        setFinalLeft(left);
         // eslint-disable-next-line
-    }, [left, top]);
+    }, [userDetailState]);
 
     useLayoutEffect(() => {
-        if (reduxLeft && reduxTop && !positionUpdated) {
-            setCardX(reduxLeft);
-            let finalTop = top;
-            console.log("reduxTop => ", reduxTop);
-            console.log("finalTop before -> ", finalTop);
-            const cardRect = cardRef?.current?.getBoundingClientRect() ?? null;
-            console.log("rect => ", cardRect);
-            if (cardRect) {
-                const isInView = checkContainerInViewport(cardRect);
-                console.log("is in view => ", isInView);
-                if (!isInView) finalTop -= 100;
-                top = finalTop;
-            }
-
-            console.log("finalTop later -> ", finalTop);
-            setCardY(finalTop);
-            setPositionUpdated(true);
+        const cardRect = cardRef?.current?.getBoundingClientRect() ?? null;
+        if (cardRect && !checkContainerInViewport(cardRect)) {
+            const { height } = cardRect;
+            setFinalTop(top - height);
+            // eslint-disable-next-line
+            top -= height;
         }
 
         // eslint-disable-next-line
-    }, [reduxLeft, reduxTop]);
+    }, []);
 
-    useEffect(() => {
-        console.log("cardX => ", cardX);
-        console.log("cardY => ", cardY);
-    }, [cardX, cardY]);
+    const closeUserCard = () => {
+        dispatch(closeDetailsCard());
+    }
 
-    return (reduxLeft && reduxTop) ? (
-        <div className="user-card-body" ref={cardRef} style={{ left: cardX ?? reduxLeft, top: cardY ?? reduxTop }}>
+    return (
+        <div id="user-card-body" onMouseLeave={closeUserCard} ref={cardRef} style={{ left: finalLeft, top: finalTop }}>
             <div className="d-flex justify-content-between">
                 <img
                     alt="user"
@@ -83,8 +68,6 @@ const UserCard = () => {
                 <div><b>{userData?.followers ?? 0}</b>&nbsp;Followers</div>
             </div>
         </div>
-    ) : (
-        <></>
     );
 };
 
