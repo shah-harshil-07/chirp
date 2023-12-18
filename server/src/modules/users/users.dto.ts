@@ -1,6 +1,8 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString, Length, Matches } from "class-validator";
-import { CustomMatch } from "src/decorators/validators";
+
 import * as Constants from "src/constants";
+import { Post } from "src/modules/posts/post.schema";
+import { CustomMatch } from "src/decorators/validators";
 
 export class UserDTO {
     @IsNotEmpty()
@@ -56,4 +58,9 @@ export class RegisteredGoogleAuthedUserDTO extends GoogleAuthedUserDTO {
     @IsNotEmpty()
     @CustomMatch(Constants.USERNAME_REGEX, { message: Constants.USERNAME_ERR_MESSAGE })
     username: string;
+}
+
+export interface IUserDetails {
+    posts: Post[],
+    userData: UserDTO,
 }

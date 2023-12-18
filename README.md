@@ -1,0 +1,1 @@
+# In user.service.ts file, there is a function named "checkUsernameAvailable" which runs the redundant query. We must use appropriate functions provided by mongoose.

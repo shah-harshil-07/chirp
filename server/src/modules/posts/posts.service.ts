@@ -167,7 +167,7 @@ export class PostService {
                 },
             })
             .lean()
-            .exec();        
+            .exec();
 
         if (postData) {
             postData["parentPost"] = postData?.postId ?? null;
@@ -177,9 +177,38 @@ export class PostService {
         return postData;
     }
 
-    async getUserPostDetails(userId: string): Promise<any> {
-        const postList = await this.postModel.find({ user: userId }).exec();
-        console.log(postList);
-        return postList;
+    async getUserPostDetails(userId: string): Promise<Post[]> {
+        return await this.postModel.aggregate([
+            { $match: { $expr: { $eq: ["$user", { $toObjectId: userId }] } } },
+            { $lookup: { localField: "postId", foreignField: "_id", from: "PostMessages", as: "post" } },
+            { $unwind: { path: "$post", preserveNullAndEmptyArrays: true } },
+            { $lookup: { from: "Users", localField: "post.user", foreignField: "_id", as: "post.user" } },
+            { $unwind: { path: "$post.user", preserveNullAndEmptyArrays: true } },
+            { $sort: { createdAt: -1 } },
+            {
+                $project: {
+                    "text": 1,
+                    "images": 1,
+                    "poll": 1,
+                    "createdAt": 1,
+                    "comments": 1,
+                    "reposts": 1,
+                    "likes": 1,
+                    "views": 1,
+                    "saved": 1,
+                    "post.text": 1,
+                    "post.user.name": 1,
+                    "post.user.username": 1,
+                    "post.images": 1,
+                    "post.poll": 1,
+                    "post.createdAt": 1,
+                    "post.comments": 1,
+                    "post.reposts": 1,
+                    "post.likes": 1,
+                    "post.views": 1,
+                    "post.saved": 1,
+                },
+            },
+        ]);
     }
 }

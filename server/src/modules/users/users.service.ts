@@ -1,4 +1,4 @@
-import { Model, ObjectId } from "mongoose";
+import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { MailerService } from "@nestjs-modules/mailer";
 import { Injectable, InternalServerErrorException, UseInterceptors } from "@nestjs/common";
@@ -9,9 +9,17 @@ import { OtpStore } from "../common/otp-store.schema";
 import { CommonService } from "../common/common.service";
 import { ConfigService } from "../config/config.service";
 import { ResponseInterceptor } from "src/interceptors/response";
-import { GoogleAuthedUserDTO, LoggedInUserDTO, RegisteredGoogleAuthedUserDTO, RegisteredUserDTO, UserDTO } from "./users.dto";
+import {
+    UserDTO,
+    IUserDetails,
+    LoggedInUserDTO,
+    RegisteredUserDTO,
+    GoogleAuthedUserDTO,
+    RegisteredGoogleAuthedUserDTO,
+} from "./users.dto";
 
 @Injectable()
+@UseInterceptors(ResponseInterceptor)
 export class UsersService {
     constructor(
         private readonly postService: PostService,
@@ -23,134 +31,91 @@ export class UsersService {
     ) { }
 
     public async sendOtp(emailId: string, username: string): Promise<{ otpId: string }> {
-        try {
-            const otp = this.commonService.createFourDigitOtp();
-            const otpId = await this.commonService.postOtp(otp);
-            const smtpConfig = this.configService.getConfigObj("smtp");
+        const otp = this.commonService.createFourDigitOtp();
+        const otpId = await this.commonService.postOtp(otp);
+        const smtpConfig = this.configService.getConfigObj("smtp");
 
-            await this.mailerService.sendMail({
-                to: emailId,
-                from: smtpConfig.displayEmail,
-                replyTo: smtpConfig.replyToEmail,
-                subject: "Email Verification",
-                template: "otp",
-                context: { username, otp },
-            });
+        await this.mailerService.sendMail({
+            to: emailId,
+            from: smtpConfig.displayEmail,
+            replyTo: smtpConfig.replyToEmail,
+            subject: "Email Verification",
+            template: "otp",
+            context: { username, otp },
+        });
 
-            return { otpId };
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        return { otpId };
     }
 
     public async findOtpValue(otpId: string): Promise<OtpStore> {
-        try {
-            const optObj = await this.otpModel.findById(otpId);
-            return optObj;
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        return await this.otpModel.findById(otpId);
     }
 
     public async createUser(userData: RegisteredUserDTO): Promise<RegisteredUserDTO> {
         const userDocument = new this.userModel(userData);
-
-        try {
-            await userDocument.save();
-            return userDocument;
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        await userDocument.save();
+        return userDocument;
     }
 
     public async checkUserUniquness(userData: UserDTO): Promise<boolean> {
-        try {
-            const userObj = await
-                this
-                    .userModel
-                    .findOne({ $or: [{ email: userData.email }, { username: userData.username }] })
-                    .exec();
+        const userObj = await
+            this
+                .userModel
+                .findOne({ $or: [{ email: userData.email }, { username: userData.username }] })
+                .exec();
 
-            return userObj ? false : true;
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        return userObj ? false : true;
     }
 
     public async findUser(userData: LoggedInUserDTO): Promise<UserDTO> {
-        try {
-            const userObj = await
-                this
-                    .userModel
-                    .findOne({
-                        $or: [{ email: userData.cred }, { username: userData.cred }],
-                        password: userData.password,
-                    })
-                    .exec()
-                ;
+        const userObj = await
+            this
+                .userModel
+                .findOne({
+                    $or: [{ email: userData.cred }, { username: userData.cred }],
+                    password: userData.password,
+                })
+                .exec()
+            ;
 
-            return userObj;
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        return userObj;
     }
 
     public async getGoogleCredentials(userData: GoogleAuthedUserDTO): Promise<UserDTO> {
-        try {
-            const userObj = await
-                this
-                    .userModel
-                    .findOne({
-                        $or: [{ email: userData.email }, { googleId: userData.googleId }],
-                    })
-                    .exec()
-                ;
+        const userObj = await
+            this
+                .userModel
+                .findOne({
+                    $or: [{ email: userData.email }, { googleId: userData.googleId }],
+                })
+                .exec()
+            ;
 
-            return userObj;
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        return userObj;
     }
 
     public async createGoogleAuthedUser(userData: RegisteredGoogleAuthedUserDTO): Promise<UserDTO> {
         const userDocument = new this.userModel(userData);
-
-        try {
-            await userDocument.save();
-            return userDocument;
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        await userDocument.save();
+        return userDocument;
     }
 
     public async checkUsernameAvailable(username: string): Promise<boolean> {
-        try {
-            const userObj = await this.userModel.findOne({ username });
-            return userObj ? true : false;
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        const userObj = await this.userModel.findOne({ username });
+        return userObj ? true : false;
     }
 
     public async getGoogleAuthedUserData(userData: GoogleAuthedUserDTO): Promise<UserDTO> {
-        try {
-            return await this.userModel.findOne({ email: userData.email, googleId: userData.googleId });
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        return await this.userModel.findOne({ email: userData.email, googleId: userData.googleId });
     }
 
-    @UseInterceptors(ResponseInterceptor)
-    public async getUserPosts(userId: string): Promise<any> {
-        return await this.postService.getUserPostDetails(userId);
+    public async getUserDetails(userId: string): Promise<IUserDetails> {
+        const postList = await this.postService.getUserPostDetails(userId);
+        const userDetails = await this
+            .userModel
+            .findById(userId, "name username bio website dateOfBirth location followers following picture")
+            .exec();
+
+        return { posts: postList, userData: userDetails };
     }
 }

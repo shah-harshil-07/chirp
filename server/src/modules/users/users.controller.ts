@@ -105,7 +105,7 @@ export class UsersController {
 
     @Get("get-posts/:id")
     async getPosts(@Param() { id }: { id: string }): Promise<IResponseProps> {
-        const userPosts = this.userService.getUserPosts(id);
-        return { success: true, data: userPosts, message: "Hello World" };
+        const userData = await this.userService.getUserDetails(id);
+        return { success: true, data: userData, message: "User details fetched successfully." };
     }
 }
