@@ -1,19 +1,21 @@
 import { Module } from "@nestjs/common";
-import { UsersController } from "./users.controller";
-import { UsersService } from "./users.service";
-import { OtpStore, OtpStoreSchema } from "../common/otp-store.schema";
-import { MongooseModule } from "@nestjs/mongoose";
-import { UserModel, UserSchema } from "./users.schema";
-import { AuthService } from "../auth/auth.service";
-import { AuthModule } from "../auth/auth.module";
 import { JwtModule } from "@nestjs/jwt";
+import { MongooseModule } from "@nestjs/mongoose";
+
+import { UsersService } from "./users.service";
+import { AuthModule } from "../auth/auth.module";
+import { PostModule } from "../posts/posts.module";
+import { UsersController } from "./users.controller";
+import { UserModel, UserSchema } from "./users.schema";
 import { ConfigModule } from "../config/config.module";
 import { ConfigService } from "../config/config.service";
+import { OtpStore, OtpStoreSchema } from "../common/otp-store.schema";
 
 @Module({
 	imports: [
 		ConfigModule,
 		AuthModule,
+		PostModule,
 		JwtModule.registerAsync({
 			imports: [ConfigModule],
 			inject: [ConfigService],
@@ -27,7 +29,7 @@ import { ConfigService } from "../config/config.service";
 		]),
 	],
 	controllers: [UsersController],
-	providers: [UsersService, AuthService],
+	providers: [UsersService],
 	exports: [UsersService],
 })
 export class UsersModule { }

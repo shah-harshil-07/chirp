@@ -1,22 +1,25 @@
-import { Model } from "mongoose";
+import { Model, ObjectId } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { MailerService } from "@nestjs-modules/mailer";
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, UseInterceptors } from "@nestjs/common";
 
 import { UserModel } from "./users.schema";
+import { PostService } from "../posts/posts.service";
 import { OtpStore } from "../common/otp-store.schema";
 import { CommonService } from "../common/common.service";
 import { ConfigService } from "../config/config.service";
+import { ResponseInterceptor } from "src/interceptors/response";
 import { GoogleAuthedUserDTO, LoggedInUserDTO, RegisteredGoogleAuthedUserDTO, RegisteredUserDTO, UserDTO } from "./users.dto";
 
 @Injectable()
 export class UsersService {
     constructor(
-        @InjectModel(OtpStore.name) private readonly otpModel: Model<OtpStore>,
-        @InjectModel(UserModel.name) private readonly userModel: Model<UserModel>,
+        private readonly postService: PostService,
         private readonly mailerService: MailerService,
         private readonly commonService: CommonService,
         private readonly configService: ConfigService,
+        @InjectModel(OtpStore.name) private readonly otpModel: Model<OtpStore>,
+        @InjectModel(UserModel.name) private readonly userModel: Model<UserModel>,
     ) { }
 
     public async sendOtp(emailId: string, username: string): Promise<{ otpId: string }> {
@@ -144,5 +147,10 @@ export class UsersService {
             console.log(error);
             throw new InternalServerErrorException();
         }
+    }
+
+    @UseInterceptors(ResponseInterceptor)
+    public async getUserPosts(userId: string): Promise<any> {
+        return await this.postService.getUserPostDetails(userId);
     }
 }

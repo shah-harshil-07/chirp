@@ -6,7 +6,6 @@ import { CommentsController } from "./comments.controller";
 import { PostModule } from "src/modules/posts/posts.module";
 import { Comments, CommentsSchema } from "./comments.schema";
 import { ConfigModule } from "src/modules/config/config.module";
-import { ConfigService } from "src/modules/config/config.service";
 import { CustomValidatorsModule } from "../../custom-validators/custom-validators.module";
 
 @Module({
@@ -19,7 +18,7 @@ import { CustomValidatorsModule } from "../../custom-validators/custom-validator
 		]),
 	],
 	controllers: [CommentsController],
-	providers: [CommentsService, CustomValidatorsModule, ConfigService],
+	providers: [CommentsService],
 	exports: [CommentsService],
 })
 export class CommentsModule { }

@@ -176,4 +176,10 @@ export class PostService {
 
         return postData;
     }
+
+    async getUserPostDetails(userId: string): Promise<any> {
+        const postList = await this.postModel.find({ user: userId }).exec();
+        console.log(postList);
+        return postList;
+    }
 }
