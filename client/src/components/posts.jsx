@@ -207,18 +207,28 @@ const Posts = () => {
 		}, 2000);
 	}
 
+	const moveToUserPage = (e, userId) => {
+		e.stopPropagation();
+		navigate(`/user/${userId}`);
+	}
+
 	return (
 		<div>
 			{
 				posts.map((post, postIndex) => {
 					const { post: parentPost, createdAt, isLiked, isSaved, _id: postId } = post;
 					const { likes, reposts, comments, views, saved, } = post;
-					const { name, username, picture } = post.user ?? {};
+					const { name, username, picture, _id: userId } = post.user ?? {};
 					let parentPostImages = [], pureImages = [];
 					const images = postImages[postIndex];
 
 					const { text: parentPostText, createdAt: parentCreatedAt, user: parentPostUser } = parentPost ?? {};
-					const { name: parentName, username: parentUserName, picture: parentPicture } = parentPostUser ?? {};
+					const {
+						name: parentName,
+						_id: parentUserId,
+						picture: parentPicture,
+						username: parentUserName,
+					} = parentPostUser ?? {};
 
 					if (images?.length) {
 						images.forEach(image => {
@@ -231,8 +241,9 @@ const Posts = () => {
 						<Card className="post-card" key={postId} onClick={() => { moveToCommentList(postId); }}>
 							<img
 								alt="user"
-								className="post-user-image"
 								onMouseOut={closeUserCard}
+								className="post-user-image"
+								onClick={e => { moveToUserPage(e, userId); }}
 								src={picture ?? Constants.placeHolderImageSrc}
 								onMouseOver={e => { openUserCard(e, post?.user); }}
 							/>
@@ -265,6 +276,7 @@ const Posts = () => {
 												onMouseOut={closeUserCard}
 												className="parent-post-user-img"
 												src={parentPicture ?? placeHolderImageSrc}
+												onClick={e => { moveToUserPage(e, parentUserId); }}
 												onMouseOver={e => { openUserCard(e, parentPostUser); }}
 											/>
 

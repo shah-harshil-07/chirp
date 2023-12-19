@@ -7,6 +7,7 @@ const reducers = { ...userDetailActions };
 export const initialState = {
     open: false,
     data: {
+        _id: '',
         bio: '',
         name: '',
         image: '',

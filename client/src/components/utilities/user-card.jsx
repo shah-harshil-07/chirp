@@ -1,5 +1,6 @@
 import "src/styles/utilities/user-card.css";
 
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
@@ -9,7 +10,7 @@ import { closeDetailsCard } from "src/redux/reducers/user-details";
 
 const UserCard = () => {
     const cardRef = useRef(null);
-    const dispatch = useDispatch();
+    const dispatch = useDispatch(), navigate = useNavigate();
     const userDetailState = useSelector(state => state.userDetails);
     const userData = userDetailState?.data ?? {};
     let { left, top } = userData?.coordinates ?? {};
@@ -39,6 +40,11 @@ const UserCard = () => {
         dispatch(closeDetailsCard());
     }
 
+    const moveToUserPage = (e, userId) => {
+		e.stopPropagation();
+		navigate(`/user/${userId}`);
+	}
+
     return (
         <div id="user-card-body" onMouseLeave={closeUserCard} ref={cardRef} style={{ left: finalLeft, top: finalTop }}>
             <div className="d-flex justify-content-between">
@@ -46,6 +52,7 @@ const UserCard = () => {
                     alt="user"
                     className="user-card-header-img"
                     src={userData?.picture ?? placeHolderImageSrc}
+                    onClick={e => { moveToUserPage(e, userData._id); }}
                     onError={e => { e.target.src = placeHolderImageSrc }}
                 />
 
