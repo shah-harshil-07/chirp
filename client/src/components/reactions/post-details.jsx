@@ -217,12 +217,12 @@ const PostDetails = () => {
 
     return (
         <div>
-            <div id="post-detail-header">
-                <div id="post-detail-heading-icon" onClick={moveToHomePage}>
+            <div className="common-header">
+                <div className="common-heading-icon" onClick={moveToHomePage}>
                     <CIcon width={20} height={20} size="sm" icon={cilArrowLeft} />
                 </div>
 
-                <div id="post-detail-heading-text">Comments</div>
+                <div className="common-heading-text">Comments</div>
             </div>
 
             <Card className="post-detail-card">
