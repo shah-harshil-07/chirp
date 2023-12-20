@@ -13,7 +13,7 @@ const UserInfo = () => {
     const statsList = [
         { icon: cilLocationPin, text: "Mumbai, Maharashtra" },
         { icon: cilLink, text: "https://www.linkedin.com/in/harshil-shah-612b3418a/" },
-        { icon: cilBirthdayCake, text: "Born December 16" },
+        { icon: cilBirthdayCake, text: "Born Decemember 16" },
         { icon: cilCalendar, text: "Joined April 25" },
     ];
 
@@ -56,21 +56,28 @@ const UserInfo = () => {
                     <p style={{ fontSize: "16px" }}>
                         {
                             statsList.map((statsObj, statsIndex) => {
-                                const { icon, text } = statsObj;
-                                const n = text.length;
+                                let { icon, text } = statsObj;
+                                let n = text.length, textShortened = false;
+
+                                if ((n * 16) > totalLineLength) {
+                                    text = text.slice(0, 66) + "...";
+                                    n = text.length;
+                                    textShortened = true;
+                                }
+
                                 let currentCoverage = (n + 1) * 16, addBreak = false;
                                 currentCoverage += (statsIndex < statsList.length - 1) ? 32 : 0;
 
-                                if (currentCoverage > availableCoverage) {
+                                if (currentCoverage > availableCoverage || textShortened) {
                                     addBreak = true;
-                                    availableCoverage = totalLineLength;
+                                    availableCoverage = totalLineLength - currentCoverage;
                                 } else {
                                     availableCoverage -= currentCoverage;
                                 }
 
                                 return (
                                     <React.Fragment key={statsIndex}>
-                                        {addBreak && <br />}
+                                        {addBreak && statsIndex > 0 && <br />}
                                         <CIcon size="sm" icon={icon} style={{ width: "16px", height: "16px" }} />
                                         &nbsp;{text}&nbsp;&nbsp;
                                     </React.Fragment>
