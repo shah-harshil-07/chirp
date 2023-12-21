@@ -1,0 +1,55 @@
+#user-info-header-sub-text {
+    font-size: 16px;
+    text-align: center;
+    font-weight: normal;
+}
+
+#user-info-follow-btn {
+    float: right;
+    background-color: black;
+    color: white;
+    padding: 5px 15px 5px 15px;
+    border-radius: 20px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+#user-info-back-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#user-info-user-img-container {
+    width: 150px;
+    height: 150px;
+    margin-top: -75px;
+    margin-left: 20px;
+}
+
+#user-info-user-img {
+    width: 100%;
+    height: 100%;
+    border: 1px solid;
+    border-radius: 50%;
+}
+
+#user-info-body {
+    margin-left: 20px;
+}
+
+#user-info-username-text {
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 0.1rem;
+    font-size: 18px;
+}
+
+#user-info-bio-text {
+    margin-top: 10px;
+}
+
+.user-info-stat-icon {
+    width: 16px;
+    height: 16px;
+}

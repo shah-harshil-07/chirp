@@ -1,3 +1,5 @@
+import "src/styles/user/info.css";
+
 import React from "react";
 import CIcon from "@coreui/icons-react";
 import { useNavigate } from "react-router-dom";
@@ -12,8 +14,8 @@ const UserInfo = () => {
 
     const statsList = [
         { icon: cilLocationPin, text: "Mumbai, Maharashtra" },
-        { icon: cilLink, text: "https://www.linkedin.com/in/harshil-shah-612b3418a/" },
         { icon: cilBirthdayCake, text: "Born Decemember 16" },
+        { icon: cilLink, text: "https://www.linkedin.com/in/harshil-shah-612b3418a/" },
         { icon: cilCalendar, text: "Joined April 25" },
     ];
 
@@ -30,30 +32,27 @@ const UserInfo = () => {
 
                 <div className="common-heading-text">
                     Christiano Ronaldo
-                    <div style={{ textAlign: "center", fontSize: "16px", fontWeight: "normal" }}>4000 posts</div>
+                    <div id="user-info-header-sub-text">4000 posts</div>
                 </div>
             </div>
 
             <div>
-                <img alt="background" src="https://pbs.twimg.com/profile_banners/155659213/1668980773/600x200" />
+                <img alt="background" id="user-info-back-img" src="https://pbs.twimg.com/profile_banners/155659213/1668980773/600x200" />
 
-                <div style={{ float: "right", backgroundColor: "black", color: "white", padding: "5px 15px 5px 15px", borderRadius: "20px", marginTop: "10px", cursor: "pointer" }}>
-                    <b>Following</b>
+                <div id="user-info-follow-btn"><b>Following</b></div>
+
+                <div id="user-info-user-img-container">
+                    <img alt={"user"} src={String(sampleUserImg)} id="user-info-user-img" />
                 </div>
 
-                <div style={{ width: "150px", height: "150px", marginTop: "-75px", marginLeft: "20px" }}>
-                    <img alt={"user"} src={String(sampleUserImg)} className="w-100 h-100" style={{ border: "1px solid", borderRadius: "50%" }} />
-                </div>
+                <div id="user-info-body">
+                    <p id="user-info-username-text">Christiano Ronaldo</p>@Christiano
 
-                <div style={{ marginLeft: "20px" }}>
-                    <p style={{ fontWeight: "bold", marginTop: "10px", marginBottom: "0.1rem", fontSize: "18px" }}>
-                        Christiano Ronaldo
+                    <p id="user-info-bio-text">
+                        This Privacy Policy addresses the collection and use of personal information - http://cristianoronaldo.com/terms
                     </p>
-                    @Christiano
 
-                    <p style={{ marginTop: "10px" }}>This Privacy Policy addresses the collection and use of personal information - http://cristianoronaldo.com/terms</p>
-
-                    <p style={{ fontSize: "16px" }}>
+                    <p className="font-size-16">
                         {
                             statsList.map((statsObj, statsIndex) => {
                                 let { icon, text } = statsObj;
@@ -78,7 +77,7 @@ const UserInfo = () => {
                                 return (
                                     <React.Fragment key={statsIndex}>
                                         {addBreak && statsIndex > 0 && <br />}
-                                        <CIcon size="sm" icon={icon} style={{ width: "16px", height: "16px" }} />
+                                        <CIcon size="sm" icon={icon} className="user-info-stat-icon" />
                                         &nbsp;{text}&nbsp;&nbsp;
                                     </React.Fragment>
                                 );
