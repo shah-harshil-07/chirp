@@ -15,7 +15,6 @@ import { getCommonHeader } from "src/utilities/helpers";
 import { openToaster } from "src/redux/reducers/toaster";
 import useToaster from "src/custom-hooks/toaster-message";
 import usePostServices from "src/custom-hooks/post-services";
-import { placeHolderImageSrc } from "src/utilities/constants";
 import { closeDetailsCard, openDetailsCard } from "src/redux/reducers/user-details";
 
 const Posts = () => {
@@ -23,6 +22,7 @@ const Posts = () => {
 	const headerData = getCommonHeader();
 	const likeIcon = require("src/assets/like.png");
 	const savedIcon = require("src/assets/saved-filled.png");
+	const sampleUserImg = require("src/assets/sample-user.png");
 	const { showError } = useToaster(), dispatch = useDispatch();
 	const userDetails = localStorage.getItem("chirp-userDetails");
 	const loggedInUserId = userDetails ? JSON.parse(userDetails)?._id ?? '' : '';
@@ -243,9 +243,10 @@ const Posts = () => {
 								alt="user"
 								onMouseOut={closeUserCard}
 								className="post-user-image"
+								src={picture ?? String(sampleUserImg)}
 								onClick={e => { moveToUserPage(e, userId); }}
-								src={picture ?? Constants.placeHolderImageSrc}
 								onMouseOver={e => { openUserCard(e, post?.user); }}
+								onError={e => { e.target.src = String(sampleUserImg); }}
 							/>
 
 							<div className="post-card-body">
@@ -275,9 +276,10 @@ const Posts = () => {
 												alt="post creator"
 												onMouseOut={closeUserCard}
 												className="parent-post-user-img"
-												src={parentPicture ?? placeHolderImageSrc}
+												src={parentPicture ?? String(sampleUserImg)}
 												onClick={e => { moveToUserPage(e, parentUserId); }}
 												onMouseOver={e => { openUserCard(e, parentPostUser); }}
+												onError={e => { e.target.src = String(sampleUserImg); }}
 											/>
 
 											<div className="repost-body-content">

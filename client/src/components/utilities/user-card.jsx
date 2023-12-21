@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { placeHolderImageSrc } from "src/utilities/constants";
 import { checkContainerInViewport } from "src/utilities/helpers";
 import { closeDetailsCard } from "src/redux/reducers/user-details";
 
@@ -12,6 +11,7 @@ const UserCard = () => {
     const cardRef = useRef(null);
     const dispatch = useDispatch(), navigate = useNavigate();
     const userDetailState = useSelector(state => state.userDetails);
+    const sampleUserImg = require("src/assets/sample-user.png");
     const userData = userDetailState?.data ?? {};
     let { left, top } = userData?.coordinates ?? {};
 
@@ -51,9 +51,9 @@ const UserCard = () => {
                 <img
                     alt="user"
                     className="user-card-header-img"
-                    src={userData?.picture ?? placeHolderImageSrc}
+                    src={userData?.picture ?? String(sampleUserImg)}
                     onClick={e => { moveToUserPage(e, userData._id); }}
-                    onError={e => { e.target.src = placeHolderImageSrc }}
+                    onError={e => { e.target.src = String(sampleUserImg); }}
                 />
 
                 <div className="user-card-header-follow-btn">Follow</div>

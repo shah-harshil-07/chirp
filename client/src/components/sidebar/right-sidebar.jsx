@@ -4,9 +4,10 @@ import "src/styles/sidebar/right-sidebar.css";
 import React from "react";
 import CIcon from "@coreui/icons-react";
 import { cilOptions } from "@coreui/icons";
-import { placeHolderImageSrc } from "src/utilities/constants";
 
 const RightSidebar = () => {
+    const sampleUserImg = require("src/assets/sample-user.png");
+
     return (
         <div className="sidebar">
             <div id="right-sidebar-container">
@@ -17,7 +18,7 @@ const RightSidebar = () => {
                         <b>What's happening</b>
                     </div>
 
-                    <div className="trending-section-margin-text" style={{ fontSize: "17px" }}>
+                    <div className="trending-section-margin-text font-size-17">
                         <div className="row">
                             <div className="col-md-10">Trending in India</div>
                             <div className="col-md-1"><CIcon icon={cilOptions} className="options-icon" /></div>
@@ -29,7 +30,7 @@ const RightSidebar = () => {
                         </div>
                     </div>
 
-                    <div className="trending-section-margin-text" style={{ fontSize: "17px" }}>
+                    <div className="trending-section-margin-text font-size-17">
                         <div className="row">
                             <div className="col-md-10">Trending in India</div>
                             <div className="col-md-1"><CIcon icon={cilOptions} className="options-icon" /></div>
@@ -41,7 +42,7 @@ const RightSidebar = () => {
                         </div>
                     </div>
 
-                    <div className="trending-section-margin-text" style={{ fontSize: "17px" }}>
+                    <div className="trending-section-margin-text font-size-17">
                         <div className="row">
                             <div className="col-md-10">Trending in India</div>
                             <div className="col-md-1"><CIcon icon={cilOptions} className="options-icon" /></div>
@@ -53,7 +54,7 @@ const RightSidebar = () => {
                         </div>
                     </div>
 
-                    <div className="trending-section-margin-text" style={{ fontSize: "17px" }}>
+                    <div className="trending-section-margin-text font-size-17">
                         <div className="row">
                             <div className="col-md-10">Trending in India</div>
                             <div className="col-md-1"><CIcon icon={cilOptions} className="options-icon" /></div>
@@ -75,7 +76,7 @@ const RightSidebar = () => {
 
                     <div className="row who-to-follow-user-div">
                         <div className="user-div-img-container">
-                            <img alt="logo" className="sidebar-profile-img" src={placeHolderImageSrc} />
+                            <img alt="logo" className="sidebar-profile-img" src={String(sampleUserImg)} />
                         </div>
 
                         <div className="who-to-follow-user-details">
@@ -87,7 +88,7 @@ const RightSidebar = () => {
 
                     <div className="row who-to-follow-user-div">
                         <div className="user-div-img-container">
-                            <img alt="logo" className="sidebar-profile-img" src={placeHolderImageSrc} />
+                            <img alt="logo" className="sidebar-profile-img" src={String(sampleUserImg)} />
                         </div>
 
                         <div className="who-to-follow-user-details">
@@ -99,7 +100,7 @@ const RightSidebar = () => {
 
                     <div className="row who-to-follow-user-div">
                         <div className="user-div-img-container">
-                            <img alt="logo" className="sidebar-profile-img" src={placeHolderImageSrc} />
+                            <img alt="logo" className="sidebar-profile-img" src={String(sampleUserImg)} />
                         </div>
 
                         <div className="who-to-follow-user-details">
@@ -115,7 +116,7 @@ const RightSidebar = () => {
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
 export default RightSidebar;

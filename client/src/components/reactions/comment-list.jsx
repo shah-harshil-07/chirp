@@ -160,7 +160,10 @@ const CommentList = ({ commentList }) => {
                                         </span>
                                     </div>
 
-                                    <div className="reaction-icon-container views-container" onClick={e => { e.stopPropagation(); }}>
+                                    <div
+                                        onClick={e => { e.stopPropagation(); }}
+                                        className="reaction-icon-container views-container"
+                                    >
                                         <span className="reply-icon">
                                             <CIcon title="Views" icon={cilChart} className="chirp-action" />
                                         </span>

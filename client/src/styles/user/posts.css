@@ -1,0 +1,14 @@
+#user-post-tab-view {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    font-weight: bolder;
+    justify-content: center;
+    border-bottom: 0.5px solid var(--common-hover-back-color);
+}
+
+#user-post-tab-view:hover {
+    background-color: var(--common-hover-back-color);
+}

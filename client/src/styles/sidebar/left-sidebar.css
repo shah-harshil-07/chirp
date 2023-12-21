@@ -23,7 +23,7 @@
 }
 
 #chirp-icon-container:hover {
-    background-color: rgba(15, 20, 25, 0.1);
+    background-color: var(--common-hover-back-color);
 }
 
 .left-sidebar-link {
@@ -34,8 +34,8 @@
 }
 
 .left-sidebar-link:hover {
-    background-color: rgba(15, 20, 25, 0.1);
     border-radius: 50px;
+    background-color: var(--common-hover-back-color);
 }
 
 .left-sidebar-link-label {
@@ -75,7 +75,7 @@
 }
 
 #left-sidebar-profile-container:hover {
-    background-color: rgba(15, 20, 25, 0.1);
+    background-color: var(--common-hover-back-color);
 }
 
 #profile-image-container {
@@ -108,12 +108,12 @@
 }
 
 .left-sidebar-user-action:hover {
-    background-color: rgba(15, 20, 25, 0.1);
+    background-color: var(--common-hover-back-color);
 }
 
 #left-sidebar-options-icon {
-    position: absolute;
     right: 20px;
+    position: absolute;
 }
 
 #left-sidebar-userbar-text {

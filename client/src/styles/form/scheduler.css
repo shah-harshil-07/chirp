@@ -21,7 +21,7 @@
 }
 
 #scheduler-header-close:hover {
-    background-color: rgba(15, 20, 25, 0.1);
+    background-color: var(--common-hover-back-color);
 }
 
 #scheduler-timezone-text {

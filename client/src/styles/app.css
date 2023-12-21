@@ -13,6 +13,8 @@
     --repost-bg-color: rgba(0, 186, 124, 0.3);
     --viewed-bg-color: rgba(29, 155, 240, 0.3);
     --saved-bg-color: rgba(125, 15, 209, 0.3);
+
+    --common-hover-back-color: rgba(15, 20, 25, 0.1);
 }
 
 .float-left {
@@ -128,6 +130,10 @@
     font-size: 19px;
 }
 
+.font-size-17 {
+    font-size: 17px !important;
+}
+
 .common-header {
     display: flex;
     font-size: 20px;
@@ -150,5 +156,5 @@
 
 .common-heading-icon:hover {
     cursor: pointer;
-    background-color: rgba(15, 20, 25, 0.1);
+    background-color: var(--common-hover-back-color);
 }

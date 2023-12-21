@@ -3,17 +3,17 @@ import "src/styles/sidebar/left-sidebar.css";
 
 import CIcon from "@coreui/icons-react";
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import useDocumentClickServices from "src/custom-hooks/document-services";
 import { cilHome, cilSettings, cilBookmark, cilUser, cilOptions } from "@coreui/icons";
 
-import { useNavigate, useLocation } from "react-router-dom";
 import Confirmation from "../utilities/confirmation";
-import { placeHolderImageSrc } from "src/utilities/constants";
 import { getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const LeftSidebar = () => {
     const logo = require("src/assets/logo-1.png");
     const navigate = useNavigate(), location = useLocation();
+    const sampleUserImg = require("src/assets/sample-user.png");
     const { addDocumentClickCallback } = useDocumentClickServices();
 
     const userDetails = getUserDetails(), actionbarRef = useRef(null), actionIconRef = useRef(null);
@@ -120,7 +120,8 @@ const LeftSidebar = () => {
                                     <img
                                         alt="user"
                                         className="sidebar-profile-img"
-                                        src={userDetails.picture ?? placeHolderImageSrc}
+                                        src={userDetails.picture ?? String(sampleUserImg)}
+                                        onError={e => { e.target.src = String(sampleUserImg); }}
                                     />
                                 </div>
 

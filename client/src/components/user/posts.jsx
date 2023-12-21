@@ -1,8 +1,10 @@
+import "src/styles/user/posts.css";
+
 import React from "react";
 
 const UserPosts = () => {
     return (
-        <div>User posts</div>
+        <div id="user-post-tab-view">Posts</div>
     );
 };
 

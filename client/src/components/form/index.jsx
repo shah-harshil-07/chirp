@@ -13,7 +13,6 @@ import { openModal } from "src/redux/reducers/modal";
 import * as Constants from "src/utilities/constants";
 import useToaster from "src/custom-hooks/toaster-message";
 import EmojiContainer from "../utilities/emoji-container";
-import { placeHolderImageSrc } from "src/utilities/constants";
 import DateOptionServices from "src/custom-hooks/date-services";
 import useImageConverter from "src/custom-hooks/image-converter";
 import { getCommonHeader, getUserDetails } from "src/utilities/helpers";
@@ -34,6 +33,7 @@ const Form = ({
 	const monthOptions = dateService.getMonthOptions();
 	const { uploadImagesAction } = useImageConverter();
 	const dispatch = useDispatch(), textboxRef = useRef(null);
+	const sampleUserImg = require("src/assets/sample-user.png");
 	const fileUploadRef = useRef(null), { showError, showSuccess } = useToaster();
 
 	const [text, setText] = useState('');
@@ -214,8 +214,8 @@ const Form = ({
 			<img
 				alt="user"
 				className="user-image"
-				src={ userDetails?.picture ?? placeHolderImageSrc }
-				onError={e => { e.target.src = placeHolderImageSrc }}
+				src={ userDetails?.picture ?? String(sampleUserImg) }
+				onError={e => { e.target.src = String(sampleUserImg); }}
 			/>
 
 			<div className="form-action-container">

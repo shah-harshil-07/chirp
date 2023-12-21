@@ -1,16 +1,17 @@
 import "src/styles/user/info.css";
 
-import React from "react";
 import CIcon from "@coreui/icons-react";
 import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { cilArrowLeft, cilCalendar, cilBirthdayCake, cilLink, cilLocationPin } from "@coreui/icons";
 
-const UserInfo = () => {
-    const navigate = useNavigate();
-    const sampleUserImg = require("src/assets/sample-user-img.jpeg");
+import { placeHolderImageSrc } from "src/utilities/constants";
 
+const UserInfo = ({ details }) => {
     const totalLineLength = 1040;
+    const navigate = useNavigate();
     let availableCoverage = totalLineLength;
+    const sampleUserImg = require("src/assets/sample-user.png");
 
     const statsList = [
         { icon: cilLocationPin, text: "Mumbai, Maharashtra" },
@@ -18,6 +19,12 @@ const UserInfo = () => {
         { icon: cilLink, text: "https://www.linkedin.com/in/harshil-shah-612b3418a/" },
         { icon: cilCalendar, text: "Joined April 25" },
     ];
+
+    const [userData, setUserData] = useState({});
+
+    useEffect(() => {
+        setUserData({ ...details });
+    }, [details]);
 
     const moveToHomePage = () => {
         navigate('/');
@@ -31,28 +38,32 @@ const UserInfo = () => {
                 </div>
 
                 <div className="common-heading-text">
-                    Christiano Ronaldo
+                    {userData?.name ?? ''}
                     <div id="user-info-header-sub-text">4000 posts</div>
                 </div>
             </div>
 
             <div>
-                <img alt="background" id="user-info-back-img" src="https://pbs.twimg.com/profile_banners/155659213/1668980773/600x200" />
+                <img alt="background" id="user-info-back-img" src={placeHolderImageSrc} />
 
                 <div id="user-info-follow-btn"><b>Following</b></div>
 
                 <div id="user-info-user-img-container">
-                    <img alt={"user"} src={String(sampleUserImg)} id="user-info-user-img" />
+                    <img
+                        alt={"user"}
+                        id="user-info-user-img"
+                        src={userData?.picture ?? String(sampleUserImg)}
+                        onError={e => { e.target.src = String(sampleUserImg); }}
+                    />
                 </div>
 
                 <div id="user-info-body">
-                    <p id="user-info-username-text">Christiano Ronaldo</p>@Christiano
+                    <p id="user-info-username-text">{userData?.name ?? ''}</p>
+                    {userData?.username ? `@${userData.username}` : ''}
 
-                    <p id="user-info-bio-text">
-                        This Privacy Policy addresses the collection and use of personal information - http://cristianoronaldo.com/terms
-                    </p>
+                    {userData?.bio && <p id="user-info-bio-text">{userData.bio}</p>}
 
-                    <p className="font-size-16">
+                    <p className="font-size-16 mt-3">
                         {
                             statsList.map((statsObj, statsIndex) => {
                                 let { icon, text } = statsObj;
