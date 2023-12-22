@@ -17,6 +17,7 @@ const UserDetails = () => {
     useEffect(() => {
         getUserPosts();
         window.scrollTo(0, 0);
+        // eslint-disable-next-line
     }, []);
 
     const getUserPosts = async () => {
@@ -25,8 +26,9 @@ const UserDetails = () => {
 
         if (responseData?.meta?.status && responseData?.data) {
             const { posts, userData } = responseData.data;
+            const totalPosts = posts.length;
             setPosts([...posts]);
-            setUserDetails({ ...userData });
+            setUserDetails({ ...userData, totalPosts });
         }
     }
 

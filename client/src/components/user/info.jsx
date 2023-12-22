@@ -1,5 +1,6 @@
 import "src/styles/user/info.css";
 
+import moment from "moment";
 import CIcon from "@coreui/icons-react";
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
@@ -10,20 +11,40 @@ import { placeHolderImageSrc } from "src/utilities/constants";
 const UserInfo = ({ details }) => {
     const totalLineLength = 1040;
     const navigate = useNavigate();
+    const linkEnabledKeys = ["website"];
     let availableCoverage = totalLineLength;
+    const dateEnabledKeys = ["dateOfBirth", "createdAt"];
     const sampleUserImg = require("src/assets/sample-user.png");
 
-    const statsList = [
-        { icon: cilLocationPin, text: "Mumbai, Maharashtra" },
-        { icon: cilBirthdayCake, text: "Born Decemember 16" },
-        { icon: cilLink, text: "https://www.linkedin.com/in/harshil-shah-612b3418a/" },
-        { icon: cilCalendar, text: "Joined April 25" },
+    const _statsList = [
+        { icon: cilLink, serverKey: "website", text: '' },
+        { icon: cilCalendar, serverKey: "dateOfBirth", text: '' },
+        { icon: cilLocationPin, serverKey: "location", text: '' },
+        { icon: cilBirthdayCake, serverKey: "createdAt", text: '' },
     ];
 
     const [userData, setUserData] = useState({});
+    const [statsList, setStatsList] = useState([..._statsList]);
 
     useEffect(() => {
-        setUserData({ ...details });
+        if (details) {
+            setUserData({ ...details });
+            const updatedStatsList = [];
+
+            _statsList.forEach(statsObj => {
+                const { icon, serverKey } = statsObj;
+                let value = details[serverKey];
+
+                if (value) {
+                    if (dateEnabledKeys.includes(serverKey)) value = moment(value).format("MMM Do, YYYY")
+                    updatedStatsList.push({ icon, text: value });
+                }
+            });
+
+            setStatsList([...updatedStatsList]);
+        }
+
+        // eslint-disable-next-line
     }, [details]);
 
     const moveToHomePage = () => {
@@ -39,7 +60,7 @@ const UserInfo = ({ details }) => {
 
                 <div className="common-heading-text">
                     {userData?.name ?? ''}
-                    <div id="user-info-header-sub-text">4000 posts</div>
+                    <div id="user-info-header-sub-text">{userData?.totalPosts ?? 0} posts</div>
                 </div>
             </div>
 
@@ -67,18 +88,16 @@ const UserInfo = ({ details }) => {
                         {
                             statsList.map((statsObj, statsIndex) => {
                                 let { icon, text } = statsObj;
-                                let n = text.length, textShortened = false;
 
-                                if ((n * 16) > totalLineLength) {
+                                if ((text.length * 16) > totalLineLength) {
                                     text = text.slice(0, 66) + "...";
-                                    n = text.length;
-                                    textShortened = true;
                                 }
 
+                                const n = text.length;
                                 let currentCoverage = (n + 1) * 16, addBreak = false;
-                                currentCoverage += (statsIndex < statsList.length - 1) ? 32 : 0;
+                                currentCoverage += (statsIndex < _statsList.length - 1) ? 32 : 0;
 
-                                if (currentCoverage > availableCoverage || textShortened) {
+                                if (currentCoverage > availableCoverage) {
                                     addBreak = true;
                                     availableCoverage = totalLineLength - currentCoverage;
                                 } else {
@@ -97,8 +116,8 @@ const UserInfo = ({ details }) => {
                     </p>
 
                     <div className="d-flex justify-content-start">
-                        <div className="mr-2"><b>695</b>&nbsp;Following</div>
-                        <div className="ml-2"><b>33</b>&nbsp;Followers</div>
+                        <div className="mr-2"><b>{userData.following}</b>&nbsp;Following</div>
+                        <div className="ml-2"><b>{userData.followers}</b>&nbsp;Followers</div>
                     </div>
                 </div>
             </div>
