@@ -97,7 +97,7 @@ const LeftSidebar = () => {
                         <div className="col-sm-9 left-sidebar-link-label">Bookmarks</div>
                     </div>
 
-                    <div className="row left-sidebar-link">
+                    <div className="row left-sidebar-link" onClick={moveToUserPage}>
                         <div className="col-sm-3 px-4 align-self-center">
                             <CIcon width={30} height={30} icon={cilUser} />
                         </div>
