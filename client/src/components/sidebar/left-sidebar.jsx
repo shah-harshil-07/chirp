@@ -51,6 +51,12 @@ const LeftSidebar = () => {
         else navigate('/', { preventScrollReset: false });
     }
 
+    const moveToUserPage = e => {
+        e.preventDefault();
+        const { id } = userDetails;
+        if (id) navigate(`user/${id}`);
+    }
+
     return (
         <div className="sidebar" id="left-sidebar-main">
             <div id="left-sidebar-super-container">
@@ -119,6 +125,7 @@ const LeftSidebar = () => {
                                 <div id="profile-image-container">
                                     <img
                                         alt="user"
+                                        onClick={moveToUserPage}
                                         className="sidebar-profile-img"
                                         src={userDetails.picture ?? String(sampleUserImg)}
                                         onError={e => { e.target.src = String(sampleUserImg); }}

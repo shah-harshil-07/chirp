@@ -16,9 +16,9 @@ const UserInfo = ({ details }) => {
 
     const _statsList = [
         { icon: cilLink, serverKey: "website", text: '' },
-        { icon: cilCalendar, serverKey: "dateOfBirth", text: '' },
+        { icon: cilCalendar, serverKey: "createdAt", text: '' },
         { icon: cilLocationPin, serverKey: "location", text: '' },
-        { icon: cilBirthdayCake, serverKey: "createdAt", text: '' },
+        { icon: cilBirthdayCake, serverKey: "dateOfBirth", text: '' },
     ];
 
     const [userData, setUserData] = useState({});

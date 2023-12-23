@@ -57,8 +57,5 @@
 
 .span-link {
     cursor: pointer;
-}
-
-.span-link:hover {
     color: var(--chirp-color);
 }

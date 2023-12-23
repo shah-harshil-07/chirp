@@ -181,6 +181,7 @@ const Posts = () => {
 	}
 
 	const moveToCommentList = postId => {
+		closeDetailsCardImmediately();
 		navigate(`/post/${postId}`, { preventScrollReset: false });
 	}
 
@@ -189,6 +190,11 @@ const Posts = () => {
 		const imgRect = e.target.getBoundingClientRect();
 		const coordinates = { left: imgRect.left - 130, top: window.scrollY + imgRect.bottom + 10 };
 		dispatch(openDetailsCard({ ...userDetails, coordinates }));
+	}
+
+	const closeDetailsCardImmediately = () => {
+		dispatch(closeDetailsCard());
+		document.removeEventListener("mousemove", () => { });
 	}
 
 	const closeUserCard = e => {
@@ -202,13 +208,14 @@ const Posts = () => {
 		setTimeout(() => {
 			const currentHoveredElement = document.elementFromPoint(clientX, clientY);
 			const pointerContainsCard = document.getElementById("user-card-body")?.contains(currentHoveredElement);
-			if (!pointerContainsCard) dispatch(closeDetailsCard());
+			if (!pointerContainsCard && !e.target.contains(currentHoveredElement)) dispatch(closeDetailsCard());
 			document.removeEventListener("mousemove", () => { });
 		}, 2000);
 	}
 
 	const moveToUserPage = (e, userId) => {
 		e.stopPropagation();
+		closeDetailsCardImmediately();
 		navigate(`/user/${userId}`);
 	}
 

@@ -42,6 +42,7 @@ const UserCard = () => {
 
     const moveToUserPage = (e, userId) => {
 		e.stopPropagation();
+        closeUserCard();
 		navigate(`/user/${userId}`);
 	}
 

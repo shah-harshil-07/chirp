@@ -13,7 +13,7 @@ const keyConfig = {
     email: { regex: CONSTANTS.EMAIL_REGEX, negativeCase: true, errorMessage: CONSTANTS.EMAIL_ERR_MESSAGE },
 }
 
-const MAX_DISPLAY_LENGTH = 15;
+const MAX_DISPLAY_LENGTH = 12;
 
 export const validate = (key, data) => {
     if (keyConfig?.[key]) {
@@ -40,10 +40,10 @@ export const getCommonHeader = () => {
 export const getUserDetails = () => {
     const userData = localStorage.getItem("chirp-userDetails"), len = MAX_DISPLAY_LENGTH;
     if (userData) {
-        let { name, picture, username } = JSON.parse(userData);
+        let { name, picture, username, _id } = JSON.parse(userData);
         name = name.length > len ? `${name.slice(0, len)}...` : name;
         username = username.length > len ? `${username.slice(0, len)}...` : username;
-        return { name, username, picture };
+        return { name, username, picture, id: _id };
     }
 
     return null;
