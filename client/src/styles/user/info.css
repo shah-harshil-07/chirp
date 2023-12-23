@@ -54,3 +54,11 @@
     width: 16px;
     height: 16px;
 }
+
+.span-link {
+    cursor: pointer;
+}
+
+.span-link:hover {
+    color: var(--chirp-color);
+}

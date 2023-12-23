@@ -54,6 +54,7 @@ const UserInfo = ({ details }) => {
                         break;
                     case "website":
                         value = value.replaceAll(/https:\/\/|www./g, '');
+                        if (value.length > 30) value = `${value.slice(0, 28)}...`;
                         break;
                     default:
                         break;
@@ -106,7 +107,7 @@ const UserInfo = ({ details }) => {
                     <p className="font-size-16 mt-3">
                         {
                             statsList.map((statsObj, statsIndex) => {
-                                let { icon, text } = statsObj;
+                                let { icon, text, serverKey } = statsObj;
 
                                 if ((text.length * 16) > totalLineLength) {
                                     text = text.slice(0, 66) + "...";
@@ -127,7 +128,12 @@ const UserInfo = ({ details }) => {
                                     <React.Fragment key={statsIndex}>
                                         {addBreak && statsIndex > 0 && <br />}
                                         <CIcon size="sm" icon={icon} className="user-info-stat-icon" />
-                                        &nbsp;{text}&nbsp;&nbsp;
+                                        <span
+                                            className={serverKey === "website" ? "span-link" : ''}
+                                            title={serverKey === "website" && details?.website ? details.website : ''}
+                                        >
+                                            &nbsp;{text}&nbsp;&nbsp;
+                                        </span>
                                     </React.Fragment>
                                 );
                             })
