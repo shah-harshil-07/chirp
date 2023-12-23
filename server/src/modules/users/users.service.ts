@@ -113,7 +113,7 @@ export class UsersService {
         const postList = await this.postService.getUserPostDetails(userId);
         const userDetails = await this
             .userModel
-            .findById(userId, "name username bio website dateOfBirth location followers following picture")
+            .findById(userId, "name username bio website createdAt dateOfBirth location followers following picture")
             .exec();
 
         return { posts: postList, userData: userDetails };

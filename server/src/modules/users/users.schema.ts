@@ -20,6 +20,9 @@ export class UserModel {
     @Prop({ default: null })
     dateOfBirth: Date;
 
+    @Prop({ default: new Date() })
+    createdAt: Date;
+
     @Prop()
     location: string;
 
