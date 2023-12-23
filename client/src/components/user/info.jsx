@@ -11,9 +11,7 @@ import { placeHolderImageSrc } from "src/utilities/constants";
 const UserInfo = ({ details }) => {
     const totalLineLength = 1040;
     const navigate = useNavigate();
-    const linkEnabledKeys = ["website"];
     let availableCoverage = totalLineLength;
-    const dateEnabledKeys = ["dateOfBirth", "createdAt"];
     const sampleUserImg = require("src/assets/sample-user.png");
 
     const _statsList = [
@@ -29,23 +27,44 @@ const UserInfo = ({ details }) => {
     useEffect(() => {
         if (details) {
             setUserData({ ...details });
-            const updatedStatsList = [];
-
-            _statsList.forEach(statsObj => {
-                const { icon, serverKey } = statsObj;
-                let value = details[serverKey];
-
-                if (value) {
-                    if (dateEnabledKeys.includes(serverKey)) value = moment(value).format("MMM Do, YYYY")
-                    updatedStatsList.push({ icon, text: value });
-                }
-            });
-
-            setStatsList([...updatedStatsList]);
+            updateStats();
         }
 
         // eslint-disable-next-line
     }, [details]);
+
+    const formatDisplayedDate = date => {
+        return moment(date).format("MMM Do, YYYY");
+    }
+
+    const updateStats = () => {
+        const updatedStatsList = [];
+
+        _statsList.forEach(statsObj => {
+            const { icon, serverKey } = statsObj;
+            let value = details[serverKey];
+
+            if (value) {
+                switch (serverKey) {
+                    case "dateOfBirth":
+                        value = `Born ${formatDisplayedDate(value)}`;
+                        break;
+                    case "createdAt":
+                        value = `Joined on ${formatDisplayedDate(value)}`;                        
+                        break;
+                    case "website":
+                        value = value.replaceAll(/https:\/\/|www./g, '');
+                        break;
+                    default:
+                        break;
+                }
+
+                updatedStatsList.push({ icon, serverKey, text: value });
+            }
+        });
+
+        setStatsList([...updatedStatsList]);
+    }
 
     const moveToHomePage = () => {
         navigate('/');
@@ -116,8 +135,8 @@ const UserInfo = ({ details }) => {
                     </p>
 
                     <div className="d-flex justify-content-start">
-                        <div className="mr-2"><b>{userData.following}</b>&nbsp;Following</div>
-                        <div className="ml-2"><b>{userData.followers}</b>&nbsp;Followers</div>
+                        <div className="mr-2"><b>{userData?.following ?? 0}</b>&nbsp;Following</div>
+                        <div className="ml-2"><b>{userData?.followers ?? 0}</b>&nbsp;Followers</div>
                     </div>
                 </div>
             </div>
