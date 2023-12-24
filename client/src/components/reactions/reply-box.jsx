@@ -16,6 +16,7 @@ const ReplyBox = ({ username, postId, picture }) => {
     const navigate = useNavigate();
     const { showError, showSuccess } = useToaster();
     const { uploadImagesAction } = useImageConverter();
+    const sampleUserImg = require("src/assets/sample-user.png");
     const fileUploadRef = useRef(null), headerData = getCommonHeader();
 
     const [text, setText] = useState('');
@@ -95,7 +96,8 @@ const ReplyBox = ({ username, postId, picture }) => {
                 <img
                     alt="user"
                     className="post-detail-user-image"
-                    src={picture ?? Constants.placeHolderImageSrc}
+                    src={picture ?? String(sampleUserImg)}
+                    onError={e => { e.target.src = String(sampleUserImg); }}
                 />
 
                 <textarea

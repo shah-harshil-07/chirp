@@ -15,7 +15,6 @@ import { getCommonHeader } from "src/utilities/helpers";
 import useToaster from "src/custom-hooks/toaster-message";
 import EmojiContainer from "../utilities/emoji-container";
 import usePostServices from "src/custom-hooks/post-services";
-import { placeHolderImageSrc } from "src/utilities/constants";
 import useImageConverter from "src/custom-hooks/image-converter";
 
 const RepostEditor = post => {
@@ -24,6 +23,7 @@ const RepostEditor = post => {
     const userDetails = getUserDetails() ?? {};
     const { name, username } = postCreator ?? {};
     const { picture: userPictureUrl } = userDetails;
+    const sampleUserImg = require("src/assets/sample-user.png");
     const { showError, showSuccess } = useToaster(), dispatch = useDispatch();
     const { uploadImagesAction } = useImageConverter(), { getPostTiming } = usePostServices();
     const fileUploadRef = useRef(null), textboxRef = useRef(null), bodyClasses = "mr-2 ml-2 mt-2";
@@ -138,7 +138,7 @@ const RepostEditor = post => {
         <div className="reaction-editor-body">
             <form noValidate onSubmit={repost} className="mw-100 mt-3">
                 <div className="reaction-editor-form-body">
-                    <img src={userPictureUrl ?? placeHolderImageSrc} className="reaction-editor-commentor-img" alt="user" />
+                    <img src={userPictureUrl ?? String(sampleUserImg)} className="reaction-editor-commentor-img" alt="user" />
 
                     <div className="reaction-editor-data-container">
                         <textarea
@@ -159,7 +159,8 @@ const RepostEditor = post => {
                 <img
                     alt="post creator"
                     className="reaction-editor-user-image"
-                    src={postCreator?.picture ?? placeHolderImageSrc}
+                    src={postCreator?.picture ?? String(sampleUserImg)}
+                    onError={e => { e.target.src = String(sampleUserImg); }}
                 />
 
                 <div className="reaction-editor-card-body">

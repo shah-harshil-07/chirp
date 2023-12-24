@@ -80,7 +80,9 @@ const UserInfo = ({ details }) => {
 
                 <div className="common-heading-text">
                     {userData?.name ?? ''}
-                    <div id="user-info-header-sub-text">{userData?.totalPosts ?? 0} posts</div>
+                    <div id="user-info-header-sub-text">
+                        {userData?.totalPosts ?? 0} post{userData?.totalPosts > 1 ? 's' : ''}
+                    </div>
                 </div>
             </div>
 

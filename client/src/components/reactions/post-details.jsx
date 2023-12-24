@@ -24,6 +24,7 @@ const PostDetails = () => {
     const headerData = getCommonHeader();
     const likeIcon = require("src/assets/like.png");
     const savedIcon = require("src/assets/saved-filled.png");
+    const sampleUserImg = require("src/assets/sample-user.png");
     const dispatch = useDispatch(), { showError } = useToaster();
     const userDetails = localStorage.getItem("chirp-userDetails");
     const loggedInUserId = userDetails ? JSON.parse(userDetails)?._id ?? '' : '';
@@ -108,7 +109,7 @@ const PostDetails = () => {
                     user: {
                         name: commentObj?.user?.name ?? '',
                         username: commentObj?.user?.username ?? '',
-                        picture: commentObj?.user?.picture ?? Constants.placeHolderImageSrc,
+                        picture: commentObj?.user?.picture ?? String(sampleUserImg),
                     },
                 };
             });
@@ -230,7 +231,8 @@ const PostDetails = () => {
                     <img
                         alt="user"
                         className="post-detail-card-header-image"
-                        src={postDetails?.user?.picture ?? Constants.placeHolderImageSrc}
+                        src={postDetails?.user?.picture ?? String(sampleUserImg)}
+                        onError={e => { e.target.src = String(sampleUserImg); }}
                     />
 
                     <div className="post-detail-card-header-text">
@@ -258,7 +260,8 @@ const PostDetails = () => {
                                 <img
                                     alt="post creator"
                                     className="post-detail-parent-user-img"
-                                    src={postDetails?.parentPostDetails?.user?.picture ?? Constants.placeHolderImageSrc}
+                                    onError={e => { e.target.src = String(sampleUserImg); }}
+                                    src={postDetails?.parentPostDetails?.user?.picture ?? String(sampleUserImg)}
                                 />
 
                                 <div className="post-detail-repost-body-content">

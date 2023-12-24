@@ -28,8 +28,8 @@
 }
 
 .post-list-repost-body {
-    width: 95%;
-    margin-right: 26px;
+    width: 95% !important;
+    margin-right: 26px !important;
 }
 
 .action-bar {
@@ -75,7 +75,7 @@
 }
 
 .post-reaction-data {
-    padding-top: 20%;
+    padding-top: 12%;
     margin-left: 10px;
     color: var(--unreacted-color);
 }

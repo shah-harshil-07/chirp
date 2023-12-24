@@ -14,6 +14,7 @@ const CommentList = ({ commentList }) => {
     const headerData = getCommonHeader();
     const likeIcon = require("src/assets/like.png");
     const savedIcon = require("src/assets/saved-filled.png");
+    const sampleUserImg = require("src/assets/sample-user.png");
     const { getPostTiming, handleMutedReaction, getImageFetchingPromise } = usePostServices();
 
     const [comments, setComments] = useState([]);
@@ -101,6 +102,7 @@ const CommentList = ({ commentList }) => {
                                 alt="user"
                                 className="post-detail-user-image"
                                 src={picture ?? Constants.placeHolderImageSrc}
+                                onError={e => { e.target.src = String(sampleUserImg); }}
                             />
 
                             <div id="comment-container">

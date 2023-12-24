@@ -12,3 +12,8 @@
 #user-post-tab-view:hover {
     background-color: var(--common-hover-back-color);
 }
+
+.user-post-list-repost-body {
+    width: 95% !important;
+    margin-right: 26px !important;
+}

@@ -15,7 +15,6 @@ import { getCommonHeader } from "src/utilities/helpers";
 import useToaster from "src/custom-hooks/toaster-message";
 import EmojiContainer from "../utilities/emoji-container";
 import usePostServices from "src/custom-hooks/post-services";
-import { placeHolderImageSrc } from "src/utilities/constants";
 import useImageConverter from "src/custom-hooks/image-converter";
 
 const CommentEditor = post => {
@@ -23,6 +22,7 @@ const CommentEditor = post => {
     const userDetails = getUserDetails() ?? {};
     const { name, username } = postCreator ?? {};
     const { picture: userPictureUrl } = userDetails;
+    const sampleUserImg = require("src/assets/sample-user.png");
     const { showError, showSuccess } = useToaster(), dispatch = useDispatch();
     const { getPostTiming } = usePostServices(), fileUploadRef = useRef(null);
     const { uploadImagesAction } = useImageConverter(), textboxRef = useRef(null), headerData = getCommonHeader();
@@ -132,7 +132,8 @@ const CommentEditor = post => {
                 <img
                     alt="post creator"
                     className="reaction-editor-user-image"
-                    src={postCreator?.picture ?? placeHolderImageSrc}
+                    src={postCreator?.picture ?? String(sampleUserImg)}
+                    onError={e => { e.target.src = String(sampleUserImg); }}
                 />
 
                 <div className="reaction-editor-card-body">
@@ -158,7 +159,12 @@ const CommentEditor = post => {
 
             <form noValidate onSubmit={createComment} className="mw-100 mt-3">
                 <div className="reaction-editor-form-body">
-                    <img src={userPictureUrl ?? placeHolderImageSrc} className="reaction-editor-commentor-img" alt="user" />
+                    <img
+                        alt="user"
+                        className="reaction-editor-commentor-img"
+                        src={userPictureUrl ?? String(sampleUserImg)}
+                        onError={e => { e.target.src = String(sampleUserImg); }}
+                    />
 
                     <div className="reaction-editor-data-container">
                         <textarea
