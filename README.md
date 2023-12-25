@@ -4,3 +4,4 @@
 # Implement lighthouse functionality in all the places where image is placed.
 # The number of likes, views, comments, etc. must be standardised. For example, 1,548 views must be displayed as 1.5k views. 153,258 views must be displayed as 1.5m views.
 # In the post's text display, whenever there is a link, apply "span-link" CSS class on it and display it in that way. For e.g whenever there is a link of any kind in the post's text, that link portion must be colored in blue and decorated with an underline.
+# No. of comments showed in the post list and actual no. of comments when opened in post details page are differing sometimes.
