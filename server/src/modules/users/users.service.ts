@@ -1,7 +1,7 @@
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { MailerService } from "@nestjs-modules/mailer";
-import { Injectable, InternalServerErrorException, UseInterceptors } from "@nestjs/common";
+import { Injectable, UseInterceptors } from "@nestjs/common";
 
 import { UserModel } from "./users.schema";
 import { PostService } from "../posts/posts.service";
@@ -9,6 +9,7 @@ import { OtpStore } from "../common/otp-store.schema";
 import { CommonService } from "../common/common.service";
 import { ConfigService } from "../config/config.service";
 import { ResponseInterceptor } from "src/interceptors/response";
+import { SavesLikesService } from "src/modules/reactions/savesAndLikes/savesAndLikes.service";
 import {
     UserDTO,
     IUserDetails,
@@ -26,6 +27,7 @@ export class UsersService {
         private readonly mailerService: MailerService,
         private readonly commonService: CommonService,
         private readonly configService: ConfigService,
+        private readonly savesLikesService: SavesLikesService,
         @InjectModel(OtpStore.name) private readonly otpModel: Model<OtpStore>,
         @InjectModel(UserModel.name) private readonly userModel: Model<UserModel>,
     ) { }
@@ -117,5 +119,11 @@ export class UsersService {
             .exec();
 
         return { posts: postList, userData: userDetails };
+    }
+
+    public async getUserSavedPosts(userId: string): Promise<any> {
+        const data = await this.savesLikesService.getSavedPosts(userId);
+        console.log(data);
+        return data;
     }
 }

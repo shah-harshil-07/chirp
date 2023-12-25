@@ -60,4 +60,10 @@ export class SavesLikesService {
     async checkLikes(userId: string, postIds: string[]): Promise<SavesAndLikes[]> {
         return this.savesLikesModal.find({ userId, postId: { $in: postIds } }).exec();
     }
+
+    async getSavedPosts(userId: string): Promise<any> {
+        return this.savesLikesModal.aggregate([
+            { $match: { userId } },
+        ]);
+    }
 }

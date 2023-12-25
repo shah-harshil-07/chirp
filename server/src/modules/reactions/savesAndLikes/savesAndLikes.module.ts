@@ -15,5 +15,6 @@ import { CommentsModule } from "src/modules/reactions/comments/comments.module";
 	],
 	controllers: [SavesAndLikesController],
 	providers: [SavesLikesService],
+	exports: [SavesLikesService],
 })
 export class LikesModule { }
