@@ -21,7 +21,6 @@ import {
 } from "@nestjs/common";
 
 import { PostService } from "./posts.service";
-import { Post as UserPost } from "./post.schema";
 import { IResponseProps } from "src/interceptors/interfaces";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { fileStorageConfigObj, parseFilePipeObj } from "./file.config";

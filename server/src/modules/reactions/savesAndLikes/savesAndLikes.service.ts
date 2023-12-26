@@ -63,7 +63,9 @@ export class SavesLikesService {
 
     async getSavedPosts(userId: string): Promise<any> {
         return this.savesLikesModal.aggregate([
-            { $match: { userId } },
+            { $match: { userId, saved: true } },
+            { $lookup: { from: "PostMessages", localField: "postId", foreignField: "_id", as: "post" } },
+            { $unwind: { path: "$post", preserveNullAndEmptyArrays: true } },
         ]);
     }
 }

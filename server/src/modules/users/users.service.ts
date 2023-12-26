@@ -122,8 +122,6 @@ export class UsersService {
     }
 
     public async getUserSavedPosts(userId: string): Promise<any> {
-        const data = await this.savesLikesService.getSavedPosts(userId);
-        console.log(data);
-        return data;
+        return await this.savesLikesService.getSavedPosts(userId);
     }
 }

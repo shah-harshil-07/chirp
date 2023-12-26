@@ -1,8 +1,9 @@
+import mongoose from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 @Schema({ collection: "SavesAndLikes" })
 export class SavesAndLikes {
-    @Prop({ required: true })
+    @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: "Post" })
     postId: string;
 
     @Prop({ required: true })
