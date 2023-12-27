@@ -110,7 +110,7 @@ export class UsersController {
     }
 
     @Get("get-saved/:id")
-    async getSavedPosts(@Param() { id }: { id: string }): Promise<any> {
+    async getSavedPosts(@Param() { id }: { id: string }): Promise<IResponseProps> {
         const posts = await this.userService.getUserSavedPosts(id);
         return { success: true, data: posts, message: "Saved posts fetched successfully." };
     }

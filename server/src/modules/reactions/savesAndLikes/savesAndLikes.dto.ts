@@ -1,5 +1,7 @@
 import { IsIn, IsNotEmpty, IsString } from "class-validator";
 
+import { Post } from "src/modules/posts/post.schema";
+
 export class SavesLikesDTO {
     @IsString()
     @IsNotEmpty()
@@ -25,4 +27,8 @@ export interface SavesLikesData {
 
 export interface IPostInfo {
     postIds: string[];
+}
+
+export interface ISavedPost {
+    post: Post;
 }

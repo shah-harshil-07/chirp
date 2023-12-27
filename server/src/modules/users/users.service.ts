@@ -4,11 +4,13 @@ import { MailerService } from "@nestjs-modules/mailer";
 import { Injectable, UseInterceptors } from "@nestjs/common";
 
 import { UserModel } from "./users.schema";
+import { Post } from "../posts/post.schema";
 import { PostService } from "../posts/posts.service";
 import { OtpStore } from "../common/otp-store.schema";
 import { CommonService } from "../common/common.service";
 import { ConfigService } from "../config/config.service";
 import { ResponseInterceptor } from "src/interceptors/response";
+import { ISavedPost } from "../reactions/savesAndLikes/savesAndLikes.dto";
 import { SavesLikesService } from "src/modules/reactions/savesAndLikes/savesAndLikes.service";
 import {
     UserDTO,
@@ -121,7 +123,8 @@ export class UsersService {
         return { posts: postList, userData: userDetails };
     }
 
-    public async getUserSavedPosts(userId: string): Promise<any> {
-        return await this.savesLikesService.getSavedPosts(userId);
+    public async getUserSavedPosts(userId: string): Promise<Post[]> {
+        const savedPosts = await this.savesLikesService.getSavedPosts(userId);
+        return savedPosts.map((postObj: ISavedPost) => postObj.post);
     }
 }
