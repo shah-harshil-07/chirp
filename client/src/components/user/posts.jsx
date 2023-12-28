@@ -1,21 +1,46 @@
 import "src/styles/post.css";
 import "src/styles/user/posts.css";
 
-import React from "react";
+import React, { useState } from "react";
 
 import PostUtilities from "../utilities/posts";
 
 const UserPosts = () => {
+    const tabs = ["Posts", "Saved"];
+
+    const [currentTabIndex, setCurrentTabIndex] = useState(0);
+
+    const changeTab = (e, tabIndex) => {
+        e.preventDefault();
+        setCurrentTabIndex(tabIndex);
+    }
+
     return (
         <>
-            <span className="d-flex">
-                <div className="user-post-tab-view">
-                    <div style={{ alignSelf: "center", marginTop: "15px" }}>Posts</div>
-                    <div style={{ width: "100%", backgroundColor: "var(--chirp-color)", height: "2px" }}></div>
-                </div>
-
-                <div style={{ justifyContent: "center", alignItems: "center" }} className="user-post-tab-view">Saved</div>
-            </span>
+            <div className="d-flex">
+                {
+                    tabs.map((tab, tabIndex) => {
+                        const isNonCurrentTab = tabIndex !== currentTabIndex;
+                        return (
+                            <div
+                                onClick={e => { changeTab(e, tabIndex); }}
+                                className={`user-post-tab-view ${isNonCurrentTab ? "non-curr-tab-view" : ''}`}
+                            >
+                                {
+                                    isNonCurrentTab ? (
+                                        <>{tab}</>
+                                    ) : (
+                                        <>
+                                            <div className="current-tab-label">{tab}</div>
+                                            <div className="current-tab-highlight" />
+                                        </>
+                                    )
+                                }
+                            </div>
+                        );
+                    })
+                }
+            </div>
 
             <PostUtilities parentName={"user"} />
         </>

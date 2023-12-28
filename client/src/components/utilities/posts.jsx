@@ -9,6 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { cilSend, cilCommentBubble, cilChart, cilThumbUp, cilBookmark } from "@coreui/icons";
 
 import API from "src/api";
+import Loader from "./loader";
 import ImgHolder from "./img-holder";
 import * as Constants from "src/utilities/constants";
 import { isUserLoggedIn } from "src/utilities/helpers";
@@ -39,6 +40,7 @@ const PostUtilities = ({ parentName }) => {
 
     const [posts, setPosts] = useState([]);
     const [postImages, setPostImages] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -48,6 +50,7 @@ const PostUtilities = ({ parentName }) => {
 
     const getPosts = async () => {
         try {
+            setIsLoading(true);
             let _posts = [], images = [];
             switch (parentName) {
                 case "user":
@@ -59,6 +62,8 @@ const PostUtilities = ({ parentName }) => {
                     if (generalPostResponseData?.data?.length) _posts = generalPostResponseData.data;
                     break;
             }
+
+            setIsLoading(false);
 
             _posts.forEach(postObj => {
                 postObj["isLiked"] = null;
@@ -72,6 +77,7 @@ const PostUtilities = ({ parentName }) => {
             if (isUserLoggedIn()) getPostLikesAndSaves(_posts);
         } catch (error) {
             console.log(error);
+            setIsLoading(false);
         }
     }
 
@@ -231,6 +237,8 @@ const PostUtilities = ({ parentName }) => {
 
     return (
         <div>
+            {isLoading && <Loader />}
+
             {
                 posts.map((post, postIndex) => {
                     const { post: parentPost, createdAt, isLiked, isSaved, _id: postId } = post;

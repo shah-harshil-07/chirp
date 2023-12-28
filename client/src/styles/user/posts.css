@@ -18,3 +18,19 @@
     width: 95% !important;
     margin-right: 26px !important;
 }
+
+.current-tab-highlight {
+    width: 100%;
+    height: 2px;
+    background-color: var(--chirp-color);
+}
+
+.current-tab-label {
+    margin-top: 15px;
+    align-self: center;
+}
+
+.non-curr-tab-view {
+    align-items: center;
+    justify-content: center;
+}
