@@ -8,7 +8,15 @@ import PostUtilities from "../utilities/posts";
 const UserPosts = () => {
     return (
         <>
-            <div id="user-post-tab-view">Posts</div>
+            <span className="d-flex">
+                <div className="user-post-tab-view">
+                    <div style={{ alignSelf: "center", marginTop: "15px" }}>Posts</div>
+                    <div style={{ width: "100%", backgroundColor: "var(--chirp-color)", height: "2px" }}></div>
+                </div>
+
+                <div style={{ justifyContent: "center", alignItems: "center" }} className="user-post-tab-view">Saved</div>
+            </span>
+
             <PostUtilities parentName={"user"} />
         </>
     );
