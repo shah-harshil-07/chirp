@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import PostUtilities from "../utilities/posts";
 
 const UserPosts = () => {
-    const tabs = ["Posts", "Saved"];
+    const tabs = [{ label: "Posts", parentName: "user" }, { label: "Saved", parentName: "saved" }];
 
     const [currentTabIndex, setCurrentTabIndex] = useState(0);
 
@@ -20,6 +20,7 @@ const UserPosts = () => {
             <div className="d-flex">
                 {
                     tabs.map((tab, tabIndex) => {
+                        const { label } = tab;
                         const isNonCurrentTab = tabIndex !== currentTabIndex;
                         return (
                             <div
@@ -28,10 +29,10 @@ const UserPosts = () => {
                             >
                                 {
                                     isNonCurrentTab ? (
-                                        <>{tab}</>
+                                        <>{label}</>
                                     ) : (
                                         <>
-                                            <div className="current-tab-label">{tab}</div>
+                                            <div className="current-tab-label">{label}</div>
                                             <div className="current-tab-highlight" />
                                         </>
                                     )
@@ -42,7 +43,7 @@ const UserPosts = () => {
                 }
             </div>
 
-            <PostUtilities parentName={"user"} />
+            <PostUtilities parentName={tabs[currentTabIndex]["parentName"]} />
         </>
     );
 };

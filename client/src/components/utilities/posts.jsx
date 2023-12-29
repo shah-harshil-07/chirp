@@ -57,6 +57,10 @@ const PostUtilities = ({ parentName }) => {
                     const { data: userPostResponseData } = await API(Constants.GET, `${Constants.GET_USER_POSTS}/${userId}`);
                     if (userPostResponseData?.data?.posts?.length) _posts = userPostResponseData.data.posts;
                     break;
+                case "saved":
+                    const { data: savedPostResponseData } = await API(Constants.GET, `${Constants.GET_SAVED_POSTS}/${userId}`);
+                    if (savedPostResponseData?.length) _posts = savedPostResponseData;
+                    break;
                 default:
                     const { data: generalPostResponseData } = await API(Constants.GET, Constants.GET_POSTS);
                     if (generalPostResponseData?.data?.length) _posts = generalPostResponseData.data;

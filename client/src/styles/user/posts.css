@@ -22,15 +22,30 @@
 .current-tab-highlight {
     width: 100%;
     height: 2px;
+    animation: highlightTab 0.5s linear;
     background-color: var(--chirp-color);
 }
 
 .current-tab-label {
-    margin-top: 15px;
+    margin-top: 13px;
     align-self: center;
 }
 
 .non-curr-tab-view {
     align-items: center;
     justify-content: center;
+}
+
+@keyframes highlightTab {
+    0% {
+        width: 50%;
+    }
+
+    50% {
+        width: 75%;
+    }
+
+    100% {
+        width: 100%;
+    }
 }
