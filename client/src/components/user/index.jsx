@@ -1,5 +1,7 @@
 import "src/styles/user/index.css";
 
+import CIcon from "@coreui/icons-react";
+import { cilArrowLeft } from "@coreui/icons";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -8,15 +10,12 @@ import UserInfo from "./info";
 import UserPosts from "./posts";
 import * as Constants from "src/utilities/constants";
 import { getCommonHeader } from "src/utilities/helpers";
-import CIcon from "@coreui/icons-react";
-import { cilArrowLeft } from "@coreui/icons";
 
 const UserDetails = () => {
     const navigate = useNavigate();
     const { userId } = useParams();
     const headerData = getCommonHeader();
 
-    const [posts, setPosts] = useState([]);
     const [userDetails, setUserDetails] = useState(null);
 
     useEffect(() => {
@@ -32,7 +31,6 @@ const UserDetails = () => {
         if (responseData?.meta?.status && responseData?.data) {
             const { posts, userData } = responseData.data;
             const totalPosts = posts.length;
-            setPosts([...posts]);
             setUserDetails({ ...userData, totalPosts });
         }
     }
@@ -57,7 +55,7 @@ const UserDetails = () => {
             </div>
 
             <UserInfo details={userDetails} />
-            <UserPosts posts={posts} />
+            <UserPosts userId={userId} />
         </div>
     );
 };

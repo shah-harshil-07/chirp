@@ -46,7 +46,7 @@ const PostUtilities = ({ parentName }) => {
         window.scrollTo(0, 0);
         getPosts();
         // eslint-disable-next-line
-    }, []);
+    }, [parentName]);
 
     const getPosts = async () => {
         try {
@@ -59,7 +59,7 @@ const PostUtilities = ({ parentName }) => {
                     break;
                 case "saved":
                     const { data: savedPostResponseData } = await API(Constants.GET, `${Constants.GET_SAVED_POSTS}/${userId}`);
-                    if (savedPostResponseData?.length) _posts = savedPostResponseData;
+                    if (savedPostResponseData?.data?.length) _posts = savedPostResponseData.data;
                     break;
                 default:
                     const { data: generalPostResponseData } = await API(Constants.GET, Constants.GET_POSTS);

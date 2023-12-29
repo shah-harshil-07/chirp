@@ -20,6 +20,7 @@ const UserInfo = ({ details }) => {
     ];
 
     const [userData, setUserData] = useState({});
+    const [websiteLink, setWebsiteLink] = useState('#');
     const [statsList, setStatsList] = useState([..._statsList]);
 
     useEffect(() => {
@@ -51,6 +52,7 @@ const UserInfo = ({ details }) => {
                         value = `Joined on ${formatDisplayedDate(value)}`;
                         break;
                     case "website":
+                        setWebsiteLink(value);
                         value = value.replaceAll(/https:\/\/|www./g, '');
                         if (value.length > 30) value = `${value.slice(0, 28)}...`;
                         break;
@@ -110,11 +112,16 @@ const UserInfo = ({ details }) => {
                                 <React.Fragment key={statsIndex}>
                                     {addBreak && statsIndex > 0 && <br />}
                                     <CIcon size="sm" icon={icon} className="user-info-stat-icon" />
-                                    <span
-                                        className={serverKey === "website" ? "span-link" : ''}
-                                        title={serverKey === "website" && details?.website ? details.website : ''}
-                                    >
-                                        &nbsp;{text}&nbsp;&nbsp;
+                                    <span title={serverKey === "website" && details?.website ? details.website : ''}>
+                                        &nbsp;
+                                        {
+                                            serverKey === "website" ? (
+                                                <a className="span-link" href={websiteLink}>{text}</a>
+                                            ) : (
+                                                <>{text}</>
+                                            )
+                                        }
+                                        &nbsp;&nbsp;
                                     </span>
                                 </React.Fragment>
                             );

@@ -4,9 +4,14 @@ import "src/styles/user/posts.css";
 import React, { useState } from "react";
 
 import PostUtilities from "../utilities/posts";
+import { getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
-const UserPosts = () => {
+const UserPosts = ({ userId }) => {
     const tabs = [{ label: "Posts", parentName: "user" }, { label: "Saved", parentName: "saved" }];
+    const loggedInUserData = isUserLoggedIn() ? getUserDetails() : null;
+    const { id: loggedUserId } = loggedInUserData ?? {};
+
+    if (userId !== loggedUserId) tabs.pop();
 
     const [currentTabIndex, setCurrentTabIndex] = useState(0);
 
@@ -20,10 +25,11 @@ const UserPosts = () => {
             <div className="d-flex">
                 {
                     tabs.map((tab, tabIndex) => {
-                        const { label } = tab;
-                        const isNonCurrentTab = tabIndex !== currentTabIndex;
+                        const { label } = tab, isNonCurrentTab = tabIndex !== currentTabIndex;
+
                         return (
                             <div
+                                key={tabIndex}
                                 onClick={e => { changeTab(e, tabIndex); }}
                                 className={`user-post-tab-view ${isNonCurrentTab ? "non-curr-tab-view" : ''}`}
                             >
