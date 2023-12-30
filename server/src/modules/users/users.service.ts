@@ -14,7 +14,7 @@ import { ISavedPost } from "../reactions/savesAndLikes/savesAndLikes.dto";
 import { SavesLikesService } from "src/modules/reactions/savesAndLikes/savesAndLikes.service";
 import {
     UserDTO,
-    IUserDetails,
+    IUserPosts,
     LoggedInUserDTO,
     RegisteredUserDTO,
     GoogleAuthedUserDTO,
@@ -113,14 +113,15 @@ export class UsersService {
         return await this.userModel.findOne({ email: userData.email, googleId: userData.googleId });
     }
 
-    public async getUserDetails(userId: string): Promise<IUserDetails> {
-        const postList = await this.postService.getUserPostDetails(userId);
-        const userDetails = await this
+    public async getUserDetails(userId: string): Promise<UserDTO> {
+        return await this
             .userModel
             .findById(userId, "name username bio website createdAt dateOfBirth location followers following picture")
             .exec();
+    }
 
-        return { posts: postList, userData: userDetails };
+    public async getUserPosts(userId: string): Promise<Post[]> {
+        return await this.postService.getUserPostDetails(userId);
     }
 
     public async getUserSavedPosts(userId: string): Promise<Post[]> {

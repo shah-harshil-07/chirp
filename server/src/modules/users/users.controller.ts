@@ -103,10 +103,16 @@ export class UsersController {
         }
     }
 
-    @Get("get-posts/:id")
-    async getPosts(@Param() { id }: { id: string }): Promise<IResponseProps> {
+    @Get("get-details/:id")
+    async getUserDetails(@Param() { id }: { id: string }): Promise<IResponseProps> {
         const userData = await this.userService.getUserDetails(id);
         return { success: true, data: userData, message: "User details fetched successfully." };
+    }
+
+    @Get("get-posts/:id")
+    async getPosts(@Param() { id }: { id: string }): Promise<IResponseProps> {
+        const userPosts = await this.userService.getUserPosts(id);
+        return { success: true, data: userPosts, message: "User posts fetched successfully." };
     }
 
     @Get("get-saved/:id")
