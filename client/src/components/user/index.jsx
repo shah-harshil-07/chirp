@@ -19,19 +19,19 @@ const UserDetails = () => {
     const [userDetails, setUserDetails] = useState(null);
 
     useEffect(() => {
-        getUserPosts();
+        getUserData();
         window.scrollTo(0, 0);
         // eslint-disable-next-line
     }, []);
 
-    const getUserPosts = async () => {
-        const response = await API(Constants.GET, `${Constants.GET_USER_POSTS}/${userId}`, headerData);
+    const getUserData = async () => {
+        const response = await API(Constants.GET, `${Constants.GET_USER_DETAILS}/${userId}`, headerData);
         const responseData = response?.data ?? {};
 
         if (responseData?.meta?.status && responseData?.data) {
-            const { posts, userData } = responseData.data;
-            const totalPosts = posts.length;
-            setUserDetails({ ...userData, totalPosts });
+            console.log(responseData);
+            const userData = responseData.data;
+            setUserDetails({ ...userData, totalPosts: 0 });
         }
     }
 

@@ -38,6 +38,7 @@ export const REGISTER_GOOGLE_AUTHED_USER = "user/register-google-authed-user";
 export const LOGIN_WITH_GOOGLE_CRED = "user/login-with-google-cred";
 export const GET_USER_POSTS = "user/get-posts";
 export const GET_SAVED_POSTS = "user/get-saved";
+export const GET_USER_DETAILS = "user/get-details";
 
 export const CREATE_POST = "posts/create";
 export const GET_POST_IMAGE = "posts/get-image";

@@ -55,7 +55,7 @@ const PostUtilities = ({ parentName }) => {
             switch (parentName) {
                 case "user":
                     const { data: userPostResponseData } = await API(Constants.GET, `${Constants.GET_USER_POSTS}/${userId}`);
-                    if (userPostResponseData?.data?.posts?.length) _posts = userPostResponseData.data.posts;
+                    if (userPostResponseData?.data?.length) _posts = userPostResponseData.data;
                     break;
                 case "saved":
                     const { data: savedPostResponseData } = await API(Constants.GET, `${Constants.GET_SAVED_POSTS}/${userId}`);
