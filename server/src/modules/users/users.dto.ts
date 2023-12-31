@@ -60,6 +60,19 @@ export class RegisteredGoogleAuthedUserDTO extends GoogleAuthedUserDTO {
     username: string;
 }
 
+export interface IUserDetails {
+    name: string;
+    username: string;
+    bio: string;
+    dateOfBirth: string | null;
+    followers: number;
+    following: number;
+    location: string;
+    website: string;
+    createdAt: Date | null;
+    totalPosts: number;
+}
+
 export interface IUserPosts {
     posts: Post[];
 }

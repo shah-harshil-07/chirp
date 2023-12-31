@@ -14,7 +14,7 @@ import { ISavedPost } from "../reactions/savesAndLikes/savesAndLikes.dto";
 import { SavesLikesService } from "src/modules/reactions/savesAndLikes/savesAndLikes.service";
 import {
     UserDTO,
-    IUserPosts,
+    IUserDetails,
     LoggedInUserDTO,
     RegisteredUserDTO,
     GoogleAuthedUserDTO,
@@ -113,11 +113,25 @@ export class UsersService {
         return await this.userModel.findOne({ email: userData.email, googleId: userData.googleId });
     }
 
-    public async getUserDetails(userId: string): Promise<UserDTO> {
-        return await this
+    public async getUserDetails(userId: string): Promise<IUserDetails> {
+        const details = await this
             .userModel
             .findById(userId, "name username bio website createdAt dateOfBirth location followers following picture")
+            .populate({
+                path: "_id",
+                model: "Post",
+                justOne: false,
+                localField: "_id",
+                select: "_id text",
+                foreignField: "user",
+            })
             .exec();
+
+        const clonedDetails = JSON.parse(JSON.stringify(details));
+        clonedDetails["totalPosts"] = clonedDetails?.["_id"]?.length ?? 0;
+        clonedDetails["_id"] = userId;
+
+        return clonedDetails;
     }
 
     public async getUserPosts(userId: string): Promise<Post[]> {
