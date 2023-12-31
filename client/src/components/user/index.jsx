@@ -29,9 +29,8 @@ const UserDetails = () => {
         const responseData = response?.data ?? {};
 
         if (responseData?.meta?.status && responseData?.data) {
-            console.log(responseData);
             const userData = responseData.data;
-            setUserDetails({ ...userData, totalPosts: 0 });
+            setUserDetails({ ...userData });
         }
     }
 
