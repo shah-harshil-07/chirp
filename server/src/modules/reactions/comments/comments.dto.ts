@@ -48,3 +48,16 @@ interface CommentUserData {
     googleId: string;
     picture: string;
 }
+
+export interface IUserComment {
+    post: Post;
+    comments: {
+        text: string;
+        createdAt: Date;
+        images: string[];
+        comments: number;
+        likes: number;
+        saved: number;
+        views: number;
+    }
+}

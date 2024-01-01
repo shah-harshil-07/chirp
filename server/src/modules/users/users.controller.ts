@@ -120,4 +120,10 @@ export class UsersController {
         const posts = await this.userService.getUserSavedPosts(id);
         return { success: true, data: posts, message: "Saved posts fetched successfully." };
     }
+
+    @Get("get-comments/:id")
+    async getComments(@Param() { id }: { id: string }): Promise<IResponseProps> {
+        const data = await this.userService.getComments(id);
+        return { success: true, data, message: "User comments fetched successfully." };
+    }
 }

@@ -10,6 +10,7 @@ import { UserModel, UserSchema } from "./users.schema";
 import { ConfigModule } from "../config/config.module";
 import { ConfigService } from "../config/config.service";
 import { OtpStore, OtpStoreSchema } from "../common/otp-store.schema";
+import { CommentsModule } from "../reactions/comments/comments.module";
 import { LikesModule } from "../reactions/savesAndLikes/savesAndLikes.module";
 
 @Module({
@@ -18,6 +19,7 @@ import { LikesModule } from "../reactions/savesAndLikes/savesAndLikes.module";
 		AuthModule,
 		PostModule,
 		LikesModule,
+		CommentsModule,
 		JwtModule.registerAsync({
 			imports: [ConfigModule],
 			inject: [ConfigService],

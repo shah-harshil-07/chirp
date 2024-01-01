@@ -10,6 +10,8 @@ import { OtpStore } from "../common/otp-store.schema";
 import { CommonService } from "../common/common.service";
 import { ConfigService } from "../config/config.service";
 import { ResponseInterceptor } from "src/interceptors/response";
+import { IUserComment } from "../reactions/comments/comments.dto";
+import { CommentsService } from "../reactions/comments/comments.service";
 import { ISavedPost } from "../reactions/savesAndLikes/savesAndLikes.dto";
 import { SavesLikesService } from "src/modules/reactions/savesAndLikes/savesAndLikes.service";
 import {
@@ -29,6 +31,7 @@ export class UsersService {
         private readonly mailerService: MailerService,
         private readonly commonService: CommonService,
         private readonly configService: ConfigService,
+        private readonly commentService: CommentsService,
         private readonly savesLikesService: SavesLikesService,
         @InjectModel(OtpStore.name) private readonly otpModel: Model<OtpStore>,
         @InjectModel(UserModel.name) private readonly userModel: Model<UserModel>,
@@ -141,5 +144,10 @@ export class UsersService {
     public async getUserSavedPosts(userId: string): Promise<Post[]> {
         const savedPosts = await this.savesLikesService.getSavedPosts(userId);
         return savedPosts.map((postObj: ISavedPost) => postObj.post);
+    }
+
+    public async getComments(userId: string): Promise<Post[]> {
+        const postList = await this.commentService.getUserComments(userId);
+        return postList.map((postObj: IUserComment) => postObj.post);
     }
 }
