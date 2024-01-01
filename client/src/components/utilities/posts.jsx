@@ -22,6 +22,7 @@ import { closeDetailsCard, openDetailsCard } from "src/redux/reducers/user-detai
 const PostUtilities = ({ parentName }) => {
     const { userId } = useParams();
     const navigate = useNavigate();
+    const postUtilityTheme = parentName;
     const headerData = getCommonHeader();
     const likeIcon = require("src/assets/like.png");
     const savedIcon = require("src/assets/saved-filled.png");
@@ -270,7 +271,7 @@ const PostUtilities = ({ parentName }) => {
                     }
 
                     return name && username ? (
-                        <Card className="post-card" key={postId} onClick={() => { moveToCommentList(postId); }}>
+                        <Card className="post-card" key={postIndex} onClick={() => { moveToCommentList(postId); }}>
                             <img
                                 alt="user"
                                 onMouseOut={closeUserCard}
@@ -418,6 +419,41 @@ const PostUtilities = ({ parentName }) => {
                                         </span>
                                     </div>
                                 </div>
+
+                                {
+                                    postUtilityTheme === "comments" && post.comment && (
+                                        <>
+                                            <hr />
+
+                                            <div className="repost-body" style={{ width: "95%", display: "flex" }}>
+                                                <img alt="post creator" class="parent-post-user-img position-relative" src="https://lh3.googleusercontent.com/a/AAcHTtfTXWpxyeVUVbImOJiQYom55aTstX0eieGwEBc0a6q8NyQ=s96-c" />
+
+                                                <div className="repost-body-content" style={{ marginLeft: "10px" }}>
+                                                    <div className="row mx-0">
+                                                        <b className="font-size-16">{parentName}</b>&nbsp;
+                                                        <span className="font-size-16">{`@${parentUserName}`}</span>
+                                                        <span>
+                                                            <div className="seperator-container">
+                                                                <div className="seperator" />
+                                                            </div>
+                                                        </span>
+                                                        <span className="font-size-16">{getPostTiming(parentCreatedAt)}</span>
+                                                    </div>
+
+                                                    <div className="row mx-0 mt-1 font-size-16">
+                                                        <div>{post?.comment?.text?.slice(0, 40) ?? ''}</div>
+                                                    </div>
+
+                                                    {
+                                                        post?.comment?.images?.length > 0 && (
+                                                            <ImgHolder images={post?.comment?.images} showActionButtons={false} />
+                                                        )
+                                                    }
+                                                </div>
+                                            </div>
+                                        </>
+                                    )
+                                }
                             </div>
                         </Card>
                     ) : (
