@@ -4,12 +4,11 @@ import "src/styles/user/posts.css";
 import React, { useState } from "react";
 
 import PostUtilities from "../utilities/posts";
-import { getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
+import { getUserDetails, isUserLoggedIn, userTabs } from "src/utilities/helpers";
 
 const UserPosts = ({ userId }) => {
-    const tabs = [{ label: "Posts", parentName: "user" }, { label: "Saved", parentName: "saved" }];
     const loggedInUserData = isUserLoggedIn() ? getUserDetails() : null;
-    const { id: loggedUserId } = loggedInUserData ?? {};
+    const { id: loggedUserId } = loggedInUserData ?? {}, tabs = [ ...userTabs ];
 
     if (userId !== loggedUserId) tabs.pop();
 

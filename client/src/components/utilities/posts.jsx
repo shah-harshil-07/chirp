@@ -51,21 +51,24 @@ const PostUtilities = ({ parentName }) => {
     const getPosts = async () => {
         try {
             setIsLoading(true);
-            let _posts = [], images = [];
+            let _posts = [], images = [], url = '';
             switch (parentName) {
                 case "user":
-                    const { data: userPostResponseData } = await API(Constants.GET, `${Constants.GET_USER_POSTS}/${userId}`);
-                    if (userPostResponseData?.data?.length) _posts = userPostResponseData.data;
+                    url = `${Constants.GET_USER_POSTS}/${userId}`;
+                    break;
+                case "comments":
+                    url = `${Constants.GET_USER_COMMENTS}/${userId}`;
                     break;
                 case "saved":
-                    const { data: savedPostResponseData } = await API(Constants.GET, `${Constants.GET_SAVED_POSTS}/${userId}`);
-                    if (savedPostResponseData?.data?.length) _posts = savedPostResponseData.data;
+                    url = `${Constants.GET_SAVED_POSTS}/${userId}`;
                     break;
                 default:
-                    const { data: generalPostResponseData } = await API(Constants.GET, Constants.GET_POSTS);
-                    if (generalPostResponseData?.data?.length) _posts = generalPostResponseData.data;
+                    url = Constants.GET_POSTS;
                     break;
             }
+
+            const { data: responseData } = await API(Constants.GET, url);
+            if (responseData?.data?.length) _posts = responseData.data;
 
             setIsLoading(false);
 

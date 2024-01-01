@@ -66,3 +66,9 @@ export const checkContainerInViewport = rectObj => {
         rectObj.right <= (window.innerWidth || document.documentElement.clientWidth)
     );
 }
+
+export const userTabs = [
+    { label: "Posts", parentName: "user" },
+    { label: "Comments", parentName: "comments" },
+    { label: "Saved", parentName: "saved" }
+]
