@@ -72,13 +72,21 @@ const PostUtilities = ({ parentName }) => {
             if (responseData?.data?.length) _posts = responseData.data;
 
             setIsLoading(false);
+            // const comments = [];
 
             _posts.forEach(postObj => {
                 postObj["isLiked"] = null;
                 const { images: postImages, post } = postObj;
                 if (post?.images?.length) postImages.push(post.images);
                 images.push(postImages);
+
+                // if (postUtilityTheme === "comments") comments.push(postObj.comment);
             });
+
+            // if (comments?.length && postUtilityTheme === "comments") {
+            //     const imageNames = comments.map(comment => comment.images);
+            //     getCommentImages(imageNames, comments);
+            // }
 
             getPostImages(images);
             setPosts([..._posts]);
@@ -126,6 +134,29 @@ const PostUtilities = ({ parentName }) => {
 
         Promise.allSettled(promises);
     }
+
+    // const getCommentImgPromise = (imageName, commentIndex, imageIndex, _comments) => {
+    //     const successCallback = imageData => {
+    //         if (!_comments?.[commentIndex]?.images) _comments[commentIndex]["images"] = [];
+    //         _comments[commentIndex]["images"][imageIndex] = imageData;
+    //         setComments([..._comments]);
+    //     }
+
+    //     return getImageFetchingPromise(imageName, successCallback);
+    // }
+
+    // const getCommentImages = (imageNameSuperList, comments) => {
+    //     const promises = [];
+
+    //     imageNameSuperList.forEach((imageNames, commentIndex) => {
+    //         imageNames.forEach((imageName, imageIndex) => {
+    //             const params = [imageName, commentIndex, imageIndex, comments];
+    //             promises.push(getCommentImgPromise(...params));
+    //         });
+    //     });
+
+    //     Promise.allSettled(promises);
+    // }
 
     const getPostLikesAndSaves = async posts => {
         const data = { postIds: posts.map(post => post._id) };
@@ -426,18 +457,27 @@ const PostUtilities = ({ parentName }) => {
                                             <hr />
 
                                             <div className="repost-body" style={{ width: "95%", display: "flex" }}>
-                                                <img alt="post creator" class="parent-post-user-img position-relative" src="https://lh3.googleusercontent.com/a/AAcHTtfTXWpxyeVUVbImOJiQYom55aTstX0eieGwEBc0a6q8NyQ=s96-c" />
+                                                <img
+                                                    alt="post creator"
+                                                    class="parent-post-user-img position-relative"
+                                                    src={post?.comment?.user?.picture ?? String(sampleUserImg)}
+                                                />
 
                                                 <div className="repost-body-content" style={{ marginLeft: "10px" }}>
                                                     <div className="row mx-0">
-                                                        <b className="font-size-16">{parentName}</b>&nbsp;
-                                                        <span className="font-size-16">{`@${parentUserName}`}</span>
+                                                        <b className="font-size-16">{post?.comment?.user?.name ?? ''}</b>&nbsp;
+
+                                                        <span className="font-size-16">{`@${post?.comment?.user?.username ?? ''}`}</span>
+
                                                         <span>
                                                             <div className="seperator-container">
                                                                 <div className="seperator" />
                                                             </div>
                                                         </span>
-                                                        <span className="font-size-16">{getPostTiming(parentCreatedAt)}</span>
+
+                                                        <span className="font-size-16">
+                                                            {getPostTiming(post?.comment?.createdAt)}
+                                                        </span>
                                                     </div>
 
                                                     <div className="row mx-0 mt-1 font-size-16">
