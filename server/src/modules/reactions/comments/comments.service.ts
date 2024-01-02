@@ -48,8 +48,8 @@ export class CommentsService {
                     "user.name": 1,
                     "user.username": 1,
                     "user.picture": 1,
-                }
-            }
+                },
+            },
         ]);
 
         return { post: postData, comments: commentList };
@@ -82,6 +82,7 @@ export class CommentsService {
             {
                 $project: {
                     "_id": 0,
+                    "post._id": 1,
                     "post.text": 1,
                     "post.user._id": 1,
                     "post.user.name": 1,

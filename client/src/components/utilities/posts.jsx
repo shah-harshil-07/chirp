@@ -459,7 +459,10 @@ const PostUtilities = ({ parentName }) => {
                                         <>
                                             <hr />
 
-                                            <div className="repost-body user-comment-body">
+                                            <div
+                                                className="repost-body user-comment-body"
+                                                onClick={() => { moveToCommentList(postId); }}
+                                            >
                                                 <img
                                                     alt="post creator"
                                                     className="parent-post-user-img"
