@@ -1,4 +1,4 @@
-import "src/styles/post.css";
+import "src/styles/utilities/post.css";
 import "src/styles/reactions/post-details.css";
 
 import CIcon from "@coreui/icons-react";

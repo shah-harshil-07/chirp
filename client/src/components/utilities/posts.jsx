@@ -1,5 +1,5 @@
-import "src/styles/post.css";
 import "src/styles/user/posts.css";
+import "src/styles/utilities/post.css";
 
 import CIcon from "@coreui/icons-react";
 import { Card } from "@material-ui/core/";
@@ -42,6 +42,7 @@ const PostUtilities = ({ parentName }) => {
     const [posts, setPosts] = useState([]);
     const [postImages, setPostImages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [userComments, setUserComments] = useState([]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -72,7 +73,7 @@ const PostUtilities = ({ parentName }) => {
             if (responseData?.data?.length) _posts = responseData.data;
 
             setIsLoading(false);
-            // const comments = [];
+            const comments = [];
 
             _posts.forEach(postObj => {
                 postObj["isLiked"] = null;
@@ -80,13 +81,13 @@ const PostUtilities = ({ parentName }) => {
                 if (post?.images?.length) postImages.push(post.images);
                 images.push(postImages);
 
-                // if (postUtilityTheme === "comments") comments.push(postObj.comment);
+                if (postUtilityTheme === "comments") comments.push(postObj.comment);
             });
 
-            // if (comments?.length && postUtilityTheme === "comments") {
-            //     const imageNames = comments.map(comment => comment.images);
-            //     getCommentImages(imageNames, comments);
-            // }
+            if (comments?.length && postUtilityTheme === "comments") {
+                const imageNames = comments.map(comment => comment.images);
+                getCommentImages(imageNames, comments);
+            }
 
             getPostImages(images);
             setPosts([..._posts]);
@@ -135,28 +136,28 @@ const PostUtilities = ({ parentName }) => {
         Promise.allSettled(promises);
     }
 
-    // const getCommentImgPromise = (imageName, commentIndex, imageIndex, _comments) => {
-    //     const successCallback = imageData => {
-    //         if (!_comments?.[commentIndex]?.images) _comments[commentIndex]["images"] = [];
-    //         _comments[commentIndex]["images"][imageIndex] = imageData;
-    //         setComments([..._comments]);
-    //     }
+    const getCommentImgPromise = (imageName, commentIndex, imageIndex, _comments) => {
+        const successCallback = imageData => {
+            if (!_comments?.[commentIndex]?.images) _comments[commentIndex]["images"] = [];
+            _comments[commentIndex]["images"][imageIndex] = imageData;
+            setUserComments([..._comments]);
+        }
 
-    //     return getImageFetchingPromise(imageName, successCallback);
-    // }
+        return getImageFetchingPromise(imageName, successCallback);
+    }
 
-    // const getCommentImages = (imageNameSuperList, comments) => {
-    //     const promises = [];
+    const getCommentImages = (imageNameSuperList, comments) => {
+        const promises = [];
 
-    //     imageNameSuperList.forEach((imageNames, commentIndex) => {
-    //         imageNames.forEach((imageName, imageIndex) => {
-    //             const params = [imageName, commentIndex, imageIndex, comments];
-    //             promises.push(getCommentImgPromise(...params));
-    //         });
-    //     });
+        imageNameSuperList.forEach((imageNames, commentIndex) => {
+            imageNames.forEach((imageName, imageIndex) => {
+                const params = [imageName, commentIndex, imageIndex, comments];
+                promises.push(getCommentImgPromise(...params));
+            });
+        });
 
-    //     Promise.allSettled(promises);
-    // }
+        Promise.allSettled(promises);
+    }
 
     const getPostLikesAndSaves = async posts => {
         const data = { postIds: posts.map(post => post._id) };
@@ -285,6 +286,8 @@ const PostUtilities = ({ parentName }) => {
                     const { name, username, picture, _id: userId } = post.user ?? {};
                     let parentPostImages = [], pureImages = [];
                     const images = postImages[postIndex];
+
+                    const commentObj = userComments?.[postIndex];
 
                     const { text: parentPostText, createdAt: parentCreatedAt, user: parentPostUser } = parentPost ?? {};
                     const {
@@ -452,22 +455,24 @@ const PostUtilities = ({ parentName }) => {
                                 </div>
 
                                 {
-                                    postUtilityTheme === "comments" && post.comment && (
+                                    postUtilityTheme === "comments" && commentObj && (
                                         <>
                                             <hr />
 
-                                            <div className="repost-body" style={{ width: "95%", display: "flex" }}>
+                                            <div className="repost-body user-comment-body">
                                                 <img
                                                     alt="post creator"
-                                                    class="parent-post-user-img position-relative"
-                                                    src={post?.comment?.user?.picture ?? String(sampleUserImg)}
+                                                    className="parent-post-user-img"
+                                                    src={commentObj?.user?.picture ?? String(sampleUserImg)}
                                                 />
 
-                                                <div className="repost-body-content" style={{ marginLeft: "10px" }}>
-                                                    <div className="row mx-0">
-                                                        <b className="font-size-16">{post?.comment?.user?.name ?? ''}</b>&nbsp;
+                                                <div className="repost-body-content user-comment-body-content">
+                                                    <div className="user-comment-head">
+                                                        <b className="font-size-16">{commentObj?.user?.name ?? ''}</b>&nbsp;
 
-                                                        <span className="font-size-16">{`@${post?.comment?.user?.username ?? ''}`}</span>
+                                                        <span className="font-size-16">
+                                                            {`@${commentObj?.user?.username ?? ''}`}
+                                                        </span>
 
                                                         <span>
                                                             <div className="seperator-container">
@@ -476,21 +481,28 @@ const PostUtilities = ({ parentName }) => {
                                                         </span>
 
                                                         <span className="font-size-16">
-                                                            {getPostTiming(post?.comment?.createdAt)}
+                                                            {getPostTiming(commentObj?.createdAt)}
                                                         </span>
                                                     </div>
 
-                                                    <div className="row mx-0 mt-1 font-size-16">
-                                                        <div>{post?.comment?.text?.slice(0, 40) ?? ''}</div>
+                                                    <div className="user-comment-text">
+                                                        <div>{commentObj?.text ?? ''}</div>
                                                     </div>
 
-                                                    {
-                                                        post?.comment?.images?.length > 0 && (
-                                                            <ImgHolder images={post?.comment?.images} showActionButtons={false} />
-                                                        )
-                                                    }
+                                                    <div className="user-comment-img-box">
+                                                        {
+                                                            commentObj?.images?.length > 0 && (
+                                                                <ImgHolder
+                                                                    showActionButtons={false}
+                                                                    images={commentObj?.images}
+                                                                />
+                                                            )
+                                                        }
+                                                    </div>
                                                 </div>
                                             </div>
+
+                                            <span className="user-comment-load-all">Load All Comments</span>
                                         </>
                                     )
                                 }

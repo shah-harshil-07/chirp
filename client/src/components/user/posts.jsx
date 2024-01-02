@@ -1,5 +1,5 @@
-import "src/styles/post.css";
 import "src/styles/user/posts.css";
+import "src/styles/utilities/post.css";
 
 import React, { useState } from "react";
 

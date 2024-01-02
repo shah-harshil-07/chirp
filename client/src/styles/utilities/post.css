@@ -139,3 +139,37 @@
 .post-list-repost-body:hover {
     background-color: rgba(15, 20, 25, 0.05);
 }
+
+.user-comment-body {
+    width: 95% !important;
+    background-color: rgba(15, 20, 25, 0.1) !important;
+}
+
+.user-comment-body-content {
+    margin-left: 10px;
+}
+
+.user-comment-head {
+    display: flex;
+    margin-left: 40px;
+}
+
+.user-comment-text {
+    font-size: 16px;
+    margin-top: 10px;
+    margin-left: 40px;
+}
+
+.user-comment-img-box {
+    width: 95%;
+    margin-left: 40px;
+}
+
+.user-comment-load-all {
+    color: #6c757d;
+    font-weight: bold;
+}
+
+.user-comment-load-all:hover {
+    text-decoration: underline;
+}
