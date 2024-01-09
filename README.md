@@ -8,3 +8,5 @@
 # When watched in Slow 3G, the loader is not visible in any of the pages. A loader is needed.
 # I cannot comment on a comment. Implement the multilevel comment functionality.
 # I can comment with empty string or blank spaces. That must not happen.
+# The back button in the post detail page must go to previous page and not the post listing page.
+# Login through any user. > Go to any other user's detail page. > Click on the image in the left-sidebar's profile container section. > The route is changed above but the details do not change with it. The updated user details appear only after the page is refreshed.
