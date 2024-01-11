@@ -4,8 +4,8 @@ import "src/styles/reactions/post-details.css";
 import CIcon from "@coreui/icons-react";
 import { Card } from "@material-ui/core";
 import { useDispatch } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { cilArrowLeft, cilBookmark, cilCommentBubble, cilSend, cilThumbUp } from "@coreui/icons";
 
 import API from "src/api";

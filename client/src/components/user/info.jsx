@@ -2,13 +2,17 @@ import "src/styles/user/info.css";
 
 import moment from "moment";
 import CIcon from "@coreui/icons-react";
+import { useDispatch } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { cilCalendar, cilBirthdayCake, cilLink, cilLocationPin } from "@coreui/icons";
 
+import CustomModal from "../utilities/custom-modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
+import { openModal } from "src/redux/reducers/modal";
 
 const UserInfo = ({ details }) => {
     const totalLineLength = 1040;
+    const dispatch = useDispatch();
     let availableCoverage = totalLineLength;
     const sampleUserImg = require("src/assets/sample-user.png");
 
@@ -67,11 +71,23 @@ const UserInfo = ({ details }) => {
         setStatsList([...updatedStatsList]);
     }
 
+    const openProfileEditor = () => {
+        dispatch(openModal({ type: "edit-profile" }));
+    }
+
+    const closeProfileEditor = () => {
+        
+    }
+
+    const editProfileBodyJSX = (
+        <div>Edit profile</div>
+    );
+
     return (
         <div>
             <img alt="background" id="user-info-back-img" src={placeHolderImageSrc} />
 
-            <div id="user-info-follow-btn"><b>Following</b></div>
+            <div id="user-info-follow-btn" onClick={openProfileEditor} style={{ border: "1px solid", backgroundColor: "whitesmoke", color: "black" }}><b>Edit profile</b></div>
 
             <div id="user-info-user-img-container">
                 <img
@@ -134,6 +150,8 @@ const UserInfo = ({ details }) => {
                     <div className="ml-2"><b>{userData?.followers ?? 0}</b>&nbsp;Followers</div>
                 </div>
             </div>
+
+            <CustomModal bodyJSX={editProfileBodyJSX} includeHeader={true} />
         </div>
     );
 };
