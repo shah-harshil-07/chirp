@@ -15,6 +15,7 @@ const CustomModal = ({
     includeHeader,
     includeFooter,
     footerDisabled,
+    customHeaderJSX,
     displayOverflow,
     customFooterJSX,
     modalContentClasses,
@@ -29,11 +30,11 @@ const CustomModal = ({
 
     return (
         <div className="custom-modal">
-            <div className={`custom-modal-content ${modalContentClasses}`}>
+            <div className={`custom-modal-content ${modalContentClasses ?? ''}`}>
                 <header className="custom-header">
                     <div className="row mr-0">
                         {
-                            includeHeader ? (
+                            includeHeader ? customHeaderJSX ? customHeaderJSX : (
                                 <>
                                     <div className="col-sm-11">
                                         <div style={{ marginLeft: "51%" }}>
@@ -60,7 +61,7 @@ const CustomModal = ({
                     </div>
                 </header>
 
-                <div className={`custom-container-body ${bodyClasses}`} style={displayOverflow ? overflowStyles : {}}>
+                <div className={`custom-container-body ${bodyClasses ?? ''}`} style={displayOverflow ? overflowStyles : {}}>
                     {showLoader ? (<div id="custom-modal-loader-container"><Loader /></div>) : bodyJSX}
                 </div>
 

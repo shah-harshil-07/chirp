@@ -2,19 +2,18 @@ import "src/styles/user/info.css";
 
 import moment from "moment";
 import CIcon from "@coreui/icons-react";
-import { useDispatch } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { cilCalendar, cilBirthdayCake, cilLink, cilLocationPin } from "@coreui/icons";
 
 import CustomModal from "../utilities/custom-modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
-import { openModal } from "src/redux/reducers/modal";
+import LabelledInput from "../utilities/labelled-input";
 
 const UserInfo = ({ details }) => {
     const totalLineLength = 1040;
-    const dispatch = useDispatch();
     let availableCoverage = totalLineLength;
     const sampleUserImg = require("src/assets/sample-user.png");
+    const _profileDetails = { name: '', bio: '', location: '', website: '', dateOfBirth: '' };
 
     const _statsList = [
         { icon: cilLink, serverKey: "website", text: '' },
@@ -26,6 +25,9 @@ const UserInfo = ({ details }) => {
     const [userData, setUserData] = useState({});
     const [websiteLink, setWebsiteLink] = useState('#');
     const [statsList, setStatsList] = useState([..._statsList]);
+    const [errors, setErrors] = useState({ ..._profileDetails });
+    const [showProfileEditor, setShowProfileEditor] = useState(false);
+    const [profileDetails, setProfileDetails] = useState({ ..._profileDetails });
 
     useEffect(() => {
         if (details) {
@@ -72,15 +74,55 @@ const UserInfo = ({ details }) => {
     }
 
     const openProfileEditor = () => {
-        dispatch(openModal({ type: "edit-profile" }));
+        setShowProfileEditor(true);
     }
 
     const closeProfileEditor = () => {
-        
+        setShowProfileEditor(false);
     }
 
+    const handleInputChange = (key, value) => {
+        setProfileDetails({ ...profileDetails, [key]: value });
+    }
+
+    const editProfileHeaderJSX = (
+        <div className="w-100 row">
+            <div className="col-sm-1 custom-close-div" onClick={closeProfileEditor}>
+                <div className="custom-close-btn-container">
+                    <span className="custom-close-btn">&times;</span>
+                </div>
+            </div>
+
+            <div className="col-sm-11" style={{ paddingLeft: "25px", paddingTop: "2px" }}>
+                <b style={{ fontSize: "25px" }}>Edit profile</b>
+
+                <div id="user-info-follow-btn" style={{ marginTop: "2px", fontWeight: "bold" }}>Save</div>
+            </div>
+        </div>
+    );
+
     const editProfileBodyJSX = (
-        <div>Edit profile</div>
+        <div className="w-100">
+            <img alt="background" id="user-info-back-img" src={placeHolderImageSrc} />
+
+            <div id="user-info-user-img-container">
+                <img
+                    alt={"user"}
+                    id="user-info-user-img"
+                    src={userData?.picture ?? String(sampleUserImg)}
+                    onError={e => { e.target.src = String(sampleUserImg); }}
+                />
+            </div>
+
+            <div style={{ padding: "20px" }}>
+                <LabelledInput
+                    header={"Name"}
+                    value={profileDetails["name"]}
+                    handleChange={value => { handleInputChange("name", value); }}
+                />
+                <p className="text-danger create-account-text">{errors["name"]}</p>
+            </div>
+        </div>
     );
 
     return (
@@ -151,7 +193,16 @@ const UserInfo = ({ details }) => {
                 </div>
             </div>
 
-            <CustomModal bodyJSX={editProfileBodyJSX} includeHeader={true} />
+            {
+                showProfileEditor && (
+                    <CustomModal
+                        includeHeader={true}
+                        bodyJSX={editProfileBodyJSX}
+                        bodyClasses={"ml-0 mr-0 p-0"}
+                        customHeaderJSX={editProfileHeaderJSX}
+                    />
+                )
+            }
         </div>
     );
 };
