@@ -15,7 +15,7 @@ const CustomSelect = ({ label, options, selectedValue, handleValueChange, innerC
                 {options.map(optionObj => (<option key={optionObj.value} value={optionObj.value}>{optionObj.label}</option>))}
             </select>
         </div>
-    )
-}
+    );
+};
 
 export default CustomSelect;

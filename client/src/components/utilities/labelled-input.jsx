@@ -14,7 +14,7 @@ const LabelledInput = ({ value, handleChange, header, disabled, extraClasses, ty
     }, [value]);
 
     return (
-        <div className={`labelled-input-div ${extraClasses}`} onClick={() => { inputRef.current.focus(); }}>
+        <div className={`labelled-input-div ${extraClasses ?? ''}`} onClick={() => { inputRef.current.focus(); }}>
             <label style={labelStyles} className="labelled-input-text"> {header} </label>
 
             <div id="labelled-input-inner-div">
@@ -30,7 +30,7 @@ const LabelledInput = ({ value, handleChange, header, disabled, extraClasses, ty
                 />
             </div>
         </div>
-    )
+    );
 }
 
 export default LabelledInput;

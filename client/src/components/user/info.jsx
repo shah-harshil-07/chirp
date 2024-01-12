@@ -8,6 +8,7 @@ import { cilCalendar, cilBirthdayCake, cilLink, cilLocationPin } from "@coreui/i
 import CustomModal from "../utilities/custom-modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
 import LabelledInput from "../utilities/labelled-input";
+import CustomSelect from "../utilities/custom-select";
 
 const UserInfo = ({ details }) => {
     const totalLineLength = 1040;
@@ -121,6 +122,31 @@ const UserInfo = ({ details }) => {
                     handleChange={value => { handleInputChange("name", value); }}
                 />
                 <p className="text-danger create-account-text">{errors["name"]}</p>
+
+                <div className="mt-3" style={{ display: "flex", flexDirection: "column", border: "1px solid var(--chirp-color)", paddingLeft: "12px", paddingRight: "12px", borderRadius: "12px" }}>
+                    <label for="bio" style={{ marginLeft: "2px", fontSize: "14px", fontWeight: "bold", color: "var(--chirp-color)", marginBottom: '0' }}>Bio</label>
+                    <textarea rows={3} style={{ height: "80%", width: "100%", border: "none", outline: "none" }} value={profileDetails.bio} />
+                </div>
+
+                <LabelledInput
+                    header={"Location"}
+                    extraClasses={"mt-3"}
+                    value={profileDetails["location"]}
+                    handleChange={value => { handleInputChange("location", value); }}
+                />
+
+                <LabelledInput
+                    header={"Website"}
+                    extraClasses={"mt-3"}
+                    value={profileDetails["website"]}
+                    handleChange={value => { handleInputChange("website", value); }}
+                />
+
+                <div className="d-flex">
+                    <CustomSelect
+                        
+                    />
+                </div>
             </div>
         </div>
     );
@@ -197,8 +223,9 @@ const UserInfo = ({ details }) => {
                 showProfileEditor && (
                     <CustomModal
                         includeHeader={true}
+                        displayOverflow={true}
                         bodyJSX={editProfileBodyJSX}
-                        bodyClasses={"ml-0 mr-0 p-0"}
+                        bodyClasses={"ml-0 mr-0 p-0 mt-4"}
                         customHeaderJSX={editProfileHeaderJSX}
                     />
                 )
