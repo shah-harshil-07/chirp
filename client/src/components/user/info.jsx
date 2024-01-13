@@ -1,4 +1,5 @@
 import "src/styles/user/info.css";
+import "src/styles/signup-steps/create-account.css";
 
 import moment from "moment";
 import CIcon from "@coreui/icons-react";
@@ -10,11 +11,17 @@ import CustomSelect from "../utilities/custom-select";
 import LabelledInput from "../utilities/labelled-input";
 import { placeHolderImageSrc } from "src/utilities/constants";
 import DateOptionServices from "src/custom-hooks/date-services";
+import LabelledInputTextarea from "../utilities/labelled-textarea";
+import { getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const UserInfo = ({ details }) => {
     const totalLineLength = 1040;
     let availableCoverage = totalLineLength;
     const sampleUserImg = require("src/assets/sample-user.png");
+
+    const loggedInUserData = isUserLoggedIn() ? getUserDetails() : null;
+    const { id: loggedUserId } = loggedInUserData;
+    const isLoggedInUser = details?._id === loggedUserId;
 
     const dateService = new DateOptionServices();
     const yearOptions = dateService.getYearOptions();
@@ -67,6 +74,8 @@ const UserInfo = ({ details }) => {
         const dateOfBirth = { ...profileDetails.dateOfBirth, day: 1 };
         setProfileDetails({ ...profileDetails, dateOfBirth });
         setDayOfMonthOptions([..._dayOfMonthOptions]);
+
+        // eslint-disable-next-line
     }, [profileDetails.dateOfBirth.month]);
 
     const formatDisplayedDate = date => {
@@ -125,10 +134,9 @@ const UserInfo = ({ details }) => {
                 </div>
             </div>
 
-            <div className="col-sm-11" style={{ paddingLeft: "25px", paddingTop: "2px" }}>
-                <b style={{ fontSize: "25px" }}>Edit profile</b>
-
-                <div id="user-info-follow-btn" style={{ marginTop: "2px", fontWeight: "bold" }}>Save</div>
+            <div className="col-sm-11 user-info-profile-header">
+                <b className="font-size-25">Edit profile</b>
+                <div id="user-info-profile-save-btn">Save</div>
             </div>
         </div>
     );
@@ -146,7 +154,7 @@ const UserInfo = ({ details }) => {
                 />
             </div>
 
-            <div style={{ padding: "20px" }}>
+            <div id="user-info-profile-editor-body">
                 <LabelledInput
                     header={"Name"}
                     value={profileDetails["name"]}
@@ -154,10 +162,12 @@ const UserInfo = ({ details }) => {
                 />
                 <p className="text-danger create-account-text">{errors["name"]}</p>
 
-                <div className="mt-3" style={{ display: "flex", flexDirection: "column", border: "1px solid var(--chirp-color)", paddingLeft: "12px", paddingRight: "12px", borderRadius: "12px" }}>
-                    <label htmlFor="bio" style={{ marginLeft: "2px", fontSize: "14px", fontWeight: "bold", color: "var(--chirp-color)", marginBottom: '0' }}>Bio</label>
-                    <textarea rows={3} style={{ height: "80%", width: "100%", border: "none", outline: "none" }} value={profileDetails.bio} />
-                </div>
+                <LabelledInputTextarea
+                    header={"Bio"}
+                    bodyClasses={"mt-3"}
+                    value={profileDetails["bio"]}
+                    handleChange={value => { handleInputChange("bio", value); }}
+                />
 
                 <LabelledInput
                     header={"Location"}
@@ -173,8 +183,8 @@ const UserInfo = ({ details }) => {
                     handleChange={value => { handleInputChange("website", value); }}
                 />
 
-                <div className="d-flex mt-3 w-100" style={{ paddingLeft: "12px", paddingRight: "12px", justifyContent: "space-between" }}>
-                    <div style={{ width: "120px", display: "flex", flexWrap: "wrap", alignContent: "center", fontWeight: "bold", color: "var(--chirp-color)", fontSize: "18px" }}>Date of Birth</div>
+                <div className="mt-3" id="user-info-profile-dob-box">
+                    <div id="user-info-profile-dob-text">Date of Birth</div>
 
                     <CustomSelect
                         label={"Day"}
@@ -208,7 +218,12 @@ const UserInfo = ({ details }) => {
         <div>
             <img alt="background" id="user-info-back-img" src={placeHolderImageSrc} />
 
-            <div id="user-info-follow-btn" onClick={openProfileEditor} style={{ border: "1px solid", backgroundColor: "whitesmoke", color: "black" }}><b>Edit profile</b></div>
+            <div
+                onClick={e => { if (isLoggedInUser) openProfileEditor(e); }}
+                id={isLoggedInUser ? "user-info-profile-editor-btn" : "user-info-follow-btn"}
+            >
+                <b>{isLoggedInUser ? "Edit profile" : "Follow"}</b>
+            </div>
 
             <div id="user-info-user-img-container">
                 <img

@@ -1,11 +1,37 @@
 #user-info-follow-btn {
     float: right;
-    background-color: black;
     color: white;
-    padding: 5px 15px 5px 15px;
-    border-radius: 20px;
-    margin-top: 10px;
     cursor: pointer;
+    margin-top: 10px;
+    border-radius: 20px;
+    background-color: black;
+    padding: 5px 15px 5px 15px;
+}
+
+#user-info-profile-editor-btn {
+    float: right;
+    color: black;
+    cursor: pointer;
+    margin-top: 10px;
+    border: 1px solid;
+    border-radius: 20px;
+    background-color: white;
+    padding: 5px 15px 5px 15px;
+}
+
+#user-info-profile-editor-btn:hover {
+    background-color: var(--common-hover-back-color);
+}
+
+#user-info-profile-save-btn {
+    float: right;
+    color: white;
+    cursor: pointer;
+    margin-top: 2px;
+    font-weight: bold;
+    border-radius: 20px;
+    background-color: black;
+    padding: 5px 15px 5px 15px;
 }
 
 #user-info-back-img {
@@ -44,6 +70,28 @@
     margin-top: 10px;
 }
 
+#user-info-profile-editor-body {
+    padding: 20px;
+}
+
+#user-info-profile-dob-box {
+    width: 100%;
+    display: flex;
+    padding-left: 12px;
+    padding-right: 12px;
+    justify-content: space-between;
+}
+
+#user-info-profile-dob-text {
+    width: 120px;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 18px;
+    font-weight: bold;
+    align-content: center;
+    color: var(--chirp-color);
+}
+
 .user-info-stat-icon {
     width: 16px;
     height: 16px;
@@ -64,4 +112,9 @@
 
 .user-info-year-select {
     width: 100px;
+}
+
+.user-info-profile-header {
+    padding-top: 2px;
+    padding-left: 25px;
 }
