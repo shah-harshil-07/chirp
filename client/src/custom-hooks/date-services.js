@@ -1,5 +1,5 @@
 class DateOptionServices {
-    #weekOptions = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    #weekOptions = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]; #yearOptions = [];
     #hourOptions = []; #minuteOptions = []; #dayOfWeekOptions = []; #baseDayOfMonthOptions = [];
     #monthOptions = [
         { value: 0, label: "January" }, // index: 0, days: 31
@@ -25,33 +25,28 @@ class DateOptionServices {
             if (i <= 28 && i > 0) this.#baseDayOfMonthOptions.push(option);
             this.#minuteOptions.push(option);
         }
+
+        const currentYear = +((new Date()).getFullYear());
+        for (let i = 1971; i < currentYear; i++) this.#yearOptions.push({ value: i, label: i });
     }
 
-    getDayOfWeekOptions() {
-        return this.#dayOfWeekOptions;
-    }
+    getDayOfWeekOptions = () => this.#dayOfWeekOptions;
 
-    getHourOptions() {
-        return this.#hourOptions;
-    }
+    getHourOptions = () => this.#hourOptions;
 
-    getMinuteOptions() {
-        return this.#minuteOptions;
-    }
+    getMinuteOptions = () => this.#minuteOptions;
 
-    getWeekOptions() {
-        return this.#weekOptions;
-    }
+    getWeekOptions = () => this.#weekOptions;
 
-    getMonthOptions() {
-        return this.#monthOptions;
-    }
+    getMonthOptions = () => this.#monthOptions;
 
-    getDayOfMonthOptions(monthIndex, year) {
+    getYearOptions = () => this.#yearOptions;
+
+    getDayOfMonthOptions = (monthIndex, year) =>  {
         let upperLimit = 0, dayOfMonthOptions = [...this.#baseDayOfMonthOptions];
 
         if (monthIndex === 1) {
-            upperLimit = (year % 400 === 0 && year % 100 !== 0 && year % 4 === 0) ? 29 : 28;
+            upperLimit = year % 4 === 0 ? 29 : 28;
         } else if (monthIndex <= 6) {
             upperLimit = monthIndex % 2 === 0 ? 31 : 30;
         } else {
@@ -60,7 +55,7 @@ class DateOptionServices {
 
         for (let i = 29; i <= upperLimit; i++) dayOfMonthOptions.push({ value: i, label: i });
         return dayOfMonthOptions;
-    }
+    };
 }
 
 export default DateOptionServices;

@@ -12,3 +12,4 @@
 # Login through any user. > Go to any other user's detail page. > Click on the image in the left-sidebar's profile container section. > The route is changed above but the details do not change with it. The updated user details appear only after the page is refreshed.
 # In user/comments or user/saved section, if any post is not available, keep a placeholder text in the place saying the particular posts are not available or anything.
 # tab index is missing for every field in login and signup section.
+# In scheduler, if I keep the month value at March, and select the day as 31, then change the month to February, the data in the select dropdown will show value of 1 but on top the text will show February 31.

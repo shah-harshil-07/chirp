@@ -6,15 +6,36 @@ import React, { useEffect, useState } from "react";
 import { cilCalendar, cilBirthdayCake, cilLink, cilLocationPin } from "@coreui/icons";
 
 import CustomModal from "../utilities/custom-modal";
-import { placeHolderImageSrc } from "src/utilities/constants";
-import LabelledInput from "../utilities/labelled-input";
 import CustomSelect from "../utilities/custom-select";
+import LabelledInput from "../utilities/labelled-input";
+import { placeHolderImageSrc } from "src/utilities/constants";
+import DateOptionServices from "src/custom-hooks/date-services";
 
 const UserInfo = ({ details }) => {
     const totalLineLength = 1040;
     let availableCoverage = totalLineLength;
     const sampleUserImg = require("src/assets/sample-user.png");
-    const _profileDetails = { name: '', bio: '', location: '', website: '', dateOfBirth: '' };
+
+    const dateService = new DateOptionServices();
+    const yearOptions = dateService.getYearOptions();
+    const monthOptions = dateService.getMonthOptions();
+
+    const currentDate = new Date();
+    const preselectedDay = currentDate.getUTCDate();
+    const preselectedMonth = currentDate.getUTCMonth();
+    const preselectedYear = currentDate.getFullYear() - 5;
+    const initialDayOfMonthOptions = dateService.getDayOfMonthOptions(preselectedMonth, preselectedYear);
+    const _profileDetails = {
+        bio: '',
+        name: '',
+        website: '',
+        location: '',
+        dateOfBirth: {
+            day: preselectedDay,
+            year: preselectedYear,
+            month: preselectedMonth,
+        },
+    };
 
     const _statsList = [
         { icon: cilLink, serverKey: "website", text: '' },
@@ -29,6 +50,7 @@ const UserInfo = ({ details }) => {
     const [errors, setErrors] = useState({ ..._profileDetails });
     const [showProfileEditor, setShowProfileEditor] = useState(false);
     const [profileDetails, setProfileDetails] = useState({ ..._profileDetails });
+    const [dayOfMonthOptions, setDayOfMonthOptions] = useState([...initialDayOfMonthOptions]);
 
     useEffect(() => {
         if (details) {
@@ -38,6 +60,14 @@ const UserInfo = ({ details }) => {
 
         // eslint-disable-next-line
     }, [details]);
+
+    useEffect(() => {
+        const { year, month } = profileDetails?.dateOfBirth ?? {};
+        const _dayOfMonthOptions = dateService.getDayOfMonthOptions(month, year);
+        const dateOfBirth = { ...profileDetails.dateOfBirth, day: 1 };
+        setProfileDetails({ ...profileDetails, dateOfBirth });
+        setDayOfMonthOptions([..._dayOfMonthOptions]);
+    }, [profileDetails.dateOfBirth.month]);
 
     const formatDisplayedDate = date => {
         return moment(date).format("MMM Do, YYYY");
@@ -83,6 +113,7 @@ const UserInfo = ({ details }) => {
     }
 
     const handleInputChange = (key, value) => {
+        setErrors({ ...errors, [key]: '' });
         setProfileDetails({ ...profileDetails, [key]: value });
     }
 
@@ -124,7 +155,7 @@ const UserInfo = ({ details }) => {
                 <p className="text-danger create-account-text">{errors["name"]}</p>
 
                 <div className="mt-3" style={{ display: "flex", flexDirection: "column", border: "1px solid var(--chirp-color)", paddingLeft: "12px", paddingRight: "12px", borderRadius: "12px" }}>
-                    <label for="bio" style={{ marginLeft: "2px", fontSize: "14px", fontWeight: "bold", color: "var(--chirp-color)", marginBottom: '0' }}>Bio</label>
+                    <label htmlFor="bio" style={{ marginLeft: "2px", fontSize: "14px", fontWeight: "bold", color: "var(--chirp-color)", marginBottom: '0' }}>Bio</label>
                     <textarea rows={3} style={{ height: "80%", width: "100%", border: "none", outline: "none" }} value={profileDetails.bio} />
                 </div>
 
@@ -142,9 +173,31 @@ const UserInfo = ({ details }) => {
                     handleChange={value => { handleInputChange("website", value); }}
                 />
 
-                <div className="d-flex">
+                <div className="d-flex mt-3 w-100" style={{ paddingLeft: "12px", paddingRight: "12px", justifyContent: "space-between" }}>
+                    <div style={{ width: "120px", display: "flex", flexWrap: "wrap", alignContent: "center", fontWeight: "bold", color: "var(--chirp-color)", fontSize: "18px" }}>Date of Birth</div>
+
                     <CustomSelect
-                        
+                        label={"Day"}
+                        options={dayOfMonthOptions}
+                        divClass={"user-info-day-select"}
+                        selectedValue={profileDetails.dateOfBirth.day}
+                        handleValueChange={value => { handleInputChange("dateOfBirth.day", value); }}
+                    />
+
+                    <CustomSelect
+                        label={"Month"}
+                        options={monthOptions}
+                        divClass={"user-info-month-select"}
+                        selectedValue={profileDetails.dateOfBirth.month}
+                        handleValueChange={value => { handleInputChange("dateOfBirth.month", value); }}
+                    />
+
+                    <CustomSelect
+                        label={"Year"}
+                        options={yearOptions}
+                        divClass={"user-info-year-select"}
+                        selectedValue={profileDetails.dateOfBirth.year}
+                        handleValueChange={value => { handleInputChange("dateOfBirth.year", value); }}
                     />
                 </div>
             </div>
@@ -199,10 +252,10 @@ const UserInfo = ({ details }) => {
                                     <span title={serverKey === "website" && details?.website ? details.website : ''}>
                                         &nbsp;
                                         {
-                                            serverKey === "website" ? (
-                                                <a className="span-link" href={websiteLink}>{text}</a>
+                                            serverKey === "website" && websiteLink ? (
+                                                <a className="span-link" href={websiteLink}>{text ?? ''}</a>
                                             ) : (
-                                                <>{text}</>
+                                                <>{text ?? ''}</>
                                             )
                                         }
                                         &nbsp;&nbsp;

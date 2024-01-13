@@ -11,9 +11,9 @@ import DateOptionServices from "src/custom-hooks/date-services";
 const PollCreator = ({ closePollCreator, handleChoiceChange, editPollData }) => {
     const containerRef = useRef(null);
     const dateService = new DateOptionServices();
-    const dayOfWeekOptions = dateService.getDayOfWeekOptions();
     const hourOptions = dateService.getHourOptions();
     const minuteOptions = dateService.getMinuteOptions();
+    const dayOfWeekOptions = dateService.getDayOfWeekOptions();
     const minMinuteOptions = minuteOptions.slice(5, minuteOptions.length);
 
     const [hours, setHours] = useState(0);

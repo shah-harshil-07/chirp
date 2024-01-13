@@ -53,3 +53,15 @@
     cursor: pointer;
     color: var(--chirp-color);
 }
+
+.user-info-day-select {
+    width: 120px;
+}
+
+.user-info-month-select {
+    width: 140px;
+}
+
+.user-info-year-select {
+    width: 100px;
+}
