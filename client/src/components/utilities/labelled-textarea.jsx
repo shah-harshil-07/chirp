@@ -2,7 +2,7 @@ import "src/styles/utilities/labelled-textarea.css";
 
 import React, { useEffect, useRef, useState } from "react";
 
-const LabelledInputTextarea = ({ header, bodyClasses, rows, value, handleChange }) => {
+const LabelledInputTextarea = ({ name, header, bodyClasses, rows, value, handleChange }) => {
     const inputRef = useRef(null);
 
     const focusedStyles = { animation: "toggleTextareaLabel 0.25s linear" };
@@ -16,13 +16,14 @@ const LabelledInputTextarea = ({ header, bodyClasses, rows, value, handleChange 
 
     return (
         <div className={`labelled-textarea-div ${bodyClasses ?? ''}`} onClick={() => { inputRef.current.focus(); }}>
-            <label htmlFor={(header ?? '').toLowerCase()} className="labelled-textarea-label" style={labelStyles}>
+            <label htmlFor={(name ?? '').toLowerCase()} className="labelled-textarea-label" style={labelStyles}>
                 {header ?? ''}
             </label>
 
             <textarea
                 ref={inputRef}
                 rows={rows ?? 3}
+                name={name ?? ''}
                 value={value ?? ''}
                 className="labelled-textarea-style"
                 onChange={e => { handleChange(e.target.value); }}

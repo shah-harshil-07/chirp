@@ -19,16 +19,14 @@ const useImageConverter = () => {
         return new File([blob], fileName, { type: contentType });
     }
 
-    const uploadImagesAction = (e, onloadCallback, uploadedFiles) => {
+    const uploadImagesAction = (e, onloadCallback, uploadedFiles, uploadLimit = 4) => {
         const files = e.target.files;
 
-        if (files.length + uploadedFiles.length > 4) {
-			showError("More than 4 images are not allowed.");
+        if (files.length + uploadedFiles.length > uploadLimit) {
+			showError(`More than ${uploadLimit} image${uploadLimit > 1 ? "s are" : " is"} not allowed.`);
 		} else {
-			for (let i = 0; i < files.length; i++) {
-				const fileObj = files[i];
-
-				if (!allowedFileTypes.includes(fileObj.type) || i > 3) {
+			for (const fileObj of files) {
+				if (!allowedFileTypes.includes(fileObj.type)) {
 					showError("Only jpg, jpeg & png type files are allowed.");
 					continue;
 				}

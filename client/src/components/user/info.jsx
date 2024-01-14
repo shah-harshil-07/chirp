@@ -3,21 +3,24 @@ import "src/styles/signup-steps/create-account.css";
 
 import moment from "moment";
 import CIcon from "@coreui/icons-react";
-import React, { useEffect, useState } from "react";
-import { cilCalendar, cilBirthdayCake, cilLink, cilLocationPin } from "@coreui/icons";
+import React, { useEffect, useRef, useState } from "react";
+import { cilCalendar, cilBirthdayCake, cilLink, cilLocationPin, cilCamera } from "@coreui/icons";
 
 import CustomModal from "../utilities/custom-modal";
 import CustomSelect from "../utilities/custom-select";
 import LabelledInput from "../utilities/labelled-input";
 import { placeHolderImageSrc } from "src/utilities/constants";
 import DateOptionServices from "src/custom-hooks/date-services";
+import useImageConverter from "src/custom-hooks/image-converter";
 import LabelledInputTextarea from "../utilities/labelled-textarea";
-import { getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
+import { getErrorMessage, getUserDetails, isUserLoggedIn, validate } from "src/utilities/helpers";
 
 const UserInfo = ({ details }) => {
     const totalLineLength = 1040;
     let availableCoverage = totalLineLength;
+    const { uploadImagesAction } = useImageConverter();
     const sampleUserImg = require("src/assets/sample-user.png");
+    const profileImgRef = useRef(null), backImgRef = useRef(null);
 
     const loggedInUserData = isUserLoggedIn() ? getUserDetails() : null;
     const { id: loggedUserId } = loggedInUserData;
@@ -52,11 +55,16 @@ const UserInfo = ({ details }) => {
     ];
 
     const [userData, setUserData] = useState({});
+    const [errors, setErrors] = useState({ name: '' });
     const [websiteLink, setWebsiteLink] = useState('#');
+    const [isFormValid, setIsFormValid] = useState(true);
     const [statsList, setStatsList] = useState([..._statsList]);
-    const [errors, setErrors] = useState({ ..._profileDetails });
     const [showProfileEditor, setShowProfileEditor] = useState(false);
+    const [uploadedBackImgFile, setUploadedBackImgFile] = useState(null);
+    const [uploadedProfileImgFile, setUploadedProfileImgFile] = useState(null);
     const [profileDetails, setProfileDetails] = useState({ ..._profileDetails });
+    const [uploadedBackImgFileObject, setUploadedBackImgFileObject] = useState(null);
+    const [uploadedProfileImgFileObject, setUploadedProfileImgFileObject] = useState(null);
     const [dayOfMonthOptions, setDayOfMonthOptions] = useState([...initialDayOfMonthOptions]);
 
     useEffect(() => {
@@ -67,16 +75,6 @@ const UserInfo = ({ details }) => {
 
         // eslint-disable-next-line
     }, [details]);
-
-    useEffect(() => {
-        const { year, month } = profileDetails?.dateOfBirth ?? {};
-        const _dayOfMonthOptions = dateService.getDayOfMonthOptions(month, year);
-        const dateOfBirth = { ...profileDetails.dateOfBirth, day: 1 };
-        setProfileDetails({ ...profileDetails, dateOfBirth });
-        setDayOfMonthOptions([..._dayOfMonthOptions]);
-
-        // eslint-disable-next-line
-    }, [profileDetails.dateOfBirth.month]);
 
     const formatDisplayedDate = date => {
         return moment(date).format("MMM Do, YYYY");
@@ -122,8 +120,33 @@ const UserInfo = ({ details }) => {
     }
 
     const handleInputChange = (key, value) => {
-        setErrors({ ...errors, [key]: '' });
+        let _isFormValid = isFormValid;
+        const _errors = { ...errors };
+        if (key === "name" && validate("name", value)) {
+            _errors["name"] = getErrorMessage("name");
+            _isFormValid = false;
+        } else {
+            _errors["name"] = '';
+            _isFormValid = true;
+        }
+
+        setErrors({ ..._errors });
+        setIsFormValid(_isFormValid);
         setProfileDetails({ ...profileDetails, [key]: value });
+    }
+
+    const handleDobChange = (key, value) => {
+        const { dateOfBirth } = profileDetails;
+        dateOfBirth[key] = value;
+
+        if (key === "month" || key === "year") {
+            const { month, year } = dateOfBirth;
+            const _dayOfMonthOptions = dateService.getDayOfMonthOptions(+month, +year);
+            dateOfBirth["day"] = 1;
+            setDayOfMonthOptions([..._dayOfMonthOptions]);
+        }
+
+        setProfileDetails({ ...profileDetails, dateOfBirth });
     }
 
     const editProfileHeaderJSX = (
@@ -136,26 +159,79 @@ const UserInfo = ({ details }) => {
 
             <div className="col-sm-11 user-info-profile-header">
                 <b className="font-size-25">Edit profile</b>
-                <div id="user-info-profile-save-btn">Save</div>
+                {isFormValid && <div id="user-info-profile-save-btn">Save</div>}
             </div>
         </div>
     );
 
+    const handleImageUpload = (e, key) => {
+        const isProfileKey = key === "profile";
+        const fileStateChangeFn = isProfileKey ? setUploadedProfileImgFile : setUploadedBackImgFile;
+        const fileStateObjChangeFn = isProfileKey ? setUploadedProfileImgFileObject : setUploadedBackImgFileObject;
+
+        const readerLoadCallback = (e, fileObj) => {
+            fileStateObjChangeFn(fileObj);
+            fileStateChangeFn(e.target.result);
+        };
+
+        uploadImagesAction(e, readerLoadCallback, [], 1);
+	}
+
     const editProfileBodyJSX = (
         <div className="w-100">
-            <img alt="background" id="user-info-back-img" src={placeHolderImageSrc} />
+            <div id="user-info-back-img-container">
+                <img
+                    alt="background"
+                    id="user-info-back-img"
+                    src={uploadedBackImgFile ?? placeHolderImageSrc}
+                    onError={e => { e.target.src = String(sampleUserImg); }}
+                />
+
+                <CIcon
+                    size="sm"
+                    icon={cilCamera}
+                    title="Upload background image"
+                    id="user-info-user-back-img-uploader"
+                    onClick={() => { backImgRef.current.click(); }}
+                />
+
+                <input
+                    type="file"
+                    accept="image/*"
+                    ref={backImgRef}
+                    className="d-none"
+                    onChange={e => { handleImageUpload(e, "back"); }}
+                />
+            </div>
 
             <div id="user-info-user-img-container">
                 <img
                     alt={"user"}
                     id="user-info-user-img"
-                    src={userData?.picture ?? String(sampleUserImg)}
                     onError={e => { e.target.src = String(sampleUserImg); }}
+                    src={uploadedProfileImgFile ?? userData?.picture ?? String(sampleUserImg)}
+                />
+
+                <CIcon
+                    size="sm"
+                    icon={cilCamera}
+                    title="Upload profile image"
+                    id="user-info-user-img-uploader"
+                    onClick={() => { profileImgRef.current.click(); }}
+                />
+
+                <input
+                    type="file"
+                    accept="image/*"
+                    className="d-none"
+                    ref={profileImgRef}
+                    onChange={e => { handleImageUpload(e, "profile"); }}
                 />
             </div>
 
             <div id="user-info-profile-editor-body">
                 <LabelledInput
+                    name={"name"}
                     header={"Name"}
                     value={profileDetails["name"]}
                     handleChange={value => { handleInputChange("name", value); }}
@@ -163,6 +239,7 @@ const UserInfo = ({ details }) => {
                 <p className="text-danger create-account-text">{errors["name"]}</p>
 
                 <LabelledInputTextarea
+                    name={"bio"}
                     header={"Bio"}
                     bodyClasses={"mt-3"}
                     value={profileDetails["bio"]}
@@ -170,6 +247,7 @@ const UserInfo = ({ details }) => {
                 />
 
                 <LabelledInput
+                    name={"location"}
                     header={"Location"}
                     extraClasses={"mt-3"}
                     value={profileDetails["location"]}
@@ -177,6 +255,7 @@ const UserInfo = ({ details }) => {
                 />
 
                 <LabelledInput
+                    name={"website"}
                     header={"Website"}
                     extraClasses={"mt-3"}
                     value={profileDetails["website"]}
@@ -191,7 +270,7 @@ const UserInfo = ({ details }) => {
                         options={dayOfMonthOptions}
                         divClass={"user-info-day-select"}
                         selectedValue={profileDetails.dateOfBirth.day}
-                        handleValueChange={value => { handleInputChange("dateOfBirth.day", value); }}
+                        handleValueChange={value => { handleDobChange("day", value); }}
                     />
 
                     <CustomSelect
@@ -199,7 +278,7 @@ const UserInfo = ({ details }) => {
                         options={monthOptions}
                         divClass={"user-info-month-select"}
                         selectedValue={profileDetails.dateOfBirth.month}
-                        handleValueChange={value => { handleInputChange("dateOfBirth.month", value); }}
+                        handleValueChange={value => { handleDobChange("month", value); }}
                     />
 
                     <CustomSelect
@@ -207,7 +286,7 @@ const UserInfo = ({ details }) => {
                         options={yearOptions}
                         divClass={"user-info-year-select"}
                         selectedValue={profileDetails.dateOfBirth.year}
-                        handleValueChange={value => { handleInputChange("dateOfBirth.year", value); }}
+                        handleValueChange={value => { handleDobChange("year", value); }}
                     />
                 </div>
             </div>

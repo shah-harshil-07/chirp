@@ -2,7 +2,7 @@ import "src/styles/utilities/labelled-input.css";
 
 import React, { useEffect, useRef, useState } from "react";
 
-const LabelledInput = ({ value, handleChange, header, disabled, extraClasses, type }) => {
+const LabelledInput = ({ name, value, handleChange, header, disabled, extraClasses, type }) => {
     const unfocusedLabelStyles = { fontSize: "20px", top: "12px", zIndex: '2', left: "21px" };
     const focusedLabelStyles = { animation: "toggleLabel 0.25s linear" };
     const inputRef = useRef(null);
@@ -19,9 +19,10 @@ const LabelledInput = ({ value, handleChange, header, disabled, extraClasses, ty
 
             <div id="labelled-input-inner-div">
                 <input
-                    value={value}
                     ref={inputRef}
+                    name={name ?? ''}
                     disabled={disabled}
+                    value={value ?? ''}
                     type={type ?? "text"}
                     className="labelled-input-box"
                     onFocus={() => setLabelStyles(focusedLabelStyles)}
