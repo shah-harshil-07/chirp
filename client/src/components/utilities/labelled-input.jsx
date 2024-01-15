@@ -2,7 +2,18 @@ import "src/styles/utilities/labelled-input.css";
 
 import React, { useEffect, useRef, useState } from "react";
 
-const LabelledInput = ({ name, value, handleChange, header, disabled, extraClasses, type }) => {
+const LabelledInput = ({
+    name,
+    type,
+    value,
+    header,
+    disabled,
+    suggestions,
+    handleChange,
+    extraClasses,
+    autoCompleteMode,
+    handleOptionSelect,
+}) => {
     const unfocusedLabelStyles = { fontSize: "20px", top: "12px", zIndex: '2', left: "21px" };
     const focusedLabelStyles = { animation: "toggleLabel 0.25s linear" };
     const inputRef = useRef(null);
@@ -25,11 +36,35 @@ const LabelledInput = ({ name, value, handleChange, header, disabled, extraClass
                     value={value ?? ''}
                     type={type ?? "text"}
                     className="labelled-input-box"
+                    autoComplete={autoCompleteMode ? "off" : "on"}
                     onFocus={() => setLabelStyles(focusedLabelStyles)}
                     onChange={e => { if (!disabled) handleChange(e.target.value) }}
                     onBlur={() => { if (!value) setLabelStyles(unfocusedLabelStyles) }}
                 />
             </div>
+
+            {
+                autoCompleteMode && suggestions?.length > 0 && (
+                    <div className="labelled-input-suggestion-container">
+                        <div className="labelled-input-ul-container">
+                            <ul className="labelled-input-select" role="listbox">
+                                {
+                                    suggestions.map(({ id, text, selectionObj }, i) => (
+                                        <li
+                                            key={id}
+                                            tabIndex={i}
+                                            className="labelled-input-option"
+                                            onClick={handleOptionSelect(selectionObj)}
+                                        >
+                                            {text ?? ''}
+                                        </li>
+                                    ))
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                )
+            }
         </div>
     );
 }

@@ -48,3 +48,41 @@
     border: 0px solid;
     outline: none;
 }
+
+.labelled-input-suggestion-container {
+    border: 0;
+    top: 53px;
+    z-index: 3;
+    width: 96%;
+    color: #495057;
+    position: absolute;
+    background: #fff;
+    transform-origin: center top;
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
+}
+
+.labelled-input-ul-container {
+    overflow: auto;
+    max-height: 140px;
+}
+
+.labelled-input-select {
+    margin: 0; 
+    padding: 0.5rem 0;
+    list-style-type: none;
+    box-sizing: border-box;
+}
+
+.labelled-input-option {
+    margin: 0;
+    border: 0;
+    cursor: pointer;
+    color: #495057;
+    border-radius: 0;
+    padding: .5rem 1rem;
+    background: transparent;
+}
+
+.labelled-input-option:hover {
+    background-color: var(--common-hover-back-color);
+}

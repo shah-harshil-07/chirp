@@ -4,6 +4,7 @@ import "src/styles/signup-steps/create-account.css";
 import moment from "moment";
 import CIcon from "@coreui/icons-react";
 import React, { useEffect, useRef, useState } from "react";
+import usePlacesAutocomplete from "use-places-autocomplete";
 import { cilCalendar, cilBirthdayCake, cilLink, cilLocationPin, cilCamera } from "@coreui/icons";
 
 import CustomModal from "../utilities/custom-modal";
@@ -53,6 +54,13 @@ const UserInfo = ({ details }) => {
         { icon: cilLocationPin, serverKey: "location", text: '' },
         { icon: cilBirthdayCake, serverKey: "dateOfBirth", text: '' },
     ];
+
+    const {
+        value: location,
+        clearSuggestions,
+        setValue: setLocation,
+        suggestions: { data },
+    } = usePlacesAutocomplete({ debounce: 300 });
 
     const [userData, setUserData] = useState({});
     const [errors, setErrors] = useState({ name: '' });
@@ -164,6 +172,30 @@ const UserInfo = ({ details }) => {
         </div>
     );
 
+    const handleLocationChange = value => {
+        setLocation(value);
+    }
+
+    const handleLocationSelect = ({ description }) => () => {
+		setLocation(description, false);
+		clearSuggestions();
+	};
+
+	const renderSuggestions = () => {
+		return data.map(suggestion => {
+			const {
+				place_id,
+				structured_formatting: { main_text, secondary_text },
+			} = suggestion;
+
+            return {
+                id: place_id,
+                selectionObj: suggestion,
+                text: `${main_text ?? ''}${main_text && secondary_text ? `, ${secondary_text}` : ''}`,
+            };
+		});
+	}
+
     const handleImageUpload = (e, key) => {
         const isProfileKey = key === "profile";
         const fileStateChangeFn = isProfileKey ? setUploadedProfileImgFile : setUploadedBackImgFile;
@@ -175,7 +207,7 @@ const UserInfo = ({ details }) => {
         };
 
         uploadImagesAction(e, readerLoadCallback, [], 1);
-	}
+    }
 
     const editProfileBodyJSX = (
         <div className="w-100">
@@ -247,11 +279,14 @@ const UserInfo = ({ details }) => {
                 />
 
                 <LabelledInput
+                    value={location}
                     name={"location"}
                     header={"Location"}
                     extraClasses={"mt-3"}
-                    value={profileDetails["location"]}
-                    handleChange={value => { handleInputChange("location", value); }}
+                    autoCompleteMode={true}
+                    suggestions={renderSuggestions()}
+                    handleChange={handleLocationChange}
+                    handleOptionSelect={handleLocationSelect}
                 />
 
                 <LabelledInput
