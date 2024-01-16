@@ -60,31 +60,6 @@ export class RegisteredGoogleAuthedUserDTO extends GoogleAuthedUserDTO {
     username: string;
 }
 
-export interface IUserDetails {
-    name: string;
-    username: string;
-    bio: string;
-    dateOfBirth: string | null;
-    followers: number;
-    following: number;
-    location: string;
-    website: string;
-    createdAt: Date | null;
-    totalPosts: number;
-}
-
-export interface IUserPosts {
-    posts: Post[];
-}
-
-export interface IUpdateUserDetails {
-    name: string;
-    bio?: string;
-    website?: string;
-    location?: string;
-    dateOfBirth?: string;
-}
-
 export class IUpdateUserDetailsDTO {
     @IsString()
     @IsNotEmpty()
@@ -107,6 +82,30 @@ export class IUpdateUserDetailsDTO {
     dateOfBirth: string;
 }
 
+export interface IUserDetails {
+    name: string;
+    username: string;
+    bio: string;
+    dateOfBirth: string | null;
+    followers: number;
+    following: number;
+    location: string;
+    website: string;
+    createdAt: Date | null;
+    totalPosts: number;
+}
+
+export interface IUserPosts {
+    posts: Post[];
+}
+
 export interface IParamId {
     id: string;
 }
+
+export const validationParamList = {
+    updateDetails: {
+        name: "required|isString",
+        dateOfBirth: "isDateValid|isString",
+    },
+};

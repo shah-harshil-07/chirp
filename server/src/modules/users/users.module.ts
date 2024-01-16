@@ -12,6 +12,7 @@ import { ConfigService } from "../config/config.service";
 import { OtpStore, OtpStoreSchema } from "../common/otp-store.schema";
 import { CommentsModule } from "../reactions/comments/comments.module";
 import { LikesModule } from "../reactions/savesAndLikes/savesAndLikes.module";
+import { CustomValidatorsModule } from "../custom-validators/custom-validators.module";
 
 @Module({
 	imports: [
@@ -20,6 +21,7 @@ import { LikesModule } from "../reactions/savesAndLikes/savesAndLikes.module";
 		PostModule,
 		LikesModule,
 		CommentsModule,
+		CustomValidatorsModule,
 		JwtModule.registerAsync({
 			imports: [ConfigModule],
 			inject: [ConfigService],

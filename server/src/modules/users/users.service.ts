@@ -13,6 +13,8 @@ import { ResponseInterceptor } from "src/interceptors/response";
 import { IUserComment } from "../reactions/comments/comments.dto";
 import { CommentsService } from "../reactions/comments/comments.service";
 import { ISavedPost } from "../reactions/savesAndLikes/savesAndLikes.dto";
+import { CustomBadRequestException } from "src/exception-handlers/400/handler";
+import { CustomValidatorsService } from "../custom-validators/custom-validators.service";
 import { SavesLikesService } from "src/modules/reactions/savesAndLikes/savesAndLikes.service";
 import {
     UserDTO,
@@ -20,6 +22,7 @@ import {
     LoggedInUserDTO,
     RegisteredUserDTO,
     GoogleAuthedUserDTO,
+    validationParamList,
     IUpdateUserDetailsDTO,
     RegisteredGoogleAuthedUserDTO,
 } from "./users.dto";
@@ -151,6 +154,10 @@ export class UsersService {
     }
 
     public async updateDetails(userId: string, userData: IUpdateUserDetailsDTO): Promise<any> {
+        const validationService = new CustomValidatorsService(validationParamList.updateDetails);
+        const { isValid, errors } = validationService.validate(userData);
+        if (!isValid && errors) throw new CustomBadRequestException(errors);
+
         return await this.userModel.findByIdAndUpdate(
             userId,
             {

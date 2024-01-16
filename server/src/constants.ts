@@ -15,3 +15,4 @@ export const EMAIL_ERR_MESSAGE = "Email must be valid.";
 export const REQUIRED_ERR_MESSAGE = "The field input is required.";
 export const IS_STRING_ERR_MESSAGE = "The field value must be a string.";
 export const DOB_TYPE_ERR_MESSAGE = "The date of birth must be of the type YYYY-mm-dd format."
+export const INVALID_DATE_ERR_MESSAGE = "The date is invalid.";
