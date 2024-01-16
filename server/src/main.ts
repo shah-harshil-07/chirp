@@ -10,7 +10,7 @@ import { BadRequestExceptionFilter } from "./exception-handlers/400/filter";
 import { UnprocessableEntityExceptionFilter } from "./exception-handlers/422/filter";
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule, { logger: new CustomLogger() });
+	const app = await NestFactory.create(AppModule, { logger: new CustomLogger("Welcome to Chirp!") });
 
 	app.enableCors();
 	app.useGlobalPipes(new ValidationPipe());

@@ -6,10 +6,10 @@ import { ConfigService } from "./modules/config/config.service";
 export class CustomLogger implements LoggerService {
     private colorConfig: any;
 
-    constructor() {
+    constructor(message?: string) {
         const configObj = new ConfigService();
         this.colorConfig = configObj.getLoggingColorConfig();
-        this.printMessage("cyan", "Welcome to Chirp!");
+        if (message) this.printMessage("cyan", message);
     }
 
     public log(message: string) {

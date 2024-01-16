@@ -23,8 +23,8 @@ import {
 import { PostService } from "./posts.service";
 import { IResponseProps } from "src/interceptors/interfaces";
 import { ResponseInterceptor } from "src/interceptors/response";
-import { fileStorageConfigObj, parseFilePipeObj } from "./file.config";
 import { IScheduledPostIds, IVotingUserData, PostDTO } from "./post.dto";
+import { getFileStorageConfigObj, parseFilePipeObj } from "./file.config";
 
 @Controller("posts")
 export class PostController {
@@ -54,7 +54,7 @@ export class PostController {
 
     @Post("create")
     @UseGuards(AuthGuard("jwt"))
-    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 5, fileStorageConfigObj))
+    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 5, getFileStorageConfigObj()))
     async create(
         @Req() req: any,
         @Body() postData: PostDTO,
@@ -132,7 +132,7 @@ export class PostController {
 
     @Post("scheduled/reschedule/:id")
     @UseGuards(AuthGuard("jwt"))
-    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 5, fileStorageConfigObj))
+    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 5, getFileStorageConfigObj()))
     async reschedulePost(
         @Req() req: any,
         @Param() { id }: any,

@@ -1,8 +1,10 @@
-import { Body, Controller, Param, Post, Get, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Param, Post, Get, UseInterceptors, UploadedFiles, UploadedFile } from "@nestjs/common";
 
 import { UsersService } from "./users.service";
 import { AuthService } from "src/modules/auth/auth.service";
+import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
 import { ResponseInterceptor } from "src/interceptors/response";
+import { getFileStorageConfigObj, parseFilePipeObj } from "../posts/file.config";
 import {
     OtpDTO,
     UserDTO,
@@ -130,8 +132,19 @@ export class UsersController {
     }
 
     @Post("update-details/:id")
-    async updateDetails(@Param() { id }: IParamId, @Body() requestData: IUpdateUserDetailsDTO): Promise<IResponseProps> {
-        const data = await this.userService.updateDetails(id, requestData);
-        return { success: true, data, message: "User details updated successfully." };
+    @UseInterceptors(
+        FileInterceptor("picture", getFileStorageConfigObj("user-images")),
+        FileInterceptor("backgroundImage", getFileStorageConfigObj("user-images")),
+    )
+    async updateDetails(
+        @Param() { id }: IParamId,
+        @Body() requestData: any,
+        @UploadedFile(parseFilePipeObj) picture: Express.Multer.File,
+        // @UploadedFile(parseFilePipeObj) backgroundImage: Express.Multer.File,
+    ): Promise<IResponseProps> {
+        // console.log(picture);
+        // console.log(backgroundImage);
+        // const data = await this.userService.updateDetails(id, requestData);
+        return { success: true, data: [], message: "User details updated successfully." };
     }
 }

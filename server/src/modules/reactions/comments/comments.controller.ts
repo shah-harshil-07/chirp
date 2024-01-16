@@ -7,7 +7,7 @@ import { IResponseProps } from "src/interceptors/interfaces";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { CommentDTO, validationParamList } from "./comments.dto";
 import { CustomBadRequestException } from "src/exception-handlers/400/handler";
-import { fileStorageConfigObj, parseFilePipeObj } from "src/modules/posts/file.config";
+import { getFileStorageConfigObj, parseFilePipeObj } from "src/modules/posts/file.config";
 import { CustomValidatorsService } from "src/modules/custom-validators/custom-validators.service";
 
 @Controller("comments")
@@ -16,7 +16,7 @@ export class CommentsController {
 
     @Post("store")
     @UseGuards(AuthGuard("jwt"))
-    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 4, fileStorageConfigObj))
+    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 4, getFileStorageConfigObj()))
     async store(
         @Req() req: any,
         @Body() commentData: CommentDTO,

@@ -5,14 +5,16 @@ interface IFileStorageConfig {
     storage: StorageEngine;
 }
 
-export const fileStorageConfigObj: IFileStorageConfig = {
-    storage: diskStorage({
-        destination: "storage/post-images/",
-        filename: (_, file, cb) => {
-            const extension = file?.originalname?.split('.')?.[1] ?? "jpg";
-            cb(null, `${Date.now()}.${extension}`);
-        },
-    })
+export function getFileStorageConfigObj(configKey = "post-images"): IFileStorageConfig {
+    return {
+        storage: diskStorage({
+            destination: `storage/${configKey}/`,
+            filename: (_, file, cb) => {
+                const extension = file?.originalname?.split('.')?.[1] ?? "jpg";
+                cb(null, `${Date.now()}.${extension}`);
+            },
+        })
+    };
 };
 
 export const parseFilePipeObj = new ParseFilePipe({
