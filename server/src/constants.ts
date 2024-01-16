@@ -4,6 +4,7 @@ export const PASSWORD_REGEX = /(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z\d!@
 export const EMAIL_REGEX = "/^([a-zA-Z0-9\+_\-]+)(\.[a-zA-Z0-9\+_\-]+)*@([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,6}$/";
 export const NAME_REGEX = "[^a-zA-Z\\s]+";
 export const USERNAME_REGEX = "[^A-Za-z\\d_]";
+export const DOB_REGEX = /^(?![\d]{4}-[\d]{2}-[\d]{2}$).*$/;
 
 /* Regex validating expressions */
 /*--------------------------------------------------------------------------------*/
@@ -13,3 +14,4 @@ export const USERNAME_ERR_MESSAGE = "Only uppercase and lowercase letters, numbe
 export const EMAIL_ERR_MESSAGE = "Email must be valid.";
 export const REQUIRED_ERR_MESSAGE = "The field input is required.";
 export const IS_STRING_ERR_MESSAGE = "The field value must be a string.";
+export const DOB_TYPE_ERR_MESSAGE = "The date of birth must be of the type YYYY-mm-dd format."

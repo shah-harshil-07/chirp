@@ -76,3 +76,37 @@ export interface IUserDetails {
 export interface IUserPosts {
     posts: Post[];
 }
+
+export interface IUpdateUserDetails {
+    name: string;
+    bio?: string;
+    website?: string;
+    location?: string;
+    dateOfBirth?: string;
+}
+
+export class IUpdateUserDetailsDTO {
+    @IsString()
+    @IsNotEmpty()
+    name: string;
+
+    @IsString()
+    @IsOptional()
+    bio: string;
+
+    @IsString()
+    @IsOptional()
+    website: string;
+
+    @IsString()
+    @IsOptional()
+    location: string;
+
+    @IsNotEmpty()
+    @CustomMatch(Constants.DOB_REGEX, { message: Constants.DOB_TYPE_ERR_MESSAGE })
+    dateOfBirth: string;
+}
+
+export interface IParamId {
+    id: string;
+}

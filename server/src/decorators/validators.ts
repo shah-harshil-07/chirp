@@ -1,17 +1,17 @@
 import { ValidationArguments, ValidationOptions, registerDecorator } from "class-validator";
 
-export function CustomMatch(property: string, validationOptions: ValidationOptions) {
+export function CustomMatch(property: string | object, validationOptions: ValidationOptions) {
     return function (object: Object, propertyName: string) {
         registerDecorator({
-            name: "CustomMatch",
-            target: object.constructor,
             propertyName,
+            name: "CustomMatch",
             constraints: [property],
+            target: object.constructor,
             options: validationOptions,
             validator: {
                 validate(value?: any, args?: ValidationArguments): boolean {
-                    const [ regexString ] = args.constraints;
-                    const regexObj = new RegExp(regexString);                    
+                    const [ regexPattern ] = args.constraints;
+                    const regexObj = typeof(regexPattern) === "string" ? new RegExp(regexPattern) : regexPattern;
                     return !regexObj.test(value);
                 },
                 defaultMessage(validationArguments): string {

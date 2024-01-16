@@ -20,6 +20,7 @@ import {
     LoggedInUserDTO,
     RegisteredUserDTO,
     GoogleAuthedUserDTO,
+    IUpdateUserDetailsDTO,
     RegisteredGoogleAuthedUserDTO,
 } from "./users.dto";
 
@@ -82,8 +83,7 @@ export class UsersService {
                     $or: [{ email: userData.cred }, { username: userData.cred }],
                     password: userData.password,
                 })
-                .exec()
-            ;
+                .exec();
 
         return userObj;
     }
@@ -95,8 +95,7 @@ export class UsersService {
                 .findOne({
                     $or: [{ email: userData.email }, { googleId: userData.googleId }],
                 })
-                .exec()
-            ;
+                .exec();
 
         return userObj;
     }
@@ -149,5 +148,21 @@ export class UsersService {
     public async getComments(userId: string): Promise<Post[]> {
         const postList = await this.commentService.getUserComments(userId);
         return postList.map((postObj: IUserComment) => postObj.post);
+    }
+
+    public async updateDetails(userId: string, userData: IUpdateUserDetailsDTO): Promise<any> {
+        return await this.userModel.findByIdAndUpdate(
+            userId,
+            {
+                $set: {
+                    bio: userData?.bio ?? '',
+                    name: userData.name ?? '',
+                    website: userData?.website ?? '',
+                    location: userData?.location ?? '',
+                    dateOfBirth: new Date(userData?.dateOfBirth),
+                },
+            },
+            { new: true }
+        );
     }
 }

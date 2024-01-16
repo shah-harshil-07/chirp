@@ -6,9 +6,11 @@ import { ResponseInterceptor } from "src/interceptors/response";
 import {
     OtpDTO,
     UserDTO,
+    IParamId,
     LoggedInUserDTO,
     RegisteredUserDTO,
     GoogleAuthedUserDTO,
+    IUpdateUserDetailsDTO,
     RegisteredGoogleAuthedUserDTO,
 } from "./users.dto";
 
@@ -19,8 +21,8 @@ interface IResponseProps {
     success: boolean;
 };
 
-@UseInterceptors(ResponseInterceptor)
 @Controller("user")
+@UseInterceptors(ResponseInterceptor)
 export class UsersController {
     constructor(private readonly userService: UsersService, private readonly authService: AuthService) { }
 
@@ -31,7 +33,7 @@ export class UsersController {
     }
 
     @Post("check-otp/:id")
-    async checkOtp(@Body() requestData: OtpDTO, @Param() { id }: { id: string }): Promise<IResponseProps> {
+    async checkOtp(@Body() requestData: OtpDTO, @Param() { id }: IParamId): Promise<IResponseProps> {
         const otpData = await this.userService.findOtpValue(id);
         const createdTime = otpData.createdAt;
         const currentTime = Date.now();
@@ -104,26 +106,32 @@ export class UsersController {
     }
 
     @Get("get-details/:id")
-    async getUserDetails(@Param() { id }: { id: string }): Promise<IResponseProps> {
+    async getUserDetails(@Param() { id }: IParamId): Promise<IResponseProps> {
         const userData = await this.userService.getUserDetails(id);
         return { success: true, data: userData, message: "User details fetched successfully." };
     }
 
     @Get("get-posts/:id")
-    async getPosts(@Param() { id }: { id: string }): Promise<IResponseProps> {
+    async getPosts(@Param() { id }: IParamId): Promise<IResponseProps> {
         const userPosts = await this.userService.getUserPosts(id);
         return { success: true, data: userPosts, message: "User posts fetched successfully." };
     }
 
     @Get("get-saved/:id")
-    async getSavedPosts(@Param() { id }: { id: string }): Promise<IResponseProps> {
+    async getSavedPosts(@Param() { id }: IParamId): Promise<IResponseProps> {
         const posts = await this.userService.getUserSavedPosts(id);
         return { success: true, data: posts, message: "Saved posts fetched successfully." };
     }
 
     @Get("get-comments/:id")
-    async getComments(@Param() { id }: { id: string }): Promise<IResponseProps> {
+    async getComments(@Param() { id }: IParamId): Promise<IResponseProps> {
         const data = await this.userService.getComments(id);
         return { success: true, data, message: "User comments fetched successfully." };
+    }
+
+    @Post("update-details/:id")
+    async updateDetails(@Param() { id }: IParamId, @Body() requestData: IUpdateUserDetailsDTO): Promise<IResponseProps> {
+        const data = await this.userService.updateDetails(id, requestData);
+        return { success: true, data, message: "User details updated successfully." };
     }
 }
