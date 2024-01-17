@@ -6,8 +6,8 @@ import { CommentsService } from "./comments.service";
 import { IResponseProps } from "src/interceptors/interfaces";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { CommentDTO, validationParamList } from "./comments.dto";
+import { ConfigService } from "src/modules/config/config.service";
 import { CustomBadRequestException } from "src/exception-handlers/400/handler";
-import { getFileStorageConfigObj, parseFilePipeObj } from "src/modules/posts/file.config";
 import { CustomValidatorsService } from "src/modules/custom-validators/custom-validators.service";
 
 @Controller("comments")
@@ -16,11 +16,11 @@ export class CommentsController {
 
     @Post("store")
     @UseGuards(AuthGuard("jwt"))
-    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 4, getFileStorageConfigObj()))
+    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 4, ConfigService.getFileStorageConfigObj()))
     async store(
         @Req() req: any,
         @Body() commentData: CommentDTO,
-        @UploadedFiles(parseFilePipeObj) images: Array<Express.Multer.File>
+        @UploadedFiles(ConfigService.getParseFilePipeObj()) images: Array<Express.Multer.File>
     ): Promise<IResponseProps> {
         const createdAt = new Date();
         const { _id: userId } = req.user;

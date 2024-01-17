@@ -164,9 +164,11 @@ export class UsersService {
                 $set: {
                     bio: userData?.bio ?? '',
                     name: userData.name ?? '',
+                    picture: userData?.picture ?? '',
                     website: userData?.website ?? '',
                     location: userData?.location ?? '',
                     dateOfBirth: new Date(userData?.dateOfBirth),
+                    backgroundImage: userData?.backgroundImage ?? '',
                 },
             },
             { new: true }

@@ -40,6 +40,9 @@ export class UserModel {
 
     @Prop()
     picture: string;
+
+    @Prop()
+    backgroundImage: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserModel);

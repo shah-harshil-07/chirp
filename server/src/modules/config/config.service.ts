@@ -1,4 +1,5 @@
-import { Injectable } from "@nestjs/common";
+import { StorageEngine, diskStorage } from "multer";
+import { FileTypeValidator, Injectable, MaxFileSizeValidator, ParseFilePipe } from "@nestjs/common";
 
 interface IAnyObject {
     [key: string]: string;
@@ -7,6 +8,10 @@ interface IAnyObject {
 interface IReactionConfigData {
     count: number;
     attribute: string | null;
+}
+
+interface IFileStorageConfig {
+    storage: StorageEngine;
 }
 
 @Injectable()
@@ -71,5 +76,27 @@ export class ConfigService {
 
         const count = mode === "add" ? 1 : mode === "remove" ? -1 : 0;
         return { attribute, count };
+    }
+
+    public static getFileStorageConfigObj(configKey = "post-images"): IFileStorageConfig {
+        return {
+            storage: diskStorage({
+                destination: `storage/${configKey}/`,
+                filename: (_, file, cb) => {
+                    const extension = file?.originalname?.split('.')?.[1] ?? "jpg";
+                    cb(null, `${Date.now()}.${extension}`);
+                },
+            })
+        };
+    };
+
+    public static getParseFilePipeObj(sizeLimit = 5): ParseFilePipe {
+        return new ParseFilePipe({
+            fileIsRequired: false,
+            validators: [
+                new FileTypeValidator({ fileType: ".(jpg|jpeg|png)" }),
+                new MaxFileSizeValidator({ maxSize: 1024 * 1024 * sizeLimit }),
+            ],
+        });
     }
 }

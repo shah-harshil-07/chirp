@@ -80,6 +80,14 @@ export class IUpdateUserDetailsDTO {
     @IsNotEmpty()
     @CustomMatch(Constants.DOB_REGEX, { message: Constants.DOB_TYPE_ERR_MESSAGE })
     dateOfBirth: string;
+
+    @IsString()
+    @IsOptional()
+    picture: string;
+
+    @IsString()
+    @IsOptional()
+    backgroundImage: string;
 }
 
 export interface IUserDetails {

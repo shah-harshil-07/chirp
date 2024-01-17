@@ -23,8 +23,8 @@ import {
 import { PostService } from "./posts.service";
 import { IResponseProps } from "src/interceptors/interfaces";
 import { ResponseInterceptor } from "src/interceptors/response";
+import { ConfigService } from "src/modules/config/config.service";
 import { IScheduledPostIds, IVotingUserData, PostDTO } from "./post.dto";
-import { getFileStorageConfigObj, parseFilePipeObj } from "./file.config";
 
 @Controller("posts")
 export class PostController {
@@ -54,11 +54,14 @@ export class PostController {
 
     @Post("create")
     @UseGuards(AuthGuard("jwt"))
-    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 5, getFileStorageConfigObj()))
+    @UseInterceptors(
+        ResponseInterceptor,
+        FilesInterceptor("images[]", 5, ConfigService.getFileStorageConfigObj())
+    )
     async create(
         @Req() req: any,
         @Body() postData: PostDTO,
-        @UploadedFiles(parseFilePipeObj) images: Array<Express.Multer.File>
+        @UploadedFiles(ConfigService.getParseFilePipeObj()) images: Array<Express.Multer.File>
     ): Promise<IResponseProps> {
         try {
             const { _id: userId } = req.user;
@@ -132,12 +135,15 @@ export class PostController {
 
     @Post("scheduled/reschedule/:id")
     @UseGuards(AuthGuard("jwt"))
-    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 5, getFileStorageConfigObj()))
+    @UseInterceptors(
+        ResponseInterceptor,
+        FilesInterceptor("images[]", 5, ConfigService.getFileStorageConfigObj())
+    )
     async reschedulePost(
         @Req() req: any,
         @Param() { id }: any,
         @Body() postData: PostDTO,
-        @UploadedFiles(parseFilePipeObj) images: Array<Express.Multer.File>
+        @UploadedFiles(ConfigService.getParseFilePipeObj()) images: Array<Express.Multer.File>
     ): Promise<IResponseProps> {
         try {
             await this.postService.deleteScheduledPostWithImages(id);

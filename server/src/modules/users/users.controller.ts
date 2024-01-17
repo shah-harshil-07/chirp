@@ -1,10 +1,10 @@
-import { Body, Controller, Param, Post, Get, UseInterceptors, UploadedFiles, UploadedFile } from "@nestjs/common";
+import { FileFieldsInterceptor } from "@nestjs/platform-express";
+import { Body, Controller, Param, Post, Get, UseInterceptors, UploadedFiles } from "@nestjs/common";
 
 import { UsersService } from "./users.service";
 import { AuthService } from "src/modules/auth/auth.service";
-import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
 import { ResponseInterceptor } from "src/interceptors/response";
-import { getFileStorageConfigObj, parseFilePipeObj } from "../posts/file.config";
+import { ConfigService } from "src/modules/config/config.service";
 import {
     OtpDTO,
     UserDTO,
@@ -135,7 +135,7 @@ export class UsersController {
     @UseInterceptors(
         FileFieldsInterceptor(
             [{ name: "picture", maxCount: 1 }, { name: "backgroundImage", maxCount: 1 }],
-            getFileStorageConfigObj("user-images")
+            ConfigService.getFileStorageConfigObj("user-images"),
         ),
     )
     async updateDetails(
@@ -146,9 +146,13 @@ export class UsersController {
             backgroundImage?: Express.Multer.File[]
         }
     ): Promise<IResponseProps> {
-        console.log(files?.picture?.[0]);
-        console.log(files?.backgroundImage?.[0]);
-        const data = await this.userService.updateDetails(id, requestData);
+        const detailsData: IUpdateUserDetailsDTO = {
+            ...requestData,
+            picture: files?.picture?.[0]?.filename ?? '',
+            backgroundImage: files?.backgroundImage?.[0]?.filename ?? '',
+        };
+
+        const data = await this.userService.updateDetails(id, detailsData);
         return { success: true, data, message: "User details updated successfully." };
     }
 }
