@@ -27,7 +27,7 @@ class DateOptionServices {
         }
 
         const currentYear = +((new Date()).getFullYear());
-        for (let i = 1971; i < currentYear; i++) this.#yearOptions.push({ value: i, label: i });
+        for (let i = 1971; i <= currentYear; i++) this.#yearOptions.push({ value: i, label: i });
     }
 
     getDayOfWeekOptions = () => this.#dayOfWeekOptions;

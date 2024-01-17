@@ -121,7 +121,10 @@ export class UsersService {
     public async getUserDetails(userId: string): Promise<IUserDetails> {
         const details = await this
             .userModel
-            .findById(userId, "name username bio website createdAt dateOfBirth location followers following picture")
+            .findById(
+                userId,
+                "name username bio website createdAt dateOfBirth location followers following picture backgroundImage"
+            )
             .populate({
                 path: "_id",
                 model: "Post",

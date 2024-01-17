@@ -62,6 +62,11 @@
     animation: track-progress 5s linear;
 }
 
+.toast-message {
+    width: 100%;
+    text-align: center;
+}
+
 @keyframes track-progress {
     0% {
         transform: scaleX(1);

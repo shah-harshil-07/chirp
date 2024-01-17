@@ -4,7 +4,6 @@ import "src/styles/signup-steps/create-account.css";
 import moment from "moment";
 import CIcon from "@coreui/icons-react";
 import React, { useEffect, useRef, useState } from "react";
-import usePlacesAutocomplete from "use-places-autocomplete";
 import { cilCalendar, cilBirthdayCake, cilLink, cilLocationPin, cilCamera } from "@coreui/icons";
 
 import CustomModal from "../utilities/custom-modal";
@@ -55,13 +54,6 @@ const UserInfo = ({ details }) => {
         { icon: cilBirthdayCake, serverKey: "dateOfBirth", text: '' },
     ];
 
-    const {
-        value: location,
-        clearSuggestions,
-        setValue: setLocation,
-        suggestions: { data },
-    } = usePlacesAutocomplete({ debounce: 300 });
-
     const [userData, setUserData] = useState({});
     const [errors, setErrors] = useState({ name: '' });
     const [websiteLink, setWebsiteLink] = useState('#');
@@ -79,6 +71,10 @@ const UserInfo = ({ details }) => {
         if (details) {
             setUserData({ ...details });
             updateStats();
+            updateProfileDetails();
+
+            if (details.picture) setUploadedProfileImgFile(details.picture);
+            if (details.backgroundImage) setUploadedProfileImgFile(details.backgroundImage);
         }
 
         // eslint-disable-next-line
@@ -119,6 +115,22 @@ const UserInfo = ({ details }) => {
         setStatsList([...updatedStatsList]);
     }
 
+    const updateProfileDetails = () => {
+        const momentDoB = moment(details?.dateOfBirth);
+        const day = momentDoB?.date() ?? preselectedDay;
+        const year = momentDoB?.year() ?? preselectedYear;
+        const month = momentDoB?.month() ?? preselectedMonth;
+
+        setProfileDetails({
+            ...profileDetails,
+            bio: details?.bio ?? '',
+            name: details?.name ?? '',
+            website: details?.website ?? '',
+            location: details?.location ?? '',
+            dateOfBirth: { year, month, day },
+        });
+    }
+
     const openProfileEditor = () => {
         setShowProfileEditor(true);
     }
@@ -157,6 +169,12 @@ const UserInfo = ({ details }) => {
         setProfileDetails({ ...profileDetails, dateOfBirth });
     }
 
+    const handleDetailsUpdate = e => {
+        console.log(e);
+        console.log(uploadedBackImgFileObject);
+        console.log(uploadedProfileImgFileObject);
+    }
+
     const editProfileHeaderJSX = (
         <div className="w-100 row">
             <div className="col-sm-1 custom-close-div" onClick={closeProfileEditor}>
@@ -167,34 +185,10 @@ const UserInfo = ({ details }) => {
 
             <div className="col-sm-11 user-info-profile-header">
                 <b className="font-size-25">Edit profile</b>
-                {isFormValid && <div id="user-info-profile-save-btn">Save</div>}
+                {isFormValid && <div onClick={handleDetailsUpdate} id="user-info-profile-save-btn">Save</div>}
             </div>
         </div>
     );
-
-    const handleLocationChange = value => {
-        setLocation(value);
-    }
-
-    const handleLocationSelect = ({ description }) => () => {
-		setLocation(description, false);
-		clearSuggestions();
-	};
-
-	const renderSuggestions = () => {
-		return data.map(suggestion => {
-			const {
-				place_id,
-				structured_formatting: { main_text, secondary_text },
-			} = suggestion;
-
-            return {
-                id: place_id,
-                selectionObj: suggestion,
-                text: `${main_text ?? ''}${main_text && secondary_text ? `, ${secondary_text}` : ''}`,
-            };
-		});
-	}
 
     const handleImageUpload = (e, key) => {
         const isProfileKey = key === "profile";
@@ -279,14 +273,11 @@ const UserInfo = ({ details }) => {
                 />
 
                 <LabelledInput
-                    value={location}
                     name={"location"}
                     header={"Location"}
                     extraClasses={"mt-3"}
-                    autoCompleteMode={true}
-                    suggestions={renderSuggestions()}
-                    handleChange={handleLocationChange}
-                    handleOptionSelect={handleLocationSelect}
+                    value={profileDetails["location"]}
+                    handleChange={value => { handleInputChange("location", value); }}
                 />
 
                 <LabelledInput
@@ -330,7 +321,12 @@ const UserInfo = ({ details }) => {
 
     return (
         <div>
-            <img alt="background" id="user-info-back-img" src={placeHolderImageSrc} />
+            <img
+                alt="background"
+                id="user-info-back-img"
+                src={userData?.backgroundImage ?? String(placeHolderImageSrc)}
+                onError={e => { e.target.src = String(placeHolderImageSrc); }}
+            />
 
             <div
                 onClick={e => { if (isLoggedInUser) openProfileEditor(e); }}

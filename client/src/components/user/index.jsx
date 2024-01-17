@@ -10,11 +10,13 @@ import UserInfo from "./info";
 import UserPosts from "./posts";
 import * as Constants from "src/utilities/constants";
 import { getCommonHeader } from "src/utilities/helpers";
+import usePostServices from "src/custom-hooks/post-services";
 
 const UserDetails = () => {
     const navigate = useNavigate();
     const { userId } = useParams();
     const headerData = getCommonHeader();
+    const { getImageFetchingPromise } = usePostServices();
 
     const [userDetails, setUserDetails] = useState(null);
 
@@ -31,6 +33,20 @@ const UserDetails = () => {
         if (responseData?.meta?.status && responseData?.data) {
             const userData = responseData.data;
             setUserDetails({ ...userData });
+
+            const pictureSuccessCallback = imageData => {
+                userData["picture"] = imageData;
+                setUserDetails({ ...userData });
+            }
+
+            if (userData.picture) getImageFetchingPromise(userData.picture, pictureSuccessCallback);
+
+            const bgImgSuccessCallback = imageData => {
+                userData["backgroundImage"] = imageData;
+                setUserDetails({ ...userData });
+            }
+
+            if (userData.backgroundImage) getImageFetchingPromise(userData.backgroundImage, bgImgSuccessCallback);
         }
     }
 
