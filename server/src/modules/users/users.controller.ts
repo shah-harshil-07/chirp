@@ -1,5 +1,17 @@
+import { join } from "path";
+import { createReadStream, existsSync } from "fs";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
-import { Body, Controller, Param, Post, Get, UseInterceptors, UploadedFiles } from "@nestjs/common";
+import {
+    Get,
+    Body,
+    Post,
+    Param,
+    Controller,
+    UploadedFiles,
+    StreamableFile,
+    UseInterceptors,
+    UnprocessableEntityException,
+} from "@nestjs/common";
 
 import { UsersService } from "./users.service";
 import { AuthService } from "src/modules/auth/auth.service";
@@ -24,17 +36,18 @@ interface IResponseProps {
 };
 
 @Controller("user")
-@UseInterceptors(ResponseInterceptor)
 export class UsersController {
     constructor(private readonly userService: UsersService, private readonly authService: AuthService) { }
 
     @Post("verify-email")
+    @UseInterceptors(ResponseInterceptor)
     async verifyEmail(@Body() userData: UserDTO): Promise<IResponseProps> {
         const otpData = await this.userService.sendOtp(userData.email, userData.name);
         return { success: true, data: otpData, message: "Otp sent successfully." };
     }
 
     @Post("check-otp/:id")
+    @UseInterceptors(ResponseInterceptor)
     async checkOtp(@Body() requestData: OtpDTO, @Param() { id }: IParamId): Promise<IResponseProps> {
         const otpData = await this.userService.findOtpValue(id);
         const createdTime = otpData.createdAt;
@@ -46,6 +59,7 @@ export class UsersController {
     }
 
     @Post("register")
+    @UseInterceptors(ResponseInterceptor)
     async register(@Body() requestData: RegisteredUserDTO): Promise<IResponseProps> {
         const userObj = await this.userService.createUser(requestData);
         const accessToken = this.authService.generateToken(userObj);
@@ -54,6 +68,7 @@ export class UsersController {
     }
 
     @Post("check-user-credentials")
+    @UseInterceptors(ResponseInterceptor)
     async checkUniqueness(@Body() requestData: UserDTO): Promise<IResponseProps> {
         const userUnique = await this.userService.checkUserUniquness(requestData);
         const message = userUnique ? "The user credentials are unique." : "Please change either username or email.";
@@ -62,6 +77,7 @@ export class UsersController {
     }
 
     @Post("check-google-credentials")
+    @UseInterceptors(ResponseInterceptor)
     async checkGoogleCredentials(@Body() requestData: GoogleAuthedUserDTO): Promise<IResponseProps> {
         const userData = await this.userService.getGoogleCredentials(requestData);
         const data = { userAvailable: userData ? true : false };
@@ -70,6 +86,7 @@ export class UsersController {
     }
 
     @Post("register-google-authed-user")
+    @UseInterceptors(ResponseInterceptor)
     async registerGoogleAuthedUser(@Body() requestData: RegisteredGoogleAuthedUserDTO): Promise<IResponseProps> {
         const usernameAvailable = await this.userService.checkUsernameAvailable(requestData.username);
         if (usernameAvailable) {
@@ -83,6 +100,7 @@ export class UsersController {
     }
 
     @Post("login")
+    @UseInterceptors(ResponseInterceptor)
     async login(@Body() requestData: LoggedInUserDTO): Promise<IResponseProps> {
         let accessToken = null;
         const userObj = await this.userService.findUser(requestData);
@@ -95,6 +113,7 @@ export class UsersController {
     }
 
     @Post("login-with-google-cred")
+    @UseInterceptors(ResponseInterceptor)
     async loginWithGoogleCredentials(@Body() requestData: GoogleAuthedUserDTO): Promise<IResponseProps> {
         const userData = await this.userService.getGoogleAuthedUserData(requestData);
 
@@ -108,24 +127,28 @@ export class UsersController {
     }
 
     @Get("get-details/:id")
+    @UseInterceptors(ResponseInterceptor)
     async getUserDetails(@Param() { id }: IParamId): Promise<IResponseProps> {
         const userData = await this.userService.getUserDetails(id);
         return { success: true, data: userData, message: "User details fetched successfully." };
     }
 
     @Get("get-posts/:id")
+    @UseInterceptors(ResponseInterceptor)
     async getPosts(@Param() { id }: IParamId): Promise<IResponseProps> {
         const userPosts = await this.userService.getUserPosts(id);
         return { success: true, data: userPosts, message: "User posts fetched successfully." };
     }
 
     @Get("get-saved/:id")
+    @UseInterceptors(ResponseInterceptor)
     async getSavedPosts(@Param() { id }: IParamId): Promise<IResponseProps> {
         const posts = await this.userService.getUserSavedPosts(id);
         return { success: true, data: posts, message: "Saved posts fetched successfully." };
     }
 
     @Get("get-comments/:id")
+    @UseInterceptors(ResponseInterceptor)
     async getComments(@Param() { id }: IParamId): Promise<IResponseProps> {
         const data = await this.userService.getComments(id);
         return { success: true, data, message: "User comments fetched successfully." };
@@ -133,6 +156,7 @@ export class UsersController {
 
     @Post("update-details/:id")
     @UseInterceptors(
+        ResponseInterceptor,
         FileFieldsInterceptor(
             [{ name: "picture", maxCount: 1 }, { name: "backgroundImage", maxCount: 1 }],
             ConfigService.getFileStorageConfigObj("user-images"),
@@ -154,5 +178,17 @@ export class UsersController {
 
         const data = await this.userService.updateDetails(id, detailsData);
         return { success: true, data, message: "User details updated successfully." };
+    }
+
+    @Get("get-image/:filename")
+    getScheduledPostImage(@Param() { filename }: any): StreamableFile {
+        const path = join(process.cwd(), `storage/user-images/${filename}`);
+
+        if (existsSync(path)) {
+            const file = createReadStream(path, "base64");
+            return new StreamableFile(file);
+        }
+
+        throw new UnprocessableEntityException();
     }
 }

@@ -39,14 +39,18 @@ const UserDetails = () => {
                 setUserDetails({ ...userData });
             }
 
-            if (userData.picture) getImageFetchingPromise(userData.picture, pictureSuccessCallback);
+            if (userData.picture) {
+                getImageFetchingPromise(userData.picture, pictureSuccessCallback, "user");
+            }
 
             const bgImgSuccessCallback = imageData => {
                 userData["backgroundImage"] = imageData;
                 setUserDetails({ ...userData });
             }
 
-            if (userData.backgroundImage) getImageFetchingPromise(userData.backgroundImage, bgImgSuccessCallback);
+            if (userData.backgroundImage) {
+                getImageFetchingPromise(userData.backgroundImage, bgImgSuccessCallback, "user");
+            }
         }
     }
 

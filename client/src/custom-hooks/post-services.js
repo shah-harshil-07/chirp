@@ -136,9 +136,11 @@ const usePostServices = () => {
         else showError("Please login to repost!");
     }
 
-    const getImageFetchingPromise = (imageName, updatingStateCallback) => {
+    const getImageFetchingPromise = (imageName, updatingStateCallback, imageKey = "post") => {
+        const baseUrl = imageKey === "post" ? Constants.GET_POST_IMAGE : Constants.GET_USER_IMAGE;
+
         return new Promise((res, rej) => {
-            API(Constants.GET, `${Constants.GET_POST_IMAGE}/${imageName}`, null, headerData)
+            API(Constants.GET, `${baseUrl}/${imageName}`, null, headerData)
                 .then(imageResponse => {
                     const base64ImgData = imageResponse.data;
                     const base64Prefix = "data:image/*;charset=utf-8;base64,";

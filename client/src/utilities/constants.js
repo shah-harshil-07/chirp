@@ -40,6 +40,7 @@ export const GET_USER_POSTS = "user/get-posts";
 export const GET_SAVED_POSTS = "user/get-saved";
 export const GET_USER_DETAILS = "user/get-details";
 export const GET_USER_COMMENTS = "user/get-comments";
+export const GET_USER_IMAGE = "user/get-image";
 
 export const CREATE_POST = "posts/create";
 export const GET_POST_IMAGE = "posts/get-image";

@@ -74,7 +74,7 @@ const UserInfo = ({ details }) => {
             updateProfileDetails();
 
             if (details.picture) setUploadedProfileImgFile(details.picture);
-            if (details.backgroundImage) setUploadedProfileImgFile(details.backgroundImage);
+            if (details.backgroundImage) setUploadedBackImgFile(details.backgroundImage);
         }
 
         // eslint-disable-next-line
@@ -234,8 +234,8 @@ const UserInfo = ({ details }) => {
                 <img
                     alt={"user"}
                     id="user-info-user-img"
+                    src={uploadedProfileImgFile ?? String(sampleUserImg)}
                     onError={e => { e.target.src = String(sampleUserImg); }}
-                    src={uploadedProfileImgFile ?? userData?.picture ?? String(sampleUserImg)}
                 />
 
                 <CIcon
