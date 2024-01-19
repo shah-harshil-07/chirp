@@ -1,7 +1,7 @@
 import "src/styles/utilities/custom-modal.css";
 
-import React from "react";
 import { useDispatch } from "react-redux";
+import React, { useEffect, useRef, useState } from "react";
 
 import Loader from "./loader";
 import { closeModal } from "src/redux/reducers/modal";
@@ -20,13 +20,24 @@ const CustomModal = ({
     customFooterJSX,
     modalContentClasses,
 }) => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch(), bodyRef = useRef(null);
     const logo = require("src/assets/logo-1.png");
     const overflowStyles = { overflow: "scroll", overflowX: "hidden", height: includeFooter ? "325px" : "80%" };
 
     const closeCustomDialog = () => {
         dispatch(closeModal());
     }
+
+    const [isInitialScrollSet, setIsInitialScrollSet] = useState(false);
+
+    useEffect(() => {
+        if (!isInitialScrollSet) {            
+            bodyRef.current.scrollTop = 0;
+            setIsInitialScrollSet(true);
+        }
+
+        // eslint-disable-next-line
+    }, []);
 
     return (
         <div className="custom-modal">
@@ -61,8 +72,13 @@ const CustomModal = ({
                     </div>
                 </header>
 
-                <div className={`custom-container-body ${bodyClasses ?? ''}`} style={displayOverflow ? overflowStyles : {}}>
-                    {showLoader ? (<div id="custom-modal-loader-container"><Loader /></div>) : bodyJSX}
+                <div
+                    ref={bodyRef}
+                    id="custom-modal-body"
+                    style={displayOverflow ? overflowStyles : {}}
+                    className={`custom-container-body ${bodyClasses ?? ''}`}
+                >
+                    {showLoader ? <div id="custom-modal-loader-container"><Loader /></div> : bodyJSX}
                 </div>
 
                 {
