@@ -161,20 +161,20 @@ export class UsersService {
         const { isValid, errors } = validationService.validate(userData);
         if (!isValid && errors) throw new CustomBadRequestException(errors);
 
-        return await this.userModel.findByIdAndUpdate(
-            userId,
-            {
-                $set: {
-                    bio: userData?.bio ?? '',
-                    name: userData.name ?? '',
-                    picture: userData?.picture ?? '',
-                    website: userData?.website ?? '',
-                    location: userData?.location ?? '',
-                    dateOfBirth: new Date(userData?.dateOfBirth),
-                    backgroundImage: userData?.backgroundImage ?? '',
-                },
-            },
-            { new: true }
-        );
+        const imageDirectory = "storage/user-images";
+        const user = await this.userModel.findOne({ _id: userId });
+
+        if (user.picture) this.commonService.unlinkImage(imageDirectory, user.picture);
+        if (user.backgroundImage) this.commonService.unlinkImage(imageDirectory, user.backgroundImage);
+
+        user.bio = userData?.bio ?? '';
+        user.name = userData?.name ?? '';
+        user.picture = userData?.picture ?? '';
+        user.website = userData?.website ?? '';
+        user.location = userData?.location ?? '';
+        user.dateOfBirth = new Date(userData?.dateOfBirth);
+        user.backgroundImage = userData?.backgroundImage ?? '';
+
+        return user.save();
     }
 }
