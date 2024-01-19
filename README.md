@@ -14,4 +14,3 @@
 # tab index is missing for every field in login and signup section.
 # In scheduler, if I keep the month value at March, and select the day as 31, then change the month to February, the data in the select dropdown will show value of 1 but on top the text will show February 31.
 # If I go to other user's profile page, I am unable to see their profile image.
-# If I upload a new profile image and a background image, the old images stored in the directory must be deleted.
