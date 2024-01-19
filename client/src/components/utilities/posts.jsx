@@ -466,6 +466,7 @@ const PostUtilities = ({ parentName }) => {
                                                 <img
                                                     alt="post creator"
                                                     className="parent-post-user-img"
+                                                    onError={e => e.target.src = String(sampleUserImg)}
                                                     src={commentObj?.user?.picture ?? String(sampleUserImg)}
                                                 />
 
