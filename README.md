@@ -14,3 +14,5 @@
 # tab index is missing for every field in login and signup section.
 # In scheduler, if I keep the month value at March, and select the day as 31, then change the month to February, the data in the select dropdown will show value of 1 but on top the text will show February 31.
 # If I go to other user's profile page, I am unable to see their profile image.
+# If user updates the profile image, in user/info section, his new picture must be reflected on post list and every other page where the user's image appears.
+# If I click on te image of user who has url based image, the page gets blank.
