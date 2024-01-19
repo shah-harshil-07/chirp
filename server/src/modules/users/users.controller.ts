@@ -11,6 +11,7 @@ import {
     StreamableFile,
     UseInterceptors,
     UnprocessableEntityException,
+    UseGuards,
 } from "@nestjs/common";
 
 import { UsersService } from "./users.service";
@@ -27,6 +28,7 @@ import {
     IUpdateUserDetailsDTO,
     RegisteredGoogleAuthedUserDTO,
 } from "./users.dto";
+import { AuthGuard } from "@nestjs/passport";
 
 interface IResponseProps {
     data?: any;
@@ -154,6 +156,7 @@ export class UsersController {
         return { success: true, data, message: "User comments fetched successfully." };
     }
 
+    @UseGuards(AuthGuard("jwt"))
     @Post("update-details/:id")
     @UseInterceptors(
         ResponseInterceptor,

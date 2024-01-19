@@ -56,9 +56,7 @@ const ScheduledPostList = () => {
                         .then(imageResponse => {
                             if (imageResponse?.data) {
                                 const base64ImgData = imageResponse.data;
-                                const base64Prefix = "data:image/*;charset=utf-8;base64,";
-
-                                _scheduledPostImages[postIndex][imageIndex] = base64Prefix + base64ImgData;
+                                _scheduledPostImages[postIndex][imageIndex] = Constants.base64Prefix + base64ImgData;
                                 updateScheduledPostFileObjects(base64ImgData, postIndex, imageIndex, image);
                                 setSchduledPostImages([..._scheduledPostImages]);
                                 res();

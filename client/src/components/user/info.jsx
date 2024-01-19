@@ -6,21 +6,26 @@ import CIcon from "@coreui/icons-react";
 import React, { useEffect, useRef, useState } from "react";
 import { cilCalendar, cilBirthdayCake, cilLink, cilLocationPin, cilCamera } from "@coreui/icons";
 
+import API from "src/api";
 import CustomModal from "../utilities/custom-modal";
+import * as Constants from "src/utilities/constants";
 import CustomSelect from "../utilities/custom-select";
 import LabelledInput from "../utilities/labelled-input";
+import useToaster from "src/custom-hooks/toaster-message";
 import { placeHolderImageSrc } from "src/utilities/constants";
 import DateOptionServices from "src/custom-hooks/date-services";
 import useImageConverter from "src/custom-hooks/image-converter";
 import LabelledInputTextarea from "../utilities/labelled-textarea";
-import { getErrorMessage, getUserDetails, isUserLoggedIn, validate } from "src/utilities/helpers";
+import { getCommonHeader, getErrorMessage, getUserDetails, isUserLoggedIn, validate } from "src/utilities/helpers";
 
-const UserInfo = ({ details }) => {
+const UserInfo = ({ details, getterFn }) => {
     const totalLineLength = 1040;
+    const commonHeader = getCommonHeader();
     let availableCoverage = totalLineLength;
-    const { uploadImagesAction } = useImageConverter();
+    const { showSuccess, showError } = useToaster();
     const sampleUserImg = require("src/assets/sample-user.png");
     const profileImgRef = useRef(null), backImgRef = useRef(null);
+    const { uploadImagesAction, getFileObjectFromBase64 } = useImageConverter();
 
     const loggedInUserData = isUserLoggedIn() ? getUserDetails() : null;
     const { id: loggedUserId } = loggedInUserData;
@@ -73,8 +78,23 @@ const UserInfo = ({ details }) => {
             updateStats();
             updateProfileDetails();
 
-            if (details.picture) setUploadedProfileImgFile(details.picture);
-            if (details.backgroundImage) setUploadedBackImgFile(details.backgroundImage);
+            if (details.picture) {
+                const { picture } = details;
+                setUploadedProfileImgFile(picture);
+                if (picture?.startsWith(Constants.base64Prefix)) {
+                    const base64ImgData = picture.replaceAll(Constants.base64Prefix, '');
+                    setUploadedProfileImgFileObject(getFileObjectFromBase64(base64ImgData));
+                }
+            }
+
+            if (details.backgroundImage) {
+                const { backgroundImage } = details;
+                setUploadedBackImgFile(backgroundImage);
+                if (backgroundImage?.startsWith(Constants.base64Prefix)) {
+                    const base64ImgData = backgroundImage.replaceAll(Constants.base64Prefix, '');
+                    setUploadedBackImgFileObject(getFileObjectFromBase64(base64ImgData));
+                }
+            }
         }
 
         // eslint-disable-next-line
@@ -142,12 +162,17 @@ const UserInfo = ({ details }) => {
     const handleInputChange = (key, value) => {
         let _isFormValid = isFormValid;
         const _errors = { ...errors };
-        if (key === "name" && validate("name", value)) {
-            _errors["name"] = getErrorMessage("name");
-            _isFormValid = false;
-        } else {
-            _errors["name"] = '';
-            _isFormValid = true;
+        if (key === "name") {
+            if (!value) {
+                _isFormValid = false;
+                _errors["name"] = "name is required";
+            } else if (validate("name", value)) {
+                _isFormValid = false;
+                _errors["name"] = getErrorMessage("name");
+            } else {
+                _errors["name"] = '';
+                _isFormValid = true;
+            }
         }
 
         setErrors({ ..._errors });
@@ -170,9 +195,58 @@ const UserInfo = ({ details }) => {
     }
 
     const handleDetailsUpdate = e => {
-        console.log(e);
-        console.log(uploadedBackImgFileObject);
-        console.log(uploadedProfileImgFileObject);
+        e.preventDefault();
+
+        if (isFormValid && details?._id) {
+            const formData = new FormData();
+            const { dateOfBirth } = profileDetails ?? {};
+            const { day, month, year } = dateOfBirth ?? {};
+
+            let monthValue = (month ?? preselectedMonth) + 1;
+            monthValue = monthValue < 10 ? `0${monthValue}` : String(monthValue);
+
+            let dayValue = day ?? preselectedDay;
+            dayValue = dayValue < 10 ? `0${dayValue}` : String(dayValue);
+
+            const strDateOfBirth = `${year ?? preselectedYear}-${monthValue}-${dayValue}`;
+
+            formData.set("name", profileDetails?.name ?? '');
+            formData.set("bio", profileDetails?.bio ?? '');
+            formData.set("website", profileDetails?.website ?? '');
+            formData.set("location", profileDetails?.location ?? '');
+            formData.set("dateOfBirth", strDateOfBirth);
+
+            if (uploadedProfileImgFileObject) {
+                formData.set("picture", uploadedProfileImgFileObject);
+            }
+
+            if (uploadedBackImgFileObject) {
+                formData.set("backgroundImage", uploadedBackImgFileObject);
+            }
+
+            submitUserDetails(formData);
+        }
+    }
+
+    const submitUserDetails = async formData => {
+        const url = `${Constants.UPDATE_USER_DETAILS}/${details._id}`;
+        const { data: response } = await API(Constants.POST, url, formData, commonHeader);
+
+        if (response?.meta?.status) {
+            const message = response?.meta?.message ?? "Details updated successfully!";
+            showSuccess(message);
+            setShowProfileEditor(false);
+            getterFn();
+        } else {
+            const message = response?.errors?.message ?? response?.meta?.message ?? "Something went wrong!";
+            if (Array.isArray(message)) {
+                let finalMessage = '';
+                message.forEach(msgStr => finalMessage += msgStr);
+                showError(finalMessage);
+            } else {
+                showError(message);
+            }
+        }
     }
 
     const editProfileHeaderJSX = (

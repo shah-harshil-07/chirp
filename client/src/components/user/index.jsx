@@ -73,7 +73,7 @@ const UserDetails = () => {
                 </div>
             </div>
 
-            <UserInfo details={userDetails} />
+            <UserInfo details={userDetails} getterFn={getUserData} />
             <UserPosts userId={userId} />
         </div>
     );

@@ -13,7 +13,7 @@ export class ValidationFactory {
     private static checkDateValidity(value: string): boolean {
         if (value) {
             const [year, month, day] = value.split('-');
-            if (+month > 12) return false;
+            if (+month > 12 || +month < 1) return false;
             if (+year > (new Date()).getFullYear()) return false;
 
             let dayLimit = 28;

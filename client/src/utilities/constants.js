@@ -24,6 +24,10 @@ export const POST = "post";
 export const PUT = "put";
 export const DELETE = "delete";
 
+/* Other Constants */
+/*--------------------------------------------------------------------------------*/
+export const base64Prefix = "data:image/*;charset=utf-8;base64,";
+
 /* API half URLs */
 /*--------------------------------------------------------------------------------*/
 export const GET_POSTS = "posts/all";
@@ -41,6 +45,7 @@ export const GET_SAVED_POSTS = "user/get-saved";
 export const GET_USER_DETAILS = "user/get-details";
 export const GET_USER_COMMENTS = "user/get-comments";
 export const GET_USER_IMAGE = "user/get-image";
+export const UPDATE_USER_DETAILS = "user/update-details";
 
 export const CREATE_POST = "posts/create";
 export const GET_POST_IMAGE = "posts/get-image";

@@ -143,8 +143,7 @@ const usePostServices = () => {
             API(Constants.GET, `${baseUrl}/${imageName}`, null, headerData)
                 .then(imageResponse => {
                     const base64ImgData = imageResponse.data;
-                    const base64Prefix = "data:image/*;charset=utf-8;base64,";
-                    const imageData = base64Prefix + base64ImgData;
+                    const imageData = Constants.base64Prefix + base64ImgData;
                     updatingStateCallback(imageData);
                     res();
                 })
