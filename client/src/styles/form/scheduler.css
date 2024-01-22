@@ -34,8 +34,9 @@
 }
 
 #scheduler-footer-text {
-    font-weight: bold;
     font-size: 17px;
+    font-weight: bold;
+    color: var(--chirp-color);
 }
 
 #scheduler-footer {
@@ -46,6 +47,10 @@
 
 #scheduler-footer:hover {
     background-color: rgba(29, 161, 242, 0.6);
+}
+
+#scheduler-footer:hover span:first-child {
+    color: white;
 }
 
 .scheduler-error-select {

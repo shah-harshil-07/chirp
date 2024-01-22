@@ -12,7 +12,6 @@
 # Login through any user. > Go to any other user's detail page. > Click on the image in the left-sidebar's profile container section. > The route is changed above but the details do not change with it. The updated user details appear only after the page is refreshed.
 # In user/comments or user/saved section, if any post is not available, keep a placeholder text in the place saying the particular posts are not available or anything.
 # tab index is missing for every field in login and signup section.
-# In Scheduler, if I swiftly (in a very fast motion) I hover over the footer section (Scheduled events bar), The footer background color becomes white but the text color which must change to blue remainds white only.
 # If I go to other user's profile page, I am unable to see their profile image.
 # If user updates the profile image, in user/info section, his new picture must be reflected on post list and every other page where the user's image appears.
 # If I click on te image of user who has url based image, the page gets blank.

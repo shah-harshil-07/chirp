@@ -41,7 +41,6 @@ const Scheduler = ({
     const [hours, setHours] = useState(defaultDate.getHours());
     const [dayOfMonthOptions, setDayOfMonthOptions] = useState([]);
     const [minutes, setMinutes] = useState(defaultDate.getMinutes());
-    const [footerTextColor, setFooterTextColor] = useState("#1DA1F2");
     const [dayOfMonth, setDayOfMonth] = useState(defaultDate.getDate());
     const [displayedMonth, setDisplayedMonth] = useState(monthOptions[month]?.label ?? '');
     const [displayedDayOfWeek, setDisplayedDayOfWeek] = useState(weekOptions[defaultDate.getDay()]);
@@ -278,14 +277,8 @@ const Scheduler = ({
                 </div>
             </div>
 
-            <div
-                id="scheduler-footer"
-                className="pt-2 pb-2 pl-3"
-                onClick={openScheduledPostList}
-                onMouseOver={() => { setFooterTextColor("white"); }}
-                onMouseLeave={() => { setFooterTextColor("#1DA1F2"); }}
-            >
-                <span style={{ color: footerTextColor }} id="scheduler-footer-text">Scheduled Events</span>
+            <div id="scheduler-footer" className="pt-2 pb-2 pl-3" onClick={openScheduledPostList}>
+                <span id="scheduler-footer-text">Scheduled Events</span>
             </div>
         </div>
     );
