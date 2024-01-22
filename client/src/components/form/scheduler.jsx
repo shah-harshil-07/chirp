@@ -69,7 +69,20 @@ const Scheduler = ({
     useEffect(() => {
         if (month >= 0 && year >= 0) {
             const _dayOfMonthOptions = dateServiceObj.getDayOfMonthOptions(+month, +year);
+            const n = _dayOfMonthOptions.length;
             setDayOfMonthOptions([..._dayOfMonthOptions]);
+
+            const dayOfMonthMaxValue = _dayOfMonthOptions[n - 1]?.value ?? 1;
+            let _dayOfMonth = dayOfMonth, _displayedDayOfWeek = displayedDayOfWeek;
+
+            if (dayOfMonth > dayOfMonthMaxValue) {
+                _dayOfMonth = 1;
+                const date = new Date(year, month, _dayOfMonth, hours, minutes, 0, 0);
+                _displayedDayOfWeek = weekOptions[date.getDay()];
+            }
+
+            setDisplayedDayOfWeek(_displayedDayOfWeek);
+            setDayOfMonth(_dayOfMonth);
         }
         // eslint-disable-next-line
     }, [month, year]);
@@ -167,7 +180,7 @@ const Scheduler = ({
                     }
 
                     <div
-                        onClick={e => confirmAction(e)}
+                        onClick={confirmAction}
                         style={{ opacity: isDateValid ? 1 : 0.5 }}
                         className={`pr-0 ${isPostScheduled ? "col-md-3" : "col-md-5"}`}
                     >
@@ -199,7 +212,7 @@ const Scheduler = ({
                                 options={dayOfMonthOptions}
                                 innerClass={!isDateValid ? "scheduler-error-select" : ''}
                                 labelClass={!isDateValid ? "scheduler-error-select-label" : ''}
-                                handleValueChange={dayOfMonthValue => handleDateChange("dayOfMonth", dayOfMonthValue)}
+                                handleValueChange={dayOfMonthValue => { handleDateChange("dayOfMonth", dayOfMonthValue); }}
                             />
                         </div>
 
@@ -210,7 +223,7 @@ const Scheduler = ({
                                 options={monthOptions}
                                 innerClass={!isDateValid ? "scheduler-error-select" : ''}
                                 labelClass={!isDateValid ? "scheduler-error-select-label" : ''}
-                                handleValueChange={monthValue => handleDateChange("month", monthValue)}
+                                handleValueChange={monthValue => { handleDateChange("month", monthValue); }}
                             />
                         </div>
 
@@ -221,7 +234,7 @@ const Scheduler = ({
                                 options={yearOptions}
                                 innerClass={!isDateValid ? "scheduler-error-select" : ''}
                                 labelClass={!isDateValid ? "scheduler-error-select-label" : ''}
-                                handleValueChange={yearValue => handleDateChange("year", yearValue)}
+                                handleValueChange={yearValue => { handleDateChange("year", yearValue); }}
                             />
                         </div>
                     </div>
@@ -238,7 +251,7 @@ const Scheduler = ({
                                 selectedValue={hours}
                                 innerClass={!isDateValid ? "scheduler-error-select" : ''}
                                 labelClass={!isDateValid ? "scheduler-error-select-label" : ''}
-                                handleValueChange={hourValue => handleDateChange("hour", hourValue)}
+                                handleValueChange={hourValue => { handleDateChange("hour", hourValue); }}
                             />
                         </div>
 
@@ -249,12 +262,12 @@ const Scheduler = ({
                                 selectedValue={minutes}
                                 innerClass={!isDateValid ? "scheduler-error-select" : ''}
                                 labelClass={!isDateValid ? "scheduler-error-select-label" : ''}
-                                handleValueChange={minuteValue => handleDateChange("minute", minuteValue)}
+                                handleValueChange={minuteValue => { handleDateChange("minute", minuteValue); }}
                             />
                         </div>
                     </div>
 
-                    {!isDateValid && (<p className="text-danger">{"You can't schedule a post to send it to past."}</p>)}
+                    {!isDateValid && <p className="text-danger">{"You can't schedule a post to send it to past."}</p>}
                 </div>
 
                 <div className="mt-4 pl-2">
@@ -269,8 +282,8 @@ const Scheduler = ({
                 id="scheduler-footer"
                 className="pt-2 pb-2 pl-3"
                 onClick={openScheduledPostList}
-                onMouseOver={() => setFooterTextColor("white")}
-                onMouseLeave={() => setFooterTextColor("#1DA1F2")}
+                onMouseOver={() => { setFooterTextColor("white"); }}
+                onMouseLeave={() => { setFooterTextColor("#1DA1F2"); }}
             >
                 <span style={{ color: footerTextColor }} id="scheduler-footer-text">Scheduled Events</span>
             </div>
