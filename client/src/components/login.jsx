@@ -72,10 +72,11 @@ const Login = () => {
                 <div className="or-div">or</div>
             </div>
 
-            <LabelledInput value={cred} handleChange={data => { setCred(data) }} header={"Email or Username"} />
+            <LabelledInput tabIndex={1} value={cred} handleChange={data => { setCred(data) }} header={"Email or Username"} />
 
             <div className="position-relative">
                 <LabelledInput
+                    tabIndex={2}
                     value={password}
                     header={"Password"}
                     extraClasses={"mt-3"}
@@ -92,6 +93,7 @@ const Login = () => {
             </div>
 
             <div
+                tabIndex={3}
                 id="login-next-box"
                 className="auth-box"
                 onClick={attemptLogin}

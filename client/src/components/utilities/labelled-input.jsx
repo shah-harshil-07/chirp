@@ -8,6 +8,7 @@ const LabelledInput = ({
     value,
     header,
     disabled,
+    tabIndex,
     suggestions,
     handleChange,
     extraClasses,
@@ -35,6 +36,7 @@ const LabelledInput = ({
                     disabled={disabled}
                     value={value ?? ''}
                     type={type ?? "text"}
+                    tabIndex={tabIndex ?? 0}
                     className="labelled-input-box"
                     autoComplete={autoCompleteMode ? "off" : "on"}
                     onFocus={() => setLabelStyles(focusedLabelStyles)}

@@ -40,6 +40,7 @@ const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
 
             <div className="position-relative">
                 <LabelledInput
+                    tabIndex={1}
                     header={"Name"}
                     value={data["name"]}
                     handleChange={value => handleInputChange("name", value)}
@@ -47,6 +48,7 @@ const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
                 <p className="text-danger create-account-text">{errors["name"]}</p>
 
                 <LabelledInput
+                    tabIndex={2}
                     extraClasses="mt-3"
                     header={"Username"}
                     value={data["username"]}
@@ -55,6 +57,7 @@ const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
                 <p className="text-danger create-account-text">{errors["username"]}</p>
 
                 <LabelledInput
+                    tabIndex={3}
                     header={"Email"}
                     extraClasses="mt-3"
                     value={data["email"]}
@@ -64,6 +67,7 @@ const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
 
                 <div className="position-relative">
                     <LabelledInput
+                        tabIndex={4}
                         extraClasses="mt-3"
                         header={"Password"}
                         value={data["password"]}
@@ -83,6 +87,7 @@ const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
 
                 <div className="position-relative">
                     <LabelledInput
+                        tabIndex={4}
                         extraClasses="mt-3"
                         header={"Confirm Password"}
                         value={data["confirmPassword"]}
@@ -102,6 +107,7 @@ const CreateAccount = forwardRef(({ handleDataChange }, ref) => {
 
                 <div style={{ marginTop: "38px" }}>
                     <input
+                        tabIndex={5}
                         type="checkbox"
                         defaultChecked={data["noteChecked"]}
                         onChange={() => handleInputChange("noteChecked", !data["noteChecked"])}
