@@ -145,7 +145,7 @@ const usePostServices = () => {
                     const base64ImgData = imageResponse.data;
                     const imageData = Constants.base64Prefix + base64ImgData;
                     updatingStateCallback(imageData);
-                    res();
+                    res(imageData);
                 })
                 .catch(err => {
                     console.log(err);

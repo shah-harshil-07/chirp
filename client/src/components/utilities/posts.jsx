@@ -75,11 +75,38 @@ const PostUtilities = ({ parentName }) => {
             setIsLoading(false);
             const comments = [];
 
-            _posts.forEach(postObj => {
+            _posts.forEach(async postObj => {
                 postObj["isLiked"] = null;
                 const { images: postImages, post } = postObj;
                 if (post?.images?.length) postImages.push(post.images);
                 images.push(postImages);
+
+                const { picture: userPic } = postObj?.user ?? {};
+                const { picture: parentUserPic } = postObj?.post?.user ?? {};
+
+                if (userPic) {
+                    if (userPic.startsWith(Constants.httpsOrigin)) {
+                        postObj["user"]["picture"] = userPic;
+                    } else {
+                        getImageFetchingPromise(
+                            userPic,
+                            imageData => { postObj["user"]["picture"] = imageData; },
+                            "user"
+                        );
+                    }
+                }
+
+                if (parentUserPic) {
+                    if (parentUserPic.startsWith(Constants.httpsOrigin)) {
+                        postObj["post"]["user"]["picture"] = parentUserPic;
+                    } else {
+                        getImageFetchingPromise(
+                            parentUserPic,
+                            imageData => { postObj["post"]["user"]["picture"] = imageData; },
+                            "user"
+                        );
+                    }
+                }
 
                 if (postUtilityTheme === "comments") comments.push(postObj.comment);
             });
