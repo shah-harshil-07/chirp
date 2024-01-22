@@ -27,6 +27,7 @@ export const DELETE = "delete";
 /* Other Constants */
 /*--------------------------------------------------------------------------------*/
 export const base64Prefix = "data:image/*;charset=utf-8;base64,";
+export const httpsOrigin = "https://";
 
 /* API half URLs */
 /*--------------------------------------------------------------------------------*/
@@ -46,6 +47,7 @@ export const GET_USER_DETAILS = "user/get-details";
 export const GET_USER_COMMENTS = "user/get-comments";
 export const GET_USER_IMAGE = "user/get-image";
 export const UPDATE_USER_DETAILS = "user/update-details";
+export const DELETE_USER_IMAGE = "user/delete-image";
 
 export const CREATE_POST = "posts/create";
 export const GET_POST_IMAGE = "posts/get-image";

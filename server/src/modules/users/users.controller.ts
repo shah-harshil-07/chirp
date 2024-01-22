@@ -1,4 +1,5 @@
 import { join } from "path";
+import { AuthGuard } from "@nestjs/passport";
 import { createReadStream, existsSync } from "fs";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import {
@@ -6,12 +7,13 @@ import {
     Body,
     Post,
     Param,
+    Delete,
+    UseGuards,
     Controller,
     UploadedFiles,
     StreamableFile,
     UseInterceptors,
     UnprocessableEntityException,
-    UseGuards,
 } from "@nestjs/common";
 
 import { UsersService } from "./users.service";
@@ -25,10 +27,10 @@ import {
     LoggedInUserDTO,
     RegisteredUserDTO,
     GoogleAuthedUserDTO,
+    IDeleteImgDetailsDTO,
     IUpdateUserDetailsDTO,
     RegisteredGoogleAuthedUserDTO,
 } from "./users.dto";
-import { AuthGuard } from "@nestjs/passport";
 
 interface IResponseProps {
     data?: any;
@@ -184,7 +186,7 @@ export class UsersController {
     }
 
     @Get("get-image/:filename")
-    getScheduledPostImage(@Param() { filename }: any): StreamableFile {
+    getUserImage(@Param() { filename }: any): StreamableFile {
         const path = join(process.cwd(), `storage/user-images/${filename}`);
 
         if (existsSync(path)) {
@@ -193,5 +195,15 @@ export class UsersController {
         }
 
         throw new UnprocessableEntityException();
+    }
+
+    @Delete("delete-image/:id")
+    @UseInterceptors(ResponseInterceptor)
+    async deleteUserImage(
+        @Param() { id }: IParamId,
+        @Body() requestData: IDeleteImgDetailsDTO,
+    ): Promise<IResponseProps> {
+        await this.userService.deleteUserImage(id, requestData.fileName, requestData.imageType);
+        return { success: true, data: null, message: "Image deleted successfully." };
     }
 }

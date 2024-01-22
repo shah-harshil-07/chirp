@@ -35,20 +35,22 @@ const UserDetails = () => {
             setUserDetails({ ...userData });
 
             const pictureSuccessCallback = imageData => {
+                userData["profile"] = userData["picture"];
                 userData["picture"] = imageData;
                 setUserDetails({ ...userData });
             }
 
-            if (userData.picture) {
+            if (userData?.picture && !userData?.picture?.startsWith(Constants.httpsOrigin)) {
                 getImageFetchingPromise(userData.picture, pictureSuccessCallback, "user");
             }
 
             const bgImgSuccessCallback = imageData => {
+                userData["back"] = userData["backgroundImage"];
                 userData["backgroundImage"] = imageData;
                 setUserDetails({ ...userData });
             }
 
-            if (userData.backgroundImage) {
+            if (userData?.backgroundImage && !userData?.backgroundImage?.startsWith(Constants.httpsOrigin)) {
                 getImageFetchingPromise(userData.backgroundImage, bgImgSuccessCallback, "user");
             }
         }

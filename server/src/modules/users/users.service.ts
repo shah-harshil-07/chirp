@@ -30,6 +30,8 @@ import {
 @Injectable()
 @UseInterceptors(ResponseInterceptor)
 export class UsersService {
+    private imageDirectory = "storage/user-images";
+
     constructor(
         private readonly postService: PostService,
         private readonly mailerService: MailerService,
@@ -48,11 +50,11 @@ export class UsersService {
 
         await this.mailerService.sendMail({
             to: emailId,
-            from: smtpConfig.displayEmail,
-            replyTo: smtpConfig.replyToEmail,
-            subject: "Email Verification",
             template: "otp",
             context: { username, otp },
+            from: smtpConfig.displayEmail,
+            subject: "Email Verification",
+            replyTo: smtpConfig.replyToEmail,
         });
 
         return { otpId };
@@ -156,25 +158,31 @@ export class UsersService {
         return postList.map((postObj: IUserComment) => postObj.post);
     }
 
-    public async updateDetails(userId: string, userData: IUpdateUserDetailsDTO): Promise<any> {
+    public async updateDetails(userId: string, userData: IUpdateUserDetailsDTO): Promise<UserDTO> {
         const validationService = new CustomValidatorsService(validationParamList.updateDetails);
         const { isValid, errors } = validationService.validate(userData);
         if (!isValid && errors) throw new CustomBadRequestException(errors);
 
-        const imageDirectory = "storage/user-images";
         const user = await this.userModel.findOne({ _id: userId });
 
-        if (user.picture) this.commonService.unlinkImage(imageDirectory, user.picture);
-        if (user.backgroundImage) this.commonService.unlinkImage(imageDirectory, user.backgroundImage);
+        if (user.picture) this.commonService.unlinkImage(this.imageDirectory, user.picture);
+        if (user.backgroundImage) this.commonService.unlinkImage(this.imageDirectory, user.backgroundImage);
 
         user.bio = userData?.bio ?? '';
         user.name = userData?.name ?? '';
-        user.picture = userData?.picture ?? '';
-        user.website = userData?.website ?? '';
         user.location = userData?.location ?? '';
         user.dateOfBirth = new Date(userData?.dateOfBirth);
         user.backgroundImage = userData?.backgroundImage ?? '';
 
+        if (userData?.picture) user.picture = userData?.picture ?? '';
+        if (userData?.website) user.website = userData?.website ?? '';
+
         return user.save();
+    }
+
+    public async deleteUserImage(userId: string, fileName: string, imageType: string): Promise<null> {
+        await this.userModel.findByIdAndUpdate(userId, { [imageType]: '' });
+        if (fileName) this.commonService.unlinkImage(this.imageDirectory, fileName);
+        return null;
     }
 }

@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, Length, Matches } from "class-validator";
+import { IsEmail, IsIn, IsNotEmpty, IsOptional, IsString, Length, Matches } from "class-validator";
 
 import * as Constants from "src/constants";
 import { Post } from "src/modules/posts/post.schema";
@@ -117,3 +117,14 @@ export const validationParamList = {
         dateOfBirth: "isDateValid|isString",
     },
 };
+
+export class IDeleteImgDetailsDTO {
+    @IsString()
+    @IsNotEmpty()
+    fileName: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @IsIn(["picture", "backgroundImage"])
+    imageType: string;
+}
