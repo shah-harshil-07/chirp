@@ -166,3 +166,8 @@
 .font-size-25 {
     font-size: 25px !important;
 }
+
+.no-posts-box {
+    font-size: 16px;
+    text-align: center;
+}

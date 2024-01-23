@@ -291,8 +291,9 @@ const PostUtilities = ({ parentName }) => {
     }
 
     return (
-        <div>
+        <div className={!posts?.length ? "no-posts-box" : ''}>
             {isLoading && <Loader />}
+            {!posts?.length && <i>No posts are available</i>}
 
             {
                 posts.map((post, postIndex) => {
@@ -508,7 +509,7 @@ const PostUtilities = ({ parentName }) => {
                                                             commentObj?.images?.length > 0 && (
                                                                 <ImgHolder
                                                                     showActionButtons={false}
-                                                                    images={commentObj?.images}
+                                                                    images={commentObj?.images ?? []}
                                                                 />
                                                             )
                                                         }

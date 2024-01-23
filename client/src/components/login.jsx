@@ -163,7 +163,6 @@ const Login = () => {
                 const token = responseData?.data?.accessToken ?? '';
                 const userData = responseData?.data?.userData ?? null;
                 const userValid = responseData?.data?.userValid ?? false;
-                console.log(userData);
 
                 if (userData?.picture) {
                     await getImageFetchingPromise(userData.picture, base64Image => userData["picture"] = base64Image, "user");

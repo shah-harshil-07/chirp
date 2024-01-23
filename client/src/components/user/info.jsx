@@ -28,7 +28,7 @@ const UserInfo = ({ details, getterFn }) => {
     const profileImgRef = useRef(null), backImgRef = useRef(null);
     const { uploadImagesAction, getFileObjectFromBase64 } = useImageConverter();
 
-    const loggedInUserData = isUserLoggedIn() ? getUserDetails() : null;
+    const loggedInUserData = isUserLoggedIn() ? getUserDetails() : {};
     const { id: loggedUserId } = loggedInUserData;
     const isLoggedInUser = details?._id === loggedUserId;
 
