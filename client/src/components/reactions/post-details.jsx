@@ -86,6 +86,7 @@ const PostDetails = () => {
                     images: post?.parentPost?.images ?? [],
                     createdAt: post?.parentPost?.createdAt ?? null,
                     user: {
+                        id: post?.parentPost?.user?._id ?? '',
                         name: post?.parentPost?.user?.name ?? '',
                         picture: post?.parentPost?.user?.picture ?? null,
                         username: post?.parentPost?.user?.username ?? '',
@@ -234,6 +235,15 @@ const PostDetails = () => {
         navigate('/');
     }
 
+    const moveToUserPage = (e, userId) => {
+        if (userId) {
+            e.stopPropagation();
+            navigate(`/user/${userId}`);
+        } else {
+            showError("user id is unavailable.");
+        }
+    }
+
     return (
         <div>
             <div className="common-header">
@@ -245,7 +255,7 @@ const PostDetails = () => {
             </div>
 
             <Card className="post-detail-card">
-                <div className="post-detail-card-header">
+                <div className="post-detail-card-header" onClick={e => { moveToUserPage(e, postDetails?.user?.id); }}>
                     <img
                         alt="user"
                         className="post-detail-card-header-image"
@@ -280,10 +290,14 @@ const PostDetails = () => {
                                     className="post-detail-parent-user-img"
                                     onError={e => { e.target.src = String(sampleUserImg); }}
                                     src={postDetails?.parentPostDetails?.user?.picture ?? String(sampleUserImg)}
+                                    onClick={e => { moveToUserPage(e, postDetails?.parentPostDetails?.user?.id); }}
                                 />
 
                                 <div className="post-detail-repost-body-content">
-                                    <div className="row mx-0 font-size-19">
+                                    <div
+                                        className="row mx-0 font-size-19 post-detail-repost-body-title"
+                                        onClick={e => { moveToUserPage(e, postDetails?.parentPostDetails?.user?.id); }}
+                                    >
                                         <b>{postDetails?.parentPostDetails?.user?.name ?? ''}</b>&nbsp;
 
                                         <span>{`@${postDetails?.parentPostDetails?.user?.username ?? ''}`}</span>

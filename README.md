@@ -10,4 +10,3 @@
 # I can comment with empty string or blank spaces. That must not happen.
 # The back button in the post detail page must go to previous page and not the post listing page.
 # Login through any user. > Go to any other user's detail page. > Click on the image in the left-sidebar's profile container section. > The route is changed above but the details do not change with it. The updated user details appear only after the page is refreshed.
-# In post detail page, If I click on any user's image, the page must be redirected to the particular user details page.

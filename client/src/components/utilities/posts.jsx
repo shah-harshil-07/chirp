@@ -258,9 +258,11 @@ const PostUtilities = ({ parentName }) => {
 
     const openUserCard = (e, userDetails) => {
         e.stopPropagation();
+        const { _id: userId } = userDetails;
+        const picture = userImages?.[userId] ?? '';
         const imgRect = e.target.getBoundingClientRect();
         const coordinates = { left: imgRect.left - 130, top: window.scrollY + imgRect.bottom + 10 };
-        dispatch(openDetailsCard({ ...userDetails, coordinates }));
+        dispatch(openDetailsCard({ ...userDetails, picture, coordinates }));
     }
 
     const closeDetailsCardImmediately = () => {

@@ -31,6 +31,14 @@
     position: absolute;
 }
 
+.post-detail-card-header-text:hover {
+    text-decoration: underline;
+}
+
+.post-detail-repost-body-title:hover {
+    text-decoration: underline;
+}
+
 .post-detail-body {
     margin-top: 5px;
     margin-left: 15px;
