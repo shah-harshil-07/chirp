@@ -12,4 +12,3 @@
 # Login through any user. > Go to any other user's detail page. > Click on the image in the left-sidebar's profile container section. > The route is changed above but the details do not change with it. The updated user details appear only after the page is refreshed.
 # In user/comments or user/saved section, if any post is not available, keep a placeholder text in the place saying the particular posts are not available or anything.
 # tab index is missing for every field in login and signup section.
-# If user updates the profile image, in user/info section, his new picture must be reflected on post list and every other page where the user's image appears.

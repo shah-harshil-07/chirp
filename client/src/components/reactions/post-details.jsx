@@ -38,6 +38,7 @@ const PostDetails = () => {
         getImageFetchingPromise,
     } = usePostServices();
 
+    const [userImages, setUserImages] = useState({});
     const [commentList, setCommentList] = useState([]);
     const [postDetails, setPostDetails] = useState(null);
     const [isPostLiked, setIsPostLiked] = useState(false);
@@ -65,6 +66,7 @@ const PostDetails = () => {
         const responseData = response?.data;
 
         if (responseData?.meta?.status && responseData?.data) {
+            const _userImages = {};
             const { post, comments } = responseData.data;
             const _postDetails = {
                 id: post?._id ?? '',
@@ -90,13 +92,20 @@ const PostDetails = () => {
                     },
                 },
                 user: {
+                    id: post?.user?._id ?? '',
                     name: post?.user?.name ?? '',
                     username: post?.user?.username ?? '',
                     picture: post?.user?.picture ?? null,
                 },
             };
 
+            const { user: { id: mainUserId, picture: mainUserPic } } = _postDetails;
+            if (mainUserId && mainUserPic) _userImages[mainUserId] = mainUserPic;
+
             const _commentList = comments.map((commentObj, commentIndex) => {
+                const { _id: userId, picture: userPic, name, username } = commentObj?.user ?? {};
+                if (userPic) _userImages[userId] = userPic;
+
                 return {
                     comments: commentObj?.comments ?? 0,
                     createdAt: commentObj?.createdAt ?? null,
@@ -107,13 +116,22 @@ const PostDetails = () => {
                     text: commentObj?.text ?? '',
                     id: commentObj?._id ?? commentIndex,
                     user: {
-                        name: commentObj?.user?.name ?? '',
-                        username: commentObj?.user?.username ?? '',
-                        picture: commentObj?.user?.picture ?? String(sampleUserImg),
+                        userId,
+                        name: name ?? '',
+                        username: username ?? '',
+                        picture: userPic ?? String(sampleUserImg),
                     },
                 };
             });
 
+            for (const userId in _userImages) {
+                const imageValue = _userImages[userId];
+                if (!imageValue.startsWith(Constants.httpsOrigin)) {
+                    await getImageFetchingPromise(imageValue, imageData => { _userImages[userId] = imageData; }, "user");
+                }
+            }
+
+            setUserImages({ ..._userImages });
             setCommentList([..._commentList]);
             setPostDetails({ ..._postDetails });
             setInitialDetailsUpdated(true);
@@ -231,8 +249,8 @@ const PostDetails = () => {
                     <img
                         alt="user"
                         className="post-detail-card-header-image"
-                        src={postDetails?.user?.picture ?? String(sampleUserImg)}
                         onError={e => { e.target.src = String(sampleUserImg); }}
+                        src={userImages?.[postDetails?.user?.id ?? '0'] ?? String(sampleUserImg)}
                     />
 
                     <div className="post-detail-card-header-text">
@@ -371,13 +389,17 @@ const PostDetails = () => {
 
             {
                 isUserLoggedIn() ? (
-                    <ReplyBox postId={postId} username={postDetails?.user?.username} picture={postDetails?.user?.picture} />
+                    <ReplyBox
+                        postId={postId}
+                        username={postDetails?.user?.username}
+                        picture={userImages?.[postDetails?.user?.id ?? '0']}
+                    />
                 ) : (
                     <div id="post-detail-seperator"><div className="seperator" /></div>
                 )
             }
 
-            <CommentList commentList={commentList} />
+            <CommentList commentList={commentList} userImages={userImages} />
         </div>
     );
 }

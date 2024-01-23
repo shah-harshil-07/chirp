@@ -45,6 +45,7 @@ export class CommentsService {
                     "likes": 1,
                     "saved": 1,
                     "views": 1,
+                    "user._id": 1,
                     "user.name": 1,
                     "user.username": 1,
                     "user.picture": 1,

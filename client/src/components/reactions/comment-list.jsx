@@ -10,7 +10,7 @@ import ImgHolder from "src/components/utilities/img-holder";
 import usePostServices from "src/custom-hooks/post-services";
 import { getCommonHeader, isUserLoggedIn } from "src/utilities/helpers";
 
-const CommentList = ({ commentList }) => {
+const CommentList = ({ commentList, userImages }) => {
     const headerData = getCommonHeader();
     const likeIcon = require("src/assets/like.png");
     const savedIcon = require("src/assets/saved-filled.png");
@@ -94,14 +94,14 @@ const CommentList = ({ commentList }) => {
             {
                 commentList.map((commentObj, commentIndex) => {
                     const { user, text, createdAt, likes, saved, views, images } = commentObj;
-                    const { name, picture, username } = user ?? {};
+                    const { userId, name, username } = user ?? {};
 
                     return (
                         <Card className="mt-3" key={commentIndex}>
                             <img
                                 alt="user"
                                 className="post-detail-user-image"
-                                src={picture ?? Constants.placeHolderImageSrc}
+                                src={userImages[userId] ?? String(sampleUserImg)}
                                 onError={e => { e.target.src = String(sampleUserImg); }}
                             />
 

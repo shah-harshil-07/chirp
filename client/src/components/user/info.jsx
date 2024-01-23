@@ -144,9 +144,9 @@ const UserInfo = ({ details, getterFn }) => {
 
     const updateProfileDetails = () => {
         const momentDoB = moment(details?.dateOfBirth);
-        const day = momentDoB?.date() ?? preselectedDay;
-        const year = momentDoB?.year() ?? preselectedYear;
-        const month = momentDoB?.month() ?? preselectedMonth;
+        const day = isNaN(momentDoB.date()) ? preselectedDay : momentDoB.date();
+        const year = isNaN(momentDoB.year()) ? preselectedYear : momentDoB.year();
+        const month = isNaN(momentDoB.month()) ? preselectedMonth : momentDoB.month();
 
         setProfileDetails({
             ...profileDetails,
@@ -209,7 +209,7 @@ const UserInfo = ({ details, getterFn }) => {
             const { dateOfBirth } = profileDetails ?? {};
             const { day, month, year } = dateOfBirth ?? {};
 
-            let monthValue = (month ?? preselectedMonth) + 1;
+            let monthValue = +(month ?? preselectedMonth) + 1;
             monthValue = monthValue < 10 ? `0${monthValue}` : String(monthValue);
 
             let dayValue = day ?? preselectedDay;

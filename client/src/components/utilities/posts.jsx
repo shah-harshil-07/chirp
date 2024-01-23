@@ -41,6 +41,7 @@ const PostUtilities = ({ parentName }) => {
 
     const [posts, setPosts] = useState([]);
     const [postImages, setPostImages] = useState([]);
+    const [userImages, setUserImages] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [userComments, setUserComments] = useState([]);
 
@@ -73,7 +74,7 @@ const PostUtilities = ({ parentName }) => {
             if (responseData?.data?.length) _posts = responseData.data;
 
             setIsLoading(false);
-            const comments = [];
+            const comments = [], _userImages = {};
 
             _posts.forEach(async postObj => {
                 postObj["isLiked"] = null;
@@ -81,35 +82,22 @@ const PostUtilities = ({ parentName }) => {
                 if (post?.images?.length) postImages.push(post.images);
                 images.push(postImages);
 
-                const { picture: userPic } = postObj?.user ?? {};
-                const { picture: parentUserPic } = postObj?.post?.user ?? {};
+                const { _id: userId, picture: userPic } = postObj?.user ?? {};
+                const { _id: parentUserId, picture: parentUserPic } = postObj?.post?.user ?? {};
 
-                if (userPic) {
-                    if (userPic.startsWith(Constants.httpsOrigin)) {
-                        postObj["user"]["picture"] = userPic;
-                    } else {
-                        getImageFetchingPromise(
-                            userPic,
-                            imageData => { postObj["user"]["picture"] = imageData; },
-                            "user"
-                        );
-                    }
-                }
-
-                if (parentUserPic) {
-                    if (parentUserPic.startsWith(Constants.httpsOrigin)) {
-                        postObj["post"]["user"]["picture"] = parentUserPic;
-                    } else {
-                        getImageFetchingPromise(
-                            parentUserPic,
-                            imageData => { postObj["post"]["user"]["picture"] = imageData; },
-                            "user"
-                        );
-                    }
-                }
-
+                if (userPic) _userImages[userId] = userPic;
+                if (parentUserPic) _userImages[parentUserId] = parentUserPic;
                 if (postUtilityTheme === "comments") comments.push(postObj.comment);
             });
+
+            for (const userId in _userImages) {
+                const imageValue = _userImages[userId];
+                if (!imageValue.startsWith(Constants.httpsOrigin)) {
+                    await getImageFetchingPromise(imageValue, imageData => { _userImages[userId] = imageData; }, "user");
+                }
+            }
+
+            setUserImages({ ..._userImages });
 
             if (comments?.length && postUtilityTheme === "comments") {
                 const imageNames = comments.map(comment => comment.images);
@@ -310,19 +298,14 @@ const PostUtilities = ({ parentName }) => {
                 posts.map((post, postIndex) => {
                     const { post: parentPost, createdAt, isLiked, isSaved, _id: postId } = post;
                     const { likes, reposts, comments, views, saved, } = post;
-                    const { name, username, picture, _id: userId } = post.user ?? {};
+                    const { name, username, _id: userId } = post.user ?? {};
                     let parentPostImages = [], pureImages = [];
                     const images = postImages[postIndex];
 
                     const commentObj = userComments?.[postIndex];
 
                     const { text: parentPostText, createdAt: parentCreatedAt, user: parentPostUser } = parentPost ?? {};
-                    const {
-                        name: parentName,
-                        _id: parentUserId,
-                        picture: parentPicture,
-                        username: parentUserName,
-                    } = parentPostUser ?? {};
+                    const { name: parentName, _id: parentUserId, username: parentUserName } = parentPostUser ?? {};
 
                     if (images?.length) {
                         images.forEach(image => {
@@ -337,8 +320,8 @@ const PostUtilities = ({ parentName }) => {
                                 alt="user"
                                 onMouseOut={closeUserCard}
                                 className="post-user-image"
-                                src={picture ?? String(sampleUserImg)}
                                 onClick={e => { moveToUserPage(e, userId); }}
+                                src={userImages[userId] ?? String(sampleUserImg)}
                                 onMouseOver={e => { openUserCard(e, post?.user); }}
                                 onError={e => { e.target.src = String(sampleUserImg); }}
                             />
@@ -370,8 +353,8 @@ const PostUtilities = ({ parentName }) => {
                                                 alt="post creator"
                                                 onMouseOut={closeUserCard}
                                                 className="parent-post-user-img"
-                                                src={parentPicture ?? String(sampleUserImg)}
                                                 onClick={e => { moveToUserPage(e, parentUserId); }}
+                                                src={userImages[parentUserId] ?? String(sampleUserImg)}
                                                 onMouseOver={e => { openUserCard(e, parentPostUser); }}
                                                 onError={e => { e.target.src = String(sampleUserImg); }}
                                             />

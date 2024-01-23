@@ -14,9 +14,11 @@ import * as Constants from "src/utilities/constants";
 import LabelledInput from "./utilities/labelled-input";
 import { openToaster } from "src/redux/reducers/toaster";
 import useToaster from "src/custom-hooks/toaster-message";
+import usePostServices from "src/custom-hooks/post-services";
 import { openModal, closeModal } from "src/redux/reducers/modal";
 
 const Login = () => {
+    const { getImageFetchingPromise } = usePostServices();
     const navigate = useNavigate(), { showError } = useToaster();
 
     const [cred, setCred] = useState('');
@@ -72,7 +74,7 @@ const Login = () => {
                 <div className="or-div">or</div>
             </div>
 
-            <LabelledInput tabIndex={1} value={cred} handleChange={data => { setCred(data) }} header={"Email or Username"} />
+            <LabelledInput tabIndex={1} value={cred} handleChange={data => { setCred(data); }} header={"Email or Username"} />
 
             <div className="position-relative">
                 <LabelledInput
@@ -158,12 +160,17 @@ const Login = () => {
             const responseData = response.data;
 
             if (responseData?.meta?.status && responseData?.data) {
-                const userValid = responseData?.data?.userValid ?? false;
                 const token = responseData?.data?.accessToken ?? '';
                 const userData = responseData?.data?.userData ?? null;
+                const userValid = responseData?.data?.userValid ?? false;
+                console.log(userData);
 
-                const message = responseData?.meta?.message ?? "Something went wrong";
+                if (userData?.picture) {
+                    await getImageFetchingPromise(userData.picture, base64Image => userData["picture"] = base64Image, "user");
+                }
+
                 const type = userValid ? "Success" : "Error";
+                const message = responseData?.meta?.message ?? "Something went wrong";
 
                 if (userValid && token && userData) {
                     localStorage.setItem("chirp-accessToken", token);
