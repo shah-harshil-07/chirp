@@ -15,7 +15,7 @@ const CommentList = ({ commentList, userImages }) => {
     const likeIcon = require("src/assets/like.png");
     const savedIcon = require("src/assets/saved-filled.png");
     const sampleUserImg = require("src/assets/sample-user.png");
-    const { getPostTiming, handleMutedReaction, getImageFetchingPromise } = usePostServices();
+    const { getPostTiming, handleMutedReaction, getImageFetchingPromise, getFormattedNumber } = usePostServices();
 
     const [comments, setComments] = useState([]);
 
@@ -136,7 +136,7 @@ const CommentList = ({ commentList, userImages }) => {
                                             className="post-reaction-data"
                                             style={commentObj?.isLiked ? { color: "var(--liked-color)" } : {}}
                                         >
-                                            {likes ?? 0}
+                                            {getFormattedNumber(likes ?? 0)}
                                         </span>
                                     </div>
 
@@ -158,7 +158,7 @@ const CommentList = ({ commentList, userImages }) => {
                                             className="post-reaction-data"
                                             style={commentObj?.isSaved ? { color: "var(--saved-color)" } : {}}
                                         >
-                                            {saved ?? 0}
+                                            {getFormattedNumber(saved ?? 0)}
                                         </span>
                                     </div>
 
@@ -170,7 +170,7 @@ const CommentList = ({ commentList, userImages }) => {
                                             <CIcon title="Views" icon={cilChart} className="chirp-action" />
                                         </span>
 
-                                        <span className="post-reaction-data">{views ?? 0}</span>
+                                        <span className="post-reaction-data">{getFormattedNumber(views ?? 0)}</span>
                                     </div>
                                 </div>
                             </div>

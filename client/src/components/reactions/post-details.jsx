@@ -33,6 +33,7 @@ const PostDetails = () => {
         createPollJSX,
         openRepostBox,
         openCommentBox,
+        getFormattedNumber,
         handleMutedReaction,
         getFormattedPostTiming,
         getImageFetchingPromise,
@@ -328,7 +329,7 @@ const PostDetails = () => {
 
                     <div>
                         {getFormattedPostTiming(postDetails?.createdAt ?? null)}&nbsp;&nbsp;
-                        {postDetails?.views >= 0 && <span><b>{postDetails.views} Views</b></span>}
+                        {postDetails?.views >= 0 && <span><b>{getFormattedNumber(postDetails.views)} Views</b></span>}
                     </div>
 
                     <div className="action-bar">
@@ -340,7 +341,7 @@ const PostDetails = () => {
                                 <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
                             </span>
 
-                            <span className="post-reaction-data">{postDetails?.comments ?? 0}</span>
+                            <span className="post-reaction-data">{getFormattedNumber(postDetails?.comments ?? 0)}</span>
                         </div>
 
                         <div
@@ -351,7 +352,7 @@ const PostDetails = () => {
                                 <CIcon icon={cilSend} title="Repost" className="chirp-action" />
                             </span>
 
-                            <span className="post-reaction-data">{postDetails?.reposts ?? 0}</span>
+                            <span className="post-reaction-data">{getFormattedNumber(postDetails?.reposts ?? 0)}</span>
                         </div>
 
                         <div
@@ -372,7 +373,7 @@ const PostDetails = () => {
                                 className="post-reaction-data"
                                 style={isPostLiked ? { color: "var(--liked-color)" } : {}}
                             >
-                                {postDetails?.likes ?? 0}
+                                {getFormattedNumber(postDetails?.likes ?? 0)}
                             </span>
                         </div>
 
@@ -394,7 +395,7 @@ const PostDetails = () => {
                                 className="post-reaction-data"
                                 style={isPostSaved ? { color: "var(--saved-color)" } : {}}
                             >
-                                {postDetails?.saved ?? 0}
+                                {getFormattedNumber(postDetails?.saved ?? 0)}
                             </span>
                         </div>
                     </div>

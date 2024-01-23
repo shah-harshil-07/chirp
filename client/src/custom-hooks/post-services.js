@@ -11,6 +11,9 @@ import { getCommonHeader, isUserLoggedIn } from "src/utilities/helpers";
 const usePostServices = () => {
     const dispatch = useDispatch();
     const { showError } = useToaster();
+    const oneCrore = Math.pow(10, 7);
+    const oneLakh = Math.pow(10, 5);
+    const oneThousand = Math.pow(10, 3);
     const headerData = getCommonHeader();
     const availableMutedActions = ["like", "save"];
 
@@ -158,11 +161,38 @@ const usePostServices = () => {
         return dateObj ? moment(dateObj).format("hhA MMM. Do, YYYY") : null;
     }
 
+    const getFormattedNumber = number => {
+        let formattedNumber = number, flag = '';
+        if (!isNaN(number)) {
+            if (+(number) > oneCrore) {
+                flag = "cr";
+                formattedNumber = (number / oneCrore)?.toFixed(2);
+            } else if (+(number) > oneLakh) {
+                flag = "L";
+                formattedNumber = (number / oneLakh)?.toFixed(2);
+            } else if (+(number) > oneThousand) {
+                flag = "k";
+                formattedNumber = (number / oneThousand)?.toFixed(2);
+            }
+        } else {
+            return number;
+        }
+
+        let str = String(formattedNumber);
+        let sliceIndex = str.length;
+
+        for (let i = str.length - 1; i >= 0; i--) if (str[i] === '0') sliceIndex--; else break;
+        str = str.slice(0, sliceIndex);
+        if (str[str.length - 1] === '.') str = str.slice(0, str.length - 1);
+        return (str + flag).trimEnd();
+    }
+
     return {
         getPostTiming,
         createPollJSX,
         openRepostBox,
         openCommentBox,
+        getFormattedNumber,
         handleMutedReaction,
         getFormattedPostTiming,
         getImageFetchingPromise,

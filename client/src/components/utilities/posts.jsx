@@ -35,6 +35,7 @@ const PostUtilities = ({ parentName }) => {
         createPollJSX,
         openRepostBox,
         openCommentBox,
+        getFormattedNumber,
         handleMutedReaction,
         getImageFetchingPromise,
     } = usePostServices();
@@ -402,7 +403,7 @@ const PostUtilities = ({ parentName }) => {
                                             <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
                                         </span>
 
-                                        <span className="post-reaction-data">{comments ?? 0}</span>
+                                        <span className="post-reaction-data">{getFormattedNumber(comments ?? 0)}</span>
                                     </div>
 
                                     <div
@@ -413,7 +414,7 @@ const PostUtilities = ({ parentName }) => {
                                             <CIcon icon={cilSend} title="Repost" className="chirp-action" />
                                         </span>
 
-                                        <span className="post-reaction-data">{reposts ?? 0}</span>
+                                        <span className="post-reaction-data">{getFormattedNumber(reposts ?? 0)}</span>
                                     </div>
 
                                     <div
@@ -434,7 +435,7 @@ const PostUtilities = ({ parentName }) => {
                                             className="post-reaction-data"
                                             style={isLiked ? { color: "var(--liked-color)" } : {}}
                                         >
-                                            {likes ?? 0}
+                                            {getFormattedNumber(likes ?? 0)}
                                         </span>
                                     </div>
 
@@ -446,7 +447,7 @@ const PostUtilities = ({ parentName }) => {
                                             <CIcon title="Views" icon={cilChart} className="chirp-action" />
                                         </span>
 
-                                        <span className="post-reaction-data">{views ?? 0}</span>
+                                        <span className="post-reaction-data">{getFormattedNumber(views ?? 0)}</span>
                                     </div>
 
                                     <div
@@ -467,7 +468,7 @@ const PostUtilities = ({ parentName }) => {
                                             className="post-reaction-data"
                                             style={isSaved ? { color: "var(--saved-color)" } : {}}
                                         >
-                                            {saved ?? 0}
+                                            {getFormattedNumber(saved ?? 0)}
                                         </span>
                                     </div>
                                 </div>
