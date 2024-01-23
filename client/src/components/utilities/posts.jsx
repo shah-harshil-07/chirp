@@ -288,8 +288,13 @@ const PostUtilities = ({ parentName }) => {
 
     const moveToUserPage = (e, userId) => {
         e.stopPropagation();
-        closeDetailsCardImmediately();
-        navigate(`/user/${userId}`);
+
+        if (userId) {
+            closeDetailsCardImmediately();
+            navigate(`/user/${userId}`);
+        } else {
+            showError("user id is unavailable.");
+        }
     }
 
     return (

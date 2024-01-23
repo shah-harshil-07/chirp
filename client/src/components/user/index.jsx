@@ -24,7 +24,7 @@ const UserDetails = () => {
         getUserData();
         window.scrollTo(0, 0);
         // eslint-disable-next-line
-    }, []);
+    }, [userId]);
 
     const getUserData = async () => {
         const response = await API(Constants.GET, `${Constants.GET_USER_DETAILS}/${userId}`, headerData);

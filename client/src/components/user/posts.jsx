@@ -48,7 +48,7 @@ const UserPosts = ({ userId }) => {
                 }
             </div>
 
-            <PostUtilities parentName={tabs[currentTabIndex]["parentName"]} />
+            <PostUtilities parentName={tabs?.[currentTabIndex]?.parentName ?? "user"} />
         </>
     );
 };

@@ -70,5 +70,5 @@ export const checkContainerInViewport = rectObj => {
 export const userTabs = [
     { label: "Posts", parentName: "user" },
     { label: "Comments", parentName: "comments" },
-    { label: "Saved", parentName: "saved" }
+    { label: "Saved", parentName: "saved" },
 ]
