@@ -13,9 +13,9 @@ import EmojiContainer from "../utilities/emoji-container";
 import useImageConverter from "src/custom-hooks/image-converter";
 
 const ReplyBox = ({ username, postId, picture }) => {
-    const navigate = useNavigate();
     const { showError, showSuccess } = useToaster();
     const { uploadImagesAction } = useImageConverter();
+    const navigate = useNavigate(), textboxRef = useRef(null);
     const sampleUserImg = require("src/assets/sample-user.png");
     const fileUploadRef = useRef(null), headerData = getCommonHeader();
 
@@ -57,8 +57,12 @@ const ReplyBox = ({ username, postId, picture }) => {
         setText(`${text}${e.emoji}`);
     }
 
+    const checkTextValidity = () => {
+        return Boolean(text.trim());
+    }
+
     const postComment = async () => {
-        if (text) {
+        if (checkTextValidity()) {
             const data = { text, postId };
             const formData = new FormData();
             formData.append("data", JSON.stringify(data));
@@ -81,6 +85,11 @@ const ReplyBox = ({ username, postId, picture }) => {
         }
     }
 
+    const handleTextChange = e => {
+		setText(e.target.value);
+		textboxRef.current.style.height = `${textboxRef.current.scrollHeight}px`;
+	}
+
     return (
         <>
             {
@@ -102,10 +111,11 @@ const ReplyBox = ({ username, postId, picture }) => {
 
                 <textarea
                     value={text}
+                    ref={textboxRef}
+                    id="replybox-textarea"
                     className="special-input"
+                    onChange={handleTextChange}
                     placeholder="Post your reply"
-                    style={{ marginLeft: "70px" }}
-                    onChange={e => { setText(e.target.value); }}
                 />
             </div>
 
@@ -148,7 +158,11 @@ const ReplyBox = ({ username, postId, picture }) => {
                         )
                     }
 
-                    <div onClick={postComment} style={{ opacity: text ? '1' : "0.4" }} className="chirp-button">
+                    <div
+                        onClick={postComment}
+                        className="chirp-button"
+                        style={{ opacity: checkTextValidity() ? '1' : "0.4" }}
+                    >
                         Reply
                     </div>
                 </div>

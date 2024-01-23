@@ -7,5 +7,3 @@
 # No. of comments showed in the post list and actual no. of comments when opened in post details page are differing sometimes.
 # When watched in Slow 3G, the loader is not visible in any of the pages. A loader is needed.
 # I cannot comment on a comment. Implement the multilevel comment functionality.
-# I can comment with empty string or blank spaces. That must not happen.
-# The back button in the post detail page must go to previous page and not the post listing page.

@@ -231,8 +231,8 @@ const PostDetails = () => {
         handleMutedReaction(action, postData, handleLikeAction, handleSaveAction);
     }
 
-    const moveToHomePage = () => {
-        navigate('/');
+    const moveBack = () => {
+        navigate(-1);
     }
 
     const moveToUserPage = (e, userId) => {
@@ -247,7 +247,7 @@ const PostDetails = () => {
     return (
         <div>
             <div className="common-header">
-                <div className="common-heading-icon" onClick={moveToHomePage}>
+                <div className="common-heading-icon" onClick={moveBack}>
                     <CIcon width={20} height={20} size="sm" icon={cilArrowLeft} />
                 </div>
 

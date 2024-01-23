@@ -56,14 +56,14 @@ const UserDetails = () => {
         }
     }
 
-    const moveToHomePage = () => {
-        navigate('/');
+    const moveBack = () => {
+        navigate(-1);
     }
 
     return (
         <div>
             <div className="common-header" id="user-header-box">
-                <div className="common-heading-icon" onClick={moveToHomePage}>
+                <div className="common-heading-icon" onClick={moveBack}>
                     <CIcon width={20} height={20} size="sm" icon={cilArrowLeft} />
                 </div>
 
