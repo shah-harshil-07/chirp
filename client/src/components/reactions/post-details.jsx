@@ -335,7 +335,13 @@ const PostDetails = () => {
 
                     <div>
                         {getFormattedPostTiming(postDetails?.createdAt ?? null)}&nbsp;&nbsp;
-                        {postDetails?.views >= 0 && <span><b>{getFormattedNumber(postDetails.views)} Views</b></span>}
+                        {
+                            postDetails?.views >= 0 && (
+                                <span>
+                                    <b>{`${getFormattedNumber(postDetails.views)} View${postDetails.views > 1 ? 's' : ''}`}</b>
+                                </span>
+                            )
+                        }
                     </div>
 
                     <div className="action-bar">

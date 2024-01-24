@@ -6,3 +6,6 @@
 # No. of comments showed in the post list and actual no. of comments when opened in post details page are differing sometimes.
 # I cannot comment on a comment. Implement the multilevel comment functionality.
 # Add a "https://" text as the prefix to the "website" input of profile editor form.
+# The user images are not appearing in the comment editor and repost editor page.
+# If I repost on a post, the reposted post's repost count is not getting updated and when I go to the repost post's detail page, I cannot see the reposted post.
+# In the post details page, if the post data is not available, redirect the user to home page and show an alert saying the post details are unavailable at the moment.
