@@ -7,13 +7,17 @@ import { Outlet } from "react-router-dom";
 import AuthBar from "./components/auth-bar";
 import Toaster from "./components/utilities/toaster";
 import LeftSidebar from "./components/sidebar/left-sidebar";
+import LightHouse from "./components/utilities/lighthouse";
 import RightSidebar from "./components/sidebar/right-sidebar";
 import { isUserLoggedIn, modalConfig } from "./utilities/helpers";
 
 const App = () => {
 	const dialogState = useSelector(state => state.modal);
 	const toasterState = useSelector(state => state.toaster);
+	const lighthouseState = useSelector(state => state.lighthouse);
+
 	const { type, message } = toasterState?.messageObj ?? {};
+	const { open: isLighthouseOpen, images, initialIndex } = lighthouseState;
 
 	const getDialog = () => {
 		const Dialog = modalConfig?.[dialogState.type] ?? <></>, props = dialogState.props ?? {};
@@ -29,6 +33,8 @@ const App = () => {
 			{!isUserLoggedIn() && <AuthBar />}
 
 			{toasterState.open && <Toaster type={type} message={message} />}
+
+			{isLighthouseOpen && <LightHouse images={images} initialIndex={initialIndex} />}
 		</>
 	);
 };

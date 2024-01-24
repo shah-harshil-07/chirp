@@ -1,18 +1,29 @@
 import "src/styles/utilities/img-holder.css";
 
 import React from "react";
+import { useDispatch } from "react-redux";
+
+import { openLighthouse } from "src/redux/reducers/lighthouse";
+import { placeHolderImageSrc } from "src/utilities/constants";
 
 const ImgHolder = ({ images, removeImage, showActionButtons = true }) => {
+    const dispatch = useDispatch();
+
     const removeImageIcon = (index = 0, right = "20px", top = "5px") => {
         return (
-            <div className="img-holder-remove-img-icon" onClick={() => removeImage(index)} style={{ right, top }}>
-                <span style={{ fontSize: "20px" }}>&times;</span>
+            <div className="img-holder-remove-img-icon" onClick={() => { removeImage(index); }} style={{ right, top }}>
+                <span className="font-size-20">&times;</span>
             </div>
         );
     }
 
     const editButton = (bottom = "6px", left = "21px") => {
         return <div className="img-holder-edit-btn" style={{ bottom, left }}>Edit</div>;
+    }
+
+    const zoomImage = (e, index) => {
+        e.stopPropagation();
+        dispatch(openLighthouse({ images, initialIndex: index }));
     }
 
     return (
@@ -24,7 +35,9 @@ const ImgHolder = ({ images, removeImage, showActionButtons = true }) => {
 
                         <img
                             alt="uploaded"
-                            src={images[0]}
+                            onClick={e => { zoomImage(e, 0); }}
+                            src={images[0] ?? placeHolderImageSrc}
+                            onError={e => { e.target.src = placeHolderImageSrc; }}
                             className="object-fit-cover w-100 h-100 rounded-10 max-height-400"
                         />
 
@@ -36,8 +49,10 @@ const ImgHolder = ({ images, removeImage, showActionButtons = true }) => {
                             {showActionButtons && removeImageIcon(0, "10px")}
 
                             <img
-                                src={images[0]}
                                 alt="uploaded"
+                                onClick={e => { zoomImage(e, 0); }}
+                                src={images[0] ?? placeHolderImageSrc}
+                                onError={e => { e.target.src = placeHolderImageSrc; }}
                                 className="object-fit-cover w-100 h-100 rounded-10 max-height-400"
                             />
 
@@ -48,8 +63,10 @@ const ImgHolder = ({ images, removeImage, showActionButtons = true }) => {
                             {showActionButtons && removeImageIcon(1, "10px")}
 
                             <img
-                                src={images[1]}
                                 alt="uploaded"
+                                onClick={e => { zoomImage(e, 1); }}
+                                src={images[1] ?? placeHolderImageSrc}
+                                onError={e => { e.target.src = placeHolderImageSrc; }}
                                 className="object-fit-cover w-100 h-100 rounded-10 max-height-400"
                             />
 
@@ -63,7 +80,9 @@ const ImgHolder = ({ images, removeImage, showActionButtons = true }) => {
 
                             <img
                                 alt="uploaded"
-                                src={images[0]}
+                                onClick={e => { zoomImage(e, 0); }}
+                                src={images[0] ?? placeHolderImageSrc}
+                                onError={e => { e.target.src = placeHolderImageSrc; }}
                                 className="object-fit-cover w-100 h-100 rounded-10 position-relative max-height-400"
                             />
 
@@ -75,8 +94,10 @@ const ImgHolder = ({ images, removeImage, showActionButtons = true }) => {
                                 {showActionButtons && removeImageIcon(1, "6px", "8px")}
 
                                 <img
-                                    src={images[1]}
                                     alt="uploaded"
+                                    onClick={e => { zoomImage(e, 1); }}
+                                    src={images[1] ?? placeHolderImageSrc}
+                                    onError={e => { e.target.src = placeHolderImageSrc; }}
                                     className="object-fit-cover w-100 h-100 rounded-10 max-height-200"
                                 />
 
@@ -87,8 +108,10 @@ const ImgHolder = ({ images, removeImage, showActionButtons = true }) => {
                                 {showActionButtons && removeImageIcon(2, "6px", "13px")}
 
                                 <img
-                                    src={images[2]}
                                     alt="uploaded"
+                                    onClick={e => { zoomImage(e, 2); }}
+                                    src={images[2] ?? placeHolderImageSrc}
+                                    onError={e => { e.target.src = placeHolderImageSrc; }}
                                     className="object-fit-cover w-100 h-100 rounded-10 max-height-200"
                                 />
 
@@ -103,8 +126,10 @@ const ImgHolder = ({ images, removeImage, showActionButtons = true }) => {
                                 {showActionButtons && removeImageIcon(0, "10px")}
 
                                 <img
-                                    src={images[0]}
                                     alt="uploaded"
+                                    onClick={e => { zoomImage(e, 0); }}
+                                    src={images[0] ?? placeHolderImageSrc}
+                                    onError={e => { e.target.src = placeHolderImageSrc; }}
                                     className="object-fit-cover w-100 h-100 rounded-10 max-height-200"
                                 />
 
@@ -115,8 +140,10 @@ const ImgHolder = ({ images, removeImage, showActionButtons = true }) => {
                                 {showActionButtons && removeImageIcon(1, "10px")}
 
                                 <img
-                                    src={images[1]}
                                     alt="uploaded"
+                                    onClick={e => { zoomImage(e, 1); }}
+                                    src={images[1] ?? placeHolderImageSrc}
+                                    onError={e => { e.target.src = placeHolderImageSrc; }}
                                     className="object-fit-cover w-100 h-100 rounded-10 max-height-200"
                                 />
 
@@ -129,8 +156,10 @@ const ImgHolder = ({ images, removeImage, showActionButtons = true }) => {
                                 {showActionButtons && removeImageIcon(2, "10px")}
 
                                 <img
-                                    src={images[2]}
                                     alt="uploaded"
+                                    onClick={e => { zoomImage(e, 2); }}
+                                    src={images[2] ?? placeHolderImageSrc}
+                                    onError={e => { e.target.src = placeHolderImageSrc; }}
                                     className="object-fit-cover w-100 h-100 rounded-10 max-height-200"
                                 />
 
@@ -141,8 +170,10 @@ const ImgHolder = ({ images, removeImage, showActionButtons = true }) => {
                                 {showActionButtons && removeImageIcon(3, "10px")}
 
                                 <img
-                                    src={images[3]}
                                     alt="uploaded"
+                                    onClick={e => { zoomImage(e, 3); }}
+                                    src={images[3] ?? placeHolderImageSrc}
+                                    onError={e => { e.target.src = placeHolderImageSrc; }}
                                     className="object-fit-cover w-100 h-100 rounded-10 max-height-200"
                                 />
 
