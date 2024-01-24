@@ -266,6 +266,16 @@ const PostDetails = () => {
         }
     }
 
+    const moveToPostDetailPage = (e, postId) => {
+        if (postId) {
+            e.stopPropagation();
+            navigate(`/post/${postId}`);
+            window.location.reload();
+        } else {
+            showError("post id is unavailable.");
+        }
+    }
+
     return (
         <div>
             <div className="common-header">
@@ -319,11 +329,11 @@ const PostDetails = () => {
                                     }
                                 />
 
-                                <div className="post-detail-repost-body-content">
-                                    <div
-                                        className="row mx-0 font-size-19 post-detail-repost-body-title"
-                                        onClick={e => { moveToUserPage(e, postDetails?.parentPostDetails?.user?.id); }}
-                                    >
+                                <div
+                                    className="post-detail-repost-body-content"
+                                    onClick={e => { moveToPostDetailPage(e, postDetails?.parentPostDetails?.id); }}
+                                >
+                                    <div className="row mx-0 font-size-19 post-detail-repost-body-title">
                                         <b>{postDetails?.parentPostDetails?.user?.name ?? ''}</b>&nbsp;
 
                                         <span>{`@${postDetails?.parentPostDetails?.user?.username ?? ''}`}</span>
