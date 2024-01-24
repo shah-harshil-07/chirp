@@ -113,8 +113,8 @@ export class UsersService {
     }
 
     public async checkUsernameAvailable(username: string): Promise<boolean> {
-        const userObj = await this.userModel.findOne({ username });
-        return userObj ? true : false;
+        const instances = await this.userModel.countDocuments({ username });
+        return instances == 0;
     }
 
     public async getGoogleAuthedUserData(userData: GoogleAuthedUserDTO): Promise<UserDTO> {
