@@ -18,7 +18,7 @@ import usePostServices from "src/custom-hooks/post-services";
 import useImageConverter from "src/custom-hooks/image-converter";
 
 const RepostEditor = post => {
-    const { createdAt, user: postCreator, _id: postId } = post;
+    const { createdAt, user: postCreator, id: postId } = post;
     const headerData = getCommonHeader();
     const userDetails = getUserDetails() ?? {};
     const { name, username } = postCreator ?? {};
@@ -35,42 +35,9 @@ const RepostEditor = post => {
     const [uploadedFileObjects, setUploadedFileObjects] = useState([]);
 
     useEffect(() => {
-        const { images } = post;
-        if (images?.length) getParentPostImages(images);
+        setParentPostImages([...post?.images ?? []]);
         // eslint-disable-next-line
     }, [post]);
-
-    const getParentPostImages = postImages => {
-        const promises = [];
-
-        postImages.forEach(imageName => {
-            const _parentPostImages = parentPostImages;
-            const promise = new Promise((res, rej) => {
-                API(Constants.GET, `${Constants.GET_POST_IMAGE}/${imageName}`, null, headerData)
-                    .then(imageResponse => {
-                        if (imageResponse?.data) {
-                            const base64ImgData = imageResponse.data;
-                            const base64Prefix = "data:image/*;charset=utf-8;base64,";
-                            const imageData = base64Prefix + base64ImgData;
-
-                            _parentPostImages.push(imageData);
-                            setParentPostImages([..._parentPostImages]);
-                            res();
-                        } else {
-                            rej();
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        rej();
-                    });
-            });
-
-            promises.push(promise);
-        });
-
-        Promise.allSettled(promises);
-    }
 
     const resetFileCache = () => {
         fileUploadRef.current.value = '';
@@ -138,7 +105,12 @@ const RepostEditor = post => {
         <div className="reaction-editor-body">
             <form noValidate onSubmit={repost} className="mw-100 mt-3">
                 <div className="reaction-editor-form-body">
-                    <img src={userPictureUrl ?? String(sampleUserImg)} className="reaction-editor-commentor-img" alt="user" />
+                    <img
+                        alt="user"
+                        className="reaction-editor-commentor-img"
+                        src={userPictureUrl ?? String(sampleUserImg)}
+                        onError={e => { e.target.src = String(sampleUserImg); }}
+                    />
 
                     <div className="reaction-editor-data-container">
                         <textarea
@@ -171,7 +143,11 @@ const RepostEditor = post => {
                         <span className="font-size-20">{getPostTiming(createdAt)}</span>
                     </div>
 
-                    <div className="row mx-0 mt-3 font-size-20"><div>{post?.text?.slice(0, 40) ?? ''}</div></div>
+                    <div className="row mx-0 mt-3 font-size-20">
+                        <div>
+                            {(post?.text?.slice(0, 40) ?? '') + (post?.text?.length > 40 ? "..." : '')}
+                        </div>
+                    </div>
 
                     {parentPostImages?.length > 0 && <ImgHolder images={parentPostImages} showActionButtons={false} />}
                 </div>

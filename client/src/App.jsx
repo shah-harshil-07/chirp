@@ -13,6 +13,7 @@ import { isUserLoggedIn, modalConfig } from "./utilities/helpers";
 const App = () => {
 	const dialogState = useSelector(state => state.modal);
 	const toasterState = useSelector(state => state.toaster);
+	const { type, message } = toasterState?.messageObj ?? {};
 
 	const getDialog = () => {
 		const Dialog = modalConfig?.[dialogState.type] ?? <></>, props = dialogState.props ?? {};
@@ -27,11 +28,7 @@ const App = () => {
 
 			{!isUserLoggedIn() && <AuthBar />}
 
-			{
-				toasterState.open && (
-					<Toaster type={toasterState?.messageObj?.type} message={toasterState?.messageObj?.message} />
-				)
-			}
+			{toasterState.open && <Toaster type={type} message={message} />}
 		</>
 	);
 };

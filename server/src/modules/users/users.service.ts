@@ -14,6 +14,7 @@ import { IUserComment } from "../reactions/comments/comments.dto";
 import { CommentsService } from "../reactions/comments/comments.service";
 import { ISavedPost } from "../reactions/savesAndLikes/savesAndLikes.dto";
 import { CustomBadRequestException } from "src/exception-handlers/400/handler";
+import { CustomUnprocessableEntityException } from "src/exception-handlers/422/handler";
 import { CustomValidatorsService } from "../custom-validators/custom-validators.service";
 import { SavesLikesService } from "src/modules/reactions/savesAndLikes/savesAndLikes.service";
 import {
@@ -138,10 +139,13 @@ export class UsersService {
             .exec();
 
         const clonedDetails = JSON.parse(JSON.stringify(details));
-        clonedDetails["totalPosts"] = clonedDetails?.["_id"]?.length ?? 0;
-        clonedDetails["_id"] = userId;
-
-        return clonedDetails;
+        if (clonedDetails) {
+            clonedDetails["totalPosts"] = clonedDetails?.["_id"]?.length ?? 0;
+            clonedDetails["_id"] = userId;
+            return clonedDetails;
+        } else {
+            throw new CustomUnprocessableEntityException("The user details are unavailable.");
+        }
     }
 
     public async getUserPosts(userId: string): Promise<Post[]> {

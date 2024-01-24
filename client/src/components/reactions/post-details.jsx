@@ -50,7 +50,7 @@ const PostDetails = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (postId) getCommentList();
+        if (postId) getCommentList().catch(moveBack);
         // eslint-disable-next-line
     }, []);
 
@@ -104,8 +104,11 @@ const PostDetails = () => {
                 },
             };
 
-            const { user: { id: mainUserId, picture: mainUserPic } } = _postDetails;
+            const { user: { id: mainUserId, picture: mainUserPic }, parentPostDetails } = _postDetails;
+            const { user: { id: parentUserId, picture: parentUserPic } } = parentPostDetails;
+
             if (mainUserId && mainUserPic) _userImages[mainUserId] = mainUserPic;
+            if (parentUserId && parentUserPic) _userImages[parentUserId] = parentUserPic;
 
             const _commentList = comments.map((commentObj, commentIndex) => {
                 const { _id: userId, picture: userPic, name, username } = commentObj?.user ?? {};
@@ -200,16 +203,20 @@ const PostDetails = () => {
     }
 
     const getPostLikesAndSaves = async post => {
-        let _isPostLiked, _isPostSaved;
-        const data = { postIds: [post.id] };
-        const { data: reactionData } = await API(Constants.POST, Constants.GET_POST_LIKES_AND_SAVES, data, headerData);
-        const reactedPostObj = reactionData?.data?.[0] ?? null;
+        if (post?.id) {
+            let _isPostLiked, _isPostSaved;
+            const data = { postIds: [post.id] };
+            const { data: reactionData } = await API(Constants.POST, Constants.GET_POST_LIKES_AND_SAVES, data, headerData);
+            const reactedPostObj = reactionData?.data?.[0] ?? null;
 
-        _isPostLiked = reactedPostObj?.liked ?? false;
-        _isPostSaved = reactedPostObj?.saved ?? false;
+            _isPostLiked = reactedPostObj?.liked ?? false;
+            _isPostSaved = reactedPostObj?.saved ?? false;
 
-        setIsPostLiked(_isPostLiked);
-        setIsPostSaved(_isPostSaved);
+            setIsPostLiked(_isPostLiked);
+            setIsPostSaved(_isPostSaved);
+        } else {
+            moveBack();
+        }
     }
 
     const triggerMutedReaction = async (e, action) => {
@@ -235,6 +242,15 @@ const PostDetails = () => {
         }
 
         handleMutedReaction(action, postData, handleLikeAction, handleSaveAction);
+    }
+
+    const triggerVocalReaction = (e, reactionType) => {
+        let reactionFn = null;
+        if (reactionType === "repost") reactionFn = openRepostBox;
+        else if (reactionType === "comment") reactionFn = openCommentBox;
+        const data = { ...postDetails };
+        if (data?.user?.picture) data.user.picture = userImages?.[postDetails?.user?.id ?? '0'] ?? '';
+        if (reactionFn) reactionFn(e, postDetails); else showError("Something went wrong!");
     }
 
     const moveBack = () => {
@@ -296,8 +312,11 @@ const PostDetails = () => {
                                     alt="post creator"
                                     className="post-detail-parent-user-img"
                                     onError={e => { e.target.src = String(sampleUserImg); }}
-                                    src={postDetails?.parentPostDetails?.user?.picture ?? String(sampleUserImg)}
                                     onClick={e => { moveToUserPage(e, postDetails?.parentPostDetails?.user?.id); }}
+                                    src={
+                                        userImages?.[postDetails?.parentPostDetails?.user?.id ?? '0'] ??
+                                        String(sampleUserImg)
+                                    }
                                 />
 
                                 <div className="post-detail-repost-body-content">
@@ -338,7 +357,9 @@ const PostDetails = () => {
                         {
                             postDetails?.views >= 0 && (
                                 <span>
-                                    <b>{`${getFormattedNumber(postDetails.views)} View${postDetails.views > 1 ? 's' : ''}`}</b>
+                                    <b>
+                                        {`${getFormattedNumber(postDetails.views)} View${postDetails.views > 1 ? 's' : ''}`}
+                                    </b>
                                 </span>
                             )
                         }
@@ -346,8 +367,8 @@ const PostDetails = () => {
 
                     <div className="action-bar">
                         <div
-                            onClick={e => { openCommentBox(e, postDetails); }}
                             className="reaction-icon-container reply-container"
+                            onClick={e => { triggerVocalReaction(e, "comment"); }}
                         >
                             <span className="reply-icon">
                                 <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
@@ -357,8 +378,8 @@ const PostDetails = () => {
                         </div>
 
                         <div
-                            onClick={e => { openRepostBox(e, postDetails); }}
                             className="reaction-icon-container repost-container"
+                            onClick={e => { triggerVocalReaction(e, "repost"); }}
                         >
                             <span className="reply-icon">
                                 <CIcon icon={cilSend} title="Repost" className="chirp-action" />

@@ -58,6 +58,7 @@ export class SavesLikesService {
     }
 
     async checkLikes(userId: string, postIds: string[]): Promise<SavesAndLikes[]> {
+        postIds = postIds.filter(postId => postId?.length > 0);
         return this.savesLikesModal.find({ userId, postId: { $in: postIds } }).exec();
     }
 

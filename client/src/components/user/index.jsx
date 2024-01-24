@@ -22,7 +22,7 @@ const UserDetails = () => {
     const [userDetails, setUserDetails] = useState(null);
 
     useEffect(() => {
-        getUserData();
+        getUserData().catch(moveBack);
         window.scrollTo(0, 0);
         // eslint-disable-next-line
     }, [userId]);
@@ -55,6 +55,8 @@ const UserDetails = () => {
             if (userData?.backgroundImage && !userData?.backgroundImage?.startsWith(Constants.httpsOrigin)) {
                 getImageFetchingPromise(userData.backgroundImage, bgImgSuccessCallback, "user");
             }
+        } else {
+            moveBack();
         }
 
         setIsLoading(false);

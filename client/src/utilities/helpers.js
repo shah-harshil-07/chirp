@@ -50,8 +50,8 @@ export const getUserDetails = () => {
 }
 
 export const modalConfig = {
-    register: Register,
     login: Login,
+    register: Register,
     repostEditor: RepostEditor,
     commentEditor: CommentEditor,
     scheduledPosts: ScheduledPostList,
