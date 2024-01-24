@@ -7,6 +7,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { cilCalendar, cilBirthdayCake, cilLink, cilLocationPin, cilCamera, cilTrash } from "@coreui/icons";
 
 import API from "src/api";
+import Loader from "../utilities/loader";
 import CustomModal from "../utilities/custom-modal";
 import Confirmation from "../utilities/confirmation";
 import * as Constants from "src/utilities/constants";
@@ -19,7 +20,7 @@ import useImageConverter from "src/custom-hooks/image-converter";
 import LabelledInputTextarea from "../utilities/labelled-textarea";
 import { getCommonHeader, getErrorMessage, getUserDetails, isUserLoggedIn, validate } from "src/utilities/helpers";
 
-const UserInfo = ({ details, getterFn }) => {
+const UserInfo = ({ details, getterFn, isLoading }) => {
     const totalLineLength = 1040;
     const commonHeader = getCommonHeader();
     let availableCoverage = totalLineLength;
@@ -87,6 +88,7 @@ const UserInfo = ({ details, getterFn }) => {
 
             if (details.picture) {
                 const { picture } = details;
+                setShowProfileImgUploader(true);
                 setUploadedProfileImgFile(picture);
                 if (picture?.startsWith(Constants.base64Prefix)) {
                     const base64ImgData = picture.replaceAll(Constants.base64Prefix, '');
@@ -97,6 +99,7 @@ const UserInfo = ({ details, getterFn }) => {
             if (details.backgroundImage) {
                 const { backgroundImage } = details;
                 setUploadedBackImgFile(backgroundImage);
+                setShowBackImgUploader(true);
                 if (backgroundImage?.startsWith(Constants.base64Prefix)) {
                     const base64ImgData = backgroundImage.replaceAll(Constants.base64Prefix, '');
                     setUploadedBackImgFileObject(getFileObjectFromBase64(base64ImgData));
@@ -347,10 +350,7 @@ const UserInfo = ({ details, getterFn }) => {
                     src={uploadedBackImgFile ?? placeHolderImageSrc}
                     onError={e => {
                         e.target.src = placeHolderImageSrc;
-                        if (uploadedBackImgFile) {
-                            setShowBackImgUploader(false);
-                            showError("There was an error loading the background image!!");
-                        }
+                        if (uploadedBackImgFile) setShowBackImgUploader(false);
                     }}
                 />
 
@@ -383,10 +383,7 @@ const UserInfo = ({ details, getterFn }) => {
                     src={uploadedProfileImgFile ?? String(sampleUserImg)}
                     onError={e => {
                         e.target.src = String(sampleUserImg);
-                        if (uploadedProfileImgFile) {
-                            setShowProfileImgUploader(false);
-                            showError("There was an error loading the profile image!!");
-                        }
+                        if (uploadedProfileImgFile) setShowProfileImgUploader(false);
                     }}
                 />
 
@@ -478,6 +475,7 @@ const UserInfo = ({ details, getterFn }) => {
 
     return (
         <div>
+            {isLoading && <Loader />}
             <img
                 alt="background"
                 id="user-info-back-img"

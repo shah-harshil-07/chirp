@@ -5,12 +5,13 @@ import API from "src/api";
 import CIcon from "@coreui/icons-react";
 import { cilBookmark, cilChart, cilThumbUp } from "@coreui/icons";
 
+import Loader from "src/components/utilities/loader";
 import * as Constants from "src/utilities/constants";
 import ImgHolder from "src/components/utilities/img-holder";
 import usePostServices from "src/custom-hooks/post-services";
 import { getCommonHeader, isUserLoggedIn } from "src/utilities/helpers";
 
-const CommentList = ({ commentList, userImages }) => {
+const CommentList = ({ commentList, userImages, isLoading }) => {
     const headerData = getCommonHeader();
     const likeIcon = require("src/assets/like.png");
     const savedIcon = require("src/assets/saved-filled.png");
@@ -91,6 +92,7 @@ const CommentList = ({ commentList, userImages }) => {
 
     return (
         <>
+            {isLoading && <Loader />}
             {
                 commentList.map((commentObj, commentIndex) => {
                     const { user, text, createdAt, likes, saved, views, images } = commentObj;

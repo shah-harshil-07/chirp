@@ -4,5 +4,5 @@
 # Implement lighthouse functionality in all the places where image is placed.
 # In the post's text display, whenever there is a link, apply "span-link" CSS class on it and display it in that way. For e.g whenever there is a link of any kind in the post's text, that link portion must be colored in blue and decorated with an underline.
 # No. of comments showed in the post list and actual no. of comments when opened in post details page are differing sometimes.
-# When watched in Slow 3G, the loader is not visible in any of the pages. A loader is needed.
 # I cannot comment on a comment. Implement the multilevel comment functionality.
+# Add a "https://" text as the prefix to the "website" input of profile editor form.

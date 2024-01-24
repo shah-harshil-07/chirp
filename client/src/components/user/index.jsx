@@ -18,6 +18,7 @@ const UserDetails = () => {
     const headerData = getCommonHeader();
     const { getImageFetchingPromise } = usePostServices();
 
+    const [isLoading, setIsLoading] = useState(false);
     const [userDetails, setUserDetails] = useState(null);
 
     useEffect(() => {
@@ -27,6 +28,7 @@ const UserDetails = () => {
     }, [userId]);
 
     const getUserData = async () => {
+        setIsLoading(true);
         const response = await API(Constants.GET, `${Constants.GET_USER_DETAILS}/${userId}`, headerData);
         const responseData = response?.data ?? {};
 
@@ -54,6 +56,8 @@ const UserDetails = () => {
                 getImageFetchingPromise(userData.backgroundImage, bgImgSuccessCallback, "user");
             }
         }
+
+        setIsLoading(false);
     }
 
     const moveBack = () => {
@@ -75,7 +79,7 @@ const UserDetails = () => {
                 </div>
             </div>
 
-            <UserInfo details={userDetails} getterFn={getUserData} />
+            <UserInfo details={userDetails} getterFn={getUserData} isLoading={isLoading} />
             <UserPosts userId={userId} />
         </div>
     );

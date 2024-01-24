@@ -12,6 +12,7 @@ import API from "src/api";
 import ReplyBox from "./reply-box";
 import CommentList from "./comment-list";
 import * as Constants from "src/utilities/constants";
+import Loader from "src/components/utilities/loader";
 import { openToaster } from "src/redux/reducers/toaster";
 import useToaster from "src/custom-hooks/toaster-message";
 import ImgHolder from "src/components/utilities/img-holder";
@@ -40,6 +41,7 @@ const PostDetails = () => {
     } = usePostServices();
 
     const [userImages, setUserImages] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
     const [commentList, setCommentList] = useState([]);
     const [postDetails, setPostDetails] = useState(null);
     const [isPostLiked, setIsPostLiked] = useState(false);
@@ -63,6 +65,7 @@ const PostDetails = () => {
     }, [postDetails, initialDetailsUpdated]);
 
     const getCommentList = async () => {
+        setIsLoading(true);
         const response = await API(Constants.GET, `${Constants.COMMENT_LIST}/${postId}`, null, headerData);
         const responseData = response?.data;
 
@@ -138,6 +141,8 @@ const PostDetails = () => {
             setPostDetails({ ..._postDetails });
             setInitialDetailsUpdated(true);
         }
+
+        setIsLoading(false);
     }
 
     const getPromise = (imageName, imageIndex) => {
@@ -256,6 +261,7 @@ const PostDetails = () => {
             </div>
 
             <Card className="post-detail-card">
+                {isLoading && <Loader />}
                 <div className="post-detail-card-header" onClick={e => { moveToUserPage(e, postDetails?.user?.id); }}>
                     <img
                         alt="user"
@@ -266,7 +272,7 @@ const PostDetails = () => {
 
                     <div className="post-detail-card-header-text">
                         <div><b>{postDetails?.user?.name ?? ''}</b></div>
-                        <div>{`@${postDetails?.user?.username ?? ''}`}</div>
+                        {postDetails?.user?.username && <div>{`@${postDetails?.user?.username ?? ''}`}</div>}
                     </div>
                 </div>
 
@@ -414,7 +420,7 @@ const PostDetails = () => {
                 )
             }
 
-            <CommentList commentList={commentList} userImages={userImages} />
+            <CommentList commentList={commentList} userImages={userImages} isLoading={isLoading} />
         </div>
     );
 }
