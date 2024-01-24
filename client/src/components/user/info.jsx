@@ -82,9 +82,9 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
 
     useEffect(() => {
         if (details) {
-            setUserData({ ...details });
             updateStats();
             updateProfileDetails();
+            setUserData({ ...details });
 
             if (details.picture) {
                 const { picture } = details;
@@ -155,9 +155,9 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
             ...profileDetails,
             bio: details?.bio ?? '',
             name: details?.name ?? '',
-            website: details?.website ?? '',
             location: details?.location ?? '',
             dateOfBirth: { year, month, day },
+            website: details?.website?.replace(/https:\/\//ig, '') ?? '',
         });
     }
 
@@ -209,7 +209,8 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
 
         if (isFormValid && details?._id) {
             const formData = new FormData();
-            const { dateOfBirth } = profileDetails ?? {};
+            const { httpsOrigin } = Constants;
+            const { dateOfBirth, name, bio, website, location } = profileDetails ?? {};
             const { day, month, year } = dateOfBirth ?? {};
 
             let monthValue = +(month ?? preselectedMonth) + 1;
@@ -219,11 +220,12 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
             dayValue = dayValue < 10 ? `0${dayValue}` : String(dayValue);
 
             const strDateOfBirth = `${year ?? preselectedYear}-${monthValue}-${dayValue}`;
+            let websiteLink = website.startsWith(httpsOrigin) ? website : httpsOrigin + website;
 
-            formData.set("name", profileDetails?.name ?? '');
-            formData.set("bio", profileDetails?.bio ?? '');
-            formData.set("website", profileDetails?.website ?? '');
-            formData.set("location", profileDetails?.location ?? '');
+            formData.set("bio", bio ?? '');
+            formData.set("name", name ?? '');
+            formData.set("location", location ?? '');
+            formData.set("website", websiteLink ?? '');
             formData.set("dateOfBirth", strDateOfBirth);
 
             if (uploadedProfileImgFileObject) {
