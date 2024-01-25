@@ -15,3 +15,44 @@
     max-width: 80%;
     max-height: 100%;
 }
+
+.lighthouse-close-btn {
+    top: 60px;
+    right: 40px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    padding-top: 0px;
+    border-radius: 50%;
+    position: absolute;
+    padding-left: 12px;
+    background-color: white;
+}
+
+.lighthouse-close-icon {
+    color: #f00;
+    font-size: 28px;
+}
+
+.lighthouse-arrow-container {
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    color: white;
+    cursor: pointer;
+    position: absolute;
+    border-radius: 50%;
+}
+
+.lighthouse-arrow-container:hover {
+    color: black;
+    background-color: white;
+}
+
+#lighthouse-adjust-left {
+    left: 40px;
+}
+
+#lighthouse-adjust-right {
+    right: 40px;
+}
