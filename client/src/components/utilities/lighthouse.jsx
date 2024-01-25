@@ -1,20 +1,35 @@
 import "src/styles/utilities/lighthouse.css";
 
 import CIcon from "@coreui/icons-react";
-import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { cilArrowLeft, cilArrowRight } from "@coreui/icons";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { closeLighthouse } from "src/redux/reducers/lighthouse";
 
 const LightHouse = ({ images, initialIndex }) => {
+    const imageRef = useRef(null);
     const dispatch = useDispatch();
     const bodyDiv = document.querySelector("body");
+
+    const [currentIndex, setCurrentIndex] = useState(-1);
 
     useEffect(() => {
         bodyDiv.style.overflow = "hidden";
         return () => { bodyDiv.style.overflow = "auto"; };
     }, []);
+
+    useEffect(() => {
+        setCurrentIndex(initialIndex ?? 0);
+    }, [initialIndex, images]);
+
+    useEffect(() => {
+        imageRef.current.style.animation = "lighthouseImageLoadAnimation 0.5s linear";
+    }, [currentIndex]);
+
+    useLayoutEffect(() => {
+        imageRef.current.style.animation = '';
+    }, [currentIndex]);
 
     const closeZoom = () => {
         dispatch(closeLighthouse());
@@ -26,15 +41,31 @@ const LightHouse = ({ images, initialIndex }) => {
                 <span className="lighthouse-close-icon">&times;</span>
             </div>
 
-            <div className="lighthouse-arrow-container" id="lighthouse-adjust-left">
-                <CIcon icon={cilArrowLeft} />
-            </div>
+            {
+                currentIndex > 0 && (
+                    <div
+                        id="lighthouse-adjust-left"
+                        className="lighthouse-arrow-container"
+                        onClick={() => { setCurrentIndex(currentIndex - 1); }}
+                    >
+                        <CIcon icon={cilArrowLeft} />
+                    </div>
+                )
+            }
 
-            <div className="lighthouse-arrow-container" id="lighthouse-adjust-right">
-                <CIcon icon={cilArrowRight} />
-            </div>
+            {
+                (currentIndex < images.length - 1) && (
+                    <div
+                        id="lighthouse-adjust-right"
+                        className="lighthouse-arrow-container"
+                        onClick={() => { setCurrentIndex(currentIndex + 1); }}
+                    >
+                        <CIcon icon={cilArrowRight} />
+                    </div>
+                )
+            }
 
-            <img alt="zoomed canva" src={images[initialIndex]} className="zoomed-image" />
+            <img alt="zoomed canva" ref={imageRef} src={images[currentIndex]} className="zoomed-image" />
         </div>
     );
 }
