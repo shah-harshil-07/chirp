@@ -252,6 +252,17 @@ const PostUtilities = ({ parentName }) => {
         handleMutedReaction(action, postData, handleLikeAction, handleSaveAction);
     }
 
+    const triggerVocalReaction = (e, postObj, reactionType, images) => {
+        e.stopPropagation();
+        let reactionFn = null;
+        if (reactionType === "repost") reactionFn = openRepostBox;
+        else if (reactionType === "comment") reactionFn = openCommentBox;
+        const data = JSON.parse(JSON.stringify(postObj ?? {}));
+        data["images"] = images ?? [];
+        if (data?.user?.picture) data.user.picture = userImages?.[postObj?.user?._id ?? '0'] ?? '';
+        if (reactionFn) reactionFn(e, data); else showError("Something went wrong!");
+    }
+
     const moveToCommentList = postId => {
         closeDetailsCardImmediately();
         navigate(`/post/${postId}`, { preventScrollReset: false });
@@ -396,8 +407,8 @@ const PostUtilities = ({ parentName }) => {
 
                                 <div className="action-bar">
                                     <div
-                                        onClick={e => { openCommentBox(e, post); }}
                                         className="reaction-icon-container reply-container"
+                                        onClick={e => { triggerVocalReaction(e, post, "comment"); }}
                                     >
                                         <span className="reply-icon">
                                             <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
@@ -407,8 +418,8 @@ const PostUtilities = ({ parentName }) => {
                                     </div>
 
                                     <div
-                                        onClick={e => { openRepostBox(e, post); }}
                                         className="reaction-icon-container repost-container"
+                                        onClick={e => { triggerVocalReaction(e, post, "repost", pureImages); }}
                                     >
                                         <span className="reply-icon">
                                             <CIcon icon={cilSend} title="Repost" className="chirp-action" />
