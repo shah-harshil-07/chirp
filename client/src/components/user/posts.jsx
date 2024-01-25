@@ -2,17 +2,21 @@ import "src/styles/user/posts.css";
 import "src/styles/utilities/post.css";
 
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 import PostUtilities from "../utilities/posts";
 import { getUserDetails, isUserLoggedIn, userTabs } from "src/utilities/helpers";
 
 const UserPosts = ({ userId }) => {
+    let defaultIndex = 0;
+    const location = useLocation();
     const loggedInUserData = isUserLoggedIn() ? getUserDetails() : null;
     const { id: loggedUserId } = loggedInUserData ?? {}, tabs = [ ...userTabs ];
 
     if (userId !== loggedUserId) tabs.pop();
+    else if (location?.state?.viewSaved) defaultIndex = 2;
 
-    const [currentTabIndex, setCurrentTabIndex] = useState(0);
+    const [currentTabIndex, setCurrentTabIndex] = useState(defaultIndex);
 
     const changeTab = (e, tabIndex) => {
         e.preventDefault();

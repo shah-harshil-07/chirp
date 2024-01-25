@@ -2,4 +2,3 @@
 # I cannot comment on a comment. Implement the multilevel comment functionality.
 # Separate the logic of profile editor in a seperate component and open the modal just like the repost editor is opened.
 # If I open repost editor from home page, the images in the post are not appearing in the editor.
-# In the left sidebar, click action on Bookmarks tab is missing.

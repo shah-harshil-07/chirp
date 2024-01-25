@@ -10,13 +10,14 @@ import { closeLighthouse } from "src/redux/reducers/lighthouse";
 const LightHouse = ({ images, initialIndex }) => {
     const imageRef = useRef(null);
     const dispatch = useDispatch();
-    const bodyDiv = document.querySelector("body");
-
+    
     const [currentIndex, setCurrentIndex] = useState(-1);
-
+    
     useEffect(() => {
-        bodyDiv.style.overflow = "hidden";
-        return () => { bodyDiv.style.overflow = "auto"; };
+        const body = document.querySelector("body");
+
+        body.style.overflow = "hidden";
+        return () => { body.style.overflow = "auto"; };
     }, []);
 
     useEffect(() => {

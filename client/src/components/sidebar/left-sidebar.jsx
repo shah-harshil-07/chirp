@@ -51,10 +51,10 @@ const LeftSidebar = () => {
         else navigate('/', { preventScrollReset: false });
     }
 
-    const moveToUserPage = e => {
+    const moveToUserPage = (e, viewSaved = false) => {
         e.preventDefault();
         const { id } = userDetails;
-        if (id) navigate(`user/${id}`);
+        if (id) navigate(`user/${id}`, { state: { viewSaved } });
     }
 
     return (
@@ -89,7 +89,7 @@ const LeftSidebar = () => {
                         <div className="col-sm-9 left-sidebar-link-label">Settings</div>
                     </div>
 
-                    <div className="row left-sidebar-link">
+                    <div className="row left-sidebar-link" onClick={e => { moveToUserPage(e, true); }}>
                         <div className="col-sm-3 px-4 align-self-center">
                             <CIcon width={30} height={30} icon={cilBookmark} />
                         </div>
