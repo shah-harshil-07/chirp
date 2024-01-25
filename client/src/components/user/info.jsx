@@ -1,5 +1,4 @@
 import "src/styles/user/info.css";
-import "src/styles/signup-steps/create-account.css";
 
 import moment from "moment";
 import CIcon from "@coreui/icons-react";
@@ -15,6 +14,7 @@ import * as Constants from "src/utilities/constants";
 import CustomSelect from "../utilities/custom-select";
 import LabelledInput from "../utilities/labelled-input";
 import useToaster from "src/custom-hooks/toaster-message";
+import { openModalWithProps } from "src/redux/reducers/modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
 import { openLighthouse } from "src/redux/reducers/lighthouse";
 import DateOptionServices from "src/custom-hooks/date-services";
@@ -165,7 +165,18 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
     }
 
     const openProfileEditor = () => {
-        setShowProfileEditor(true);
+        // setShowProfileEditor(true);
+        const data = {
+            getterFn,
+            generalDetails: details,
+            userId: details?._id ?? '',
+            backImgFile: uploadedBackImgFile,
+            profileImgFile: uploadedProfileImgFile,
+            backImgFileObj: uploadedBackImgFileObject,
+            profileImgFileObj: uploadedProfileImgFileObject,
+        };
+
+        dispatch(openModalWithProps({ type: "profileEditor", props: data }));
     }
 
     const closeProfileEditor = () => {

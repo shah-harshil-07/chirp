@@ -1,10 +1,11 @@
 import Login from "../components/login";
 import Register from "../components/register";
 import * as CONSTANTS from "./constants";
+import ProfileEditor from "src/components/user/profile-editor";
+import RepostEditor from "src/components/reactions/repost-editor";
 import ScheduledPostList from "../components/form/scheduled-posts";
 import CommentEditor from "src/components/reactions/comment-editor";
 import ScheduledPostEditor from "../components/form/scheduled-post-editor";
-import RepostEditor from "src/components/reactions/repost-editor";
 
 const keyConfig = {
     password: { regex: CONSTANTS.PASSWORD_REGEX, negativeCase: true, errorMessage: CONSTANTS.PASSWORD_ERR_MESSAGE },
@@ -53,6 +54,7 @@ export const modalConfig = {
     login: Login,
     register: Register,
     repostEditor: RepostEditor,
+    profileEditor: ProfileEditor,
     commentEditor: CommentEditor,
     scheduledPosts: ScheduledPostList,
     scheduledPostEditor: ScheduledPostEditor,

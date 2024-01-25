@@ -31,7 +31,7 @@ const CustomModal = ({
     const [isInitialScrollSet, setIsInitialScrollSet] = useState(false);
 
     useEffect(() => {
-        if (!isInitialScrollSet) {            
+        if (!isInitialScrollSet) {
             bodyRef.current.scrollTop = 0;
             setIsInitialScrollSet(true);
         }
