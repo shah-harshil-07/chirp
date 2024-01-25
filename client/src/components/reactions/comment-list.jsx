@@ -3,15 +3,19 @@ import React, { useEffect, useState } from "react";
 
 import API from "src/api";
 import CIcon from "@coreui/icons-react";
+import { useNavigate } from "react-router-dom";
 import { cilBookmark, cilChart, cilThumbUp } from "@coreui/icons";
 
 import Loader from "src/components/utilities/loader";
 import * as Constants from "src/utilities/constants";
+import useToaster from "src/custom-hooks/toaster-message";
 import ImgHolder from "src/components/utilities/img-holder";
 import usePostServices from "src/custom-hooks/post-services";
 import { getCommonHeader, isUserLoggedIn } from "src/utilities/helpers";
 
 const CommentList = ({ commentList, userImages, isLoading }) => {
+    const navigate = useNavigate();
+    const { showError } = useToaster();
     const headerData = getCommonHeader();
     const likeIcon = require("src/assets/like.png");
     const savedIcon = require("src/assets/saved-filled.png");
@@ -90,6 +94,15 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
         handleMutedReaction(action, commentData, handleLikeAction, handleSaveAction);
     }
 
+    const moveToUserPage = (e, userId) => {
+        if (userId) {
+            e.stopPropagation();
+            navigate(`/user/${userId}`);
+        } else {
+            showError("user id is unavailable.");
+        }
+    }
+
     return (
         <>
             {isLoading && <Loader />}
@@ -103,6 +116,7 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
                             <img
                                 alt="user"
                                 className="post-detail-user-image"
+                                onClick={e => { moveToUserPage(e, userId); }}
                                 src={userImages[userId] ?? String(sampleUserImg)}
                                 onError={e => { e.target.src = String(sampleUserImg); }}
                             />

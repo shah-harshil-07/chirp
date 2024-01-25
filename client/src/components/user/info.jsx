@@ -3,6 +3,7 @@ import "src/styles/signup-steps/create-account.css";
 
 import moment from "moment";
 import CIcon from "@coreui/icons-react";
+import { useDispatch } from "react-redux";
 import React, { useEffect, useRef, useState } from "react";
 import { cilCalendar, cilBirthdayCake, cilLink, cilLocationPin, cilCamera, cilTrash } from "@coreui/icons";
 
@@ -15,6 +16,7 @@ import CustomSelect from "../utilities/custom-select";
 import LabelledInput from "../utilities/labelled-input";
 import useToaster from "src/custom-hooks/toaster-message";
 import { placeHolderImageSrc } from "src/utilities/constants";
+import { openLighthouse } from "src/redux/reducers/lighthouse";
 import DateOptionServices from "src/custom-hooks/date-services";
 import useImageConverter from "src/custom-hooks/image-converter";
 import LabelledInputTextarea from "../utilities/labelled-textarea";
@@ -22,6 +24,7 @@ import { getCommonHeader, getErrorMessage, getUserDetails, isUserLoggedIn, valid
 
 const UserInfo = ({ details, getterFn, isLoading }) => {
     const totalLineLength = 1040;
+    const dispatch = useDispatch();
     const commonHeader = getCommonHeader();
     let availableCoverage = totalLineLength;
     const { showSuccess, showError } = useToaster();
@@ -475,6 +478,11 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
         </div>
     );
 
+    const zoomImage = (e, imgSrc) => {
+        e.stopPropagation();
+        dispatch(openLighthouse({ images: [imgSrc], initialIndex: 0 }));
+    }
+
     return (
         <div>
             {isLoading && <Loader />}
@@ -483,6 +491,7 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
                 id="user-info-back-img"
                 src={userData?.backgroundImage ?? String(placeHolderImageSrc)}
                 onError={e => { e.target.src = String(placeHolderImageSrc); }}
+                onClick={e => { if (userData?.backgroundImage) zoomImage(e, userData.backgroundImage); }}
             />
 
             <div
@@ -498,6 +507,7 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
                     id="user-info-user-img"
                     src={userData?.picture ?? String(sampleUserImg)}
                     onError={e => { e.target.src = String(sampleUserImg); }}
+                    onClick={e => { if (userData?.picture) zoomImage(e, userData.picture); }}
                 />
             </div>
 

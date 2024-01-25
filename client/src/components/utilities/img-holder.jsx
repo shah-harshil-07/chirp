@@ -3,8 +3,8 @@ import "src/styles/utilities/img-holder.css";
 import React from "react";
 import { useDispatch } from "react-redux";
 
-import { openLighthouse } from "src/redux/reducers/lighthouse";
 import { placeHolderImageSrc } from "src/utilities/constants";
+import { openLighthouse } from "src/redux/reducers/lighthouse";
 
 const ImgHolder = ({ images, removeImage, showActionButtons = true }) => {
     const dispatch = useDispatch();

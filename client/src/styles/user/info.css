@@ -42,12 +42,14 @@
 #user-info-back-img {
     width: 100%;
     height: 256px;
+    cursor: pointer;
     object-fit: cover;
 }
 
 #user-info-user-img-container {
     width: 150px;
     height: 150px;
+    cursor: pointer;
     margin-top: -75px;
     margin-left: 20px;
     position: relative;
