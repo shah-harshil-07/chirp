@@ -143,6 +143,8 @@ const PostDetails = () => {
             setCommentList([..._commentList]);
             setPostDetails({ ..._postDetails });
             setInitialDetailsUpdated(true);
+        } else {
+            moveBack();
         }
 
         setIsLoading(false);

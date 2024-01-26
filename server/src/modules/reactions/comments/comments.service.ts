@@ -3,6 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Injectable, InternalServerErrorException, UseInterceptors } from "@nestjs/common";
 
 import { Comments } from "./comments.schema";
+import { Post } from "src/modules/posts/post.schema";
 import { PostService } from "src/modules/posts/posts.service";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { ConfigService } from "src/modules/config/config.service";
@@ -20,19 +21,40 @@ export class CommentsService {
     async create(commentData: ICommentData): Promise<Comments> {
         const { postId } = commentData;
         const createdComment = new this.commentModel(commentData);
-        const isReactionAdded = await this.postService.changeReactionCount(postId, "commented", "add");
+        let isReactionAdded: Post | Comments;
+        const { parentCommentId } = commentData;
+
+        if (parentCommentId) isReactionAdded = await this.changeReactionCount(parentCommentId, "commented", "add");
+        else isReactionAdded = await this.postService.changeReactionCount(postId, "commented", "add");
 
         if (!isReactionAdded) throw new InternalServerErrorException();
         else return createdComment.save();
     }
 
-    async list(postId: string): Promise<ICommentList> {
-        const postData = await this.postService.getDetails(postId);
+    async getCommentDetails(commentId: string): Promise<Comments> {
+        return await this.commentModel.findById(commentId).populate("userId", "_id name username picture");
+    }
+
+    async list(postId: string, type: string): Promise<ICommentList> {
+        let matchQuery: any;
+        let baseData: Post | Comments;
+
+        if (type === "post") {
+            baseData = await this.postService.getDetails(postId);
+            matchQuery = { $expr: { $eq: ["$postId", { $toObjectId: postId }] }, parentCommentId: null };
+        } else {
+            const commentData = await this.getCommentDetails(postId);
+            const clonedCommentData = JSON.parse(JSON.stringify(commentData));
+            clonedCommentData.user = clonedCommentData.userId;
+            delete clonedCommentData.userId;
+            baseData = clonedCommentData;
+            matchQuery = { parentCommentId: postId };
+        }
 
         await this.commentModel.updateMany({}, { $inc: { views: 1 } });
 
         const commentList = await this.commentModel.aggregate([
-            { $match: { $expr: { $eq: ["$postId", { $toObjectId: postId }] } } },
+            { $match: { ...matchQuery } },
             { $lookup: { from: "Users", localField: "userId", foreignField: "_id", as: "user" } },
             { $unwind: "$user" },
             {
@@ -46,6 +68,7 @@ export class CommentsService {
                     "saved": 1,
                     "views": 1,
                     "user._id": 1,
+                    "parentCommentId": 1,
                     "user.name": 1,
                     "user.username": 1,
                     "user.picture": 1,
@@ -53,7 +76,7 @@ export class CommentsService {
             },
         ]);
 
-        return { post: postData, comments: commentList };
+        return { post: baseData, comments: commentList };
     }
 
     async changeReactionCount(commentId: string, reaction: string, mode: string): Promise<Comments> {

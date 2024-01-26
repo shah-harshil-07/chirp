@@ -5,9 +5,9 @@ import { Body, Controller, Get, Param, Post, Req, UploadedFiles, UseGuards, UseI
 import { CommentsService } from "./comments.service";
 import { IResponseProps } from "src/interceptors/interfaces";
 import { ResponseInterceptor } from "src/interceptors/response";
-import { CommentDTO, validationParamList } from "./comments.dto";
 import { ConfigService } from "src/modules/config/config.service";
 import { CustomBadRequestException } from "src/exception-handlers/400/handler";
+import { CommentDTO, ICommentListReqDTO, IPostId, validationParamList } from "./comments.dto";
 import { CustomValidatorsService } from "src/modules/custom-validators/custom-validators.service";
 
 @Controller("comments")
@@ -41,10 +41,10 @@ export class CommentsController {
         return { success: true, message: "Comment stored successfully!", data: comment };
     }
 
-    @Get("all/:postId")
+    @Post("all/:postId")
     @UseInterceptors(ResponseInterceptor)
-    async list(@Param() { postId }: any): Promise<any> {
-        const commentList = await this.commentService.list(postId);
+    async list(@Param() { postId }: IPostId, @Body() commentListReq: ICommentListReqDTO): Promise<IResponseProps> {
+        const commentList = await this.commentService.list(postId, commentListReq.type);
         return { success: true, message: "Comment list fetched successfully.", data: commentList };
     }
 }

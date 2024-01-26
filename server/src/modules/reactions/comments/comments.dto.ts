@@ -1,6 +1,7 @@
-import { IsJSON, IsOptional } from "class-validator";
+import { IsIn, IsJSON, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 import { Post } from "src/modules/posts/post.schema";
+import { Comments } from "./comments.schema";
 
 export class CommentDTO {
     @IsJSON()
@@ -8,6 +9,17 @@ export class CommentDTO {
 
     @IsOptional()
     images: string[];
+}
+
+export class ICommentListReqDTO {
+    @IsString()
+    @IsNotEmpty()
+    @IsIn(["post", "comment"])
+    type: string;
+}
+
+export interface IPostId {
+    postId: string;
 }
 
 export interface ICommentData {
@@ -29,7 +41,7 @@ export const validationParamList = {
 }
 
 export interface ICommentList {
-    post: Post,
+    post: Post | Comments,
     comments: Array<CommentDataDTO>,
 }
 
