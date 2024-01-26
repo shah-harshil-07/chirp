@@ -62,9 +62,11 @@ const ProfileEditor = ({
     const [isFormValid, setIsFormValid] = useState(true);
     const [isNewBackImg, setIsNewBackImg] = useState(false);
     const [selectedImgKey, setSelectedImgKey] = useState('');
+    const [openCustomModal, setOpenCustomModal] = useState(false);
     const [isNewProfileImg, setIsNewProfileImg] = useState(false);
     const [uploadedBackImgFile, setUploadedBackImgFile] = useState(null);
     const [showBackImgUploader, setShowBackImgUploader] = useState(true);
+    const [profileDetailsUpdated, setProfileDetailsUpdated] = useState(false);
     const [showProfileImgUploader, setShowProfileImgUploader] = useState(true);
     const [uploadedProfileImgFile, setUploadedProfileImgFile] = useState(null);
     const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
@@ -83,6 +85,10 @@ const ProfileEditor = ({
         // eslint-disable-next-line
     }, [backImgFile, profileImgFile, backImgFileObj, profileImgFileObj]);
 
+    useEffect(() => {
+        if (profileDetailsUpdated && profileDetails) setOpenCustomModal(true);
+    }, [profileDetailsUpdated, profileDetails]);
+
     const updateProfileDetails = () => {
         const momentDoB = moment(generalDetails?.dateOfBirth);
         const day = isNaN(momentDoB.date()) ? preselectedDay : momentDoB.date();
@@ -93,10 +99,12 @@ const ProfileEditor = ({
             ...profileDetails,
             bio: generalDetails?.bio ?? '',
             name: generalDetails?.name ?? '',
-            location: generalDetails?.location ?? '',
             dateOfBirth: { year, month, day },
+            location: generalDetails?.location ?? '',
             website: generalDetails?.website?.replace(/https:\/\//ig, '') ?? '',
         });
+
+        setProfileDetailsUpdated(true);
     }
 
     const handleImgAction = key => {
@@ -375,7 +383,7 @@ const ProfileEditor = ({
 
     const confirmDeleteImage = async () => {
         if (selectedImgKey) {
-            closeProfileEditor();
+            setOpenDeleteConfirmation(false);
             const url = `${Constants.DELETE_USER_IMAGE}/${userId}`;
             const data = {
                 fileName: generalDetails[selectedImgKey],
@@ -406,13 +414,17 @@ const ProfileEditor = ({
 
     return (
         <>
-            <CustomModal
-                includeHeader={true}
-                displayOverflow={true}
-                bodyJSX={editProfileBodyJSX}
-                bodyClasses={"ml-0 mr-0 p-0 mt-4"}
-                customHeaderJSX={editProfileHeaderJSX}
-            />
+            {
+                openCustomModal && (
+                    <CustomModal
+                        includeHeader={true}
+                        displayOverflow={true}
+                        bodyJSX={editProfileBodyJSX}
+                        bodyClasses={"ml-0 mr-0 p-0 mt-4"}
+                        customHeaderJSX={editProfileHeaderJSX}
+                    />
+                )
+            }
 
             {
                 openDeleteConfirmation && (

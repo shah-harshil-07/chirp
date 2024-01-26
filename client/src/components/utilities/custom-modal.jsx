@@ -20,8 +20,8 @@ const CustomModal = ({
     customFooterJSX,
     modalContentClasses,
 }) => {
-    const dispatch = useDispatch(), bodyRef = useRef(null);
     const logo = require("src/assets/logo-1.png");
+    const dispatch = useDispatch(), bodyRef = useRef(null);
     const overflowStyles = { overflow: "scroll", overflowX: "hidden", height: includeFooter ? "325px" : "80%" };
 
     const closeCustomDialog = () => {
