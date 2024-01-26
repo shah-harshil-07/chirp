@@ -5,7 +5,7 @@ import CIcon from "@coreui/icons-react";
 import { Card } from "@material-ui/core";
 import { useDispatch } from "react-redux";
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { cilArrowLeft, cilBookmark, cilCommentBubble, cilSend, cilThumbUp } from "@coreui/icons";
 
 import API from "src/api";
@@ -20,6 +20,7 @@ import usePostServices from "src/custom-hooks/post-services";
 import { getCommonHeader, isUserLoggedIn } from "src/utilities/helpers";
 
 const PostDetails = () => {
+    const location = useLocation();
     const navigate = useNavigate();
     const { postId } = useParams();
     const headerData = getCommonHeader();
@@ -52,7 +53,7 @@ const PostDetails = () => {
         window.scrollTo(0, 0);
         if (postId) getCommentList().catch(moveBack);
         // eslint-disable-next-line
-    }, []);
+    }, [postId]);
 
     useEffect(() => {
         if (initialDetailsUpdated) {
@@ -66,12 +67,13 @@ const PostDetails = () => {
 
     const getCommentList = async () => {
         setIsLoading(true);
-        const response = await API(Constants.GET, `${Constants.COMMENT_LIST}/${postId}`, null, headerData);
+        const data = { type: location?.state?.type ?? "post" };
+        const response = await API(Constants.POST, `${Constants.COMMENT_LIST}/${postId}`, data, headerData);
         const responseData = response?.data;
 
         if (responseData?.meta?.status && responseData?.data) {
             const _userImages = {};
-            const { post, comments } = responseData.data;
+            const { post, comments } = responseData?.data ?? {};
             const _postDetails = {
                 id: post?._id ?? '',
                 comments: post?.comments ?? 0,
@@ -103,6 +105,8 @@ const PostDetails = () => {
                     picture: post?.user?.picture ?? null,
                 },
             };
+
+            if (post == null) moveBack();
 
             const { user: { id: mainUserId, picture: mainUserPic }, parentPostDetails } = _postDetails;
             const { user: { id: parentUserId, picture: parentUserPic } } = parentPostDetails;
@@ -289,162 +293,164 @@ const PostDetails = () => {
             </div>
 
             <Card className="post-detail-card">
-                {isLoading && <Loader />}
-                <div className="post-detail-card-header" onClick={e => { moveToUserPage(e, postDetails?.user?.id); }}>
-                    <img
-                        alt="user"
-                        className="post-detail-card-header-image"
-                        onError={e => { e.target.src = String(sampleUserImg); }}
-                        src={userImages?.[postDetails?.user?.id ?? '0'] ?? String(sampleUserImg)}
-                    />
-
-                    <div className="post-detail-card-header-text">
-                        <div><b>{postDetails?.user?.name ?? ''}</b></div>
-                        {postDetails?.user?.username && <div>{`@${postDetails?.user?.username ?? ''}`}</div>}
-                    </div>
-                </div>
-
-                <div className="post-detail-body">
-                    <div className="row mx-0 font-size-20"><div>{postDetails?.text ?? ''}</div></div>
-
-                    {postDetails?.poll?.choices && getPollJSX(postDetails.poll, postDetails.id)}
-                    {
-                        postDetails?.images?.length > 0 && (
-                            <ImgHolder images={postDetails?.images} showActionButtons={false} />
-                        )
-                    }
-
-                    {
-                        postDetails?.parentPostDetails?.user?.name && (
-                            <div
-                                className="post-list-repost-body repost-body"
-                                style={{ marginTop: postDetails?.images?.length ? "10px" : '0' }}
-                            >
+                {
+                    isLoading ? <Loader /> : (
+                        <>
+                            <div className="post-detail-card-header" onClick={e => { moveToUserPage(e, postDetails?.user?.id); }}>
                                 <img
-                                    alt="post creator"
-                                    className="post-detail-parent-user-img"
+                                    alt="user"
+                                    className="post-detail-card-header-image"
                                     onError={e => { e.target.src = String(sampleUserImg); }}
-                                    onClick={e => { moveToUserPage(e, postDetails?.parentPostDetails?.user?.id); }}
-                                    src={
-                                        userImages?.[postDetails?.parentPostDetails?.user?.id ?? '0'] ??
-                                        String(sampleUserImg)
-                                    }
+                                    src={userImages?.[postDetails?.user?.id ?? '0'] ?? String(sampleUserImg)}
                                 />
 
-                                <div
-                                    className="post-detail-repost-body-content"
-                                    onClick={e => { moveToPostDetailPage(e, postDetails?.parentPostDetails?.id); }}
-                                >
-                                    <div className="row mx-0 font-size-19 post-detail-repost-body-title">
-                                        <b>{postDetails?.parentPostDetails?.user?.name ?? ''}</b>&nbsp;
+                                <div className="post-detail-card-header-text">
+                                    <div><b>{postDetails?.user?.name ?? ''}</b></div>
+                                    {postDetails?.user?.username && <div>{`@${postDetails?.user?.username ?? ''}`}</div>}
+                                </div>
+                            </div>
 
-                                        <span>{`@${postDetails?.parentPostDetails?.user?.username ?? ''}`}</span>
+                            <div className="post-detail-body">
+                                <div className="row mx-0 font-size-20"><div>{postDetails?.text ?? ''}</div></div>
 
-                                        <span>
-                                            <div className="seperator-container"><div className="seperator" /></div>
-                                        </span>
+                                {postDetails?.poll?.choices && getPollJSX(postDetails.poll, postDetails.id)}
+                                {
+                                    postDetails?.images?.length > 0 && (
+                                        <ImgHolder images={postDetails?.images} showActionButtons={false} />
+                                    )
+                                }
 
-                                        <span>{getPostTiming(postDetails?.parentPostDetails?.createdAt)}</span>
-                                    </div>
-
-                                    <div className="row mx-0 mt-1 font-size-20">
-                                        <div>{postDetails?.parentPostDetails?.text?.slice(0, 40) ?? ''}</div>
-                                    </div>
-
-                                    {
-                                        postDetails?.parentPostDetails?.images?.length > 0 && (
-                                            <ImgHolder
-                                                showActionButtons={false}
-                                                images={postDetails?.parentPostDetails?.images}
+                                {
+                                    postDetails?.parentPostDetails?.user?.name && (
+                                        <div
+                                            className="post-list-repost-body repost-body"
+                                            style={{ marginTop: postDetails?.images?.length ? "10px" : '0' }}
+                                        >
+                                            <img
+                                                alt="post creator"
+                                                className="post-detail-parent-user-img"
+                                                onError={e => { e.target.src = String(sampleUserImg); }}
+                                                onClick={e => { moveToUserPage(e, postDetails?.parentPostDetails?.user?.id); }}
+                                                src={userImages?.[postDetails?.parentPostDetails?.user?.id ?? '0'] ?? String(sampleUserImg)}
                                             />
+
+                                            <div
+                                                className="post-detail-repost-body-content"
+                                                onClick={e => { moveToPostDetailPage(e, postDetails?.parentPostDetails?.id); }}
+                                            >
+                                                <div className="row mx-0 font-size-19 post-detail-repost-body-title">
+                                                    <b>{postDetails?.parentPostDetails?.user?.name ?? ''}</b>&nbsp;
+
+                                                    <span>{`@${postDetails?.parentPostDetails?.user?.username ?? ''}`}</span>
+
+                                                    <span>
+                                                        <div className="seperator-container"><div className="seperator" /></div>
+                                                    </span>
+
+                                                    <span>{getPostTiming(postDetails?.parentPostDetails?.createdAt)}</span>
+                                                </div>
+
+                                                <div className="row mx-0 mt-1 font-size-20">
+                                                    <div>{postDetails?.parentPostDetails?.text?.slice(0, 40) ?? ''}</div>
+                                                </div>
+
+                                                {
+                                                    postDetails?.parentPostDetails?.images?.length > 0 && (
+                                                        <ImgHolder
+                                                            showActionButtons={false}
+                                                            images={postDetails?.parentPostDetails?.images}
+                                                        />
+                                                    )
+                                                }
+                                            </div>
+                                        </div>
+                                    )
+                                }
+
+                                <div>
+                                    {getFormattedPostTiming(postDetails?.createdAt ?? null)}&nbsp;&nbsp;
+                                    {
+                                        postDetails?.views >= 0 && (
+                                            <span>
+                                                <b>
+                                                    {`${getFormattedNumber(postDetails.views)} View${postDetails.views > 1 ? 's' : ''}`}
+                                                </b>
+                                            </span>
                                         )
                                     }
                                 </div>
+
+                                <div className="action-bar">
+                                    <div
+                                        className="reaction-icon-container reply-container"
+                                        onClick={e => { triggerVocalReaction(e, "comment"); }}
+                                    >
+                                        <span className="reply-icon">
+                                            <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
+                                        </span>
+
+                                        <span className="post-reaction-data">{getFormattedNumber(postDetails?.comments ?? 0)}</span>
+                                    </div>
+
+                                    <div
+                                        className="reaction-icon-container repost-container"
+                                        onClick={e => { triggerVocalReaction(e, "repost"); }}
+                                    >
+                                        <span className="reply-icon">
+                                            <CIcon icon={cilSend} title="Repost" className="chirp-action" />
+                                        </span>
+
+                                        <span className="post-reaction-data">{getFormattedNumber(postDetails?.reposts ?? 0)}</span>
+                                    </div>
+
+                                    <div
+                                        className="reaction-icon-container like-container"
+                                        onClick={e => { triggerMutedReaction(e, "like"); }}
+                                    >
+                                        <span className="reply-icon" style={isPostLiked ? { paddingTop: "6px" } : {}}>
+                                            {
+                                                isPostLiked ? (
+                                                    <img width="20" height="20" src={String(likeIcon)} alt="like" />
+                                                ) : (
+                                                    <CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
+                                                )
+                                            }
+                                        </span>
+
+                                        <span
+                                            className="post-reaction-data"
+                                            style={isPostLiked ? { color: "var(--liked-color)" } : {}}
+                                        >
+                                            {getFormattedNumber(postDetails?.likes ?? 0)}
+                                        </span>
+                                    </div>
+
+                                    <div
+                                        className="reaction-icon-container saved-container"
+                                        onClick={e => { triggerMutedReaction(e, "save"); }}
+                                    >
+                                        <span className="reply-icon" style={false ? { paddingTop: "6px" } : {}}>
+                                            {
+                                                isPostSaved ? (
+                                                    <img width="20" height="20" src={String(savedIcon)} alt="like" />
+                                                ) : (
+                                                    <CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
+                                                )
+                                            }
+                                        </span>
+
+                                        <span
+                                            className="post-reaction-data"
+                                            style={isPostSaved ? { color: "var(--saved-color)" } : {}}
+                                        >
+                                            {getFormattedNumber(postDetails?.saved ?? 0)}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                        )
-                    }
-
-                    <div>
-                        {getFormattedPostTiming(postDetails?.createdAt ?? null)}&nbsp;&nbsp;
-                        {
-                            postDetails?.views >= 0 && (
-                                <span>
-                                    <b>
-                                        {`${getFormattedNumber(postDetails.views)} View${postDetails.views > 1 ? 's' : ''}`}
-                                    </b>
-                                </span>
-                            )
-                        }
-                    </div>
-
-                    <div className="action-bar">
-                        <div
-                            className="reaction-icon-container reply-container"
-                            onClick={e => { triggerVocalReaction(e, "comment"); }}
-                        >
-                            <span className="reply-icon">
-                                <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
-                            </span>
-
-                            <span className="post-reaction-data">{getFormattedNumber(postDetails?.comments ?? 0)}</span>
-                        </div>
-
-                        <div
-                            className="reaction-icon-container repost-container"
-                            onClick={e => { triggerVocalReaction(e, "repost"); }}
-                        >
-                            <span className="reply-icon">
-                                <CIcon icon={cilSend} title="Repost" className="chirp-action" />
-                            </span>
-
-                            <span className="post-reaction-data">{getFormattedNumber(postDetails?.reposts ?? 0)}</span>
-                        </div>
-
-                        <div
-                            className="reaction-icon-container like-container"
-                            onClick={e => { triggerMutedReaction(e, "like"); }}
-                        >
-                            <span className="reply-icon" style={isPostLiked ? { paddingTop: "6px" } : {}}>
-                                {
-                                    isPostLiked ? (
-                                        <img width="20" height="20" src={String(likeIcon)} alt="like" />
-                                    ) : (
-                                        <CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
-                                    )
-                                }
-                            </span>
-
-                            <span
-                                className="post-reaction-data"
-                                style={isPostLiked ? { color: "var(--liked-color)" } : {}}
-                            >
-                                {getFormattedNumber(postDetails?.likes ?? 0)}
-                            </span>
-                        </div>
-
-                        <div
-                            className="reaction-icon-container saved-container"
-                            onClick={e => { triggerMutedReaction(e, "save"); }}
-                        >
-                            <span className="reply-icon" style={false ? { paddingTop: "6px" } : {}}>
-                                {
-                                    isPostSaved ? (
-                                        <img width="20" height="20" src={String(savedIcon)} alt="like" />
-                                    ) : (
-                                        <CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
-                                    )
-                                }
-                            </span>
-
-                            <span
-                                className="post-reaction-data"
-                                style={isPostSaved ? { color: "var(--saved-color)" } : {}}
-                            >
-                                {getFormattedNumber(postDetails?.saved ?? 0)}
-                            </span>
-                        </div>
-                    </div>
-                </div>
+                        </>
+                    )
+                }
             </Card>
 
             {

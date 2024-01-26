@@ -1,10 +1,11 @@
-import { Card } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
+import "src/styles/reactions/post-details.css";
 
 import API from "src/api";
 import CIcon from "@coreui/icons-react";
+import { Card } from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
-import { cilBookmark, cilChart, cilThumbUp } from "@coreui/icons";
+import React, { useEffect, useState } from "react";
+import { cilChart, cilCommentBubble, cilThumbUp } from "@coreui/icons";
 
 import Loader from "src/components/utilities/loader";
 import * as Constants from "src/utilities/constants";
@@ -17,8 +18,8 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
     const navigate = useNavigate();
     const { showError } = useToaster();
     const headerData = getCommonHeader();
+    const { openCommentBox } = usePostServices();
     const likeIcon = require("src/assets/like.png");
-    const savedIcon = require("src/assets/saved-filled.png");
     const sampleUserImg = require("src/assets/sample-user.png");
     const { getPostTiming, handleMutedReaction, getImageFetchingPromise, getFormattedNumber } = usePostServices();
 
@@ -103,16 +104,30 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
         }
     }
 
-    return (
+    const moveToCommentDetailPage = commentId => {
+        if (commentId) {
+            navigate(`/post/${commentId}`, { state: { type: "comment" } });
+            window.location.reload();
+        } else {
+            showError("comment id is unavailable.");
+        }
+    }
+
+    const triggerVocalReaction = (e, commentDetails) => {
+        const data = { ...commentDetails };
+        if (data?.user?.picture) data.user.picture = userImages?.[commentDetails?.user?.userId ?? '0'] ?? '';
+        openCommentBox(e, commentDetails);
+    }
+
+    return isLoading ? <Loader /> : (
         <>
-            {isLoading && <Loader />}
             {
                 commentList.map((commentObj, commentIndex) => {
-                    const { user, text, createdAt, likes, saved, views, images } = commentObj;
+                    const { user, text, createdAt, likes, comments, views, images, id } = commentObj;
                     const { userId, name, username } = user ?? {};
 
                     return (
-                        <Card className="mt-3" key={commentIndex}>
+                        <Card className="mt-3 comment-card" onClick={() => { moveToCommentDetailPage(id); }} key={commentIndex}>
                             <img
                                 alt="user"
                                 className="post-detail-user-image"
@@ -157,25 +172,14 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
                                     </div>
 
                                     <div
-                                        className="reaction-icon-container saved-container"
-                                        onClick={e => { triggerMutedReaction(e, commentIndex, "save"); }}
+                                        className="reaction-icon-container reply-container"
+                                        onClick={e => { triggerVocalReaction(e, commentObj); }}
                                     >
-                                        <span className="reply-icon" style={false ? { paddingTop: "6px" } : {}}>
-                                            {
-                                                commentObj?.isSaved ? (
-                                                    <img width="20" height="20" src={String(savedIcon)} alt="like" />
-                                                ) : (
-                                                    <CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
-                                                )
-                                            }
+                                        <span className="reply-icon">
+                                            <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
                                         </span>
 
-                                        <span
-                                            className="post-reaction-data"
-                                            style={commentObj?.isSaved ? { color: "var(--saved-color)" } : {}}
-                                        >
-                                            {getFormattedNumber(saved ?? 0)}
-                                        </span>
+                                        <span className="post-reaction-data">{getFormattedNumber(comments ?? 0)}</span>
                                     </div>
 
                                     <div
@@ -195,7 +199,7 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
                 })
             }
         </>
-    );
+    )
 };
 
 export default CommentList;

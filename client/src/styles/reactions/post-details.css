@@ -77,6 +77,11 @@
     position: relative;
 }
 
+.comment-card:hover {
+    cursor: pointer;
+    background-color: var(--common-hover-back-color);
+}
+
 #post-detail-seperator {
     width: 100%;
     height: 50px;
