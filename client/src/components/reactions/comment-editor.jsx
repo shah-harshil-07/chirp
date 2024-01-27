@@ -1,11 +1,12 @@
 import "src/styles/reactions/index.css";
 
 import CIcon from "@coreui/icons-react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import React, { useRef, useState } from "react";
 import { cilImage, cilSmile } from "@coreui/icons";
 
 import API from "src/api";
-import { useDispatch } from "react-redux";
 import ImgHolder from "../utilities/img-holder";
 import CustomModal from "../utilities/custom-modal";
 import * as Constants from "src/utilities/constants";
@@ -18,7 +19,8 @@ import usePostServices from "src/custom-hooks/post-services";
 import useImageConverter from "src/custom-hooks/image-converter";
 
 const CommentEditor = post => {
-    const { createdAt, poll, user: postCreator, _id: postId } = post;
+    const navigate = useNavigate();
+    const { createdAt, poll, user: postCreator, id, type, originalPostId } = post;
     const userDetails = getUserDetails() ?? {};
     const { name, username } = postCreator ?? {};
     const { picture: userPictureUrl } = userDetails;
@@ -36,7 +38,14 @@ const CommentEditor = post => {
 
     const createComment = async () => {
         if (text) {
-            const data = { text, postId };
+            const data = { text };
+            if (type === "comment") {
+                data["parentCommentId"] = id;
+                data["postId"] = originalPostId;
+            } else {
+                data["postId"] = id;
+            }
+
             const formData = new FormData();
             formData.append("data", JSON.stringify(data));
 
@@ -55,6 +64,7 @@ const CommentEditor = post => {
             }
 
             dispatch(closeModal());
+            setTimeout(() => { navigate(0); }, 5000);
         }
     }
 

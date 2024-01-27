@@ -7,7 +7,8 @@ export class ValidationFactory {
     }
 
     private static isString(value: any): boolean {
-        return typeof value === "string";
+        const allowedTypes = ["string", "undefined"];
+        return allowedTypes.includes(typeof value);
     }
 
     private static checkDateValidity(value: string): boolean {

@@ -1,19 +1,19 @@
+import { join } from "path";
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
-import { ConfigModule as NestConfig } from "@nestjs/config";
-import { MailerModule } from "@nestjs-modules/mailer";
-import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
-import { MulterModule } from "@nestjs/platform-express";
 import { ScheduleModule } from "@nestjs/schedule";
-import { join } from "path";
+import { MailerModule } from "@nestjs-modules/mailer";
+import { MulterModule } from "@nestjs/platform-express";
+import { ConfigModule as NestConfig } from "@nestjs/config";
+import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 
+import { AuthModule } from "./auth/auth.module";
 import { PostModule } from "./posts/posts.module";
 import { UsersModule } from "./users/users.module";
 import { CommonModule } from "./common/common.module";
-import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "./config/config.module";
-import { CommentsModule } from './reactions/comments/comments.module';
-import { LikesModule } from './reactions/savesAndLikes/savesAndLikes.module';
+import { CommentsModule } from "./reactions/comments/comments.module";
+import { LikesModule } from "./reactions/savesAndLikes/savesAndLikes.module";
 
 @Module({
 	imports: [
@@ -39,8 +39,8 @@ import { LikesModule } from './reactions/savesAndLikes/savesAndLikes.module';
 		CommonModule,
 		AuthModule,
 		ConfigModule,
-		CommentsModule,
 		LikesModule,
+		CommentsModule,
 	],
 })
 export class AppModule { }

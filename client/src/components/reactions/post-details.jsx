@@ -85,6 +85,7 @@ const PostDetails = () => {
                 text: post?.text ?? '',
                 views: post?.views ?? 0,
                 poll: post?.poll ?? null,
+                originalPostId: post?.postId ?? null,
                 parentPostDetails: {
                     id: post?.parentPost?._id ?? '',
                     text: post?.parentPost?.text ?? '',
@@ -127,6 +128,7 @@ const PostDetails = () => {
                     views: commentObj?.views ?? 0,
                     text: commentObj?.text ?? '',
                     id: commentObj?._id ?? commentIndex,
+                    originalPostId: commentObj?.postId ?? '',
                     user: {
                         userId,
                         name: name ?? '',
@@ -254,9 +256,9 @@ const PostDetails = () => {
         let reactionFn = null;
         if (reactionType === "repost") reactionFn = openRepostBox;
         else if (reactionType === "comment") reactionFn = openCommentBox;
-        const data = { ...postDetails };
+        const data = { ...postDetails, type: location?.state?.type ?? "post" };
         if (data?.user?.picture) data.user.picture = userImages?.[postDetails?.user?.id ?? '0'] ?? '';
-        if (reactionFn) reactionFn(e, postDetails); else showError("Something went wrong!");
+        if (reactionFn) reactionFn(e, data); else showError("Something went wrong!");
     }
 
     const moveBack = () => {
@@ -456,8 +458,10 @@ const PostDetails = () => {
             {
                 isUserLoggedIn() ? (
                     <ReplyBox
-                        postId={postId}
-                        username={postDetails?.user?.username}
+                        id={postId ?? ''}
+                        type={location?.state?.type ?? "post"}
+                        username={postDetails?.user?.username ?? ''}
+                        originalPostId={postDetails?.originalPostId ?? ''}
                         picture={userImages?.[postDetails?.user?.id ?? '0']}
                     />
                 ) : (
@@ -465,7 +469,7 @@ const PostDetails = () => {
                 )
             }
 
-            <CommentList commentList={commentList} userImages={userImages} isLoading={isLoading} />
+            <CommentList isLoading={isLoading} userImages={userImages} commentList={commentList} />
         </div>
     );
 }

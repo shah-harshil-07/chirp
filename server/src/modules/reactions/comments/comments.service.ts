@@ -1,6 +1,6 @@
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
-import { Injectable, InternalServerErrorException, UseInterceptors } from "@nestjs/common";
+import { Inject, Injectable, InternalServerErrorException, UseInterceptors, forwardRef } from "@nestjs/common";
 
 import { Comments } from "./comments.schema";
 import { Post } from "src/modules/posts/post.schema";
@@ -13,9 +13,9 @@ import { ICommentData, ICommentList, IUserComment } from "./comments.dto";
 @UseInterceptors(ResponseInterceptor)
 export class CommentsService {
     constructor(
-        private readonly postService: PostService,
         private readonly configService: ConfigService,
         @InjectModel(Comments.name) private readonly commentModel: Model<Comments>,
+        @Inject(forwardRef(() => PostService)) private readonly postService: PostService,
     ) { }
 
     async create(commentData: ICommentData): Promise<Comments> {

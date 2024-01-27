@@ -1,14 +1,16 @@
 import { Model, ObjectId } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { SchedulerRegistry } from "@nestjs/schedule";
-import { Inject, Injectable, InternalServerErrorException, UseInterceptors } from "@nestjs/common";
+import { Inject, Injectable, InternalServerErrorException, UseInterceptors, forwardRef } from "@nestjs/common";
 
 import { Post, ScheduledPost } from "./post.schema";
 import { CommonService } from "../common/common.service";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { ConfigService } from "src/modules/config/config.service";
-import { IDuration, ParsedPostDTO, ScheduledPostDTO } from "./post.dto";
+import { Comments } from "../reactions/comments/comments.schema";
+import { CommentsService } from "../reactions/comments/comments.service";
 import { CustomUnprocessableEntityException } from "src/exception-handlers/422/handler";
+import { IDuration, IRepostedCommentPost, ParsedPostDTO, ScheduledPostDTO } from "./post.dto";
 
 @Injectable()
 @UseInterceptors(ResponseInterceptor)
@@ -19,13 +21,14 @@ export class PostService {
         private readonly configService: ConfigService,
         private schedulerRegistery: SchedulerRegistry,
         @InjectModel(Post.name) private readonly postModel: Model<Post>,
+        @Inject(forwardRef(() => CommentsService)) private commentsService: CommentsService,
         @InjectModel(ScheduledPost.name) private readonly scheduledPostModel: Model<ScheduledPost>,
     ) { }
 
     async findAll(): Promise<Post[]> {
         await this.postModel.updateMany({}, { $inc: { views: 1 } });
 
-        return this.postModel.aggregate([
+        const posts = await this.postModel.aggregate([
             { $lookup: { from: "Users", localField: "user", foreignField: "_id", as: "user" } },
             { $unwind: "$user" },
             { $lookup: { from: "PostMessages", localField: "postId", foreignField: "_id", as: "post" } },
@@ -67,6 +70,28 @@ export class PostService {
                 }
             },
         ]);
+
+        const clonedPosts = JSON.parse(JSON.stringify(posts));
+
+        for (const post of clonedPosts) {
+            if (post.postId && !post?.post?._id) {
+                post.post = await this.getRepostedCommentData(post.postId);
+            }
+        }
+
+        return clonedPosts;
+    }
+
+    async getRepostedCommentData(postId: string): Promise<Comments> {
+        const commentData = await this.commentsService.getCommentDetails(postId);
+        const clonedCommentData = JSON.parse(JSON.stringify(commentData));
+
+        if (clonedCommentData?.userId) {
+            clonedCommentData.user = clonedCommentData.userId;
+            delete clonedCommentData["userId"];
+        }
+
+        return clonedCommentData;
     }
 
     async getAllSchduledPosts(userId: ObjectId): Promise<ScheduledPost[]> {
@@ -156,10 +181,11 @@ export class PostService {
         return await this.postModel.findByIdAndUpdate(postId, { $inc: { [attribute]: count } }, { new: true });
     }
 
-    async getDetails(postId: string): Promise<Post> {
-        const postData = await this
-            .postModel
-            .findById(postId)
+    async getDetails(postId: string): Promise<IRepostedCommentPost | Post> {
+        let clonedPost: IRepostedCommentPost;
+        const postModelObj = this.postModel.findById(postId);
+
+        const postData = await postModelObj
             .populate("user", "_id name username picture")
             .populate({
                 path: "postId",
@@ -172,12 +198,17 @@ export class PostService {
             .lean()
             .exec();
 
+        clonedPost = JSON.parse(JSON.stringify(postData));
+
         if (postData) {
-            postData["parentPost"] = postData?.postId ?? null;
-            if (postData?.postId) delete postData.postId;
+            const repostId = (await this.postModel.findById(postId))?.postId?.toString();
+            if (repostId && clonedPost?.parentPost == null) {
+                clonedPost["type"] = "comment";
+                clonedPost["parentPost"] = await this.getRepostedCommentData(repostId);
+            }
         }
 
-        return postData;
+        return clonedPost;
     }
 
     async getUserPostDetails(userId: string): Promise<Post[]> {

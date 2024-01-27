@@ -1,5 +1,8 @@
 import { IsJSON, IsOptional } from "class-validator";
 
+import { Post } from "./post.schema";
+import { Comments } from "src/modules/reactions/comments/comments.schema";
+
 export class PostDTO {
     @IsJSON()
     data: string;
@@ -48,4 +51,9 @@ export interface IVotingUserData {
     postId: string;
     choiceIndex: number;
     prevChoiceIndex?: number;
+}
+
+export class IRepostedCommentPost extends Post {
+    type: string;
+    parentPost: Comments;
 }

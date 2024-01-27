@@ -34,8 +34,9 @@ export interface ICommentData {
 export const validationParamList = {
     store: {
         commentData: {
+            postId: "isString",
             text: "required|isString",
-            postId: "required|isString",
+            parentCommentId: "isString",
         },
     },
 }

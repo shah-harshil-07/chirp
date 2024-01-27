@@ -114,92 +114,86 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
     }
 
     const triggerVocalReaction = (e, commentDetails) => {
-        const data = { ...commentDetails };
+        const data = { ...commentDetails, type: "comment" };
         if (data?.user?.picture) data.user.picture = userImages?.[commentDetails?.user?.userId ?? '0'] ?? '';
-        openCommentBox(e, commentDetails);
+        openCommentBox(e, data);
     }
 
-    return isLoading ? <Loader /> : (
-        <>
-            {
-                commentList.map((commentObj, commentIndex) => {
-                    const { user, text, createdAt, likes, comments, views, images, id } = commentObj;
-                    const { userId, name, username } = user ?? {};
+    return isLoading ? <Loader /> : commentList.map((commentObj, commentIndex) => {
+        const { user, text, createdAt, likes, comments, views, images, id } = commentObj;
+        const { userId, name, username } = user ?? {};
 
-                    return (
-                        <Card className="mt-3 comment-card" onClick={() => { moveToCommentDetailPage(id); }} key={commentIndex}>
-                            <img
-                                alt="user"
-                                className="post-detail-user-image"
-                                onClick={e => { moveToUserPage(e, userId); }}
-                                src={userImages[userId] ?? String(sampleUserImg)}
-                                onError={e => { e.target.src = String(sampleUserImg); }}
-                            />
+        return (
+            <Card className="mt-3 comment-card" onClick={() => { moveToCommentDetailPage(id); }} key={commentIndex}>
+                <img
+                    alt="user"
+                    className="post-detail-user-image"
+                    onClick={e => { moveToUserPage(e, userId); }}
+                    src={userImages[userId] ?? String(sampleUserImg)}
+                    onError={e => { e.target.src = String(sampleUserImg); }}
+                />
 
-                            <div id="comment-container">
-                                <div className="row mx-0 font-size-18">
-                                    <b>{name ?? ''}</b>&nbsp;
-                                    {username && <span>{`@${username}`}</span>}
-                                    <span><div className="seperator-container"><div className="seperator" /></div></span>
-                                    <span>{getPostTiming(createdAt)}</span>
-                                </div>
+                <div id="comment-container">
+                    <div className="row mx-0 font-size-18">
+                        <b>{name ?? ''}</b>&nbsp;
+                        {username && <span>{`@${username}`}</span>}
+                        <span><div className="seperator-container"><div className="seperator" /></div></span>
+                        <span>{getPostTiming(createdAt)}</span>
+                    </div>
 
-                                <div className="row mx-0 font-size-20"><div>{text ?? ''}</div></div>
+                    <div className="row mx-0 font-size-20"><div>{text ?? ''}</div></div>
 
-                                {images?.length > 0 && <ImgHolder images={images} showActionButtons={false} />}
+                    {images?.length > 0 && <ImgHolder images={images} showActionButtons={false} />}
 
-                                <div className="action-bar">
-                                    <div
-                                        className="reaction-icon-container like-container"
-                                        onClick={e => { triggerMutedReaction(e, commentIndex, "like"); }}
-                                    >
-                                        <span className="reply-icon" style={commentObj?.isLiked ? { paddingTop: "6px" } : {}}>
-                                            {
-                                                commentObj?.isLiked ? (
-                                                    <img width="20" height="20" src={String(likeIcon)} alt="like" />
-                                                ) : (
-                                                    <CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
-                                                )
-                                            }
-                                        </span>
+                    <div className="action-bar">
+                        <div
+                            className="reaction-icon-container like-container"
+                            onClick={e => { triggerMutedReaction(e, commentIndex, "like"); }}
+                        >
+                            <span className="reply-icon" style={commentObj?.isLiked ? { paddingTop: "6px" } : {}}>
+                                {
+                                    commentObj?.isLiked ? (
+                                        <img width="20" height="20" src={String(likeIcon)} alt="like" />
+                                    ) : (
+                                        <CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
+                                    )
+                                }
+                            </span>
 
-                                        <span
-                                            className="post-reaction-data"
-                                            style={commentObj?.isLiked ? { color: "var(--liked-color)" } : {}}
-                                        >
-                                            {getFormattedNumber(likes ?? 0)}
-                                        </span>
-                                    </div>
+                            <span
+                                className="post-reaction-data"
+                                style={commentObj?.isLiked ? { color: "var(--liked-color)" } : {}}
+                            >
+                                {getFormattedNumber(likes ?? 0)}
+                            </span>
+                        </div>
 
-                                    <div
-                                        className="reaction-icon-container reply-container"
-                                        onClick={e => { triggerVocalReaction(e, commentObj); }}
-                                    >
-                                        <span className="reply-icon">
-                                            <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
-                                        </span>
+                        <div
+                            className="reaction-icon-container reply-container"
+                            onClick={e => { triggerVocalReaction(e, commentObj); }}
+                        >
+                            <span className="reply-icon">
+                                <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
+                            </span>
 
-                                        <span className="post-reaction-data">{getFormattedNumber(comments ?? 0)}</span>
-                                    </div>
+                            <span className="post-reaction-data">{getFormattedNumber(comments ?? 0)}</span>
+                        </div>
 
-                                    <div
-                                        onClick={e => { e.stopPropagation(); }}
-                                        className="reaction-icon-container views-container"
-                                    >
-                                        <span className="reply-icon">
-                                            <CIcon title="Views" icon={cilChart} className="chirp-action" />
-                                        </span>
+                        <div
+                            onClick={e => { e.stopPropagation(); }}
+                            className="reaction-icon-container views-container"
+                        >
+                            <span className="reply-icon">
+                                <CIcon title="Views" icon={cilChart} className="chirp-action" />
+                            </span>
 
-                                        <span className="post-reaction-data">{getFormattedNumber(views ?? 0)}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </Card>
-                    );
-                })
-            }
-        </>
-    )
+                            <span className="post-reaction-data">{getFormattedNumber(views ?? 0)}</span>
+                        </div>
+                    </div>
+                </div>
+            </Card>
+        );
+    });
 };
 
 export default CommentList;

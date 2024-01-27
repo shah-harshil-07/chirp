@@ -12,7 +12,7 @@ import useToaster from "src/custom-hooks/toaster-message";
 import EmojiContainer from "../utilities/emoji-container";
 import useImageConverter from "src/custom-hooks/image-converter";
 
-const ReplyBox = ({ username, postId, picture }) => {
+const ReplyBox = ({ username, id, picture, type, originalPostId }) => {
     const { showError, showSuccess } = useToaster();
     const { uploadImagesAction } = useImageConverter();
     const navigate = useNavigate(), textboxRef = useRef(null);
@@ -63,7 +63,15 @@ const ReplyBox = ({ username, postId, picture }) => {
 
     const postComment = async () => {
         if (checkTextValidity()) {
-            const data = { text, postId };
+            // const data = { text, postId };
+            const data = { text };
+            if (type === "comment") {
+                data["parentCommentId"] = id;
+                data["postId"] = originalPostId;
+            } else {
+                data["postId"] = id;
+            }
+
             const formData = new FormData();
             formData.append("data", JSON.stringify(data));
 

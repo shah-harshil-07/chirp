@@ -311,241 +311,245 @@ const PostUtilities = ({ parentName }) => {
 
     return (
         <div className={!posts?.length ? "no-posts-box" : ''}>
-            {isLoading && <Loader />}
-            {!posts?.length && <i>No posts are available</i>}
-
             {
-                posts.map((post, postIndex) => {
-                    const { post: parentPost, createdAt, isLiked, isSaved, _id: postId } = post;
-                    const { likes, reposts, comments, views, saved, } = post;
-                    const { name, username, _id: userId } = post.user ?? {};
-                    let parentPostImages = [], pureImages = [];
-                    const images = postImages[postIndex];
+                isLoading ? <Loader /> : (
+                    <>
+                        {!posts?.length && <i>No posts are available</i>}
+                        {
+                            posts.map((post, postIndex) => {
+                                const { post: parentPost, createdAt, isLiked, isSaved, _id: postId } = post;
+                                const { likes, reposts, comments, views, saved, } = post;
+                                const { name, username, _id: userId } = post.user ?? {};
+                                let parentPostImages = [], pureImages = [];
+                                const images = postImages[postIndex];
 
-                    const commentObj = userComments?.[postIndex];
+                                const commentObj = userComments?.[postIndex];
 
-                    const { text: parentPostText, createdAt: parentCreatedAt, user: parentPostUser } = parentPost ?? {};
-                    const { name: parentName, _id: parentUserId, username: parentUserName } = parentPostUser ?? {};
+                                const { text: parentPostText, createdAt: parentCreatedAt, user: parentPostUser } = parentPost ?? {};
+                                const { name: parentName, _id: parentUserId, username: parentUserName } = parentPostUser ?? {};
 
-                    if (images?.length) {
-                        images.forEach(image => {
-                            if (Array.isArray(image)) parentPostImages = [...image];
-                            else if (image) pureImages.push(image);
-                        });
-                    }
-
-                    return name && username ? (
-                        <Card className="post-card" key={postIndex} onClick={() => { moveToCommentList(postId); }}>
-                            <img
-                                alt="user"
-                                onMouseOut={closeUserCard}
-                                className="post-user-image"
-                                onClick={e => { moveToUserPage(e, userId); }}
-                                src={userImages[userId] ?? String(sampleUserImg)}
-                                onMouseOver={e => { openUserCard(e, post?.user); }}
-                                onError={e => { e.target.src = String(sampleUserImg); }}
-                            />
-
-                            <div className="post-card-body">
-                                <div className="row mx-3">
-                                    <b>{name}</b>&nbsp;
-                                    <span>{`@${username}`}</span>
-                                    <span><div className="seperator-container"><div className="seperator" /></div></span>
-                                    <span>{getPostTiming(createdAt)}</span>
-                                </div>
-
-                                <div className="row mx-3"><div>{post?.text ?? ''}</div></div>
-
-                                {post?.poll?.choices && getPollJSX(post.poll, postIndex)}
-                                {
-                                    pureImages?.length > 0 && (
-                                        <ImgHolder images={pureImages} showActionButtons={false} />
-                                    )
+                                if (images?.length) {
+                                    images.forEach(image => {
+                                        if (Array.isArray(image)) parentPostImages = [...image];
+                                        else if (image) pureImages.push(image);
+                                    });
                                 }
 
-                                {
-                                    parentPostUser && (
-                                        <div
-                                            className="repost-body user-post-list-repost-body"
-                                            style={{ marginTop: pureImages.length ? "10px" : '0' }}
-                                        >
-                                            <img
-                                                alt="post creator"
-                                                onMouseOut={closeUserCard}
-                                                className="parent-post-user-img"
-                                                onClick={e => { moveToUserPage(e, parentUserId); }}
-                                                src={userImages[parentUserId] ?? String(sampleUserImg)}
-                                                onMouseOver={e => { openUserCard(e, parentPostUser); }}
-                                                onError={e => { e.target.src = String(sampleUserImg); }}
-                                            />
+                                return name && username ? (
+                                    <Card className="post-card" key={postIndex} onClick={() => { moveToCommentList(postId); }}>
+                                        <img
+                                            alt="user"
+                                            onMouseOut={closeUserCard}
+                                            className="post-user-image"
+                                            onClick={e => { moveToUserPage(e, userId); }}
+                                            src={userImages[userId] ?? String(sampleUserImg)}
+                                            onMouseOver={e => { openUserCard(e, post?.user); }}
+                                            onError={e => { e.target.src = String(sampleUserImg); }}
+                                        />
 
-                                            <div className="repost-body-content">
-                                                <div className="row mx-0">
-                                                    <b className="font-size-16">{parentName}</b>&nbsp;
-                                                    <span className="font-size-16">{`@${parentUserName}`}</span>
-                                                    <span>
-                                                        <div className="seperator-container">
-                                                            <div className="seperator" />
-                                                        </div>
-                                                    </span>
-                                                    <span className="font-size-16">{getPostTiming(parentCreatedAt)}</span>
-                                                </div>
-
-                                                <div className="row mx-0 mt-1 font-size-16">
-                                                    <div>{parentPostText?.slice(0, 40) ?? ''}</div>
-                                                </div>
-
-                                                {
-                                                    parentPostImages?.length > 0 && (
-                                                        <ImgHolder images={parentPostImages} showActionButtons={false} />
-                                                    )
-                                                }
+                                        <div className="post-card-body">
+                                            <div className="row mx-3">
+                                                <b>{name}</b>&nbsp;
+                                                <span>{`@${username}`}</span>
+                                                <span><div className="seperator-container"><div className="seperator" /></div></span>
+                                                <span>{getPostTiming(createdAt)}</span>
                                             </div>
-                                        </div>
-                                    )
-                                }
 
-                                <div className="action-bar">
-                                    <div
-                                        className="reaction-icon-container reply-container"
-                                        onClick={e => { triggerVocalReaction(e, post, "comment"); }}
-                                    >
-                                        <span className="reply-icon">
-                                            <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
-                                        </span>
+                                            <div className="row mx-3"><div>{post?.text ?? ''}</div></div>
 
-                                        <span className="post-reaction-data">{getFormattedNumber(comments ?? 0)}</span>
-                                    </div>
-
-                                    <div
-                                        className="reaction-icon-container repost-container"
-                                        onClick={e => { triggerVocalReaction(e, post, "repost", pureImages); }}
-                                    >
-                                        <span className="reply-icon">
-                                            <CIcon icon={cilSend} title="Repost" className="chirp-action" />
-                                        </span>
-
-                                        <span className="post-reaction-data">{getFormattedNumber(reposts ?? 0)}</span>
-                                    </div>
-
-                                    <div
-                                        className="reaction-icon-container like-container"
-                                        onClick={e => { triggerMutedReaction(e, postIndex, "like"); }}
-                                    >
-                                        <span className="reply-icon" style={isLiked ? { paddingTop: "6px" } : {}}>
+                                            {post?.poll?.choices && getPollJSX(post.poll, postIndex)}
                                             {
-                                                isLiked ? (
-                                                    <img width="20" height="20" src={String(likeIcon)} alt="like" />
-                                                ) : (
-                                                    <CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
+                                                pureImages?.length > 0 && (
+                                                    <ImgHolder images={pureImages} showActionButtons={false} />
                                                 )
                                             }
-                                        </span>
 
-                                        <span
-                                            className="post-reaction-data"
-                                            style={isLiked ? { color: "var(--liked-color)" } : {}}
-                                        >
-                                            {getFormattedNumber(likes ?? 0)}
-                                        </span>
-                                    </div>
-
-                                    <div
-                                        onClick={e => { e.stopPropagation(); }}
-                                        className="reaction-icon-container views-container"
-                                    >
-                                        <span className="reply-icon">
-                                            <CIcon title="Views" icon={cilChart} className="chirp-action" />
-                                        </span>
-
-                                        <span className="post-reaction-data">{getFormattedNumber(views ?? 0)}</span>
-                                    </div>
-
-                                    <div
-                                        className="reaction-icon-container saved-container"
-                                        onClick={e => { triggerMutedReaction(e, postIndex, "save"); }}
-                                    >
-                                        <span className="reply-icon" style={isSaved ? { paddingTop: "6px" } : {}}>
                                             {
-                                                isSaved ? (
-                                                    <img width="20" height="20" src={String(savedIcon)} alt="like" />
-                                                ) : (
-                                                    <CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
-                                                )
-                                            }
-                                        </span>
+                                                parentPostUser && (
+                                                    <div
+                                                        className="repost-body user-post-list-repost-body"
+                                                        style={{ marginTop: pureImages.length ? "10px" : '0' }}
+                                                    >
+                                                        <img
+                                                            alt="post creator"
+                                                            onMouseOut={closeUserCard}
+                                                            className="parent-post-user-img"
+                                                            onClick={e => { moveToUserPage(e, parentUserId); }}
+                                                            src={userImages[parentUserId] ?? String(sampleUserImg)}
+                                                            onMouseOver={e => { openUserCard(e, parentPostUser); }}
+                                                            onError={e => { e.target.src = String(sampleUserImg); }}
+                                                        />
 
-                                        <span
-                                            className="post-reaction-data"
-                                            style={isSaved ? { color: "var(--saved-color)" } : {}}
-                                        >
-                                            {getFormattedNumber(saved ?? 0)}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {
-                                    postUtilityTheme === "comments" && commentObj && (
-                                        <>
-                                            <hr />
-
-                                            <div
-                                                className="repost-body user-comment-body"
-                                                onClick={() => { moveToCommentList(postId); }}
-                                            >
-                                                <img
-                                                    alt="post creator"
-                                                    className="parent-post-user-img"
-                                                    onError={e => e.target.src = String(sampleUserImg)}
-                                                    src={commentObj?.user?.picture ?? String(sampleUserImg)}
-                                                />
-
-                                                <div className="repost-body-content user-comment-body-content">
-                                                    <div className="user-comment-head">
-                                                        <b className="font-size-16">{commentObj?.user?.name ?? ''}</b>&nbsp;
-
-                                                        <span className="font-size-16">
-                                                            {`@${commentObj?.user?.username ?? ''}`}
-                                                        </span>
-
-                                                        <span>
-                                                            <div className="seperator-container">
-                                                                <div className="seperator" />
+                                                        <div className="repost-body-content">
+                                                            <div className="row mx-0">
+                                                                <b className="font-size-16">{parentName}</b>&nbsp;
+                                                                <span className="font-size-16">{`@${parentUserName}`}</span>
+                                                                <span>
+                                                                    <div className="seperator-container">
+                                                                        <div className="seperator" />
+                                                                    </div>
+                                                                </span>
+                                                                <span className="font-size-16">{getPostTiming(parentCreatedAt)}</span>
                                                             </div>
-                                                        </span>
 
-                                                        <span className="font-size-16">
-                                                            {getPostTiming(commentObj?.createdAt)}
-                                                        </span>
+                                                            <div className="row mx-0 mt-1 font-size-16">
+                                                                <div>{parentPostText?.slice(0, 40) ?? ''}</div>
+                                                            </div>
+
+                                                            {
+                                                                parentPostImages?.length > 0 && (
+                                                                    <ImgHolder images={parentPostImages} showActionButtons={false} />
+                                                                )
+                                                            }
+                                                        </div>
                                                     </div>
+                                                )
+                                            }
 
-                                                    <div className="user-comment-text">
-                                                        <div>{commentObj?.text ?? ''}</div>
-                                                    </div>
+                                            <div className="action-bar">
+                                                <div
+                                                    className="reaction-icon-container reply-container"
+                                                    onClick={e => { triggerVocalReaction(e, post, "comment"); }}
+                                                >
+                                                    <span className="reply-icon">
+                                                        <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
+                                                    </span>
 
-                                                    <div className="user-comment-img-box">
+                                                    <span className="post-reaction-data">{getFormattedNumber(comments ?? 0)}</span>
+                                                </div>
+
+                                                <div
+                                                    className="reaction-icon-container repost-container"
+                                                    onClick={e => { triggerVocalReaction(e, post, "repost", pureImages); }}
+                                                >
+                                                    <span className="reply-icon">
+                                                        <CIcon icon={cilSend} title="Repost" className="chirp-action" />
+                                                    </span>
+
+                                                    <span className="post-reaction-data">{getFormattedNumber(reposts ?? 0)}</span>
+                                                </div>
+
+                                                <div
+                                                    className="reaction-icon-container like-container"
+                                                    onClick={e => { triggerMutedReaction(e, postIndex, "like"); }}
+                                                >
+                                                    <span className="reply-icon" style={isLiked ? { paddingTop: "6px" } : {}}>
                                                         {
-                                                            commentObj?.images?.length > 0 && (
-                                                                <ImgHolder
-                                                                    showActionButtons={false}
-                                                                    images={commentObj?.images ?? []}
-                                                                />
+                                                            isLiked ? (
+                                                                <img width="20" height="20" src={String(likeIcon)} alt="like" />
+                                                            ) : (
+                                                                <CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
                                                             )
                                                         }
-                                                    </div>
+                                                    </span>
+
+                                                    <span
+                                                        className="post-reaction-data"
+                                                        style={isLiked ? { color: "var(--liked-color)" } : {}}
+                                                    >
+                                                        {getFormattedNumber(likes ?? 0)}
+                                                    </span>
+                                                </div>
+
+                                                <div
+                                                    onClick={e => { e.stopPropagation(); }}
+                                                    className="reaction-icon-container views-container"
+                                                >
+                                                    <span className="reply-icon">
+                                                        <CIcon title="Views" icon={cilChart} className="chirp-action" />
+                                                    </span>
+
+                                                    <span className="post-reaction-data">{getFormattedNumber(views ?? 0)}</span>
+                                                </div>
+
+                                                <div
+                                                    className="reaction-icon-container saved-container"
+                                                    onClick={e => { triggerMutedReaction(e, postIndex, "save"); }}
+                                                >
+                                                    <span className="reply-icon" style={isSaved ? { paddingTop: "6px" } : {}}>
+                                                        {
+                                                            isSaved ? (
+                                                                <img width="20" height="20" src={String(savedIcon)} alt="like" />
+                                                            ) : (
+                                                                <CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
+                                                            )
+                                                        }
+                                                    </span>
+
+                                                    <span
+                                                        className="post-reaction-data"
+                                                        style={isSaved ? { color: "var(--saved-color)" } : {}}
+                                                    >
+                                                        {getFormattedNumber(saved ?? 0)}
+                                                    </span>
                                                 </div>
                                             </div>
 
-                                            <span className="user-comment-load-all">Load All Comments</span>
-                                        </>
-                                    )
-                                }
-                            </div>
-                        </Card>
-                    ) : (
-                        <></>
-                    );
-                })
+                                            {
+                                                postUtilityTheme === "comments" && commentObj && (
+                                                    <>
+                                                        <hr />
+
+                                                        <div
+                                                            className="repost-body user-comment-body"
+                                                            onClick={() => { moveToCommentList(postId); }}
+                                                        >
+                                                            <img
+                                                                alt="post creator"
+                                                                className="parent-post-user-img"
+                                                                onError={e => e.target.src = String(sampleUserImg)}
+                                                                src={commentObj?.user?.picture ?? String(sampleUserImg)}
+                                                            />
+
+                                                            <div className="repost-body-content user-comment-body-content">
+                                                                <div className="user-comment-head">
+                                                                    <b className="font-size-16">{commentObj?.user?.name ?? ''}</b>&nbsp;
+
+                                                                    <span className="font-size-16">
+                                                                        {`@${commentObj?.user?.username ?? ''}`}
+                                                                    </span>
+
+                                                                    <span>
+                                                                        <div className="seperator-container">
+                                                                            <div className="seperator" />
+                                                                        </div>
+                                                                    </span>
+
+                                                                    <span className="font-size-16">
+                                                                        {getPostTiming(commentObj?.createdAt)}
+                                                                    </span>
+                                                                </div>
+
+                                                                <div className="user-comment-text">
+                                                                    <div>{commentObj?.text ?? ''}</div>
+                                                                </div>
+
+                                                                <div className="user-comment-img-box">
+                                                                    {
+                                                                        commentObj?.images?.length > 0 && (
+                                                                            <ImgHolder
+                                                                                showActionButtons={false}
+                                                                                images={commentObj?.images ?? []}
+                                                                            />
+                                                                        )
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <span className="user-comment-load-all">Load All Comments</span>
+                                                    </>
+                                                )
+                                            }
+                                        </div>
+                                    </Card>
+                                ) : (
+                                    <></>
+                                );
+                            })
+                        }
+                    </>
+                )
             }
         </div>
     );
