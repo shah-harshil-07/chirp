@@ -91,6 +91,7 @@ const PostDetails = () => {
                     text: post?.parentPost?.text ?? '',
                     poll: post?.parentPost?.poll ?? null,
                     images: post?.parentPost?.images ?? [],
+                    type: post?.parentPost?.type ?? "post",
                     createdAt: post?.parentPost?.createdAt ?? null,
                     user: {
                         id: post?.parentPost?.user?._id ?? '',
@@ -274,10 +275,10 @@ const PostDetails = () => {
         }
     }
 
-    const moveToPostDetailPage = (e, postId) => {
+    const moveToPostDetailPage = (e, postId, type = "post") => {
         if (postId) {
             e.stopPropagation();
-            navigate(`/post/${postId}`);
+            navigate(`/post/${postId}`, { state: { type } });
             window.location.reload();
         } else {
             showError("post id is unavailable.");
@@ -338,7 +339,12 @@ const PostDetails = () => {
 
                                             <div
                                                 className="post-detail-repost-body-content"
-                                                onClick={e => { moveToPostDetailPage(e, postDetails?.parentPostDetails?.id); }}
+                                                onClick={e => {
+                                                    moveToPostDetailPage(e,
+                                                        postDetails?.parentPostDetails?.id ?? '',
+                                                        postDetails?.parentPostDetails?.type ?? "post"
+                                                    );
+                                                }}
                                             >
                                                 <div className="row mx-0 font-size-19 post-detail-repost-body-title">
                                                     <b>{postDetails?.parentPostDetails?.user?.name ?? ''}</b>&nbsp;

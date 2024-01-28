@@ -203,8 +203,8 @@ export class PostService {
         if (postData) {
             const repostId = (await this.postModel.findById(postId))?.postId?.toString();
             if (repostId && clonedPost?.parentPost == null) {
-                clonedPost["type"] = "comment";
                 clonedPost["parentPost"] = await this.getRepostedCommentData(repostId);
+                clonedPost["parentPost"]["type"] = "comment";
             }
         }
 
