@@ -18,6 +18,7 @@ import useToaster from "src/custom-hooks/toaster-message";
 import ImgHolder from "src/components/utilities/img-holder";
 import usePostServices from "src/custom-hooks/post-services";
 import { getCommonHeader, isUserLoggedIn } from "src/utilities/helpers";
+import DisplayedText from "../utilities/displayed-text";
 
 const PostDetails = () => {
     const location = useLocation();
@@ -314,7 +315,9 @@ const PostDetails = () => {
                             </div>
 
                             <div className="post-detail-body">
-                                <div className="row mx-0 font-size-20"><div>{postDetails?.text ?? ''}</div></div>
+                                <div className="row mx-0 font-size-20">
+                                    <div><DisplayedText text={postDetails?.text ?? ''} /></div>
+                                </div>
 
                                 {postDetails?.poll?.choices && getPollJSX(postDetails.poll, postDetails.id)}
                                 {
@@ -359,7 +362,7 @@ const PostDetails = () => {
                                                 </div>
 
                                                 <div className="row mx-0 mt-1 font-size-20">
-                                                    <div>{postDetails?.parentPostDetails?.text?.slice(0, 40) ?? ''}</div>
+                                                    <div><DisplayedText text={postDetails?.parentPostDetails?.text ?? ''} /></div>
                                                 </div>
 
                                                 {

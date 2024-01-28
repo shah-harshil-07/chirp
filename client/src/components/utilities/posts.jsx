@@ -11,6 +11,7 @@ import { cilSend, cilCommentBubble, cilChart, cilThumbUp, cilBookmark } from "@c
 import API from "src/api";
 import Loader from "./loader";
 import ImgHolder from "./img-holder";
+import DisplayedText from "./displayed-text";
 import * as Constants from "src/utilities/constants";
 import { isUserLoggedIn } from "src/utilities/helpers";
 import { getCommonHeader } from "src/utilities/helpers";
@@ -355,7 +356,7 @@ const PostUtilities = ({ parentName }) => {
                                                 <span>{getPostTiming(createdAt)}</span>
                                             </div>
 
-                                            <div className="row mx-3"><div>{post?.text ?? ''}</div></div>
+                                            <div className="row mx-3"><div><DisplayedText text={post?.text ?? ''} /></div></div>
 
                                             {post?.poll?.choices && getPollJSX(post.poll, postIndex)}
                                             {
@@ -393,7 +394,8 @@ const PostUtilities = ({ parentName }) => {
                                                             </div>
 
                                                             <div className="row mx-0 mt-1 font-size-16">
-                                                                <div>{parentPostText?.slice(0, 40) ?? ''}</div>
+                                                                {/* <div>{parentPostText?.slice(0, 40) ?? ''}</div> */}
+                                                                <div><DisplayedText text={parentPostText ?? ''} /></div>
                                                             </div>
 
                                                             {
@@ -493,6 +495,7 @@ const PostUtilities = ({ parentName }) => {
                                                         <div
                                                             className="repost-body user-comment-body"
                                                             onClick={() => { moveToCommentList(postId); }}
+                                                            style={commentObj?.images?.length ? { paddingBottom: "15px" } : {}}
                                                         >
                                                             <img
                                                                 alt="post creator"
@@ -521,7 +524,7 @@ const PostUtilities = ({ parentName }) => {
                                                                 </div>
 
                                                                 <div className="user-comment-text">
-                                                                    <div>{commentObj?.text ?? ''}</div>
+                                                                    <DisplayedText text={commentObj?.text ?? ''} />
                                                                 </div>
 
                                                                 <div className="user-comment-img-box">

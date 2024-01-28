@@ -9,6 +9,7 @@ import { cilChart, cilCommentBubble, cilThumbUp } from "@coreui/icons";
 
 import Loader from "src/components/utilities/loader";
 import * as Constants from "src/utilities/constants";
+import DisplayedText from "../utilities/displayed-text";
 import useToaster from "src/custom-hooks/toaster-message";
 import ImgHolder from "src/components/utilities/img-holder";
 import usePostServices from "src/custom-hooks/post-services";
@@ -141,7 +142,7 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
                         <span>{getPostTiming(createdAt)}</span>
                     </div>
 
-                    <div className="row mx-0 font-size-20"><div>{text ?? ''}</div></div>
+                    <div className="row mx-0 font-size-20"><div><DisplayedText text={text} /></div></div>
 
                     {images?.length > 0 && <ImgHolder images={images} showActionButtons={false} />}
 
