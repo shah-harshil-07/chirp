@@ -203,12 +203,17 @@ export class PostService {
             .exec();
 
         clonedPost = JSON.parse(JSON.stringify(postData));
+        clonedPost["parentPost"] = clonedPost["postId"];
+        if (clonedPost["postId"]) delete clonedPost["postId"];
 
-        if (postData) {
+        if (clonedPost) {
             const repostId = (await this.postModel.findById(postId))?.postId?.toString();
             if (repostId && clonedPost?.parentPost == null) {
-                clonedPost["parentPost"] = await this.getRepostedCommentData(repostId);
-                clonedPost["parentPost"]["type"] = "comment";
+                const parentPostData = await this.getRepostedCommentData(repostId);
+                const clonedParentPostData = JSON.parse(JSON.stringify(parentPostData));
+                if (clonedParentPostData) clonedParentPostData["type"] = "comment";
+                clonedPost["parentPost"] = clonedParentPostData;
+                if (clonedPost?.parentPost?.images?.length) clonedPost.parentPost.images = [];
             }
         }
 

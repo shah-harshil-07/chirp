@@ -55,5 +55,5 @@ export interface IVotingUserData {
 
 export class IRepostedCommentPost extends Post {
     type: string;
-    parentPost: Comments;
+    parentPost: any;
 }
