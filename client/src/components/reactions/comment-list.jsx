@@ -5,7 +5,7 @@ import CIcon from "@coreui/icons-react";
 import { Card } from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import { cilChart, cilCommentBubble, cilThumbUp } from "@coreui/icons";
+import { cilChart, cilCommentBubble, cilSend, cilThumbUp } from "@coreui/icons";
 
 import Loader from "src/components/utilities/loader";
 import * as Constants from "src/utilities/constants";
@@ -19,9 +19,9 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
     const navigate = useNavigate();
     const { showError } = useToaster();
     const headerData = getCommonHeader();
-    const { openCommentBox } = usePostServices();
     const likeIcon = require("src/assets/like.png");
     const sampleUserImg = require("src/assets/sample-user.png");
+    const { openCommentBox, openRepostBox } = usePostServices();
     const { getPostTiming, handleMutedReaction, getImageFetchingPromise, getFormattedNumber } = usePostServices();
 
     const [comments, setComments] = useState([]);
@@ -114,14 +114,20 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
         }
     }
 
-    const triggerVocalReaction = (e, commentDetails) => {
-        const data = { ...commentDetails, type: "comment" };
+    const triggerVocalReaction = (e, commentDetails, reactionType) => {
+        e.stopPropagation();
+
+        let reactionFn = null;
+        if (reactionType === "repost") reactionFn = openRepostBox;
+        else if (reactionType === "comment") reactionFn = openCommentBox;
+
+        const data = JSON.parse(JSON.stringify(commentDetails ?? {}));
         if (data?.user?.picture) data.user.picture = userImages?.[commentDetails?.user?.userId ?? '0'] ?? '';
-        openCommentBox(e, data);
+        if (reactionFn) reactionFn(e, data); else showError("Something went wrong!");
     }
 
     return isLoading ? <Loader /> : commentList.map((commentObj, commentIndex) => {
-        const { user, text, createdAt, likes, comments, views, images, id } = commentObj;
+        const { user, text, createdAt, likes, comments, views, images, id, reposts } = commentObj;
         const { userId, name, username } = user ?? {};
 
         return (
@@ -171,13 +177,26 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
 
                         <div
                             className="reaction-icon-container reply-container"
-                            onClick={e => { triggerVocalReaction(e, commentObj); }}
+                            onClick={e => { triggerVocalReaction(e, commentObj, "comment"); }}
                         >
                             <span className="reply-icon">
                                 <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
                             </span>
 
                             <span className="post-reaction-data">{getFormattedNumber(comments ?? 0)}</span>
+                        </div>
+
+                        <div
+                            className="reaction-icon-container repost-container"
+                            onClick={e => { triggerVocalReaction(e, commentObj, "repost"); }}
+                        >
+                            <span className="reply-icon">
+                                <CIcon icon={cilSend} title="Repost" className="chirp-action" />
+                            </span>
+
+                            <span className="post-reaction-data">
+                                {getFormattedNumber(reposts ?? 0)}
+                            </span>
                         </div>
 
                         <div

@@ -72,6 +72,9 @@ export class ConfigService {
             case "commented":
                 attribute = "comments";
                 break;
+            case "reposted":
+                attribute = "reposts";
+                break;
         }
 
         const count = mode === "add" ? 1 : mode === "remove" ? -1 : 0;

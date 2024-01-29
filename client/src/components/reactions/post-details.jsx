@@ -128,6 +128,7 @@ const PostDetails = () => {
                     likes: commentObj?.likes ?? 0,
                     saved: commentObj?.saved ?? 0,
                     views: commentObj?.views ?? 0,
+                    reposts: commentObj?.reposts ?? 0,
                     text: commentObj?.text ?? '',
                     id: commentObj?._id ?? commentIndex,
                     originalPostId: commentObj?.postId ?? '',
@@ -400,7 +401,9 @@ const PostDetails = () => {
                                             <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
                                         </span>
 
-                                        <span className="post-reaction-data">{getFormattedNumber(postDetails?.comments ?? 0)}</span>
+                                        <span className="post-reaction-data">
+                                            {getFormattedNumber(postDetails?.comments ?? 0)}
+                                        </span>
                                     </div>
 
                                     <div
@@ -411,7 +414,9 @@ const PostDetails = () => {
                                             <CIcon icon={cilSend} title="Repost" className="chirp-action" />
                                         </span>
 
-                                        <span className="post-reaction-data">{getFormattedNumber(postDetails?.reposts ?? 0)}</span>
+                                        <span className="post-reaction-data">
+                                            {getFormattedNumber(postDetails?.reposts ?? 0)}
+                                        </span>
                                     </div>
 
                                     <div

@@ -101,7 +101,11 @@ export class PostService {
     async create(postData: ParsedPostDTO, userId: ObjectId): Promise<Post> {
         const { postId } = postData;
         const mainData = { ...postData, user: userId, images: postData.images, createdAt: Date.now() };
-        if (postId) await this.postModel.findByIdAndUpdate(postId, { $inc: { reposts: 1 } });
+        if (postId) {
+            const operatedPost = await this.postModel.findByIdAndUpdate(postId, { $inc: { reposts: 1 } }, { new: true });
+            if (!operatedPost) await this.commentsService.changeReactionCount(postId, "reposted", "add");
+        }
+
         const createdPost = new this.postModel(mainData);
         return createdPost.save();
     }

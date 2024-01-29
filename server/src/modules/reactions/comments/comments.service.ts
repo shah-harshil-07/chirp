@@ -67,6 +67,7 @@ export class CommentsService {
                     "likes": 1,
                     "saved": 1,
                     "views": 1,
+                    "reposts": 1,
                     "user._id": 1,
                     "parentCommentId": 1,
                     "user.name": 1,

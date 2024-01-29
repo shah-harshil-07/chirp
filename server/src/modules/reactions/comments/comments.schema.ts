@@ -33,7 +33,10 @@ export class Comments {
     saved: number;
 
     @Prop({ default: 0 })
-    views: 0;
+    views: number;
+
+    @Prop({ default: 0 })
+    reposts: number;
 }
 
 export const CommentsSchema = SchemaFactory.createForClass(Comments);
