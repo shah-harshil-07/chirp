@@ -1,8 +1,14 @@
 import "src/styles/utilities/confirmation.css";
 
-import React from "react";
+import React, { useEffect } from "react";
 
 const Confirmation = ({ message, handleCloseAction, headingText, handleConfirmAction }) => {
+    useEffect(() => {
+        const body = document.querySelector("body");
+        body.style.overflow = "hidden";
+        return () => { body.style.overflow = "auto" };
+    }, []);
+
     return (
         <div className="confirmation-modal">
             <div className="confirmation-content">

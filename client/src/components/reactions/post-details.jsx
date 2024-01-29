@@ -259,8 +259,9 @@ const PostDetails = () => {
         if (reactionType === "repost") reactionFn = openRepostBox;
         else if (reactionType === "comment") reactionFn = openCommentBox;
         const data = { ...postDetails, type: location?.state?.type ?? "post" };
-        if (data?.user?.picture) data.user.picture = userImages?.[postDetails?.user?.id ?? '0'] ?? '';
-        if (reactionFn) reactionFn(e, data); else showError("Something went wrong!");
+        const clonedData = JSON.parse(JSON.stringify(data));
+        if (clonedData?.user?.picture) clonedData.user.picture = userImages?.[postDetails?.user?.id ?? '0'] ?? '';
+        if (reactionFn) reactionFn(e, clonedData); else showError("Something went wrong!");
     }
 
     const moveBack = () => {

@@ -143,10 +143,10 @@ const Form = ({
 	}
 
 	const moveToUserPage = e => {
-        e.preventDefault();
-        const { id } = userDetails;
-        if (id) navigate(`user/${id}`);
-    }
+		e.preventDefault();
+		const { id } = userDetails;
+		if (id) navigate(`user/${id}`);
+	}
 
 	const createPost = async () => {
 		if (isFormValid && text) {
@@ -223,7 +223,7 @@ const Form = ({
 				alt="user"
 				className="user-image"
 				onClick={moveToUserPage}
-				src={ userDetails?.picture ?? String(sampleUserImg) }
+				src={userDetails?.picture ?? String(sampleUserImg)}
 				onError={e => { e.target.src = String(sampleUserImg); }}
 			/>
 

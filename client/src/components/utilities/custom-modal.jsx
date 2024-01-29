@@ -31,11 +31,14 @@ const CustomModal = ({
     const [isInitialScrollSet, setIsInitialScrollSet] = useState(false);
 
     useEffect(() => {
+        const body = document.querySelector("body");
         if (!isInitialScrollSet) {
             bodyRef.current.scrollTop = 0;
+            body.style.overflow = "hidden";
             setIsInitialScrollSet(true);
         }
 
+        return () => { body.style.overflow = "auto" }
         // eslint-disable-next-line
     }, []);
 

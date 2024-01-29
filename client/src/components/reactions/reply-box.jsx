@@ -7,12 +7,13 @@ import { cilImage, cilSmile } from "@coreui/icons";
 import API from "src/api";
 import ImgHolder from "../utilities/img-holder";
 import * as Constants from "src/utilities/constants";
-import { getCommonHeader } from "src/utilities/helpers";
 import useToaster from "src/custom-hooks/toaster-message";
 import EmojiContainer from "../utilities/emoji-container";
 import useImageConverter from "src/custom-hooks/image-converter";
+import { getCommonHeader, getUserDetails } from "src/utilities/helpers";
 
 const ReplyBox = ({ username, id, picture, type, originalPostId }) => {
+    const userDetails = getUserDetails();
     const { showError, showSuccess } = useToaster();
     const { uploadImagesAction } = useImageConverter();
     const navigate = useNavigate(), textboxRef = useRef(null);
@@ -54,7 +55,7 @@ const ReplyBox = ({ username, id, picture, type, originalPostId }) => {
     }
 
     const handleEmojiSelect = e => {
-        setText(`${text}${e.emoji}`);
+        setText(text + e.emoji);
     }
 
     const checkTextValidity = () => {
@@ -63,7 +64,6 @@ const ReplyBox = ({ username, id, picture, type, originalPostId }) => {
 
     const postComment = async () => {
         if (checkTextValidity()) {
-            // const data = { text, postId };
             const data = { text };
             if (type === "comment") {
                 data["parentCommentId"] = id;
@@ -113,7 +113,7 @@ const ReplyBox = ({ username, id, picture, type, originalPostId }) => {
                 <img
                     alt="user"
                     className="post-detail-user-image"
-                    src={picture ?? String(sampleUserImg)}
+                    src={userDetails?.picture ?? String(sampleUserImg)}
                     onError={e => { e.target.src = String(sampleUserImg); }}
                 />
 
