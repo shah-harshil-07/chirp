@@ -138,7 +138,7 @@ const Login = () => {
             }
 
             dispatch(openToaster({ messageObj: { type, message } }));
-            setTimeout(() => { navigate(0); }, 5000);
+            setTimeout(() => { navigate(0); }, 4990);
         } catch (error) {
             console.log(error);
             showError("Something went wrong!");
@@ -174,8 +174,9 @@ const Login = () => {
                 if (userValid && token && userData) {
                     localStorage.setItem("chirp-userDetails", JSON.stringify(userData));
                     localStorage.setItem("chirp-accessToken", token);
+
                     closeLoginDialog();
-                    navigate(0);
+                    setTimeout(() => { navigate(0); }, 4990);
                 }
 
                 dispatch(openToaster({ messageObj: { type, message } }));

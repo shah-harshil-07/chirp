@@ -2,8 +2,9 @@ import "src/styles/reactions/index.css";
 
 import CIcon from "@coreui/icons-react";
 import { useDispatch } from "react-redux";
-import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { cilImage, cilSmile } from "@coreui/icons";
+import React, { useEffect, useRef, useState } from "react";
 
 import API from "src/api";
 import ImgHolder from "../utilities/img-holder";
@@ -18,6 +19,7 @@ import usePostServices from "src/custom-hooks/post-services";
 import useImageConverter from "src/custom-hooks/image-converter";
 
 const RepostEditor = post => {
+    const navigate = useNavigate();
     const { createdAt, user: postCreator, id: postId } = post;
     const headerData = getCommonHeader();
     const userDetails = getUserDetails() ?? {};
@@ -90,6 +92,7 @@ const RepostEditor = post => {
             }
 
             dispatch(closeModal());
+            setTimeout(() => { navigate(0); }, 4990);
         }
     }
 
