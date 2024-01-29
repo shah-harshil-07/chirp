@@ -32,7 +32,10 @@ export class CommentsService {
     }
 
     async getCommentDetails(commentId: string): Promise<Comments> {
-        return await this.commentModel.findById(commentId).populate("userId", "_id name username picture");
+        return await this
+            .commentModel
+            .findById(commentId)
+            .populate("userId", "_id name username picture bio followers following");
     }
 
     async list(postId: string, type: string): Promise<ICommentList> {

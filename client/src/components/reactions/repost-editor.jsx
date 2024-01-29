@@ -62,6 +62,13 @@ const RepostEditor = post => {
         setText(`${text}${e.emoji}`);
     }
 
+    const getRepostBodyStyles = () => {
+        const styles = {};
+        if (uploadedFiles?.length) styles["marginTop"] = "10px";
+        if (parentPostImages?.length) styles["paddingBottom"] = "15px";
+        return styles;
+    }
+
     const repost = async () => {
         if (text) {
             const data = { text, postId };
@@ -127,7 +134,7 @@ const RepostEditor = post => {
                 </div>
             </form>
 
-            <div className="repost-body" style={uploadedFiles.length ? { marginTop: "10px" } : {}}>
+            <div className="repost-body" style={getRepostBodyStyles()}>
                 <img
                     alt="post creator"
                     className="reaction-editor-user-image"

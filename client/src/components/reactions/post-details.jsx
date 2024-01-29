@@ -91,7 +91,6 @@ const PostDetails = () => {
                     id: post?.parentPost?._id ?? '',
                     text: post?.parentPost?.text ?? '',
                     poll: post?.parentPost?.poll ?? null,
-                    images: post?.parentPost?.images ?? [],
                     type: post?.parentPost?.type ?? "post",
                     createdAt: post?.parentPost?.createdAt ?? null,
                     user: {
@@ -338,7 +337,10 @@ const PostDetails = () => {
                                                 className="post-detail-parent-user-img"
                                                 onError={e => { e.target.src = String(sampleUserImg); }}
                                                 onClick={e => { moveToUserPage(e, postDetails?.parentPostDetails?.user?.id); }}
-                                                src={userImages?.[postDetails?.parentPostDetails?.user?.id ?? '0'] ?? String(sampleUserImg)}
+                                                src={
+                                                    userImages?.[postDetails?.parentPostDetails?.user?.id ?? '0'] ??
+                                                    String(sampleUserImg)
+                                                }
                                             />
 
                                             <div
@@ -356,24 +358,19 @@ const PostDetails = () => {
                                                     <span>{`@${postDetails?.parentPostDetails?.user?.username ?? ''}`}</span>
 
                                                     <span>
-                                                        <div className="seperator-container"><div className="seperator" /></div>
+                                                        <div className="seperator-container">
+                                                            <div className="seperator" />
+                                                        </div>
                                                     </span>
 
                                                     <span>{getPostTiming(postDetails?.parentPostDetails?.createdAt)}</span>
                                                 </div>
 
                                                 <div className="row mx-0 mt-1 font-size-20">
-                                                    <div><DisplayedText text={postDetails?.parentPostDetails?.text ?? ''} /></div>
+                                                    <div>
+                                                        <DisplayedText text={postDetails?.parentPostDetails?.text ?? ''} />
+                                                    </div>
                                                 </div>
-
-                                                {
-                                                    postDetails?.parentPostDetails?.images?.length > 0 && (
-                                                        <ImgHolder
-                                                            showActionButtons={false}
-                                                            images={postDetails?.parentPostDetails?.images}
-                                                        />
-                                                    )
-                                                }
                                             </div>
                                         </div>
                                     )

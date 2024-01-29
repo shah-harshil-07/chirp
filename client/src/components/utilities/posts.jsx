@@ -310,6 +310,13 @@ const PostUtilities = ({ parentName }) => {
         }
     }
 
+    const getRepostStyles = (imageLength, parentPostImagesLength) => {
+        const styles = { marginTop: '0' };
+        if (imageLength > 0) styles["marginTop"] = "10px";
+        if (parentPostImagesLength > 0) styles["paddingBottom"] = "15px";
+        return styles;
+    }
+
     return (
         <div className={!posts?.length ? "no-posts-box" : ''}>
             {
@@ -352,11 +359,15 @@ const PostUtilities = ({ parentName }) => {
                                             <div className="row mx-3">
                                                 <b>{name}</b>&nbsp;
                                                 <span>{`@${username}`}</span>
-                                                <span><div className="seperator-container"><div className="seperator" /></div></span>
+                                                <span>
+                                                    <div className="seperator-container"><div className="seperator" /></div>
+                                                </span>
                                                 <span>{getPostTiming(createdAt)}</span>
                                             </div>
 
-                                            <div className="row mx-3"><div><DisplayedText text={post?.text ?? ''} /></div></div>
+                                            <div className="row mx-3">
+                                                <div><DisplayedText text={post?.text ?? ''} /></div>
+                                            </div>
 
                                             {post?.poll?.choices && getPollJSX(post.poll, postIndex)}
                                             {
@@ -369,7 +380,7 @@ const PostUtilities = ({ parentName }) => {
                                                 parentPostUser && (
                                                     <div
                                                         className="repost-body user-post-list-repost-body"
-                                                        style={{ marginTop: pureImages.length ? "10px" : '0' }}
+                                                        style={getRepostStyles(pureImages?.length, parentPostImages?.length)}
                                                     >
                                                         <img
                                                             alt="post creator"
@@ -390,17 +401,21 @@ const PostUtilities = ({ parentName }) => {
                                                                         <div className="seperator" />
                                                                     </div>
                                                                 </span>
-                                                                <span className="font-size-16">{getPostTiming(parentCreatedAt)}</span>
+                                                                <span className="font-size-16">
+                                                                    {getPostTiming(parentCreatedAt)}
+                                                                </span>
                                                             </div>
 
                                                             <div className="row mx-0 mt-1 font-size-16">
-                                                                {/* <div>{parentPostText?.slice(0, 40) ?? ''}</div> */}
                                                                 <div><DisplayedText text={parentPostText ?? ''} /></div>
                                                             </div>
 
                                                             {
                                                                 parentPostImages?.length > 0 && (
-                                                                    <ImgHolder images={parentPostImages} showActionButtons={false} />
+                                                                    <ImgHolder
+                                                                        images={parentPostImages}
+                                                                        showActionButtons={false}
+                                                                    />
                                                                 )
                                                             }
                                                         </div>
@@ -417,7 +432,9 @@ const PostUtilities = ({ parentName }) => {
                                                         <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
                                                     </span>
 
-                                                    <span className="post-reaction-data">{getFormattedNumber(comments ?? 0)}</span>
+                                                    <span className="post-reaction-data">
+                                                        {getFormattedNumber(comments ?? 0)}
+                                                    </span>
                                                 </div>
 
                                                 <div
@@ -428,7 +445,9 @@ const PostUtilities = ({ parentName }) => {
                                                         <CIcon icon={cilSend} title="Repost" className="chirp-action" />
                                                     </span>
 
-                                                    <span className="post-reaction-data">{getFormattedNumber(reposts ?? 0)}</span>
+                                                    <span className="post-reaction-data">
+                                                        {getFormattedNumber(reposts ?? 0)}
+                                                    </span>
                                                 </div>
 
                                                 <div
@@ -438,9 +457,18 @@ const PostUtilities = ({ parentName }) => {
                                                     <span className="reply-icon" style={isLiked ? { paddingTop: "6px" } : {}}>
                                                         {
                                                             isLiked ? (
-                                                                <img width="20" height="20" src={String(likeIcon)} alt="like" />
+                                                                <img
+                                                                    width="20"
+                                                                    alt="like"
+                                                                    height="20"
+                                                                    src={String(likeIcon)}
+                                                                />
                                                             ) : (
-                                                                <CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
+                                                                <CIcon
+                                                                    title="Like"
+                                                                    icon={cilThumbUp}
+                                                                    className="chirp-action"
+                                                                />
                                                             )
                                                         }
                                                     </span>
@@ -461,7 +489,9 @@ const PostUtilities = ({ parentName }) => {
                                                         <CIcon title="Views" icon={cilChart} className="chirp-action" />
                                                     </span>
 
-                                                    <span className="post-reaction-data">{getFormattedNumber(views ?? 0)}</span>
+                                                    <span className="post-reaction-data">
+                                                        {getFormattedNumber(views ?? 0)}
+                                                    </span>
                                                 </div>
 
                                                 <div
@@ -471,9 +501,18 @@ const PostUtilities = ({ parentName }) => {
                                                     <span className="reply-icon" style={isSaved ? { paddingTop: "6px" } : {}}>
                                                         {
                                                             isSaved ? (
-                                                                <img width="20" height="20" src={String(savedIcon)} alt="like" />
+                                                                <img
+                                                                    width="20"
+                                                                    alt="like"
+                                                                    height="20"
+                                                                    src={String(savedIcon)}
+                                                                />
                                                             ) : (
-                                                                <CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
+                                                                <CIcon
+                                                                    title="Bookmark"
+                                                                    icon={cilBookmark}
+                                                                    className="chirp-action"
+                                                                />
                                                             )
                                                         }
                                                     </span>
@@ -506,7 +545,9 @@ const PostUtilities = ({ parentName }) => {
 
                                                             <div className="repost-body-content user-comment-body-content">
                                                                 <div className="user-comment-head">
-                                                                    <b className="font-size-16">{commentObj?.user?.name ?? ''}</b>&nbsp;
+                                                                    <b className="font-size-16">
+                                                                        {commentObj?.user?.name ?? ''}
+                                                                    </b>&nbsp;
 
                                                                     <span className="font-size-16">
                                                                         {`@${commentObj?.user?.username ?? ''}`}

@@ -2,3 +2,5 @@
 # In the repost editor, when the user reposts an image-wala post, the images are not properly shown in the repost body. Same goes for the post list's repost body content.
 # After reposting any post or comment, the count of the reposted entity must be immediately updated.
 # In reply box, the logged in user's image must appear and not the post creators'.
+# Apply scroll lock on the page as soon as the custom modal opens up.
+# In post detail page, if I open up the comment box second time, an error is occuring.
