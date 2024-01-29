@@ -150,9 +150,11 @@ export class CommentsService {
 
         for (const comment of clonedComments) {
             if (comment?.post?.postId && !comment?.post?.post._id) {
-                comment.post.post = await this.getCommentDetails(comment.post.postId);
-                comment.post.user = comment?.post?.userId ?? null;
-                if (comment?.post?.userId) delete comment.post.userId;
+                const commentData = await this.getCommentDetails(comment.post.postId);
+                const clonedCommentData = JSON.parse(JSON.stringify(commentData));
+                clonedCommentData.user = clonedCommentData?.userId ?? null;
+                if (clonedCommentData?.userId) delete clonedCommentData.userId;
+                comment.post.post = clonedCommentData;
             }
         }
 
