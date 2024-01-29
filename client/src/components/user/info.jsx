@@ -106,7 +106,7 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
                         break;
                     case "website":
                         setWebsiteLink(value);
-                        value = value.replaceAll(/https:\/\/|www./g, '');
+                        value = value.replaceAll(Constants.WEBLINK_ORIGIN_REGEX, '');
                         if (value.length > 30) value = `${value.slice(0, 28)}...`;
                         break;
                     default:
