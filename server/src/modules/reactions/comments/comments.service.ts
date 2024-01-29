@@ -85,7 +85,7 @@ export class CommentsService {
     }
 
     async getUserComments(userId: string): Promise<IUserComment[]> {
-        return await this.commentModel.aggregate([
+        const comments = await this.commentModel.aggregate([
             { $match: { $expr: { $eq: ["$userId", { $toObjectId: userId }] } } },
             { $lookup: { from: "PostMessages", localField: "postId", foreignField: "_id", as: "post" } },
             { $sort: { createdAt: -1 } },
@@ -120,6 +120,7 @@ export class CommentsService {
                     "post.likes": 1,
                     "post.views": 1,
                     "post.saved": 1,
+                    "post.postId": 1,
                     "post.comment._id": 1,
                     "post.comment.user._id": 1,
                     "post.comment.user.name": 1,
@@ -144,5 +145,17 @@ export class CommentsService {
                 },
             },
         ]);
+
+        const clonedComments = JSON.parse(JSON.stringify(comments));
+
+        for (const comment of clonedComments) {
+            if (comment?.post?.postId && !comment?.post?.post._id) {
+                comment.post.post = await this.getCommentDetails(comment.post.postId);
+                comment.post.user = comment?.post?.userId ?? null;
+                if (comment?.post?.userId) delete comment.post.userId;
+            }
+        }
+
+        return clonedComments;
     }
 }

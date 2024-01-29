@@ -436,27 +436,31 @@ const PostDetails = () => {
                                         </span>
                                     </div>
 
-                                    <div
-                                        className="reaction-icon-container saved-container"
-                                        onClick={e => { triggerMutedReaction(e, "save"); }}
-                                    >
-                                        <span className="reply-icon" style={false ? { paddingTop: "6px" } : {}}>
-                                            {
-                                                isPostSaved ? (
-                                                    <img width="20" height="20" src={String(savedIcon)} alt="like" />
-                                                ) : (
-                                                    <CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
-                                                )
-                                            }
-                                        </span>
+                                    {
+                                        location?.state?.type !== "comment" && (
+                                            <div
+                                                className="reaction-icon-container saved-container"
+                                                onClick={e => { triggerMutedReaction(e, "save"); }}
+                                            >
+                                                <span className="reply-icon" style={false ? { paddingTop: "6px" } : {}}>
+                                                    {
+                                                        isPostSaved ? (
+                                                            <img width="20" height="20" src={String(savedIcon)} alt="like" />
+                                                        ) : (
+                                                            <CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
+                                                        )
+                                                    }
+                                                </span>
 
-                                        <span
-                                            className="post-reaction-data"
-                                            style={isPostSaved ? { color: "var(--saved-color)" } : {}}
-                                        >
-                                            {getFormattedNumber(postDetails?.saved ?? 0)}
-                                        </span>
-                                    </div>
+                                                <span
+                                                    className="post-reaction-data"
+                                                    style={isPostSaved ? { color: "var(--saved-color)" } : {}}
+                                                >
+                                                    {getFormattedNumber(postDetails?.saved ?? 0)}
+                                                </span>
+                                            </div>
+                                        )
+                                    }
                                 </div>
                             </div>
                         </>

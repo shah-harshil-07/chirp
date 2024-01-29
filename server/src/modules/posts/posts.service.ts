@@ -212,7 +212,7 @@ export class PostService {
     }
 
     async getUserPostDetails(userId: string): Promise<Post[]> {
-        return await this.postModel.aggregate([
+        const posts = await this.postModel.aggregate([
             { $match: { $expr: { $eq: ["$user", { $toObjectId: userId }] } } },
             { $lookup: { localField: "postId", foreignField: "_id", from: "PostMessages", as: "post" } },
             { $unwind: { path: "$post", preserveNullAndEmptyArrays: true } },
@@ -232,6 +232,8 @@ export class PostService {
                     "likes": 1,
                     "views": 1,
                     "saved": 1,
+                    "postId": 1,
+                    "post._id": 1,
                     "post.text": 1,
                     "user._id": 1,
                     "user.name": 1,
@@ -252,5 +254,15 @@ export class PostService {
                 },
             },
         ]);
+
+        const clonedPosts = JSON.parse(JSON.stringify(posts));
+
+        for (const post of clonedPosts) {
+            if (post.postId && !post?.post?._id) {
+                post.post = await this.getRepostedCommentData(post.postId);
+            }
+        }
+
+        return clonedPosts;
     }
 }
