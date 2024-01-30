@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 
 import * as Constants from "src/utilities/constants";
 
-const DisplayedText = ({ text: preFormattedText }) => {
+const DisplayedText = ({ text: preFormattedText, parentType, readMoreAction }) => {
     const breakChars = [" ", "\n"];
     const webLinkRegex = Constants.WEBLINK_ORIGIN_REGEX;
 
@@ -17,11 +17,13 @@ const DisplayedText = ({ text: preFormattedText }) => {
 
     const formatLinks = () => {
         if (typeof preFormattedText === "string") {
+            const limitedText = applyTextLimit(preFormattedText);
+
             let formattedText = '', backlogIndex = 0;
-            let startIndex = 0, n = preFormattedText.length;
+            let startIndex = 0, n = limitedText.length;
 
             do {
-                const preFormattedSubStr = preFormattedText.substring(backlogIndex, n);
+                const preFormattedSubStr = limitedText.substring(backlogIndex, n);
                 startIndex = preFormattedSubStr.search(webLinkRegex);
 
                 if (startIndex < 0) {
@@ -47,7 +49,7 @@ const DisplayedText = ({ text: preFormattedText }) => {
                     anchorElement.style.color = "var(--chirp-color)";
                     const anchorStr = anchorElement.outerHTML;
 
-                    const slice1 = preFormattedText.substring(backlogIndex, startIndex + backlogIndex);
+                    const slice1 = limitedText.substring(backlogIndex, startIndex + backlogIndex);
                     formattedText += slice1 + anchorStr;
                     backlogIndex += slice1.length + endIndex - startIndex;
                 }
@@ -55,6 +57,46 @@ const DisplayedText = ({ text: preFormattedText }) => {
 
             setText(formattedText);
         }
+    }
+
+    const applyTextLimit = text => {
+        const n = text.length;
+        let textLimit = text.length;
+
+        switch (parentType) {
+            case "post-detail-repost":
+                textLimit = Constants.postDetailRepostTextLimit;
+                break;
+            case "post-list-repost":
+                textLimit = Constants.postListRepostTextLimit;
+                break;
+            case "post-list-body":
+                textLimit = Constants.postListBodyTextLimit;
+                break;
+            case "repost-editor":
+                textLimit = Constants.repostEditorTextLimit;
+                break;
+            case "comment-editor":
+                textLimit = Constants.commentEditorTextLimit;
+                break;
+            default:
+                break;
+        }
+
+        const spanElement = document.createElement("span");
+        spanElement.innerHTML = "...Read more";
+        spanElement.className = "read-more-text";
+        spanElement.addEventListener("click", e => {
+            e.preventDefault();
+            e.stopPropagation();
+            readMoreAction();
+        });
+
+        const readMoreStr = spanElement.outerHTML;
+
+        text = text.slice(0, textLimit);
+        if (n > textLimit) text += readMoreStr;
+        return text;
     }
 
     return (

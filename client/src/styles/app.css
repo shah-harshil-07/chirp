@@ -179,3 +179,11 @@
 .w-80 {
     width: 80%;
 }
+
+.read-more-text {
+    color: var(--chirp-color);
+}
+
+.read-more-text:hover {
+    text-decoration: underline;
+}

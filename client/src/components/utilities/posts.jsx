@@ -316,6 +316,11 @@ const PostUtilities = ({ parentName }) => {
         return styles;
     }
 
+    const moveToPostDetail = postId => {
+        if (postId) navigate(`/post/${postId}`);
+        else showError("post id is unavailable");
+    }
+
     return (
         <div className={!posts?.length ? "no-posts-box" : ''}>
             {
@@ -332,7 +337,12 @@ const PostUtilities = ({ parentName }) => {
 
                                 const commentObj = userComments?.[postIndex];
 
-                                const { text: parentPostText, createdAt: parentCreatedAt, user: parentPostUser } = parentPost ?? {};
+                                const {
+                                    _id: parentPostId,
+                                    text: parentPostText,
+                                    user: parentPostUser,
+                                    createdAt: parentCreatedAt,
+                                } = parentPost ?? {};
                                 const { name: parentName, _id: parentUserId, username: parentUserName } = parentPostUser ?? {};
 
                                 if (images?.length) {
@@ -365,7 +375,13 @@ const PostUtilities = ({ parentName }) => {
                                             </div>
 
                                             <div className="row mx-3">
-                                                <div><DisplayedText text={post?.text ?? ''} /></div>
+                                                <div>
+                                                    <DisplayedText
+                                                        text={post?.text ?? ''}
+                                                        parentType={"post-list-body"}
+                                                        readMoreAction={() => { moveToPostDetail(postId); }}
+                                                    />
+                                                </div>
                                             </div>
 
                                             {post?.poll?.choices && getPollJSX(post.poll, postIndex)}
@@ -406,7 +422,15 @@ const PostUtilities = ({ parentName }) => {
                                                             </div>
 
                                                             <div className="row mx-0 mt-1 font-size-16">
-                                                                <div><DisplayedText text={parentPostText ?? ''} /></div>
+                                                                <div>
+                                                                    <DisplayedText
+                                                                        text={parentPostText ?? ''}
+                                                                        parentType={"post-list-repost"}
+                                                                        readMoreAction={() => {
+                                                                            moveToPostDetail(parentPostId);
+                                                                        }}
+                                                                    />
+                                                                </div>
                                                             </div>
 
                                                             {

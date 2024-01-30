@@ -29,6 +29,11 @@ export const DELETE = "delete";
 /*--------------------------------------------------------------------------------*/
 export const base64Prefix = "data:image/*;charset=utf-8;base64,";
 export const httpsOrigin = "https://";
+export const postDetailRepostTextLimit = 277;
+export const postListRepostTextLimit = 277;
+export const postListBodyTextLimit = 277;
+export const repostEditorTextLimit = 277;
+export const commentEditorTextLimit = 277;
 
 /* API half URLs */
 /*--------------------------------------------------------------------------------*/
