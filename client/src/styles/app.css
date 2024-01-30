@@ -101,6 +101,7 @@
     position: relative;
     border-radius: 25px;
     margin-bottom: 10px;
+    padding-bottom: 15px;
     border: 0.1px solid rgba(0,0,0,.3);
 }
 

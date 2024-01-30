@@ -13,6 +13,7 @@ import * as Constants from "src/utilities/constants";
 import { closeModal } from "src/redux/reducers/modal";
 import { getUserDetails } from "src/utilities/helpers";
 import { getCommonHeader } from "src/utilities/helpers";
+import DisplayedText from "../utilities/displayed-text";
 import useToaster from "src/custom-hooks/toaster-message";
 import EmojiContainer from "../utilities/emoji-container";
 import usePostServices from "src/custom-hooks/post-services";
@@ -156,8 +157,9 @@ const CommentEditor = post => {
 
                     <div className="row mx-0 mt-3 font-size-20">
                         <div>
-                            {post?.text?.slice(0, 100) ?? ''}
-                            {(post?.text?.length > 100) && (<a href="https://google.com">...Read more</a>)}
+                            {/* {post?.text?.slice(0, 100) ?? ''}
+                            {(post?.text?.length > 100) && (<a href="https://google.com">...Read more</a>)} */}
+                            {<DisplayedText text={post?.text ?? ''} />}
                         </div>
                     </div>
 

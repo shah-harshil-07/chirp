@@ -310,10 +310,9 @@ const PostUtilities = ({ parentName }) => {
         }
     }
 
-    const getRepostStyles = (imageLength, parentPostImagesLength) => {
+    const getRepostStyles = imageLength => {
         const styles = { marginTop: '0' };
         if (imageLength > 0) styles["marginTop"] = "10px";
-        if (parentPostImagesLength > 0) styles["paddingBottom"] = "15px";
         return styles;
     }
 
@@ -379,8 +378,8 @@ const PostUtilities = ({ parentName }) => {
                                             {
                                                 parentPostUser && (
                                                     <div
+                                                        style={getRepostStyles(pureImages?.length)}
                                                         className="repost-body user-post-list-repost-body"
-                                                        style={getRepostStyles(pureImages?.length, parentPostImages?.length)}
                                                     >
                                                         <img
                                                             alt="post creator"

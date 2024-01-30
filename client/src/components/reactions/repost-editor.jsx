@@ -12,6 +12,7 @@ import CustomModal from "../utilities/custom-modal";
 import * as Constants from "src/utilities/constants";
 import { closeModal } from "src/redux/reducers/modal";
 import { getUserDetails } from "src/utilities/helpers";
+import DisplayedText from "../utilities/displayed-text";
 import { getCommonHeader } from "src/utilities/helpers";
 import useToaster from "src/custom-hooks/toaster-message";
 import EmojiContainer from "../utilities/emoji-container";
@@ -61,13 +62,12 @@ const RepostEditor = post => {
     }
 
     const handleEmojiSelect = e => {
-        setText(`${text}${e.emoji}`);
+        setText(text + e.emoji);
     }
 
     const getRepostBodyStyles = () => {
         const styles = {};
         if (uploadedFiles?.length) styles["marginTop"] = "10px";
-        if (parentPostImages?.length) styles["paddingBottom"] = "15px";
         return styles;
     }
 
@@ -155,7 +155,8 @@ const RepostEditor = post => {
 
                     <div className="row mx-0 mt-3 font-size-20">
                         <div>
-                            {(post?.text?.slice(0, 40) ?? '') + (post?.text?.length > 40 ? "..." : '')}
+                            {/* {(post?.text?.slice(0, 40) ?? '') + (post?.text?.length > 40 ? "..." : '')} */}
+                            <DisplayedText text={post?.text ?? ''} />
                         </div>
                     </div>
 
