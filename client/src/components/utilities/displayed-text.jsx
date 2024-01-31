@@ -1,10 +1,10 @@
 import "src/styles/utilities/displayed-text.css";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 
 import * as Constants from "src/utilities/constants";
 
-const DisplayedText = ({ text: preFormattedText, parentType, readMoreAction }) => {
+const DisplayedText = ({ text: preFormattedText, parentType, readMoreAction, uniqueId }) => {
     const breakChars = [" ", "\n"];
     const webLinkRegex = Constants.WEBLINK_ORIGIN_REGEX;
 
@@ -14,6 +14,19 @@ const DisplayedText = ({ text: preFormattedText, parentType, readMoreAction }) =
         formatLinks();
         // eslint-disable-next-line
     }, [preFormattedText]);
+
+    useLayoutEffect(() => {
+        const readMoreElement = document.querySelector(`#read-more-${uniqueId}`);
+        if (readMoreElement) {
+            readMoreElement.addEventListener("click", e => {
+                e.preventDefault();
+                e.stopPropagation();
+                readMoreAction();
+            });
+        }
+
+        // eslint-disable-next-line
+    }, [text]);
 
     const formatLinks = () => {
         if (typeof preFormattedText === "string") {
@@ -86,11 +99,7 @@ const DisplayedText = ({ text: preFormattedText, parentType, readMoreAction }) =
         const spanElement = document.createElement("span");
         spanElement.innerHTML = "...Read more";
         spanElement.className = "read-more-text";
-        spanElement.addEventListener("click", e => {
-            e.preventDefault();
-            e.stopPropagation();
-            readMoreAction();
-        });
+        spanElement.id = `read-more-${uniqueId}`;
 
         const readMoreStr = spanElement.outerHTML;
 

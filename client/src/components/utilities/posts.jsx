@@ -377,6 +377,7 @@ const PostUtilities = ({ parentName }) => {
                                             <div className="row mx-3">
                                                 <div>
                                                     <DisplayedText
+                                                        uniqueId={postId}
                                                         text={post?.text ?? ''}
                                                         parentType={"post-list-body"}
                                                         readMoreAction={() => { moveToPostDetail(postId); }}
