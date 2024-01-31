@@ -5,7 +5,7 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import * as Constants from "src/utilities/constants";
 
 const DisplayedText = ({ text: preFormattedText, parentType, readMoreAction, uniqueId }) => {
-    const breakChars = [" ", "\n", "<br />"];
+    const breakChars = [" ", "\n", "<"];
     const webLinkRegex = Constants.WEBLINK_ORIGIN_REGEX;
 
     const [text, setText] = useState('');
