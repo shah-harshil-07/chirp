@@ -122,6 +122,8 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
         else if (reactionType === "comment") reactionFn = openCommentBox;
 
         const data = JSON.parse(JSON.stringify(commentDetails ?? {}));
+
+        data["type"] = "comment";
         if (data?.user?.picture) data.user.picture = userImages?.[commentDetails?.user?.userId ?? '0'] ?? '';
         if (reactionFn) reactionFn(e, data); else showError("Something went wrong!");
     }
@@ -148,7 +150,9 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
                         <span>{getPostTiming(createdAt)}</span>
                     </div>
 
-                    <div className="row mx-0 font-size-20"><div><DisplayedText text={text} /></div></div>
+                    <div className="row mx-0 font-size-20">
+                        <div><DisplayedText parentType="comment-body" text={text} /></div>
+                    </div>
 
                     {images?.length > 0 && <ImgHolder images={images} showActionButtons={false} />}
 

@@ -5,6 +5,7 @@ export const EMAIL_REGEX = /^([a-zA-Z0-9+_-]+)(\.[a-zA-Z0-9+_-]+)*@([a-zA-Z0-9-]
 export const NAME_REGEX = /[^a-zA-Z\s]+/gm;
 export const USERNAME_REGEX = /[^A-Za-z0-9_]/gm;
 export const WEBLINK_ORIGIN_REGEX = /https:\/\/|www./gm;
+export const TRIMMER_REGEX = /[\\n]{3,}/gm;
 
 /* Regex validation error messages */
 /*--------------------------------------------------------------------------------*/
@@ -34,6 +35,7 @@ export const postListRepostTextLimit = 277;
 export const postListBodyTextLimit = 277;
 export const repostEditorTextLimit = 277;
 export const commentEditorTextLimit = 277;
+export const userCommentTextLimit = 277;
 
 /* API half URLs */
 /*--------------------------------------------------------------------------------*/

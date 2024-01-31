@@ -16,7 +16,6 @@ import {
     UploadedFiles,
     StreamableFile,
     UseInterceptors,
-    InternalServerErrorException,
     UnprocessableEntityException,
 } from "@nestjs/common";
 
@@ -42,14 +41,8 @@ export class PostController {
     @UseInterceptors(ResponseInterceptor)
     async getScheduledPosts(@Req() req: any): Promise<IResponseProps> {
         const { _id: userId } = req.user;
-
-        try {
-            const data = await this.postService.getAllSchduledPosts(userId);
-            return { data, success: true, message: "Received all the scheduled posts successfully." };
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        const data = await this.postService.getAllSchduledPosts(userId);
+        return { data, success: true, message: "Received all the scheduled posts successfully." };
     }
 
     @Post("create")
@@ -63,51 +56,46 @@ export class PostController {
         @Body() postData: PostDTO,
         @UploadedFiles(ConfigService.getParseFilePipeObj()) images: Array<Express.Multer.File>
     ): Promise<IResponseProps> {
-        try {
-            const { _id: userId } = req.user;
-            const fileNames = images.map(imageObj => imageObj.filename);
-            const parsedData = JSON.parse(postData.data);
-            const data = { text: parsedData.text, images: fileNames, poll: parsedData.poll ?? null };
-            data["postId"] = parsedData.postId;
+        const { _id: userId } = req.user;
+        const fileNames = images.map(imageObj => imageObj.filename);
+        const parsedData = JSON.parse(postData.data);
+        const data = { text: parsedData.text, images: fileNames, poll: parsedData.poll ?? null };
+        data["postId"] = parsedData.postId;
 
-            if (data?.poll?.choices?.length) {
-                const choices = data.poll.choices.map((choice: string) => {
-                    return { label: choice, votes: 0 };
+        if (data?.poll?.choices?.length) {
+            const choices = data.poll.choices.map((choice: string) => {
+                return { label: choice, votes: 0 };
+            });
+
+            data.poll.choices = choices;
+            data.poll.users = [];
+        }
+
+        if (parsedData?.["schedule"]) {
+            const { year, month, dayOfMonth, hours, minutes } = parsedData["schedule"];
+            const scheduledDate = new Date(year, month, dayOfMonth, hours, minutes, 0, 0);
+            const timeoutName = `post-${Date.now()}`, diffMillis = scheduledDate.getTime() - Date.now();
+            const scheduleData = { data, timeoutId: timeoutName, schedule: parsedData.schedule };
+
+            const scheduledPost = await this.postService.schedulePost(scheduleData, userId);
+
+            if (scheduledPost && diffMillis > 0) {
+                const job = new CronJob(scheduledDate, () => {
+                    this.postService.deleteScheduledPost(scheduledPost["_id"]);
+                    this.postService.create(data, userId);
                 });
 
-                data.poll.choices = choices;
-                data.poll.users = [];
+                this.schedulerRegistery.addCronJob(timeoutName, job);
+                job.start();
+
+                return { success: true, message: "Post scheduled successfully." };
+            } else {
+                return { success: false, message: "You cannot schedule a post to send it to past." };
             }
-
-            if (parsedData?.["schedule"]) {
-                const { year, month, dayOfMonth, hours, minutes } = parsedData["schedule"];
-                const scheduledDate = new Date(year, month, dayOfMonth, hours, minutes, 0, 0);
-                const timeoutName = `post-${Date.now()}`, diffMillis = scheduledDate.getTime() - Date.now();
-                const scheduleData = { data, timeoutId: timeoutName, schedule: parsedData.schedule };
-
-                const scheduledPost = await this.postService.schedulePost(scheduleData, userId);
-
-                if (scheduledPost && diffMillis > 0) {
-                    const job = new CronJob(scheduledDate, () => {
-                        this.postService.deleteScheduledPost(scheduledPost["_id"]);
-                        this.postService.create(data, userId);
-                    });
-
-                    this.schedulerRegistery.addCronJob(timeoutName, job);
-                    job.start();
-
-                    return { success: true, message: "Post scheduled successfully." };
-                } else {
-                    return { success: false, message: "You cannot schedule a post to send it to past." };
-                }
-            }
-
-            const post = await this.postService.create(data, userId);
-            return { success: true, message: "Post created successfully.", data: post };
-        } catch (err) {
-            console.log(err);
-            throw new InternalServerErrorException();
         }
+
+        const post = await this.postService.create(data, userId);
+        return { success: true, message: "Post created successfully.", data: post };
     }
 
     @Post("poll/vote")
@@ -123,14 +111,9 @@ export class PostController {
     @UseGuards(AuthGuard("jwt"))
     @UseInterceptors(ResponseInterceptor)
     async deleteMultipleScheduledPosts(@Body() postData: IScheduledPostIds): Promise<IResponseProps> {
-        try {
-            const { postIds } = postData, deleteFn = this.postService.deleteScheduledPostWithImages;
-            for (let i = 0; i < postIds.length; i++) deleteFn(Object(postIds[i]));
-            return { success: true, message: "Scheduled posts deleted successfully." };
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        const { postIds } = postData, deleteFn = this.postService.deleteScheduledPostWithImages;
+        for (let i = 0; i < postIds.length; i++) deleteFn(Object(postIds[i]));
+        return { success: true, message: "Scheduled posts deleted successfully." };
     }
 
     @Post("scheduled/reschedule/:id")
@@ -145,13 +128,8 @@ export class PostController {
         @Body() postData: PostDTO,
         @UploadedFiles(ConfigService.getParseFilePipeObj()) images: Array<Express.Multer.File>
     ): Promise<IResponseProps> {
-        try {
-            await this.postService.deleteScheduledPostWithImages(id);
-            return await this.create(req, postData, images);
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException();
-        }
+        await this.postService.deleteScheduledPostWithImages(id);
+        return await this.create(req, postData, images);
     }
 
     @Get("get-image/:filename")

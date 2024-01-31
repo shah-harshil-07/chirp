@@ -137,6 +137,19 @@ const CommentEditor = post => {
         );
     }
 
+    const moveToPostDetailPage = e => {
+        let { id: postId, type } = post;
+        type = type ?? "post";
+
+        if (postId) {
+            e.stopPropagation();
+            dispatch(closeModal());
+            navigate(`/post/${postId}`, { state: { type } });
+        } else {
+            showError("post id is unavailable.");
+        }
+    }
+
     const bodyJSX = (
         <div className="reaction-editor-body">
             <div className="position-relative">
@@ -157,9 +170,11 @@ const CommentEditor = post => {
 
                     <div className="row mx-0 mt-3 font-size-20">
                         <div>
-                            {/* {post?.text?.slice(0, 100) ?? ''}
-                            {(post?.text?.length > 100) && (<a href="https://google.com">...Read more</a>)} */}
-                            {<DisplayedText text={post?.text ?? ''} />}
+                            <DisplayedText
+                                text={post?.text ?? ''}
+                                parentType="comment-editor"
+                                readMoreAction={moveToPostDetailPage}
+                            />
                         </div>
                     </div>
 

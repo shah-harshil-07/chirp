@@ -111,6 +111,19 @@ const RepostEditor = post => {
         setUploadedFileObjects([..._uploadedFileObjects]);
     }
 
+    const moveToPostDetailPage = e => {
+        let { id: postId, type } = post;
+        type = type ?? "post";
+
+        if (postId) {
+            e.stopPropagation();
+            dispatch(closeModal());
+            navigate(`/post/${postId}`, { state: { type } });
+        } else {
+            showError("post id is unavailable.");
+        }
+    }
+
     const bodyJSX = (
         <div className="reaction-editor-body">
             <form noValidate onSubmit={repost} className="mw-100 mt-3">
@@ -155,8 +168,11 @@ const RepostEditor = post => {
 
                     <div className="row mx-0 mt-3 font-size-20">
                         <div>
-                            {/* {(post?.text?.slice(0, 40) ?? '') + (post?.text?.length > 40 ? "..." : '')} */}
-                            <DisplayedText text={post?.text ?? ''} />
+                            <DisplayedText
+                                text={post?.text ?? ''}
+                                parentType="repost-editor"
+                                readMoreAction={moveToPostDetailPage}
+                            />
                         </div>
                     </div>
 

@@ -259,14 +259,17 @@ const PostUtilities = ({ parentName }) => {
         if (reactionType === "repost") reactionFn = openRepostBox;
         else if (reactionType === "comment") reactionFn = openCommentBox;
         const data = JSON.parse(JSON.stringify(postObj ?? {}));
+
+        data["id"] = data?._id ?? '';
         data["images"] = images ?? [];
         if (data?.user?.picture) data.user.picture = userImages?.[postObj?.user?._id ?? '0'] ?? '';
         if (reactionFn) reactionFn(e, data); else showError("Something went wrong!");
     }
 
-    const moveToCommentList = postId => {
+    const moveToCommentList = (e, postId, type = "post") => {
+        e.stopPropagation();
         closeDetailsCardImmediately();
-        navigate(`/post/${postId}`, { preventScrollReset: false });
+        navigate(`/post/${postId}`, { preventScrollReset: false, state: { type } });
     }
 
     const openUserCard = (e, userDetails) => {
@@ -316,11 +319,6 @@ const PostUtilities = ({ parentName }) => {
         return styles;
     }
 
-    const moveToPostDetail = postId => {
-        if (postId) navigate(`/post/${postId}`);
-        else showError("post id is unavailable");
-    }
-
     return (
         <div className={!posts?.length ? "no-posts-box" : ''}>
             {
@@ -330,14 +328,16 @@ const PostUtilities = ({ parentName }) => {
                         {
                             posts.map((post, postIndex) => {
                                 const { post: parentPost, createdAt, isLiked, isSaved, _id: postId } = post;
-                                const { likes, reposts, comments, views, saved, } = post;
+                                const { likes, reposts, comments, views, saved } = post;
                                 const { name, username, _id: userId } = post.user ?? {};
                                 let parentPostImages = [], pureImages = [];
                                 const images = postImages[postIndex];
 
                                 const commentObj = userComments?.[postIndex];
+                                const { _id: commentId } = commentObj ?? {};
 
                                 const {
+                                    type: parentType,
                                     _id: parentPostId,
                                     text: parentPostText,
                                     user: parentPostUser,
@@ -353,7 +353,11 @@ const PostUtilities = ({ parentName }) => {
                                 }
 
                                 return name && username ? (
-                                    <Card className="post-card" key={postIndex} onClick={() => { moveToCommentList(postId); }}>
+                                    <Card
+                                        key={postIndex}
+                                        className="post-card"
+                                        onClick={e => { moveToCommentList(e, postId); }}
+                                    >
                                         <img
                                             alt="user"
                                             onMouseOut={closeUserCard}
@@ -380,7 +384,7 @@ const PostUtilities = ({ parentName }) => {
                                                         uniqueId={postId}
                                                         text={post?.text ?? ''}
                                                         parentType={"post-list-body"}
-                                                        readMoreAction={() => { moveToPostDetail(postId); }}
+                                                        readMoreAction={e => { moveToCommentList(e, postId); }}
                                                     />
                                                 </div>
                                             </div>
@@ -397,6 +401,7 @@ const PostUtilities = ({ parentName }) => {
                                                     <div
                                                         style={getRepostStyles(pureImages?.length)}
                                                         className="repost-body user-post-list-repost-body"
+                                                        onClick={e => { moveToCommentList(e, parentPostId, parentType); }}
                                                     >
                                                         <img
                                                             alt="post creator"
@@ -425,10 +430,11 @@ const PostUtilities = ({ parentName }) => {
                                                             <div className="row mx-0 mt-1 font-size-16">
                                                                 <div>
                                                                     <DisplayedText
+                                                                        uniqueId={parentPostId}
                                                                         text={parentPostText ?? ''}
-                                                                        parentType={"post-list-repost"}
-                                                                        readMoreAction={() => {
-                                                                            moveToPostDetail(parentPostId);
+                                                                        parentType={"user-comment"}
+                                                                        readMoreAction={e => {
+                                                                            moveToCommentList(e, parentPostId, parentType);
                                                                         }}
                                                                     />
                                                                 </div>
@@ -557,7 +563,7 @@ const PostUtilities = ({ parentName }) => {
 
                                                         <div
                                                             className="repost-body user-comment-body"
-                                                            onClick={() => { moveToCommentList(postId); }}
+                                                            onClick={e => { moveToCommentList(e, commentId, "comment"); }}
                                                             style={commentObj?.images?.length ? { paddingBottom: "15px" } : {}}
                                                         >
                                                             <img
@@ -589,7 +595,13 @@ const PostUtilities = ({ parentName }) => {
                                                                 </div>
 
                                                                 <div className="user-comment-text">
-                                                                    <DisplayedText text={commentObj?.text ?? ''} />
+                                                                    <DisplayedText
+                                                                        parentType={"user-comment"}
+                                                                        text={commentObj?.text ?? ''}
+                                                                        readMoreAction={e => {
+                                                                            moveToCommentList(e, commentId, "comment");
+                                                                        }}
+                                                                    />
                                                                 </div>
 
                                                                 <div className="user-comment-img-box">

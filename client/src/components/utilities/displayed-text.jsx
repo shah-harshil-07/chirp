@@ -5,7 +5,7 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import * as Constants from "src/utilities/constants";
 
 const DisplayedText = ({ text: preFormattedText, parentType, readMoreAction, uniqueId }) => {
-    const breakChars = [" ", "\n"];
+    const breakChars = [" ", "\n", "<br />"];
     const webLinkRegex = Constants.WEBLINK_ORIGIN_REGEX;
 
     const [text, setText] = useState('');
@@ -19,9 +19,9 @@ const DisplayedText = ({ text: preFormattedText, parentType, readMoreAction, uni
         const readMoreElement = document.querySelector(`#read-more-${uniqueId}`);
         if (readMoreElement) {
             readMoreElement.addEventListener("click", e => {
-                e.preventDefault();
                 e.stopPropagation();
-                readMoreAction();
+                e.preventDefault();
+                readMoreAction(e);
             });
         }
 
@@ -30,7 +30,12 @@ const DisplayedText = ({ text: preFormattedText, parentType, readMoreAction, uni
 
     const formatLinks = () => {
         if (typeof preFormattedText === "string") {
-            const limitedText = applyTextLimit(preFormattedText);
+            const trimmedText = JSON.stringify(preFormattedText)
+                .replaceAll(Constants.TRIMMER_REGEX, "\n")
+                .replaceAll(/"/gm, '')
+                .replaceAll(/\\n/gm, "<br />");
+
+            const limitedText = applyTextLimit(trimmedText);
 
             let formattedText = '', backlogIndex = 0;
             let startIndex = 0, n = limitedText.length;
@@ -85,6 +90,9 @@ const DisplayedText = ({ text: preFormattedText, parentType, readMoreAction, uni
                 break;
             case "post-list-body":
                 textLimit = Constants.postListBodyTextLimit;
+                break;
+            case "user-comment":
+                textLimit = Constants.userCommentTextLimit;
                 break;
             case "repost-editor":
                 textLimit = Constants.repostEditorTextLimit;

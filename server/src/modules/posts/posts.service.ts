@@ -74,8 +74,11 @@ export class PostService {
         const clonedPosts = JSON.parse(JSON.stringify(posts));
 
         for (const post of clonedPosts) {
-            if (post.postId && !post?.post?._id) {
-                post.post = await this.getRepostedCommentData(post.postId);
+            if (post.postId && !post?.post?._id) {  
+                const parentPostData = await this.getRepostedCommentData(post.postId);
+                const clonedParentPostData = JSON.parse(JSON.stringify(parentPostData));
+                clonedParentPostData["type"] = "comment";
+                post.post = clonedParentPostData;
             }
         }
 

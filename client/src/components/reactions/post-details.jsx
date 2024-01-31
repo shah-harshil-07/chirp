@@ -281,7 +281,6 @@ const PostDetails = () => {
         if (postId) {
             e.stopPropagation();
             navigate(`/post/${postId}`, { state: { type } });
-            window.location.reload();
         } else {
             showError("post id is unavailable.");
         }
@@ -317,7 +316,9 @@ const PostDetails = () => {
 
                             <div className="post-detail-body">
                                 <div className="row mx-0 font-size-20">
-                                    <div><DisplayedText text={postDetails?.text ?? ''} /></div>
+                                    <div>
+                                        <DisplayedText parentType="post-detail-body" text={postDetails?.text ?? ''} />
+                                    </div>
                                 </div>
 
                                 {postDetails?.poll?.choices && getPollJSX(postDetails.poll, postDetails.id)}
@@ -347,7 +348,8 @@ const PostDetails = () => {
                                             <div
                                                 className="post-detail-repost-body-content"
                                                 onClick={e => {
-                                                    moveToPostDetailPage(e,
+                                                    moveToPostDetailPage(
+                                                        e,
                                                         postDetails?.parentPostDetails?.id ?? '',
                                                         postDetails?.parentPostDetails?.type ?? "post"
                                                     );
@@ -369,7 +371,18 @@ const PostDetails = () => {
 
                                                 <div className="row mx-0 mt-1 font-size-20">
                                                     <div>
-                                                        <DisplayedText text={postDetails?.parentPostDetails?.text ?? ''} />
+                                                        <DisplayedText
+                                                            parentType="post-detail-repost"
+                                                            text={postDetails?.parentPostDetails?.text ?? ''}
+                                                            uniqueId={postDetails?.parentPostDetails?.id ?? ''}
+                                                            readMoreAction={e => {
+                                                                moveToPostDetailPage(
+                                                                    e,
+                                                                    postDetails?.parentPostDetails?.id ?? '',
+                                                                    postDetails?.parentPostDetails?.type ?? "post"
+                                                                );
+                                                            }}
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>
