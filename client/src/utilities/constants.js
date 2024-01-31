@@ -36,6 +36,7 @@ export const postListBodyTextLimit = 277;
 export const repostEditorTextLimit = 277;
 export const commentEditorTextLimit = 277;
 export const userCommentTextLimit = 277;
+export const userCardTextLimit = 277;
 
 /* API half URLs */
 /*--------------------------------------------------------------------------------*/

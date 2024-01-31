@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
+import DisplayedText from "./displayed-text";
 import { checkContainerInViewport } from "src/utilities/helpers";
 import { closeDetailsCard } from "src/redux/reducers/user-details";
 
@@ -69,7 +70,17 @@ const UserCard = () => {
                 )
             }
 
-            {userData?.bio && <p>{userData.bio}</p>}
+            {
+                userData?.bio && (
+                    <p>
+                        <DisplayedText
+                            parentType="user-card"
+                            text={userData?.bio ?? ''}
+                            customStyles={{ fontSize: "1rem" }}
+                        />
+                    </p>
+                )
+            }
 
             <div className="d-flex justify-content-around">
                 <div><b>{userData?.following ?? 0}</b>&nbsp;Following</div>

@@ -4,7 +4,7 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 
 import * as Constants from "src/utilities/constants";
 
-const DisplayedText = ({ text: preFormattedText, parentType, readMoreAction, uniqueId }) => {
+const DisplayedText = ({ text: preFormattedText, parentType, readMoreAction, uniqueId, customStyles }) => {
     const breakChars = [" ", "\n", "<"];
     const webLinkRegex = Constants.WEBLINK_ORIGIN_REGEX;
 
@@ -100,6 +100,9 @@ const DisplayedText = ({ text: preFormattedText, parentType, readMoreAction, uni
             case "comment-editor":
                 textLimit = Constants.commentEditorTextLimit;
                 break;
+            case "user-card":
+                textLimit = Constants.userCardTextLimit;
+                break;
             default:
                 break;
         }
@@ -117,7 +120,7 @@ const DisplayedText = ({ text: preFormattedText, parentType, readMoreAction, uni
     }
 
     return (
-        <div className="displayed-text-styles">
+        <div className="displayed-text-styles" style={{ ...customStyles ?? {} }}>
             <span dangerouslySetInnerHTML={{ __html: text }} />
         </div>
     );
