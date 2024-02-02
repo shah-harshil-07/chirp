@@ -17,9 +17,12 @@ import {
 } from "@nestjs/common";
 
 import { UsersService } from "./users.service";
+import { FollowActionDTO } from "./followers.dto";
+import { FollowersService } from "./followers.service";
 import { AuthService } from "src/modules/auth/auth.service";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { ConfigService } from "src/modules/config/config.service";
+import { CustomUnprocessableEntityException } from "src/exception-handlers/422/handler";
 import {
     OtpDTO,
     UserDTO,
@@ -41,7 +44,11 @@ interface IResponseProps {
 
 @Controller("user")
 export class UsersController {
-    constructor(private readonly userService: UsersService, private readonly authService: AuthService) { }
+    constructor(
+        private readonly authService: AuthService,
+        private readonly userService: UsersService,
+        private readonly followerService: FollowersService,
+    ) { }
 
     @Post("verify-email")
     @UseInterceptors(ResponseInterceptor)
@@ -205,5 +212,89 @@ export class UsersController {
     ): Promise<IResponseProps> {
         await this.userService.deleteUserImage(id, requestData.fileName, requestData.imageType);
         return { success: true, data: null, message: "Image deleted successfully." };
+    }
+
+    @Post("follow")
+    @UseGuards(AuthGuard("jwt"))
+    @UseInterceptors(ResponseInterceptor)
+    async followUser(@Body() reqData: FollowActionDTO): Promise<IResponseProps> {
+        const { followerId, followingId } = reqData;
+        const followerExists = await this.userService.checkUserExists(followerId);
+        const followingExists = await this.userService.checkUserExists(followingId);
+
+        if (!followerExists || !followingExists) {
+            throw new CustomUnprocessableEntityException("The user id is not valid.");
+        }
+
+        let isValidaData = true, message = '';
+        if (await this.followerService.checkUserfollowing(followerId, followingId)) {
+            isValidaData = false;
+            message = "User is already following the requested user.";
+        } else if (followerId === followingId) {
+            isValidaData = false;
+            message = "follower id and following id cannot be same.";
+        }
+
+        if (!isValidaData && message) {
+            return { success: false, data: null, message };
+        } else {
+            const followDoc = await this.followerService.followUser(followerId, followingId);
+            return { success: true, data: followDoc, message: "Follow action completed successfully." };
+        }
+    }
+
+    @Post("check-following")
+    @UseGuards(AuthGuard("jwt"))
+    @UseInterceptors(ResponseInterceptor)
+    async checkUserFollowing(@Body() reqData: FollowActionDTO): Promise<IResponseProps> {
+        const { followerId, followingId } = reqData;
+        const followerExists = await this.userService.checkUserExists(followerId);
+        const followingExists = await this.userService.checkUserExists(followingId);
+
+        if (!followerExists || !followingExists) {
+            throw new CustomUnprocessableEntityException("The user id is not valid.");
+        }
+
+        const data = await this.followerService.checkUserfollowing(followerId, followingId);
+        const userFollows = Boolean(data);
+        return {
+            success: true,
+            data: { follows: userFollows },
+            message: "user following data fetched successfully."
+        };
+    }
+
+    @Post("unfollow-user")
+    @UseGuards(AuthGuard("jwt"))
+    @UseInterceptors(ResponseInterceptor)
+    async unFollowUser(@Body() reqData: FollowActionDTO): Promise<IResponseProps> {
+        const { followerId, followingId } = reqData;
+        const followerExists = await this.userService.checkUserExists(followerId);
+        const followingExists = await this.userService.checkUserExists(followingId);
+
+        if (!followerExists || !followingExists) {
+            throw new CustomUnprocessableEntityException("The user id is not valid.");
+        }
+
+        const isDeleted = await this.followerService.unFollowUser(followerId, followingId);
+        const message = isDeleted ?
+            "The unfollow action has been completed successfully." :
+            "The unfollow action has failed.";
+
+        return { success: isDeleted, data: { unfollowed: isDeleted }, message };
+    }
+
+    @Get("get-followers/:id")
+    @UseInterceptors(ResponseInterceptor)
+    async getAllFollowers(@Param() { id }: IParamId): Promise<IResponseProps> {
+        const followerList = await this.followerService.getAllFollowers({userId: id, type: "following"});
+        return { success: true, data: followerList, message: "Followers fetched successfully." };
+    }
+
+    @Get("get-following/:id")
+    @UseInterceptors(ResponseInterceptor)
+    async getAllFollowing(@Param() { id }: IParamId): Promise<IResponseProps> {
+        const followingList = await this.followerService.getAllFollowers({userId: id, type: "follower"});
+        return { success: true, data: followingList, message: "Followings fetched successfully." };
     }
 }

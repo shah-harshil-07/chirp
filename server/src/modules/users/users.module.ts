@@ -9,6 +9,8 @@ import { UsersController } from "./users.controller";
 import { UserModel, UserSchema } from "./users.schema";
 import { ConfigModule } from "../config/config.module";
 import { ConfigService } from "../config/config.service";
+import { FollowersService } from "./followers.service";
+import { FollowerModel, FollowerSchema } from "./followers.schema";
 import { OtpStore, OtpStoreSchema } from "../common/otp-store.schema";
 import { CommentsModule } from "../reactions/comments/comments.module";
 import { LikesModule } from "../reactions/savesAndLikes/savesAndLikes.module";
@@ -30,12 +32,13 @@ import { CustomValidatorsModule } from "../custom-validators/custom-validators.m
 			}),
 		}),
 		MongooseModule.forFeature([
-			{ name: OtpStore.name, schema: OtpStoreSchema },
 			{ name: UserModel.name, schema: UserSchema },
+			{ name: OtpStore.name, schema: OtpStoreSchema },
+			{ name: FollowerModel.name, schema: FollowerSchema },
 		]),
 	],
 	controllers: [UsersController],
-	providers: [UsersService],
-	exports: [UsersService],
+	providers: [UsersService, FollowersService],
+	exports: [UsersService, FollowersService],
 })
 export class UsersModule { }

@@ -72,38 +72,40 @@ export class UsersService {
     }
 
     public async checkUserUniquness(userData: UserDTO): Promise<boolean> {
-        const userObj = await
-            this
-                .userModel
-                .findOne({ $or: [{ email: userData.email }, { username: userData.username }] })
-                .exec();
+        const userObj = await this
+            .userModel
+            .findOne({ $or: [{ email: userData.email }, { username: userData.username }] })
+            .exists("_id", true)
+            .exec();
 
         return userObj ? false : true;
     }
 
     public async findUser(userData: LoggedInUserDTO): Promise<UserDTO> {
-        const userObj = await
-            this
-                .userModel
-                .findOne({
-                    $or: [{ email: userData.cred }, { username: userData.cred }],
-                    password: userData.password,
-                })
-                .exec();
+        const userObj = await this
+            .userModel
+            .findOne({
+                $or: [{ email: userData.cred }, { username: userData.cred }],
+                password: userData.password,
+            })
+            .exec();
 
         return userObj;
     }
 
     public async getGoogleCredentials(userData: GoogleAuthedUserDTO): Promise<UserDTO> {
-        const userObj = await
-            this
-                .userModel
-                .findOne({
-                    $or: [{ email: userData.email }, { googleId: userData.googleId }],
-                })
-                .exec();
+        const userObj = await this
+            .userModel
+            .findOne({
+                $or: [{ email: userData.email }, { googleId: userData.googleId }],
+            })
+            .exec();
 
         return userObj;
+    }
+
+    public async checkUserExists(userId: string): Promise<boolean> {
+        return await this.userModel.findOne({ _id: userId });
     }
 
     public async createGoogleAuthedUser(userData: RegisteredGoogleAuthedUserDTO): Promise<UserDTO> {
