@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
-import { UserModel } from "./users.schema";
+import { UserModel } from "../users.schema";
 
 @Schema({ collection: "Followers" })
 export class FollowerModel {
