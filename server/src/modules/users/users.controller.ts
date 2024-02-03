@@ -3,6 +3,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { createReadStream, existsSync } from "fs";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import {
+    Req,
     Get,
     Body,
     Post,
@@ -14,7 +15,6 @@ import {
     StreamableFile,
     UseInterceptors,
     UnprocessableEntityException,
-    Req,
 } from "@nestjs/common";
 
 import { UsersService } from "./users.service";
@@ -23,6 +23,7 @@ import { IFollowingParamId } from "./followers/followers.dto";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { FollowersService } from "./followers/followers.service";
 import { ConfigService } from "src/modules/config/config.service";
+import { GetAuthTokenGuard } from "src/modules/auth/get-token.guard";
 import { CustomUnprocessableEntityException } from "src/exception-handlers/422/handler";
 import {
     OtpDTO,
@@ -35,6 +36,7 @@ import {
     IUpdateUserDetailsDTO,
     RegisteredGoogleAuthedUserDTO,
 } from "./users.dto";
+import { CustomBadRequestException } from "src/exception-handlers/400/handler";
 
 interface IResponseProps {
     data?: any;
@@ -280,16 +282,20 @@ export class UsersController {
     }
 
     @Get("get-followers/:id")
+    @UseGuards(GetAuthTokenGuard)
     @UseInterceptors(ResponseInterceptor)
-    async getAllFollowers(@Param() { id }: IParamId): Promise<IResponseProps> {
-        const followerList = await this.followerService.getAllFollowers({ userId: id, type: "following" });
+    async getAllFollowers(@Req() req: any, @Param() { id }: IParamId): Promise<IResponseProps> {
+        const { _id: loggedInUserId } = req?.user ?? {};
+        const followerList = await this.followerService.getAllFollowers({ userId: id, type: "following", loggedInUserId });
         return { success: true, data: followerList, message: "Followers fetched successfully." };
     }
 
     @Get("get-following/:id")
+    @UseGuards(GetAuthTokenGuard)
     @UseInterceptors(ResponseInterceptor)
-    async getAllFollowing(@Param() { id }: IParamId): Promise<IResponseProps> {
-        const followingList = await this.followerService.getAllFollowers({ userId: id, type: "follower" });
+    async getAllFollowing(@Req() req: any, @Param() { id }: IParamId): Promise<IResponseProps> {
+        const { _id: loggedInUserId } = req?.user ?? {};
+        const followingList = await this.followerService.getAllFollowers({ userId: id, type: "follower", loggedInUserId });
         return { success: true, data: followingList, message: "Followings fetched successfully." };
     }
 }

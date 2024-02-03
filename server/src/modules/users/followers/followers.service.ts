@@ -24,19 +24,30 @@ export class FollowersService {
         return Boolean(deletedCount);
     }
 
-    public async getAllFollowers({userId, type}: FollowDataFetchDTO): Promise<any> {
-        return await this.followerModel.aggregate([
-            { $match: { $expr: { $eq: [`$${type}`, { $toObjectId: userId }] } } },
-            { $lookup: { localField: "follower", foreignField: "_id", from: "Users", as: "user" } },
-            { $unwind: { path: "$user", preserveNullAndEmptyArrays: true } },
+    public async getAllFollowers({ userId, type, loggedInUserId }: FollowDataFetchDTO): Promise<FollowerModel[]> {
+        const isFollowingQuerySet = loggedInUserId && loggedInUserId !== userId ? [
+            { $lookup: { localField: "user._id", foreignField: "following", from: "Followers", as: "followData" } },
             {
-                $project: {
-                    "user._id": 1,
-                    "user.name": 1,
-                    "user.username": 1,
-                    "user.picture": 1,
-                },
-            },
+                $addFields: {
+                    isFollowed: {
+                        $cond: {
+                            if: { $ne: [{ $indexOfArray: ["$followData.follower", { $toObjectId: loggedInUserId }] }, -1] },
+                            then: true,
+                            else: false,
+                        }
+                    }
+                }
+            }
+        ] : [];
+
+        // const lookupFeild = type === "follower" ? "following" : "follower";
+
+        return await this.followerModel.aggregate([
+            { $match: { $expr: { $eq: [`$following`, { $toObjectId: userId }] } } },
+            { $lookup: { localField: "follower", foreignField: "_id", from: "Users", as: "user" } },
+            { $unwind: "$user" },
+            ...isFollowingQuerySet,
+            { $project: { "isFollowed": 1, "user._id": 1, "user.name": 1, "user.username": 1, "user.picture": 1 } },
         ]);
     }
 }
