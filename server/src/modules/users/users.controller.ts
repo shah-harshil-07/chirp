@@ -298,4 +298,13 @@ export class UsersController {
         const followingList = await this.followerService.getAllFollowers({ userId: id, type: "follower", loggedInUserId });
         return { success: true, data: followingList, message: "Followings fetched successfully." };
     }
+
+    @Get("get-mutual-connections/:id")
+    @UseGuards(GetAuthTokenGuard)
+    @UseInterceptors(ResponseInterceptor)
+    async getMutualConnections(@Req() req: any, @Param() { id }: IParamId): Promise<IResponseProps> {
+        const { _id: loggedInUserId } = req?.user ?? {};
+        
+        return;
+    }
 }

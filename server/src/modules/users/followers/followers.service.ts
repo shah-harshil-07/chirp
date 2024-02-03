@@ -40,11 +40,11 @@ export class FollowersService {
             }
         ] : [];
 
-        // const lookupFeild = type === "follower" ? "following" : "follower";
+        const lookupFeild = type === "follower" ? "following" : "follower";
 
         return await this.followerModel.aggregate([
-            { $match: { $expr: { $eq: [`$following`, { $toObjectId: userId }] } } },
-            { $lookup: { localField: "follower", foreignField: "_id", from: "Users", as: "user" } },
+            { $match: { $expr: { $eq: [`$${type}`, { $toObjectId: userId }] } } },
+            { $lookup: { localField: lookupFeild, foreignField: "_id", from: "Users", as: "user" } },
             { $unwind: "$user" },
             ...isFollowingQuerySet,
             { $project: { "isFollowed": 1, "user._id": 1, "user.name": 1, "user.username": 1, "user.picture": 1 } },
