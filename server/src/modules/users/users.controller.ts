@@ -304,7 +304,7 @@ export class UsersController {
     @UseInterceptors(ResponseInterceptor)
     async getMutualConnections(@Req() req: any, @Param() { id }: IParamId): Promise<IResponseProps> {
         const { _id: loggedInUserId } = req?.user ?? {};
-        
-        return;
+        const connectionList = await this.followerService.getMutualConnections(id, loggedInUserId);
+        return { success: true, data: connectionList, message: "Mutual connections fetched successfully." };
     }
 }

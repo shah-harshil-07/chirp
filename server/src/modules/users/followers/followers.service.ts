@@ -2,6 +2,7 @@ import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { Injectable, UseInterceptors } from "@nestjs/common";
 
+import { UserModel } from "../users.schema";
 import { FollowerModel } from "./followers.schema";
 import { FollowDataFetchDTO } from "./followers.dto";
 import { ResponseInterceptor } from "src/interceptors/response";
@@ -9,7 +10,10 @@ import { ResponseInterceptor } from "src/interceptors/response";
 @Injectable()
 @UseInterceptors(ResponseInterceptor)
 export class FollowersService {
-    constructor(@InjectModel(FollowerModel.name) private readonly followerModel: Model<FollowerModel>) { }
+    constructor(
+        @InjectModel(UserModel.name) private readonly userModel: Model<UserModel>,
+        @InjectModel(FollowerModel.name) private readonly followerModel: Model<FollowerModel>,
+    ) { }
 
     public async checkUserfollowing(followerId: string, followingId: string): Promise<FollowerModel> {
         return await this.followerModel.findOne({ follower: followerId, following: followingId }).exec();
@@ -49,5 +53,49 @@ export class FollowersService {
             ...isFollowingQuerySet,
             { $project: { "isFollowed": 1, "user._id": 1, "user.name": 1, "user.username": 1, "user.picture": 1 } },
         ]);
+    }
+
+    public async getMutualConnections(userId: string, loggedInUserId: string): Promise<UserModel[]> {
+        const mutualConnectionData = await this.followerModel.aggregate([
+            {
+                $match: {
+                    $or: [
+                        { $expr: { $eq: ["$following", { $toObjectId: userId }] } },
+                        { $expr: { $eq: ["$follower", { $toObjectId: loggedInUserId }] } },
+                    ]
+                }
+            },
+            {
+                $facet: {
+                    followerGroup: [
+                        { $group: { _id: "$follower", following_arr: { $push: "$following" } } },
+                        { $match: { $expr: { $eq: ["$_id", { $toObjectId: loggedInUserId }] } } }
+                    ],
+                    followingGroup: [
+                        { $group: { _id: "$following", follower_arr: { $push: "$follower" } } },
+                        { $match: { $expr: { $eq: ["$_id", { $toObjectId: userId }] } } }
+                    ],
+                },
+            },
+            { $unwind: "$followerGroup" },
+            { $unwind: "$followingGroup" },
+            {
+                $project: {
+                    common_users: {
+                        $setIntersection: ["$followerGroup.following_arr", "$followingGroup.follower_arr"]
+                    }
+                }
+            }
+        ]);
+
+        const mutualConnectionIdList = mutualConnectionData?.[0]?.common_users ?? [];
+        if (mutualConnectionIdList?.length) {
+            return await this.userModel
+                .find({ _id: { $in: mutualConnectionIdList } })
+                .select("_id name picture")
+                .limit(5);
+        } else {
+            return [];
+        }
     }
 }
