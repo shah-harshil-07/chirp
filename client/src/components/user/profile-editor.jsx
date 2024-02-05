@@ -8,7 +8,6 @@ import React, { useEffect, useState, useRef } from "react";
 
 import API from "src/api";
 import CustomModal from "../utilities/custom-modal";
-import Confirmation from "../utilities/confirmation";
 import * as Constants from "src/utilities/constants";
 import CustomSelect from "../utilities/custom-select";
 import { closeModal } from "src/redux/reducers/modal";
@@ -20,6 +19,7 @@ import DateOptionServices from "src/custom-hooks/date-services";
 import useImageConverter from "src/custom-hooks/image-converter";
 import { getErrorMessage, validate } from "src/utilities/helpers";
 import LabelledInputTextarea from "../utilities/labelled-textarea";
+import { closeConfirmation, openConfirmation } from "src/redux/reducers/confirmation";
 
 const ProfileEditor = ({
     userId,
@@ -69,7 +69,6 @@ const ProfileEditor = ({
     const [profileDetailsUpdated, setProfileDetailsUpdated] = useState(false);
     const [showProfileImgUploader, setShowProfileImgUploader] = useState(true);
     const [uploadedProfileImgFile, setUploadedProfileImgFile] = useState(null);
-    const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
     const [profileDetails, setProfileDetails] = useState({ ..._profileDetails });
     const [uploadedBackImgFileObject, setUploadedBackImgFileObject] = useState(null);
     const [uploadedProfileImgFileObject, setUploadedProfileImgFileObject] = useState(null);
@@ -88,6 +87,20 @@ const ProfileEditor = ({
     useEffect(() => {
         if (profileDetailsUpdated && profileDetails) setOpenCustomModal(true);
     }, [profileDetailsUpdated, profileDetails]);
+
+    useEffect(() => {
+        if (selectedImgKey) {
+            const confirmationProps = {
+                headingText: "Delete",
+                handleConfirmAction: confirmDeleteImage,
+                message: "Are you sure you want to delete the image?",
+            };
+
+            dispatch(openConfirmation(confirmationProps));
+        }
+
+        // eslint-disable-next-line
+    }, [selectedImgKey]);
 
     const updateProfileDetails = () => {
         const momentDoB = moment(generalDetails?.dateOfBirth);
@@ -121,7 +134,6 @@ const ProfileEditor = ({
                 fileObjChangeFn(null);
             } else {
                 setSelectedImgKey(key);
-                setOpenDeleteConfirmation(true);
             }
         } else {
             refObj.current.click();
@@ -383,7 +395,7 @@ const ProfileEditor = ({
 
     const confirmDeleteImage = async () => {
         if (selectedImgKey) {
-            setOpenDeleteConfirmation(false);
+            dispatch(closeConfirmation());
             const url = `${Constants.DELETE_USER_IMAGE}/${userId}`;
             const data = {
                 fileName: generalDetails[selectedImgKey],
@@ -412,31 +424,16 @@ const ProfileEditor = ({
         }
     }
 
-    return (
-        <>
-            {
-                openCustomModal && (
-                    <CustomModal
-                        includeHeader={true}
-                        displayOverflow={true}
-                        bodyJSX={editProfileBodyJSX}
-                        bodyClasses={"ml-0 mr-0 p-0 mt-4"}
-                        customHeaderJSX={editProfileHeaderJSX}
-                    />
-                )
-            }
-
-            {
-                openDeleteConfirmation && (
-                    <Confirmation
-                        headingText={"Delete"}
-                        handleConfirmAction={confirmDeleteImage}
-                        message={`Are you sure you want to delete the image?`}
-                        handleCloseAction={() => { setOpenDeleteConfirmation(false); }}
-                    />
-                )
-            }
-        </>
+    return openCustomModal ? (
+        <CustomModal
+            includeHeader={true}
+            displayOverflow={true}
+            bodyJSX={editProfileBodyJSX}
+            bodyClasses={"ml-0 mr-0 p-0 mt-4"}
+            customHeaderJSX={editProfileHeaderJSX}
+        />
+    ) : (
+        <></>
     );
 };
 

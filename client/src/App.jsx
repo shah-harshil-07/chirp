@@ -6,18 +6,21 @@ import { Outlet } from "react-router-dom";
 
 import AuthBar from "./components/auth-bar";
 import Toaster from "./components/utilities/toaster";
-import LeftSidebar from "./components/sidebar/left-sidebar";
 import LightHouse from "./components/utilities/lighthouse";
+import LeftSidebar from "./components/sidebar/left-sidebar";
 import RightSidebar from "./components/sidebar/right-sidebar";
+import Confirmation from "./components/utilities/confirmation";
 import { isUserLoggedIn, modalConfig } from "./utilities/helpers";
 
 const App = () => {
 	const dialogState = useSelector(state => state.modal);
 	const toasterState = useSelector(state => state.toaster);
 	const lighthouseState = useSelector(state => state.lighthouse);
+	const confirmationState = useSelector(state => state.confirmation);
 
-	const { type, message } = toasterState?.messageObj ?? {};
-	const { open: isLighthouseOpen, images, initialIndex } = lighthouseState;
+	const { open: isLighthouseOpen, ...lighthouseProps } = lighthouseState;
+	const { open: isConfirmationOpen, ...confirmationProps } = confirmationState;
+	const { open: isToasterOpen, messageObj: toasterProps } = toasterState ?? {};
 
 	const getDialog = () => {
 		const Dialog = modalConfig?.[dialogState.type] ?? <></>, props = dialogState.props ?? {};
@@ -32,9 +35,11 @@ const App = () => {
 
 			{!isUserLoggedIn() && <AuthBar />}
 
-			{toasterState.open && <Toaster type={type} message={message} />}
+			{isToasterOpen && <Toaster {...toasterProps} />}
 
-			{isLighthouseOpen && <LightHouse images={images} initialIndex={initialIndex} />}
+			{isLighthouseOpen && <LightHouse {...lighthouseProps} />}
+
+			{isConfirmationOpen && <Confirmation {...confirmationProps} />}
 		</>
 	);
 };

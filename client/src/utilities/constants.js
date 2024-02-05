@@ -70,3 +70,7 @@ export const GET_POST_LIKES_AND_SAVES = "saves-likes/check";
 
 export const CREATE_COMMENT = "comments/store";
 export const COMMENT_LIST = "comments/all";
+
+export const FOLLOW_USER = "user/follow";
+export const UNFOLLOW_USER = "user/unfollow-user";
+export const CHECK_USER_FOLLOWING = "user/check-following";

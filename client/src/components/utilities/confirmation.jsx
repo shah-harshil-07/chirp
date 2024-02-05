@@ -1,13 +1,23 @@
 import "src/styles/utilities/confirmation.css";
 
 import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
-const Confirmation = ({ message, handleCloseAction, headingText, handleConfirmAction }) => {
+import { closeConfirmation } from "src/redux/reducers/confirmation";
+
+const Confirmation = ({ message, headingText, handleConfirmAction }) => {
+    const dispatch = useDispatch();
+
     useEffect(() => {
         const body = document.querySelector("body");
         body.style.overflow = "hidden";
         return () => { body.style.overflow = "auto" };
     }, []);
+
+    const handleCloseAction = e => {
+        e.preventDefault();
+        dispatch(closeConfirmation());
+    }
 
     return (
         <div className="confirmation-modal">

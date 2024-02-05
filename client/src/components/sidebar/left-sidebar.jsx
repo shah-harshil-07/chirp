@@ -2,15 +2,17 @@ import "src/styles/sidebar/index.css";
 import "src/styles/sidebar/left-sidebar.css";
 
 import CIcon from "@coreui/icons-react";
+import { useDispatch } from "react-redux";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useDocumentClickServices from "src/custom-hooks/document-services";
 import { cilHome, cilSettings, cilBookmark, cilUser, cilOptions } from "@coreui/icons";
 
-import Confirmation from "../utilities/confirmation";
+import { openConfirmation } from "src/redux/reducers/confirmation";
 import { getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const LeftSidebar = () => {
+    const dispatch = useDispatch();
     const logo = require("src/assets/logo-1.png");
     const navigate = useNavigate(), location = useLocation();
     const sampleUserImg = require("src/assets/sample-user.png");
@@ -19,7 +21,6 @@ const LeftSidebar = () => {
     const userDetails = getUserDetails(), actionbarRef = useRef(null), actionIconRef = useRef(null);
 
     const [viewActionbar, setViewActionbar] = useState(false);
-    const [openLogoutConfirmation, setOpenLogoutConfirmation] = useState(false);
 
     useEffect(() => {
         const outsideClickFn = e => {
@@ -41,7 +42,6 @@ const LeftSidebar = () => {
     const logoutUser = () => {
         localStorage.removeItem("chirp-accessToken");
         localStorage.removeItem("chirp-userDetails");
-        setOpenLogoutConfirmation(false);
         navigate('/', { preventScrollReset: false });
         window.location.reload();
     }
@@ -55,6 +55,16 @@ const LeftSidebar = () => {
         e.preventDefault();
         const { id } = userDetails;
         if (id) navigate(`user/${id}`, { state: { viewSaved } });
+    }
+
+    const openLogoutConfirmation = () => {
+        const confirmationProps = {
+            headingText: "Logout",
+            handleConfirmAction: logoutUser,
+            message: "Are you sure you want to logout?",
+        };
+
+        dispatch(openConfirmation(confirmationProps));
     }
 
     return (
@@ -110,10 +120,7 @@ const LeftSidebar = () => {
                     {
                         viewActionbar && (
                             <div className="left-sidebar-user-actionbar" ref={actionbarRef}>
-                                <div
-                                    className="left-sidebar-user-action"
-                                    onClick={() => { setOpenLogoutConfirmation(true); }}
-                                >
+                                <div onClick={openLogoutConfirmation} className="left-sidebar-user-action">
                                     <b>Log out {`@${userDetails?.username ?? ''}`}</b>
                                 </div>
                             </div>
@@ -148,17 +155,6 @@ const LeftSidebar = () => {
                     }
                 </div>
             </div>
-
-            {
-                openLogoutConfirmation && (
-                    <Confirmation
-                        headingText={"Logout"}
-                        handleConfirmAction={logoutUser}
-                        message={`Are you sure you want to logout?`}
-                        handleCloseAction={() => { setOpenLogoutConfirmation(false); }}
-                    />
-                )
-            }
         </div>
     );
 }

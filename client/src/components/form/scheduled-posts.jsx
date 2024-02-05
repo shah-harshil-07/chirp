@@ -10,12 +10,12 @@ import API from "src/api";
 import ImgHolder from "../utilities/img-holder";
 import CustomModal from "../utilities/custom-modal";
 import * as Constants from "src/utilities/constants";
-import Confirmation from "../utilities/confirmation";
 import { getCommonHeader } from "src/utilities/helpers";
 import useToaster from "src/custom-hooks/toaster-message";
 import DateOptionServices from "src/custom-hooks/date-services";
 import useImageConverter from "src/custom-hooks/image-converter";
 import { closeModal, openModalWithProps } from "src/redux/reducers/modal";
+import { closeConfirmation, openConfirmation } from "src/redux/reducers/confirmation";
 
 const ScheduledPostList = () => {
     const dispatch = useDispatch();
@@ -31,7 +31,6 @@ const ScheduledPostList = () => {
     const [selectedPosts, setSelectedPosts] = useState(0);
     const [displayOverflow, setDisplayOverflow] = useState(false);
     const [scheduledPostImages, setSchduledPostImages] = useState([]);
-    const [openConfirmationDialog, setOpenConfirmationDialog] = useState(false);
     const [scheduledPostFileObjects, setScheduledPostFileObjects] = useState([]);
 
     useEffect(() => {
@@ -144,6 +143,8 @@ const ScheduledPostList = () => {
     }
 
     const deleteScheduledPosts = async () => {
+        dispatch(closeConfirmation());
+
         try {
             const selectedPosts = posts.filter(post => post.selected);
             const selectedPostIds = selectedPosts.map(post => post._id);
@@ -160,6 +161,16 @@ const ScheduledPostList = () => {
         }
     }
 
+    const openDeleteConfirmation = () => {
+        const confirmationProps = {
+            headingText: "Delete post",
+            handleConfirmAction: deleteScheduledPosts,
+            message: `Are you sure you want to delete the scheduled ${selectedPosts > 1 ? "posts" : "post"}?`,
+        };
+
+        dispatch(openConfirmation(confirmationProps));
+    }
+
     const bodyJSX = (
         <>
             <div className="row">
@@ -169,7 +180,7 @@ const ScheduledPostList = () => {
                     posts.length > 0 && (
                         <div className="col-md-4">
                             <button
-                                onClick={() => { setOpenConfirmationDialog(true); }}
+                                onClick={openDeleteConfirmation}
                                 className="btn btn-danger scheduled-post-delete-btn"
                                 style={{ opacity: selectedPosts > 0 ? '1' : "0.4" }}
                             >
@@ -256,21 +267,7 @@ const ScheduledPostList = () => {
         </>
     );
 
-    return (
-        <>
-            <CustomModal bodyJSX={bodyJSX} includeHeader={true} showLoader={showLoader} displayOverflow={displayOverflow} />
-            {
-                openConfirmationDialog && (
-                    <Confirmation
-                        headingText={"Delete post"}
-                        handleConfirmAction={deleteScheduledPosts}
-                        handleCloseAction={() => { setOpenConfirmationDialog(false); }}
-                        message={`Are you sure you want to delete the scheduled ${selectedPosts > 1 ? "posts" : "post"}?`}
-                    />
-                )
-            }
-        </>
-    );
+    return <CustomModal bodyJSX={bodyJSX} includeHeader={true} showLoader={showLoader} displayOverflow={displayOverflow} />;
 }
 
 export default ScheduledPostList;

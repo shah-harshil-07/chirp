@@ -6,20 +6,25 @@ import { useDispatch } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { cilCalendar, cilBirthdayCake, cilLink, cilLocationPin } from "@coreui/icons";
 
+import API from "src/api";
 import Loader from "../utilities/loader";
 import * as Constants from "src/utilities/constants";
+import useToaster from "src/custom-hooks/toaster-message";
 import { openModalWithProps } from "src/redux/reducers/modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
 import { openLighthouse } from "src/redux/reducers/lighthouse";
 import useImageConverter from "src/custom-hooks/image-converter";
-import { getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
+import { closeConfirmation, openConfirmation } from "src/redux/reducers/confirmation";
+import { getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const UserInfo = ({ details, getterFn, isLoading }) => {
     const totalLineLength = 1040;
     const dispatch = useDispatch();
+    const commonHeader = getCommonHeader();
     let availableCoverage = totalLineLength;
-    const sampleUserImg = require("src/assets/sample-user.png");
+    const { showError, showSuccess } = useToaster();
     const { getFileObjectFromBase64 } = useImageConverter();
+    const sampleUserImg = require("src/assets/sample-user.png");
 
     const loggedInUserData = isUserLoggedIn() ? getUserDetails() : {};
     const { id: loggedUserId } = loggedInUserData;
@@ -30,6 +35,7 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
     const preselectedMonth = currentDate.getUTCMonth();
     const preselectedYear = currentDate.getFullYear() - 5;
     const _profileDetails = {
+        id: '',
         bio: '',
         name: '',
         website: '',
@@ -50,6 +56,7 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
 
     const [userData, setUserData] = useState({});
     const [websiteLink, setWebsiteLink] = useState('#');
+    const [isFollowing, setIsFollowing] = useState(false);
     const [statsList, setStatsList] = useState([..._statsList]);
     const [uploadedBackImgFile, setUploadedBackImgFile] = useState(null);
     const [uploadedProfileImgFile, setUploadedProfileImgFile] = useState(null);
@@ -62,6 +69,7 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
             updateStats();
             updateProfileDetails();
             setUserData({ ...details });
+            checkUserFollowing(details._id);
 
             if (details.picture) {
                 const { picture } = details;
@@ -120,6 +128,18 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
         setStatsList([...updatedStatsList]);
     }
 
+    const checkUserFollowing = userId => {
+        if (userId && userId !== loggedUserId) {
+            const url = `${Constants.CHECK_USER_FOLLOWING}/${userId}`;
+
+            API(Constants.GET, url, null, commonHeader).then(({ data: response }) => {
+                let { follows } = response?.data ?? {};
+                if (typeof follows !== "boolean") follows = Boolean(follows);
+                setIsFollowing(follows);
+            });
+        }
+    }
+
     const updateProfileDetails = () => {
         const momentDoB = moment(details?.dateOfBirth);
         const day = isNaN(momentDoB.date()) ? preselectedDay : momentDoB.date();
@@ -128,6 +148,7 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
 
         setProfileDetails({
             ...profileDetails,
+            id: details?._id ?? '',
             bio: details?.bio ?? '',
             name: details?.name ?? '',
             location: details?.location ?? '',
@@ -136,7 +157,9 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
         });
     }
 
-    const openProfileEditor = () => {
+    const openProfileEditor = e => {
+        e.preventDefault();
+
         const data = {
             getterFn,
             generalDetails: details,
@@ -155,6 +178,44 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
         dispatch(openLighthouse({ images: [imgSrc], initialIndex: 0 }));
     }
 
+    const handleUnfollowAction = e => {
+        const confirmationProps = {
+            headingText: "Unfollow",
+            message: "Are you sure you want to unfollow the user?",
+            handleConfirmAction: () => {
+                setIsFollowing(false);
+                followUnfollowUser(e, false);
+                dispatch(closeConfirmation());
+            }
+        };
+
+        dispatch(openConfirmation(confirmationProps));
+    }
+
+    const handleFollowAction = e => {
+        setIsFollowing(true);
+        followUnfollowUser(e, true);
+    }
+
+    const followUnfollowUser = (e, followUser) => {
+        e.preventDefault();
+        showError("message");
+
+        if (loggedUserId) {
+            const baseUrl = followUser ? Constants.FOLLOW_USER : Constants.UNFOLLOW_USER;
+            const url = `${baseUrl}/${profileDetails.id}`;
+
+            API(Constants.GET, url, null, commonHeader).then(({ data: response }) => {
+                const { status, message } = response?.meta ?? {};
+
+                if (status && message) showSuccess(message);
+                else showError(message ?? "Something went wrong!");
+            });
+        } else {
+            showError("Please login to follow.");
+        }
+    }
+
     return (
         <div>
             {isLoading && <Loader />}
@@ -167,10 +228,14 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
             />
 
             <div
-                onClick={e => { if (isLoggedInUser) openProfileEditor(e); }}
-                id={isLoggedInUser ? "user-info-profile-editor-btn" : "user-info-follow-btn"}
+                title={`click to ${isFollowing ? "unfollow" : "follow"}`}
+                id={isLoggedInUser || isFollowing ? "user-info-profile-editor-btn" : "user-info-follow-btn"}
+                onClick={e => {
+                    if (isLoggedInUser) openProfileEditor(e);
+                    else isFollowing ? handleUnfollowAction(e) : handleFollowAction(e);
+                }}
             >
-                <b>{isLoggedInUser ? "Edit profile" : "Follow"}</b>
+                <b>{isLoggedInUser ? "Edit profile" : isFollowing ? "Following" : "Follow"}</b>
             </div>
 
             <div id="user-info-user-img-container">

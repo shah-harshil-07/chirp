@@ -108,7 +108,7 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
     const moveToCommentDetailPage = commentId => {
         if (commentId) {
             navigate(`/post/${commentId}`, { state: { type: "comment" } });
-            window.location.reload();
+            navigate(0);
         } else {
             showError("comment id is unavailable.");
         }

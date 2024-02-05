@@ -236,7 +236,7 @@ export class UsersController {
         let isValidaData = true, message = '';
         if (await this.followerService.checkUserfollowing(followerId, followingId)) {
             isValidaData = false;
-            message = "User is already following the requested user.";
+            message = "You are already following the requested user.";
         } else if (followerId === followingId) {
             isValidaData = false;
             message = "follower id and following id cannot be same.";
