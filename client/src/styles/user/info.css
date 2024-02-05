@@ -125,6 +125,11 @@
     color: var(--chirp-color);
 }
 
+.user-follower-data:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 .user-info-stat-icon {
     width: 16px;
     height: 16px;

@@ -42,10 +42,10 @@ const UserCard = () => {
     }
 
     const moveToUserPage = (e, userId) => {
-		e.stopPropagation();
+        e.stopPropagation();
         closeUserCard();
-		navigate(`/user/${userId}`);
-	}
+        navigate(`/user/${userId}`);
+    }
 
     return (
         <div id="user-card-body" onMouseLeave={closeUserCard} ref={cardRef} style={{ left: finalLeft, top: finalTop }}>
@@ -72,13 +72,11 @@ const UserCard = () => {
 
             {
                 userData?.bio && (
-                    <p>
-                        <DisplayedText
-                            parentType="user-card"
-                            text={userData?.bio ?? ''}
-                            customStyles={{ fontSize: "1rem" }}
-                        />
-                    </p>
+                    <DisplayedText
+                        parentType="user-card"
+                        text={userData?.bio ?? ''}
+                        customStyles={{ fontSize: "1rem" }}
+                    />
                 )
             }
 

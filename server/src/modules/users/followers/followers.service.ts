@@ -20,10 +20,14 @@ export class FollowersService {
     }
 
     public async followUser(followerId: string, followingId: string): Promise<FollowerModel> {
+        await this.userModel.findByIdAndUpdate(followerId, { $inc: { following: 1 } });
+        await this.userModel.findByIdAndUpdate(followingId, { $inc: { followers: 1 } });
         return await this.followerModel.create({ follower: followerId, following: followingId });
     }
 
     public async unFollowUser(followerId: string, followingId: string): Promise<boolean> {
+        await this.userModel.findByIdAndUpdate(followerId, { $inc: { following: -1 } });
+        await this.userModel.findByIdAndUpdate(followingId, { $inc: { followers: -1 } });
         const { deletedCount } = await this.followerModel.deleteOne({ follower: followerId, following: followingId });
         return Boolean(deletedCount);
     }
@@ -90,10 +94,7 @@ export class FollowersService {
 
         const mutualConnectionIdList = mutualConnectionData?.[0]?.common_users ?? [];
         if (mutualConnectionIdList?.length) {
-            return await this.userModel
-                .find({ _id: { $in: mutualConnectionIdList } })
-                .select("_id name picture")
-                .limit(5);
+            return await this.userModel.find({ _id: { $in: mutualConnectionIdList } }).select("_id name picture")
         } else {
             return [];
         }

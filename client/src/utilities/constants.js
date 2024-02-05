@@ -73,4 +73,7 @@ export const COMMENT_LIST = "comments/all";
 
 export const FOLLOW_USER = "user/follow";
 export const UNFOLLOW_USER = "user/unfollow-user";
+export const FOLLOWER_LIST = "user/get-followers";
+export const FOLLOWING_LIST = "user/get-following";
 export const CHECK_USER_FOLLOWING = "user/check-following";
+export const GET_MUTUAL_CONNECTIONS = "user/get-mutual-connections";

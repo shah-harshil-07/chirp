@@ -9,7 +9,6 @@ import { cilCalendar, cilBirthdayCake, cilLink, cilLocationPin } from "@coreui/i
 import API from "src/api";
 import Loader from "../utilities/loader";
 import * as Constants from "src/utilities/constants";
-import useToaster from "src/custom-hooks/toaster-message";
 import { openModalWithProps } from "src/redux/reducers/modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
 import { openLighthouse } from "src/redux/reducers/lighthouse";
@@ -17,12 +16,11 @@ import useImageConverter from "src/custom-hooks/image-converter";
 import { closeConfirmation, openConfirmation } from "src/redux/reducers/confirmation";
 import { getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
-const UserInfo = ({ details, getterFn, isLoading }) => {
+const UserInfo = ({ details, getterFn, isLoading, changeTheme, followUnfollowAction, mutuallyConnectedUsers }) => {
     const totalLineLength = 1040;
     const dispatch = useDispatch();
     const commonHeader = getCommonHeader();
     let availableCoverage = totalLineLength;
-    const { showError, showSuccess } = useToaster();
     const { getFileObjectFromBase64 } = useImageConverter();
     const sampleUserImg = require("src/assets/sample-user.png");
 
@@ -62,6 +60,7 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
     const [uploadedProfileImgFile, setUploadedProfileImgFile] = useState(null);
     const [profileDetails, setProfileDetails] = useState({ ..._profileDetails });
     const [uploadedBackImgFileObject, setUploadedBackImgFileObject] = useState(null);
+    const [mutuallyConnectedUserNameList, setMutuallyConnectedUserNameList] = useState('');
     const [uploadedProfileImgFileObject, setUploadedProfileImgFileObject] = useState(null);
 
     useEffect(() => {
@@ -92,6 +91,12 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
 
         // eslint-disable-next-line
     }, [details]);
+
+    useEffect(() => {
+        const names = mutuallyConnectedUsers?.map(user => user?.name ?? '')?.filter(userName => Boolean(userName)) ?? [];
+        const commaSeparatedNames = names.join(', ');
+        setMutuallyConnectedUserNameList(commaSeparatedNames);
+    }, [mutuallyConnectedUsers]);
 
     const formatDisplayedDate = date => {
         return moment(date).format("MMM Do, YYYY");
@@ -184,7 +189,7 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
             message: "Are you sure you want to unfollow the user?",
             handleConfirmAction: () => {
                 setIsFollowing(false);
-                followUnfollowUser(e, false);
+                followUnfollowAction(e, profileDetails.id, false);
                 dispatch(closeConfirmation());
             }
         };
@@ -194,26 +199,7 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
 
     const handleFollowAction = e => {
         setIsFollowing(true);
-        followUnfollowUser(e, true);
-    }
-
-    const followUnfollowUser = (e, followUser) => {
-        e.preventDefault();
-        showError("message");
-
-        if (loggedUserId) {
-            const baseUrl = followUser ? Constants.FOLLOW_USER : Constants.UNFOLLOW_USER;
-            const url = `${baseUrl}/${profileDetails.id}`;
-
-            API(Constants.GET, url, null, commonHeader).then(({ data: response }) => {
-                const { status, message } = response?.meta ?? {};
-
-                if (status && message) showSuccess(message);
-                else showError(message ?? "Something went wrong!");
-            });
-        } else {
-            showError("Please login to follow.");
-        }
+        followUnfollowAction(e, profileDetails.id, true);
     }
 
     return (
@@ -296,9 +282,20 @@ const UserInfo = ({ details, getterFn, isLoading }) => {
                 </p>
 
                 <div className="d-flex justify-content-start">
-                    <div className="mr-2"><b>{userData?.following ?? 0}</b>&nbsp;Following</div>
-                    <div className="ml-2"><b>{userData?.followers ?? 0}</b>&nbsp;Followers</div>
+                    <div className="mr-2 user-follower-data" onClick={() => { changeTheme("following"); }}>
+                        <b>{userData?.following ?? 0}</b>&nbsp;Following
+                    </div>
+
+                    <div className="ml-2 user-follower-data" onClick={() => { changeTheme("followers"); }}>
+                        <b>{userData?.followers ?? 0}</b>&nbsp;Followers
+                    </div>
                 </div>
+
+                {
+                    mutuallyConnectedUserNameList && (
+                        <div>Followed by <b>{mutuallyConnectedUserNameList}</b></div>
+                    )
+                }
             </div>
         </div>
     );
