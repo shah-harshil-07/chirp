@@ -157,3 +157,12 @@
     padding-right: 0;
     padding-left: 25px;
 }
+
+.user-info-mutual-connector {
+    cursor: pointer;
+}
+
+.user-info-mutual-connector:hover {
+    color: var(--chirp-color);
+    text-decoration: underline;
+}

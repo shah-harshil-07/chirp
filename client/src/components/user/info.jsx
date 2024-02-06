@@ -60,7 +60,7 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, followUnfollowAct
     const [uploadedProfileImgFile, setUploadedProfileImgFile] = useState(null);
     const [profileDetails, setProfileDetails] = useState({ ..._profileDetails });
     const [uploadedBackImgFileObject, setUploadedBackImgFileObject] = useState(null);
-    const [mutuallyConnectedUserNameList, setMutuallyConnectedUserNameList] = useState('');
+    const [mutuallyConnectedUserNameList, setMutuallyConnectedUserNameList] = useState([]);
     const [uploadedProfileImgFileObject, setUploadedProfileImgFileObject] = useState(null);
 
     useEffect(() => {
@@ -93,9 +93,7 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, followUnfollowAct
     }, [details]);
 
     useEffect(() => {
-        const names = mutuallyConnectedUsers?.map(user => user?.name ?? '')?.filter(userName => Boolean(userName)) ?? [];
-        const commaSeparatedNames = names.join(', ');
-        setMutuallyConnectedUserNameList(commaSeparatedNames);
+        setMutuallyConnectedUserNameList([...mutuallyConnectedUsers]);
     }, [mutuallyConnectedUsers]);
 
     const formatDisplayedDate = date => {
@@ -292,8 +290,28 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, followUnfollowAct
                 </div>
 
                 {
-                    mutuallyConnectedUserNameList && (
-                        <div>Followed by <b>{mutuallyConnectedUserNameList}</b></div>
+                    mutuallyConnectedUserNameList?.length && (
+                        <div>
+                            Followed by&nbsp;
+                            {
+                                mutuallyConnectedUserNameList?.map((userObj, userIndex) => {
+                                    const { name } = userObj;
+                                    return name ? (
+                                        <>
+                                            {userIndex > 0 ?
+                                                ',' :
+                                                userIndex == mutuallyConnectedUserNameList.length - 1 && userIndex > 0 ?
+                                                    "and"
+                                                    : ''
+                                            }&nbsp;
+                                            <span title="Go to details" className="user-info-mutual-connector">{name}</span>
+                                        </>
+                                    ) : (
+                                        <></>
+                                    );
+                                })
+                            }
+                        </div>
                     )
                 }
             </div>
