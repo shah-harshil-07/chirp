@@ -15,14 +15,16 @@ import { openModalWithProps } from "src/redux/reducers/modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
 import { openLighthouse } from "src/redux/reducers/lighthouse";
 import useImageConverter from "src/custom-hooks/image-converter";
+import useConnectionServices from "src/custom-hooks/connecting-services";
 import { closeConfirmation, openConfirmation } from "src/redux/reducers/confirmation";
 import { getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
-const UserInfo = ({ details, getterFn, isLoading, changeTheme, followUnfollowAction, mutuallyConnectedUsers }) => {
+const UserInfo = ({ details, getterFn, isLoading, changeTheme, mutuallyConnectedUsers }) => {
     const totalLineLength = 1040;
     const { showError } = useToaster();
     const commonHeader = getCommonHeader();
     let availableCoverage = totalLineLength;
+    const { connectUser } = useConnectionServices();
     const { getFileObjectFromBase64 } = useImageConverter();
     const dispatch = useDispatch(), navigate = useNavigate();
     const sampleUserImg = require("src/assets/sample-user.png");
@@ -193,8 +195,8 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, followUnfollowAct
             message: "Are you sure you want to unfollow the user?",
             handleConfirmAction: () => {
                 setIsFollowing(false);
-                followUnfollowAction(e, profileDetails.id, false);
                 dispatch(closeConfirmation());
+                connectUser(e, profileDetails.id, false);
             }
         };
 
@@ -203,7 +205,7 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, followUnfollowAct
 
     const handleFollowAction = e => {
         setIsFollowing(true);
-        followUnfollowAction(e, profileDetails.id, true);
+        connectUser(e, profileDetails.id, true);
     }
 
     const printNameSeparator = userIndex => {
@@ -297,11 +299,17 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, followUnfollowAct
                 </p>
 
                 <div className="d-flex justify-content-start">
-                    <div className="mr-2 user-follower-data" onClick={() => { changeTheme("following"); }}>
+                    <div
+                        className="mr-2 user-follower-data"
+                        onClick={() => { if (userData?.following > 0) changeTheme("following"); }}
+                    >
                         <b>{userData?.following ?? 0}</b>&nbsp;Following
                     </div>
 
-                    <div className="ml-2 user-follower-data" onClick={() => { changeTheme("followers"); }}>
+                    <div
+                        className="ml-2 user-follower-data"
+                        onClick={() => { if (userData?.followers > 0) changeTheme("followers"); }}
+                    >
                         <b>{userData?.followers ?? 0}</b>&nbsp;Followers
                     </div>
                 </div>

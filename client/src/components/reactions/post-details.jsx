@@ -13,12 +13,12 @@ import ReplyBox from "./reply-box";
 import CommentList from "./comment-list";
 import * as Constants from "src/utilities/constants";
 import Loader from "src/components/utilities/loader";
+import DisplayedText from "../utilities/displayed-text";
 import { openToaster } from "src/redux/reducers/toaster";
 import useToaster from "src/custom-hooks/toaster-message";
 import ImgHolder from "src/components/utilities/img-holder";
 import usePostServices from "src/custom-hooks/post-services";
 import { getCommonHeader, isUserLoggedIn } from "src/utilities/helpers";
-import DisplayedText from "../utilities/displayed-text";
 
 const PostDetails = () => {
     const location = useLocation();

@@ -9,12 +9,14 @@ import API from "src/api";
 import Loader from "src/components/utilities/loader";
 import * as Constants from "src/utilities/constants";
 import usePostServices from "src/custom-hooks/post-services";
+import useConnectionServices from "src/custom-hooks/connecting-services";
 import { closeConfirmation, openConfirmation } from "src/redux/reducers/confirmation";
 import { getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
-const UserFollowers = ({ theme, userId, followUnfollowAction, mutuallyConnectedUsers }) => {
+const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
     const { showError } = useToaster();
     const commonHeader = getCommonHeader();
+    const { connectUser } = useConnectionServices();
     const { getImageFetchingPromise } = usePostServices();
     const dispatch = useDispatch(), navigate = useNavigate();
     const sampleUserImg = require("src/assets/sample-user.png");
@@ -110,7 +112,7 @@ const UserFollowers = ({ theme, userId, followUnfollowAction, mutuallyConnectedU
         const _users = users, userId = users?.[userIndex]?.["userId"] ?? '';
 
         if (!isFollowed) {
-            followUnfollowAction(e, userId, true);
+            connectUser(e, userId, true);
 
             if (_users[userIndex]) {
                 _users[userIndex]["isFollowed"] = true;
@@ -121,7 +123,7 @@ const UserFollowers = ({ theme, userId, followUnfollowAction, mutuallyConnectedU
                 headingText: "Unfollow",
                 message: "Are you sure you want to unfollow the user?",
                 handleConfirmAction: () => {
-                    followUnfollowAction(e, userId, false);
+                    connectUser(e, userId, false);
                     dispatch(closeConfirmation());
 
                     if (_users[userIndex]) {

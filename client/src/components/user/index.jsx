@@ -3,22 +3,21 @@ import "src/styles/user/index.css";
 import CIcon from "@coreui/icons-react";
 import { cilArrowLeft } from "@coreui/icons";
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import API from "src/api";
 import UserInfo from "./info";
 import UserPosts from "./posts";
 import UserFollowers from "./followers";
 import * as Constants from "src/utilities/constants";
-import useToaster from "src/custom-hooks/toaster-message";
 import usePostServices from "src/custom-hooks/post-services";
 import { getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const UserDetails = () => {
     const navigate = useNavigate();
     const { userId } = useParams();
+    const { state } = useLocation();
     const headerData = getCommonHeader();
-    const { showError, showSuccess } = useToaster();
     const { getImageFetchingPromise } = usePostServices();
     const loggedInUserData = isUserLoggedIn() ? getUserDetails() : {};
     const { id: loggedUserId } = loggedInUserData;
@@ -29,7 +28,8 @@ const UserDetails = () => {
     const [mutuallyConnectedUserList, setMutuallyConnectedUserList] = useState([]);
 
     useEffect(() => {
-        setTheme("posts");
+        setTheme(state?.theme ?? "posts");
+
         getUserData().catch(moveBack);
         window.scrollTo(0, 0);
         getMutualConnections();
@@ -89,25 +89,6 @@ const UserDetails = () => {
         setTheme(_theme);
     }
 
-    const followUnfollowUser = (e, followingId, followUser) => {
-        if (e) e.preventDefault();
-        showError("message");
-
-        if (loggedUserId && followingId) {
-            const baseUrl = followUser ? Constants.FOLLOW_USER : Constants.UNFOLLOW_USER;
-            const url = `${baseUrl}/${followingId}`;
-
-            API(Constants.GET, url, null, headerData).then(({ data: response }) => {
-                const { status, message } = response?.meta ?? {};
-
-                if (status && message) showSuccess(message);
-                else showError(message ?? "Something went wrong!");
-            });
-        } else {
-            showError("Please login to follow.");
-        }
-    }
-
     return (
         <div>
             <div className="common-header" id="user-header-box">
@@ -141,7 +122,6 @@ const UserDetails = () => {
                     <UserFollowers
                         theme={theme}
                         userId={userId}
-                        followUnfollowAction={followUnfollowUser}
                         mutuallyConnectedUsers={mutuallyConnectedUserList}
                     />
                 ) : (
@@ -151,7 +131,6 @@ const UserDetails = () => {
                             isLoading={isLoading}
                             getterFn={getUserData}
                             changeTheme={applyTheme}
-                            followUnfollowAction={followUnfollowUser}
                             mutuallyConnectedUsers={mutuallyConnectedUserList}
                         />
 

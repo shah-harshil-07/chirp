@@ -5,7 +5,14 @@
     position: absolute;
     border-radius: 20px;
     background-color: white;
-    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%)
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
+
+    /* padding-bottom: 7px;
+    padding-top: 7.5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: 5px;
+    margin-bottom: 12px;*/
 }
 
 .user-card-header-img {

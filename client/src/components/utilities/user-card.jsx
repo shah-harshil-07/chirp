@@ -1,27 +1,40 @@
+import "src/styles/user/info.css";
 import "src/styles/utilities/user-card.css";
 
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
+import API from "src/api";
 import DisplayedText from "./displayed-text";
-import { checkContainerInViewport } from "src/utilities/helpers";
+import * as Constants from "src/utilities/constants";
+import useToaster from "src/custom-hooks/toaster-message";
 import { closeDetailsCard } from "src/redux/reducers/user-details";
+import useConnectionServices from "src/custom-hooks/connecting-services";
+import { closeConfirmation, openConfirmation } from "src/redux/reducers/confirmation";
+import { checkContainerInViewport, getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const UserCard = () => {
-    const cardRef = useRef(null);
+    const { showError } = useToaster();
+    const { connectUser } = useConnectionServices();
     const dispatch = useDispatch(), navigate = useNavigate();
+    const cardRef = useRef(null), commonHeader = getCommonHeader();
     const userDetailState = useSelector(state => state.userDetails);
     const sampleUserImg = require("src/assets/sample-user.png");
     const userData = userDetailState?.data ?? {};
     let { left, top } = userData?.coordinates ?? {};
+    const { id: loggedUserId } = isUserLoggedIn() ? getUserDetails() : {};
 
     const [finalTop, setFinalTop] = useState(top);
     const [finalLeft, setFinalLeft] = useState(left);
+    const [isFollowing, setIsFollowing] = useState(false);
 
     useEffect(() => {
         setFinalTop(top);
         setFinalLeft(left);
+
+        const { data: userData } = userDetailState ?? {};
+        checkUserFollowing(userData._id);
         // eslint-disable-next-line
     }, [userDetailState]);
 
@@ -31,20 +44,53 @@ const UserCard = () => {
             const { height } = cardRect;
             setFinalTop(top - height);
             // eslint-disable-next-line
-            top -= height;
+            top -= height + 100;
         }
 
         // eslint-disable-next-line
     }, []);
 
+    const checkUserFollowing = userId => {
+        if (userId && userId !== loggedUserId) {
+            const url = `${Constants.CHECK_USER_FOLLOWING}/${userId}`;
+
+            API(Constants.GET, url, null, commonHeader).then(({ data: response }) => {
+                let { follows } = response?.data ?? {};
+                if (typeof follows !== "boolean") follows = Boolean(follows);
+                setIsFollowing(follows);
+            });
+        }
+    }
+
     const closeUserCard = () => {
         dispatch(closeDetailsCard());
     }
 
-    const moveToUserPage = (e, userId) => {
-        e.stopPropagation();
+    const moveToUserPage = (e, theme = "posts") => {
         closeUserCard();
-        navigate(`/user/${userId}`);
+        e.stopPropagation();
+
+        if (userData?._id) navigate(`/user/${userData._id}`, { state: { theme } });
+        else showError("user id is unavailable.");
+    }
+
+    const handleUnfollowAction = e => {
+        const confirmationProps = {
+            headingText: "Unfollow",
+            message: "Are you sure you want to unfollow the user?",
+            handleConfirmAction: () => {
+                setIsFollowing(false);
+                dispatch(closeConfirmation());
+                connectUser(e, userData._id, false);
+            }
+        };
+
+        dispatch(openConfirmation(confirmationProps));
+    }
+
+    const handleFollowAction = e => {
+        setIsFollowing(true);
+        connectUser(e, userData._id, true);
     }
 
     return (
@@ -52,13 +98,24 @@ const UserCard = () => {
             <div className="d-flex justify-content-between">
                 <img
                     alt="user"
+                    onClick={moveToUserPage}
                     className="user-card-header-img"
                     src={userData?.picture ?? String(sampleUserImg)}
-                    onClick={e => { moveToUserPage(e, userData._id); }}
                     onError={e => { e.target.src = String(sampleUserImg); }}
                 />
 
-                <div className="user-card-header-follow-btn">Follow</div>
+                {
+                    userData?._id !== loggedUserId && (
+                        <div
+                            className="user-follower-action-btn"
+                            title={`click to ${isFollowing ? "unfollow" : "follow"}`}
+                            id={isFollowing ? "user-info-profile-editor-btn" : "user-info-follow-btn"}
+                            onClick={e => { isFollowing ? handleUnfollowAction(e) : handleFollowAction(e); }}
+                        >
+                            <b>{isFollowing ? "Following" : "Follow"}</b>
+                        </div>
+                    )
+                }
             </div>
 
             {
@@ -81,8 +138,19 @@ const UserCard = () => {
             }
 
             <div className="d-flex justify-content-around">
-                <div><b>{userData?.following ?? 0}</b>&nbsp;Following</div>
-                <div><b>{userData?.followers ?? 0}</b>&nbsp;Followers</div>
+                <div
+                    className="mr-2 user-follower-data"
+                    onClick={e => { if (userData?.following > 0) moveToUserPage(e, "following"); }}
+                >
+                    <b>{userData?.following ?? 0}</b>&nbsp;Following
+                </div>
+
+                <div
+                    className="ml-2 user-follower-data"
+                    onClick={e => { if (userData?.followers > 0) moveToUserPage(e, "followers"); }}
+                >
+                    <b>{userData?.followers ?? 0}</b>&nbsp;Followers
+                </div>
             </div>
         </div>
     );
