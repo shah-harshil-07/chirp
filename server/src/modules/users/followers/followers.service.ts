@@ -55,7 +55,16 @@ export class FollowersService {
             { $lookup: { localField: lookupFeild, foreignField: "_id", from: "Users", as: "user" } },
             { $unwind: "$user" },
             ...isFollowingQuerySet,
-            { $project: { "isFollowed": 1, "user._id": 1, "user.name": 1, "user.username": 1, "user.picture": 1 } },
+            {
+                $project: {
+                    "isFollowed": 1,
+                    "user._id": 1,
+                    "user.name": 1,
+                    "user.username": 1,
+                    "user.picture": 1,
+                    "user.bio": 1
+                }
+            },
         ]);
     }
 
@@ -94,7 +103,10 @@ export class FollowersService {
 
         const mutualConnectionIdList = mutualConnectionData?.[0]?.common_users ?? [];
         if (mutualConnectionIdList?.length) {
-            return await this.userModel.find({ _id: { $in: mutualConnectionIdList } }).select("_id name picture")
+            return await this
+                .userModel
+                .find({ _id: { $in: mutualConnectionIdList } })
+                .select("_id name username bio picture");
         } else {
             return [];
         }

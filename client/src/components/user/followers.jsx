@@ -1,17 +1,22 @@
+import "src/styles/user/followers.css";
+
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
+import useToaster from "src/custom-hooks/toaster-message";
 
 import API from "src/api";
 import Loader from "src/components/utilities/loader";
 import * as Constants from "src/utilities/constants";
+import usePostServices from "src/custom-hooks/post-services";
 import { closeConfirmation, openConfirmation } from "src/redux/reducers/confirmation";
 import { getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
-import usePostServices from "src/custom-hooks/post-services";
 
-const UserFollowers = ({ theme, userId, followUnfollowAction }) => {
-    const dispatch = useDispatch();
+const UserFollowers = ({ theme, userId, followUnfollowAction, mutuallyConnectedUsers }) => {
+    const { showError } = useToaster();
     const commonHeader = getCommonHeader();
     const { getImageFetchingPromise } = usePostServices();
+    const dispatch = useDispatch(), navigate = useNavigate();
     const sampleUserImg = require("src/assets/sample-user.png");
     const { id: loggedUserId } = isUserLoggedIn() ? getUserDetails() : {};
 
@@ -33,6 +38,26 @@ const UserFollowers = ({ theme, userId, followUnfollowAction }) => {
                 break;
             case "following":
                 url = Constants.FOLLOWING_LIST;
+                break;
+            case "mutualConnection":
+                url = null;
+
+                let _userImages = {};
+                const _users = mutuallyConnectedUsers?.map((userObj, userIndex) => {
+                    const { _id: userId, picture: userPic } = userObj;
+                    _userImages[userId] = userPic;
+
+                    return {
+                        userId,
+                        isFollowed: true,
+                        id: userId ?? userIndex,
+                        name: userObj?.name ?? '',
+                        username: userObj?.username ?? '',
+                    };
+                }) ?? [];
+
+                setUsers([..._users]);
+                updatedUserImages(_userImages);
                 break;
             default:
                 break;
@@ -57,26 +82,31 @@ const UserFollowers = ({ theme, userId, followUnfollowAction }) => {
                 return {
                     userId,
                     id: userObj?._id ?? '',
+                    bio: userObj?.user?.bio ?? '',
                     name: userObj?.user?.name ?? '',
                     username: userObj?.user?.username ?? '',
                     isFollowed: userObj?.isFollowed ?? false,
                 };
             }) ?? [];
 
-            for (const userId in _userImages) {
-                const imageValue = _userImages[userId];
-                if (!imageValue.startsWith(Constants.httpsOrigin)) {
-                    await getImageFetchingPromise(imageValue, imageData => { _userImages[userId] = imageData; }, "user");
-                }
-            }
-
-            setUserImages({ ..._userImages });
-
             setUsers([..._users]);
+            updatedUserImages(_userImages);
         }
     }
 
+    const updatedUserImages = async _userImages => {
+        for (const userId in _userImages) {
+            const imageValue = _userImages[userId];
+            if (!imageValue.startsWith(Constants.httpsOrigin)) {
+                await getImageFetchingPromise(imageValue, imageData => { _userImages[userId] = imageData; }, "user");
+            }
+        }
+
+        setUserImages({ ..._userImages });
+    }
+
     const handleConnectingAction = (e, userIndex, isFollowed) => {
+        e.stopPropagation();
         const _users = users, userId = users?.[userIndex]?.["userId"] ?? '';
 
         if (!isFollowed) {
@@ -95,7 +125,7 @@ const UserFollowers = ({ theme, userId, followUnfollowAction }) => {
                     dispatch(closeConfirmation());
 
                     if (_users[userIndex]) {
-                        _users[userIndex]["isFollowed"] = true;
+                        _users[userIndex]["isFollowed"] = false;
                         setUsers([..._users]);
                     }
                 }
@@ -105,24 +135,28 @@ const UserFollowers = ({ theme, userId, followUnfollowAction }) => {
         }
     }
 
+    const moveToUserPage = userId => {
+        if (userId) navigate(`/user/${userId}`);
+        else showError("User id is unavaiable.");
+    }
+
     return isLoading ? <Loader /> : users?.map((userObj, i) => {
-        const { id, name, username, isFollowed, userId } = userObj;
+        const { id, name, username, isFollowed, userId, bio } = userObj;
 
         return (
-            <React.Fragment key={id}>
-                {i === 0 && <hr />}
-                <div className="row ml-0 mr-0">
-                    <div className="col-2">
+            <div key={id} className="user-follower-box" onClick={() => { moveToUserPage(userId); }}>
+                <div className="row ml-0 mr-0 user-follower-head">
+                    <div className="col-2 user-follower-imgbox">
                         <img
                             alt="user"
+                            className="user-follower-img"
                             src={userImages[userId] ?? String(sampleUserImg)}
                             onError={e => { e.target.src = String(sampleUserImg); }}
-                            style={{ width: "70px", height: "70px", borderRadius: "50%", objectFit: "cover" }}
                         />
                     </div>
 
-                    <div className="col-8" style={{ paddingTop: "10px", paddingLeft: '0' }}>
-                        <span style={{ fontWeight: "bolder", fontSize: "20px" }}>{name}</span>
+                    <div className="col-8 pl-0">
+                        <span className="fw-bold font-size-20">{name}</span>
                         <br />
                         <span>{username}</span>
                     </div>
@@ -130,19 +164,28 @@ const UserFollowers = ({ theme, userId, followUnfollowAction }) => {
                     {
                         userId !== loggedUserId && (
                             <div
-                                className="col-2"
                                 title={`click to ${isFollowed ? "unfollow" : "follow"}`}
-                                id={isFollowed ? "user-info-profile-editor-btn" : "user-info-follow-btn"}
-                                style={{ height: "36px", marginTop: "16px", textAlign: "center", paddingLeft: '0', paddingRight: '0' }}
                                 onClick={e => { handleConnectingAction(e, i, isFollowed); }}
+                                className={`
+                                    col-2
+                                    user-follower-action-btn
+                                    ${isFollowed ? "user-follower-following-btn" : "user-follower-follows-btn"}
+                                `}
                             >
                                 <b>{isFollowed ? "Following" : "Follow"}</b>
                             </div>
                         )
                     }
                 </div>
-                <hr />
-            </React.Fragment>
+
+                <div className="row ml-0 mr-0">
+                    <div className="col-2 user-follower-bio" />
+                    <div className="col-10">
+                        {bio?.slice(0, 130) ?? ''}
+                        {bio?.length > 130 ? "..." : ''}
+                    </div>
+                </div>
+            </div>
         );
     });
 };

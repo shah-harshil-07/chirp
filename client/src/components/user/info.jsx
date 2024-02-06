@@ -3,12 +3,14 @@ import "src/styles/user/info.css";
 import moment from "moment";
 import CIcon from "@coreui/icons-react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { cilCalendar, cilBirthdayCake, cilLink, cilLocationPin } from "@coreui/icons";
 
 import API from "src/api";
 import Loader from "../utilities/loader";
 import * as Constants from "src/utilities/constants";
+import useToaster from "src/custom-hooks/toaster-message";
 import { openModalWithProps } from "src/redux/reducers/modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
 import { openLighthouse } from "src/redux/reducers/lighthouse";
@@ -18,10 +20,11 @@ import { getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/h
 
 const UserInfo = ({ details, getterFn, isLoading, changeTheme, followUnfollowAction, mutuallyConnectedUsers }) => {
     const totalLineLength = 1040;
-    const dispatch = useDispatch();
+    const { showError } = useToaster();
     const commonHeader = getCommonHeader();
     let availableCoverage = totalLineLength;
     const { getFileObjectFromBase64 } = useImageConverter();
+    const dispatch = useDispatch(), navigate = useNavigate();
     const sampleUserImg = require("src/assets/sample-user.png");
 
     const loggedInUserData = isUserLoggedIn() ? getUserDetails() : {};
@@ -56,6 +59,7 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, followUnfollowAct
     const [websiteLink, setWebsiteLink] = useState('#');
     const [isFollowing, setIsFollowing] = useState(false);
     const [statsList, setStatsList] = useState([..._statsList]);
+    const [totalMutualConnUsers, setTotalMutualConnUsers] = useState(0);
     const [uploadedBackImgFile, setUploadedBackImgFile] = useState(null);
     const [uploadedProfileImgFile, setUploadedProfileImgFile] = useState(null);
     const [profileDetails, setProfileDetails] = useState({ ..._profileDetails });
@@ -93,7 +97,9 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, followUnfollowAct
     }, [details]);
 
     useEffect(() => {
-        setMutuallyConnectedUserNameList([...mutuallyConnectedUsers]);
+        const limit = Constants.mutualConnectionFrontLimit;
+        setTotalMutualConnUsers(mutuallyConnectedUsers.length);
+        setMutuallyConnectedUserNameList([...mutuallyConnectedUsers.slice(0, limit)]);
     }, [mutuallyConnectedUsers]);
 
     const formatDisplayedDate = date => {
@@ -200,6 +206,17 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, followUnfollowAct
         followUnfollowAction(e, profileDetails.id, true);
     }
 
+    const printNameSeparator = userIndex => {
+        const n = mutuallyConnectedUserNameList.length;
+        if (userIndex > 0) return userIndex === n - 1 ? <> and </> : <>, </>;
+        return <></>;
+    }
+
+    const moveToUserPage = userId => {
+        if (userId) navigate(`/user/${userId}`);
+        else showError("User id is unavaiable.");
+    }
+
     return (
         <div>
             {isLoading && <Loader />}
@@ -295,21 +312,31 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, followUnfollowAct
                             Followed by&nbsp;
                             {
                                 mutuallyConnectedUserNameList?.map((userObj, userIndex) => {
-                                    const { name } = userObj;
+                                    const { name, _id: userId } = userObj;
                                     return name ? (
-                                        <>
-                                            {userIndex > 0 ?
-                                                ',' :
-                                                userIndex == mutuallyConnectedUserNameList.length - 1 && userIndex > 0 ?
-                                                    "and"
-                                                    : ''
-                                            }&nbsp;
-                                            <span title="Go to details" className="user-info-mutual-connector">{name}</span>
-                                        </>
+                                        <React.Fragment key={userId}>
+                                            {printNameSeparator(userIndex)}
+                                            <span
+                                                title="Go to details"
+                                                className="user-info-mutual-connector"
+                                                onClick={() => { moveToUserPage(userId); }}
+                                            >
+                                                {name}
+                                            </span>
+                                        </React.Fragment>
                                     ) : (
                                         <></>
                                     );
                                 })
+                            }
+                            &nbsp;
+
+                            {
+                                totalMutualConnUsers > mutuallyConnectedUserNameList.length && (
+                                    <span onClick={() => { changeTheme("mutualConnection"); }}>
+                                        +{totalMutualConnUsers - mutuallyConnectedUserNameList.length} more
+                                    </span>
+                                )
                             }
                         </div>
                     )

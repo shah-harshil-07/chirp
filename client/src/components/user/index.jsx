@@ -29,6 +29,7 @@ const UserDetails = () => {
     const [mutuallyConnectedUserList, setMutuallyConnectedUserList] = useState([]);
 
     useEffect(() => {
+        setTheme("posts");
         getUserData().catch(moveBack);
         window.scrollTo(0, 0);
         getMutualConnections();
@@ -88,10 +89,6 @@ const UserDetails = () => {
         setTheme(_theme);
     }
 
-    const applyPostTheme = () => {
-        setTheme("posts");
-    }
-
     const followUnfollowUser = (e, followingId, followUser) => {
         if (e) e.preventDefault();
         showError("message");
@@ -116,7 +113,7 @@ const UserDetails = () => {
             <div className="common-header" id="user-header-box">
                 <div
                     className="common-heading-icon"
-                    onClick={() => { if (theme !== "posts") applyPostTheme(); else moveBack(); }}
+                    onClick={() => { if (theme !== "posts") applyTheme("posts"); else moveBack(); }}
                 >
                     <CIcon width={20} height={20} size="sm" icon={cilArrowLeft} />
                 </div>
@@ -140,8 +137,13 @@ const UserDetails = () => {
             </div>
 
             {
-                theme === "followers" || theme === "following" ? (
-                    <UserFollowers theme={theme} userId={userId} followUnfollowAction={followUnfollowUser} />
+                theme === "followers" || theme === "following" || theme === "mutualConnection" ? (
+                    <UserFollowers
+                        theme={theme}
+                        userId={userId}
+                        followUnfollowAction={followUnfollowUser}
+                        mutuallyConnectedUsers={mutuallyConnectedUserList}
+                    />
                 ) : (
                     <>
                         <UserInfo

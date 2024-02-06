@@ -160,6 +160,7 @@
 
 .user-info-mutual-connector {
     cursor: pointer;
+    font-weight: bold;
 }
 
 .user-info-mutual-connector:hover {
