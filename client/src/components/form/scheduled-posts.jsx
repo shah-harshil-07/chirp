@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import { cilCalendarCheck, cilList } from "@coreui/icons";
 
 import API from "src/api";
+import Loader from "../utilities/loader";
 import ImgHolder from "../utilities/img-holder";
 import CustomModal from "../utilities/custom-modal";
 import * as Constants from "src/utilities/constants";
@@ -149,7 +150,9 @@ const ScheduledPostList = () => {
             const selectedPosts = posts.filter(post => post.selected);
             const selectedPostIds = selectedPosts.map(post => post._id);
             const data = { postIds: selectedPostIds };
+            setShowLoader(true);
             const response = await API(Constants.DELETE, Constants.DELETE_SCHEDULED_POST_IMAGES, data, headerData);
+            setShowLoader(false);
             const responseData = response.data;
             if (responseData?.meta?.message) {
                 showSuccess(responseData.meta.message);
@@ -192,7 +195,7 @@ const ScheduledPostList = () => {
             </div>
 
             {
-                posts.length > 0 ? posts.map((postObj, postIndex) => {
+                showLoader ? <Loader /> : posts.length > 0 ? posts.map((postObj, postIndex) => {
                     const { year, month, dayOfMonth, hours, minutes } = postObj.schedule;
                     const date = new Date(year, month, dayOfMonth, hours, minutes, 0, 0);
                     const displayedMonth = monthOptions[month].label, displayedDayOfWeek = weekOptions[date.getDay()];
