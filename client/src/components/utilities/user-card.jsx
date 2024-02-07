@@ -153,7 +153,7 @@ const UserCard = () => {
                     className="ml-2 user-follower-data"
                     onClick={e => { if (userData?.followers > 0) moveToUserPage(e, "followers"); }}
                 >
-                    <b>{userData?.followers ?? 0}</b>&nbsp;Followers
+                    <b>{userData?.followers ?? 0}</b>&nbsp;Follower{userData.followers > 1 ? 's' : ''}
                 </div>
             </div>
 

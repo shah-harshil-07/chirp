@@ -289,7 +289,7 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, mutuallyConnected
                         className="ml-2 user-follower-data"
                         onClick={() => { if (userData?.followers > 0) changeTheme("followers"); }}
                     >
-                        <b>{userData?.followers ?? 0}</b>&nbsp;Followers
+                        <b>{userData?.followers ?? 0}</b>&nbsp;Follower{userData?.followers > 1 ? 's' : ''}
                     </div>
                 </div>
 
