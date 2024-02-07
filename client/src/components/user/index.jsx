@@ -10,8 +10,9 @@ import UserInfo from "./info";
 import UserPosts from "./posts";
 import UserFollowers from "./followers";
 import * as Constants from "src/utilities/constants";
+import { getCommonHeader } from "src/utilities/helpers";
 import usePostServices from "src/custom-hooks/post-services";
-import { getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
+import useConnectionServices from "src/custom-hooks/connecting-services";
 
 const UserDetails = () => {
     const navigate = useNavigate();
@@ -19,8 +20,7 @@ const UserDetails = () => {
     const { state } = useLocation();
     const headerData = getCommonHeader();
     const { getImageFetchingPromise } = usePostServices();
-    const loggedInUserData = isUserLoggedIn() ? getUserDetails() : {};
-    const { id: loggedUserId } = loggedInUserData;
+    const { getMutualConnections } = useConnectionServices();
 
     const [theme, setTheme] = useState("posts");
     const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +32,7 @@ const UserDetails = () => {
 
         getUserData().catch(moveBack);
         window.scrollTo(0, 0);
-        getMutualConnections();
+        getMutualConnections(userId, setMutuallyConnectedUserList);
         // eslint-disable-next-line
     }, [userId]);
 
@@ -71,22 +71,8 @@ const UserDetails = () => {
         setIsLoading(false);
     }
 
-    const getMutualConnections = () => {
-        if (loggedUserId && userId) {
-            const url = `${Constants.GET_MUTUAL_CONNECTIONS}/${userId}`;
-            API(Constants.GET, url, null, headerData).then(({ data: response }) => {
-                const users = response?.data ?? [];
-                setMutuallyConnectedUserList([...users]);
-            });
-        }
-    }
-
     const moveBack = () => {
         navigate(-1);
-    }
-
-    const applyTheme = _theme => {
-        setTheme(_theme);
     }
 
     return (
@@ -94,7 +80,7 @@ const UserDetails = () => {
             <div className="common-header" id="user-header-box">
                 <div
                     className="common-heading-icon"
-                    onClick={() => { if (theme !== "posts") applyTheme("posts"); else moveBack(); }}
+                    onClick={() => { if (theme !== "posts") setTheme("posts"); else moveBack(); }}
                 >
                     <CIcon width={20} height={20} size="sm" icon={cilArrowLeft} />
                 </div>
@@ -130,7 +116,7 @@ const UserDetails = () => {
                             details={userDetails}
                             isLoading={isLoading}
                             getterFn={getUserData}
-                            changeTheme={applyTheme}
+                            changeTheme={setTheme}
                             mutuallyConnectedUsers={mutuallyConnectedUserList}
                         />
 

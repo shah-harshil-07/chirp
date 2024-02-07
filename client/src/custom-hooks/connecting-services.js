@@ -29,7 +29,17 @@ const useConnectionServices = () => {
         }
     }
 
-    return { connectUser };
+    const getMutualConnections = (userId, updateFn) => {
+        if (loggedUserId && userId) {
+            const url = `${Constants.GET_MUTUAL_CONNECTIONS}/${userId}`;
+            API(Constants.GET, url, null, headerData).then(({ data: response }) => {
+                const users = response?.data ?? [];
+                updateFn([...users]);
+            });
+        }
+    }
+
+    return { connectUser, getMutualConnections };
 };
 
 export default useConnectionServices;

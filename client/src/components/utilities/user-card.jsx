@@ -10,31 +10,35 @@ import DisplayedText from "./displayed-text";
 import * as Constants from "src/utilities/constants";
 import useToaster from "src/custom-hooks/toaster-message";
 import { closeDetailsCard } from "src/redux/reducers/user-details";
+import MutualConnections from "src/components/user/mutual-connections";
 import useConnectionServices from "src/custom-hooks/connecting-services";
 import { closeConfirmation, openConfirmation } from "src/redux/reducers/confirmation";
 import { checkContainerInViewport, getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const UserCard = () => {
     const { showError } = useToaster();
-    const { connectUser } = useConnectionServices();
     const dispatch = useDispatch(), navigate = useNavigate();
     const cardRef = useRef(null), commonHeader = getCommonHeader();
     const userDetailState = useSelector(state => state.userDetails);
     const sampleUserImg = require("src/assets/sample-user.png");
     const userData = userDetailState?.data ?? {};
     let { left, top } = userData?.coordinates ?? {};
+    const { connectUser, getMutualConnections } = useConnectionServices();
     const { id: loggedUserId } = isUserLoggedIn() ? getUserDetails() : {};
 
     const [finalTop, setFinalTop] = useState(top);
     const [finalLeft, setFinalLeft] = useState(left);
     const [isFollowing, setIsFollowing] = useState(false);
+    const [mutuallyConnectedUsers, setMutuallyConnectedUsers] = useState([]);
 
     useEffect(() => {
         setFinalTop(top);
         setFinalLeft(left);
 
         const { data: userData } = userDetailState ?? {};
-        checkUserFollowing(userData._id);
+        const { _id: userId } = userData ?? {};
+        checkUserFollowing(userId);
+        getMutualConnections(userId, setMutuallyConnectedUsers);
         // eslint-disable-next-line
     }, [userDetailState]);
 
@@ -151,6 +155,13 @@ const UserCard = () => {
                 >
                     <b>{userData?.followers ?? 0}</b>&nbsp;Followers
                 </div>
+            </div>
+
+            <div style={{ marginTop: "5px" }}>
+                <MutualConnections
+                    users={mutuallyConnectedUsers}
+                    handleMutualConnDisplay={e => { moveToUserPage(e, "mutualConnection"); }}
+                />
             </div>
         </div>
     );

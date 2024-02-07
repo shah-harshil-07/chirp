@@ -3,14 +3,13 @@ import "src/styles/user/info.css";
 import moment from "moment";
 import CIcon from "@coreui/icons-react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { cilCalendar, cilBirthdayCake, cilLink, cilLocationPin } from "@coreui/icons";
 
 import API from "src/api";
 import Loader from "../utilities/loader";
 import * as Constants from "src/utilities/constants";
-import useToaster from "src/custom-hooks/toaster-message";
+import MutualConnections from "./mutual-connections";
 import { openModalWithProps } from "src/redux/reducers/modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
 import { openLighthouse } from "src/redux/reducers/lighthouse";
@@ -21,12 +20,11 @@ import { getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/h
 
 const UserInfo = ({ details, getterFn, isLoading, changeTheme, mutuallyConnectedUsers }) => {
     const totalLineLength = 1040;
-    const { showError } = useToaster();
+    const dispatch = useDispatch();
     const commonHeader = getCommonHeader();
     let availableCoverage = totalLineLength;
     const { connectUser } = useConnectionServices();
     const { getFileObjectFromBase64 } = useImageConverter();
-    const dispatch = useDispatch(), navigate = useNavigate();
     const sampleUserImg = require("src/assets/sample-user.png");
 
     const loggedInUserData = isUserLoggedIn() ? getUserDetails() : {};
@@ -61,12 +59,10 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, mutuallyConnected
     const [websiteLink, setWebsiteLink] = useState('#');
     const [isFollowing, setIsFollowing] = useState(false);
     const [statsList, setStatsList] = useState([..._statsList]);
-    const [totalMutualConnUsers, setTotalMutualConnUsers] = useState(0);
     const [uploadedBackImgFile, setUploadedBackImgFile] = useState(null);
     const [uploadedProfileImgFile, setUploadedProfileImgFile] = useState(null);
     const [profileDetails, setProfileDetails] = useState({ ..._profileDetails });
     const [uploadedBackImgFileObject, setUploadedBackImgFileObject] = useState(null);
-    const [mutuallyConnectedUserNameList, setMutuallyConnectedUserNameList] = useState([]);
     const [uploadedProfileImgFileObject, setUploadedProfileImgFileObject] = useState(null);
 
     useEffect(() => {
@@ -97,12 +93,6 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, mutuallyConnected
 
         // eslint-disable-next-line
     }, [details]);
-
-    useEffect(() => {
-        const limit = Constants.mutualConnectionFrontLimit;
-        setTotalMutualConnUsers(mutuallyConnectedUsers.length);
-        setMutuallyConnectedUserNameList([...mutuallyConnectedUsers.slice(0, limit)]);
-    }, [mutuallyConnectedUsers]);
 
     const formatDisplayedDate = date => {
         return moment(date).format("MMM Do, YYYY");
@@ -208,17 +198,6 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, mutuallyConnected
         connectUser(e, profileDetails.id, true);
     }
 
-    const printNameSeparator = userIndex => {
-        const n = mutuallyConnectedUserNameList.length;
-        if (userIndex > 0) return userIndex === n - 1 ? <> and </> : <>, </>;
-        return <></>;
-    }
-
-    const moveToUserPage = userId => {
-        if (userId) navigate(`/user/${userId}`);
-        else showError("User id is unavaiable.");
-    }
-
     return (
         <div>
             {isLoading && <Loader />}
@@ -314,41 +293,10 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, mutuallyConnected
                     </div>
                 </div>
 
-                {
-                    mutuallyConnectedUserNameList?.length && (
-                        <div>
-                            Followed by&nbsp;
-                            {
-                                mutuallyConnectedUserNameList?.map((userObj, userIndex) => {
-                                    const { name, _id: userId } = userObj;
-                                    return name ? (
-                                        <React.Fragment key={userId}>
-                                            {printNameSeparator(userIndex)}
-                                            <span
-                                                title="Go to details"
-                                                className="user-info-mutual-connector"
-                                                onClick={() => { moveToUserPage(userId); }}
-                                            >
-                                                {name}
-                                            </span>
-                                        </React.Fragment>
-                                    ) : (
-                                        <></>
-                                    );
-                                })
-                            }
-                            &nbsp;
-
-                            {
-                                totalMutualConnUsers > mutuallyConnectedUserNameList.length && (
-                                    <span onClick={() => { changeTheme("mutualConnection"); }}>
-                                        +{totalMutualConnUsers - mutuallyConnectedUserNameList.length} more
-                                    </span>
-                                )
-                            }
-                        </div>
-                    )
-                }
+                <MutualConnections
+                    users={mutuallyConnectedUsers}
+                    handleMutualConnDisplay={() => { changeTheme("mutualConnection"); }}
+                />
             </div>
         </div>
     );
