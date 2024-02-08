@@ -73,6 +73,7 @@ export class SavesLikesService {
             { $unwind: { path: "$post.post", preserveNullAndEmptyArrays: true } },
             { $lookup: { from: "Users", localField: "post.post.user", foreignField: "_id", as: "post.post.user" } },
             { $unwind: { path: "$post.post.user", preserveNullAndEmptyArrays: true } },
+            { $sort: { "post.createdAt": -1 } },
             {
                 $project: {
                     "post._id": 1,

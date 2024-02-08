@@ -17,6 +17,7 @@ export const CONFIRM_PASSWORD_MESSAGE = "Confirm Password must be same as Passwo
 
 /* Placeholder Image URL */
 /*--------------------------------------------------------------------------------*/
+export const animation404Src = "https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif";
 export const placeHolderImageSrc = "https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png";
 
 /* Request Methods */
