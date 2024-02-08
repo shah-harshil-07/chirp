@@ -30,7 +30,7 @@ const useConnectionServices = () => {
     }
 
     const getMutualConnections = (userId, updateFn) => {
-        if (loggedUserId && userId) {
+        if (loggedUserId && userId && loggedUserId !== userId) {
             const url = `${Constants.GET_MUTUAL_CONNECTIONS}/${userId}`;
             API(Constants.GET, url, null, headerData).then(({ data: response }) => {
                 const users = response?.data ?? [];
