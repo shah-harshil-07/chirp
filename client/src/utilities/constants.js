@@ -41,6 +41,7 @@ export const userCommentTextLimit = 277;
 export const userCardTextLimit = 277;
 
 export const mutualConnectionFrontLimit = 4;
+export const topupCountIncrementValue = 5;
 
 /* API half URLs */
 /*--------------------------------------------------------------------------------*/

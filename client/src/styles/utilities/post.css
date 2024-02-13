@@ -173,3 +173,8 @@
 .user-comment-load-all:hover {
     text-decoration: underline;
 }
+
+#end-of-posts {
+    height: 100px;
+    padding: 30px;
+}

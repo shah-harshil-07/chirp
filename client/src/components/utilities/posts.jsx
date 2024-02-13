@@ -4,7 +4,7 @@ import "src/styles/utilities/post.css";
 import CIcon from "@coreui/icons-react";
 import { Card } from "@material-ui/core/";
 import { useDispatch } from "react-redux";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { cilSend, cilCommentBubble, cilChart, cilThumbUp, cilBookmark } from "@coreui/icons";
 
@@ -21,6 +21,7 @@ import usePostServices from "src/custom-hooks/post-services";
 import { closeDetailsCard, openDetailsCard } from "src/redux/reducers/user-details";
 
 const PostUtilities = ({ parentName }) => {
+    const eopRef = useRef(null);
     const { userId } = useParams();
     const navigate = useNavigate();
     const postUtilityTheme = parentName;
@@ -42,6 +43,7 @@ const PostUtilities = ({ parentName }) => {
     } = usePostServices();
 
     const [posts, setPosts] = useState([]);
+    const [topupCount, setTopupCount] = useState(0);
     const [postImages, setPostImages] = useState([]);
     const [userImages, setUserImages] = useState({});
     const [isLoading, setIsLoading] = useState(false);
@@ -49,14 +51,25 @@ const PostUtilities = ({ parentName }) => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        getPosts();
+
+        const observer = new IntersectionObserver(([loadMoreElement]) => {
+            if (loadMoreElement.isIntersecting) {
+                const _topupCount = topupCount + Constants.topupCountIncrementValue;
+                setTopupCount(_topupCount);
+                getPosts(_topupCount);
+            }
+        }, { rootMargin: "0px" });
+
+        observer.observe(eopRef.current);
+
         // eslint-disable-next-line
     }, [parentName]);
 
-    const getPosts = async () => {
+    const getPosts = async topupCount => {
         try {
             setIsLoading(true);
             let _posts = [], images = [], url = '';
+            console.log("topupCount => ", topupCount);
             switch (parentName) {
                 case "user":
                     url = `${Constants.GET_USER_POSTS}/${userId}`;
@@ -73,7 +86,7 @@ const PostUtilities = ({ parentName }) => {
             }
 
             const { data: responseData } = await API(Constants.GET, url);
-            if (responseData?.data?.length) _posts = responseData.data;
+            if (responseData?.data?.length) _posts = [...posts, ...responseData?.data ?? []];
 
             setIsLoading(false);
             const comments = [], _userImages = {};
@@ -631,6 +644,10 @@ const PostUtilities = ({ parentName }) => {
                     </>
                 )
             }
+
+            <div ref={eopRef} id="end-of-posts">
+                <Loader />
+            </div>
         </div>
     );
 };
