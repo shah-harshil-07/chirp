@@ -1,6 +1,6 @@
 import { AuthGuard } from "@nestjs/passport";
 import { FilesInterceptor } from "@nestjs/platform-express";
-import { Body, Controller, Get, Param, Post, Req, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Param, Post, Req, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
 
 import { CommentsService } from "./comments.service";
 import { IResponseProps } from "src/interceptors/interfaces";
@@ -12,7 +12,12 @@ import { CustomValidatorsService } from "src/modules/custom-validators/custom-va
 
 @Controller("comments")
 export class CommentsController {
-    constructor(private readonly commentService: CommentsService) { }
+    constructor(
+        private readonly commentService: CommentsService,
+        private readonly storeValidatorsService: CustomValidatorsService,
+    ) {
+        this.storeValidatorsService = new CustomValidatorsService(validationParamList.store.commentData);
+    }
 
     @Post("store")
     @UseGuards(AuthGuard("jwt"))
@@ -27,8 +32,7 @@ export class CommentsController {
         const fileNames = images.map(imageObj => imageObj.filename);
 
         const parsedCommentData = JSON.parse(commentData.data);
-        const validationObj = new CustomValidatorsService(validationParamList.store.commentData);
-        const { isValid, errors } = validationObj.validate(parsedCommentData);
+        const { isValid, errors } = this.storeValidatorsService.validate(parsedCommentData);
 
         if (!isValid) throw new CustomBadRequestException(errors);
 

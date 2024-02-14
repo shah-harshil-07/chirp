@@ -6,5 +6,8 @@ import { CustomValidatorsService } from "./custom-validators.service";
 		CustomValidatorsService,
 		{ provide: "validationObj", useValue: null }
 	],
+	exports: [
+		CustomValidatorsService,
+	]
 })
 export class CustomValidatorsModule { }

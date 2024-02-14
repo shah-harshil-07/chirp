@@ -1,9 +1,9 @@
 import { join } from "path";
 import { CronJob } from "cron";
 import { AuthGuard } from "@nestjs/passport";
-import { FilesInterceptor } from "@nestjs/platform-express";
-import { SchedulerRegistry } from "@nestjs/schedule";
 import { createReadStream, existsSync } from "fs";
+import { SchedulerRegistry } from "@nestjs/schedule";
+import { FilesInterceptor } from "@nestjs/platform-express";
 import {
     Get,
     Req,
@@ -23,17 +23,28 @@ import { PostService } from "./posts.service";
 import { IResponseProps } from "src/interceptors/interfaces";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { ConfigService } from "src/modules/config/config.service";
-import { IScheduledPostIds, IVotingUserData, PostDTO } from "./post.dto";
+import { CustomBadRequestException } from "src/exception-handlers/400/handler";
+import { CustomValidatorsService } from "../custom-validators/custom-validators.service";
+import { IScheduledPostIds, IVotingUserData, PostDTO, TopupParamProps, validationParamList } from "./post.dto";
 
 @Controller("posts")
 export class PostController {
-    constructor(private readonly postService: PostService, private schedulerRegistery: SchedulerRegistry) { }
+    constructor(
+        private readonly postService: PostService,
+        private schedulerRegistery: SchedulerRegistry,
+        private indexValidatorsService: CustomValidatorsService,
+    ) {
+        this.indexValidatorsService = new CustomValidatorsService(validationParamList.index.topupParamProps);
+    }
 
-    @Get("all")
+    @Get("all/:topupCount")
     @UseInterceptors(ResponseInterceptor)
-    async index(): Promise<IResponseProps> {
-        const posts = await this.postService.findAll();
-        return { data: posts, success: true, message: "Received all the scheduled posts successfully." };
+    async index(@Param() paramData: TopupParamProps): Promise<IResponseProps> {
+        const { isValid, errors } = this.indexValidatorsService.validate(paramData);
+        if (!isValid) throw new CustomBadRequestException(errors);
+
+        const posts = await this.postService.findAll(+paramData.topupCount);
+        return { data: posts, success: true, message: "Received all the targetted posts successfully." };
     }
 
     @Get("scheduled/all")

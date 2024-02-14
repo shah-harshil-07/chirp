@@ -4,10 +4,11 @@ import { SchedulerRegistry } from "@nestjs/schedule";
 import { Inject, Injectable, InternalServerErrorException, UseInterceptors, forwardRef } from "@nestjs/common";
 
 import { Post, ScheduledPost } from "./post.schema";
+import { topupIncrementalValue } from "src/constants";
 import { CommonService } from "../common/common.service";
 import { ResponseInterceptor } from "src/interceptors/response";
-import { ConfigService } from "src/modules/config/config.service";
 import { Comments } from "../reactions/comments/comments.schema";
+import { ConfigService } from "src/modules/config/config.service";
 import { CommentsService } from "../reactions/comments/comments.service";
 import { CustomUnprocessableEntityException } from "src/exception-handlers/422/handler";
 import { IDuration, IRepostedCommentPost, ParsedPostDTO, ScheduledPostDTO } from "./post.dto";
@@ -25,17 +26,22 @@ export class PostService {
         @InjectModel(ScheduledPost.name) private readonly scheduledPostModel: Model<ScheduledPost>,
     ) { }
 
-    async findAll(): Promise<Post[]> {
+    async findAll(topupCount: number): Promise<Post[]> {
         await this.postModel.updateMany({}, { $inc: { views: 1 } });
+        let diff = topupCount - topupIncrementalValue;
+        const startCount = diff <= 0 ? 0 : diff;
+        const endCount = Math.min(topupCount, topupIncrementalValue);
 
         const posts = await this.postModel.aggregate([
+            { $sort: { createdAt: -1 } },
+            { $skip: startCount },
+            { $limit: endCount },
             { $lookup: { from: "Users", localField: "user", foreignField: "_id", as: "user" } },
             { $unwind: "$user" },
             { $lookup: { from: "PostMessages", localField: "postId", foreignField: "_id", as: "post" } },
             { $unwind: { path: "$post", preserveNullAndEmptyArrays: true } },
             { $lookup: { from: "Users", localField: "post.user", foreignField: "_id", as: "post.user" } },
             { $unwind: { path: "$post.user", preserveNullAndEmptyArrays: true } },
-            { $sort: { createdAt: -1 } },
             {
                 $project: {
                     "_id": 1,

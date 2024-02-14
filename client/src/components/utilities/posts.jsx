@@ -4,8 +4,8 @@ import "src/styles/utilities/post.css";
 import CIcon from "@coreui/icons-react";
 import { Card } from "@material-ui/core/";
 import { useDispatch } from "react-redux";
-import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
 import { cilSend, cilCommentBubble, cilChart, cilThumbUp, cilBookmark } from "@coreui/icons";
 
 import API from "src/api";
@@ -68,8 +68,7 @@ const PostUtilities = ({ parentName }) => {
     const getPosts = async topupCount => {
         try {
             setIsLoading(true);
-            let _posts = [], images = [], url = '';
-            console.log("topupCount => ", topupCount);
+            let images = [], url = '';
             switch (parentName) {
                 case "user":
                     url = `${Constants.GET_USER_POSTS}/${userId}`;
@@ -85,10 +84,11 @@ const PostUtilities = ({ parentName }) => {
                     break;
             }
 
-            const { data: responseData } = await API(Constants.GET, url);
-            if (responseData?.data?.length) _posts = [...posts, ...topupCount < 15 ? responseData?.data : []];
-            // if (responseData?.data?.length) _posts = [...posts, ...responseData?.data];
-            setMorePostsAvailable(topupCount < 15);
+            const { data: responseData } = await API(Constants.GET, `${url}/${topupCount}`);
+            const clonedExistingPosts = JSON.parse(JSON.stringify(posts ?? []));
+            const clonedResponsePosts = JSON.parse(JSON.stringify(responseData?.data ?? []));
+            const _posts = [...clonedExistingPosts, ...clonedResponsePosts];
+            setMorePostsAvailable(responseData?.data?.length > 0);
 
             const comments = [], _userImages = {};
 
@@ -336,7 +336,6 @@ const PostUtilities = ({ parentName }) => {
 
     return (
         <div className={!posts?.length ? "no-posts-box" : ''}>
-            {!posts?.length && !isLoading && <i>No posts are available</i>}
             {
                 posts.map((post, postIndex) => {
                     const { post: parentPost, createdAt, isLiked, isSaved, _id: postId } = post;

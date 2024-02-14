@@ -34,6 +34,16 @@ export class ValidationFactory {
         return true;
     }
 
+    private static checkInteger(value: string): boolean {
+        if (value) return Number.isInteger(Number(value));
+        return true;
+    }
+
+    private static checkNonNegativeNumber(value: string): boolean {
+        if (value) return Number(value) >= 0;
+        return true;
+    }
+
     public static getValidationSet(validationRule: string): IValidationSet {
         switch (validationRule) {
             case "isString":
@@ -42,6 +52,10 @@ export class ValidationFactory {
                 return { fn: this.required, errMessage: Constants.REQUIRED_ERR_MESSAGE };
             case "isDateValid":
                 return { fn: this.checkDateValidity, errMessage: Constants.INVALID_DATE_ERR_MESSAGE };
+            case "isInteger":
+                return { fn: this.checkInteger, errMessage: Constants.IS_NON_INTEGER_ERR_MESSAGE };
+            case "isNonNegative":
+                return { fn: this.checkNonNegativeNumber, errMessage: Constants.IS_NON_INTEGER_ERR_MESSAGE };
             default:
                 return null;
         }

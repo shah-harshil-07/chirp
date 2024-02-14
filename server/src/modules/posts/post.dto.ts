@@ -1,7 +1,6 @@
-import { IsJSON, IsOptional } from "class-validator";
+import { IsJSON, IsNumberString, IsOptional } from "class-validator";
 
 import { Post } from "./post.schema";
-import { Comments } from "src/modules/reactions/comments/comments.schema";
 
 export class PostDTO {
     @IsJSON()
@@ -9,6 +8,11 @@ export class PostDTO {
 
     @IsOptional()
     images: string[];
+}
+
+export class TopupParamProps {
+    @IsNumberString()
+    topupCount: number;
 }
 
 export interface IDuration {
@@ -56,4 +60,12 @@ export interface IVotingUserData {
 export class IRepostedCommentPost extends Post {
     type: string;
     parentPost: any;
+}
+
+export const validationParamList = {
+    index: {
+        topupParamProps: {
+            topupCount: "required|isInteger|isNonNegative",
+        }
+    },
 }
