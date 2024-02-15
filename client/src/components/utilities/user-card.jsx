@@ -93,8 +93,7 @@ const UserCard = () => {
     }
 
     const handleFollowAction = e => {
-        setIsFollowing(true);
-        connectUser(e, userData._id, true);
+        connectUser(e, userData._id, true, () => { setIsFollowing(true); });
     }
 
     return (

@@ -194,8 +194,7 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, mutuallyConnected
     }
 
     const handleFollowAction = e => {
-        setIsFollowing(true);
-        connectUser(e, profileDetails.id, true);
+        connectUser(e, profileDetails.id, true, () => { setIsFollowing(true); });
     }
 
     return (

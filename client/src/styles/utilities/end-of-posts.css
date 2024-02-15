@@ -1,0 +1,17 @@
+#end-of-posts {
+    height: 100px;
+    padding: 10px;
+}
+
+#more-posts-box {
+    height: 75%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#no-posts-reload-container {
+    display: flex;
+    margin-top: 20px;
+    justify-content: center;
+}

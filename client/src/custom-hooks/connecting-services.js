@@ -10,7 +10,7 @@ const useConnectionServices = () => {
     const headerData = getCommonHeader();
     const { showError, showSuccess } = useToaster();
 
-    const connectUser = (e, followingId, followUser) => {
+    const connectUser = (e, followingId, followUser, successCallback) => {
         if (e) e.preventDefault();
         showError("message");
 
@@ -21,8 +21,12 @@ const useConnectionServices = () => {
             API(Constants.GET, url, null, headerData).then(({ data: response }) => {
                 const { status, message } = response?.meta ?? {};
 
-                if (status && message) showSuccess(message);
-                else showError(message ?? "Something went wrong!");
+                if (status && message) {
+                    showSuccess(message);
+                    if (typeof successCallback === "function") successCallback();
+                } else {
+                    showError(message ?? "Something went wrong!");
+                }
             });
         } else {
             showError("Please login to follow.");

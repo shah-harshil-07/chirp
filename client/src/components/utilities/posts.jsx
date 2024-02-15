@@ -1,5 +1,6 @@
 import "src/styles/user/posts.css";
 import "src/styles/utilities/post.css";
+import "src/styles/utilities/end-of-posts.css";
 
 import CIcon from "@coreui/icons-react";
 import { Card } from "@material-ui/core/";
@@ -9,8 +10,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { cilSend, cilCommentBubble, cilChart, cilThumbUp, cilBookmark } from "@coreui/icons";
 
 import API from "src/api";
-import Loader from "./loader";
 import ImgHolder from "./img-holder";
+import EndOfPosts from "./end-of-posts";
 import DisplayedText from "./displayed-text";
 import * as Constants from "src/utilities/constants";
 import { isUserLoggedIn } from "src/utilities/helpers";
@@ -92,7 +93,7 @@ const PostUtilities = ({ parentName }) => {
 
             const comments = [], _userImages = {};
 
-            _posts.forEach(async postObj => {
+            clonedResponsePosts.forEach(async postObj => {
                 postObj["isLiked"] = null;
                 const { images: postImages, post } = postObj;
                 if (post?.images?.length) postImages.push(post.images);
@@ -113,7 +114,7 @@ const PostUtilities = ({ parentName }) => {
                 }
             }
 
-            setUserImages({ ..._userImages });
+            setUserImages({ ...userImages, ..._userImages });
 
             if (comments?.length && postUtilityTheme === "comments") {
                 const imageNames = comments.map(comment => comment.images);
@@ -123,7 +124,7 @@ const PostUtilities = ({ parentName }) => {
             getPostImages(images);
             setPosts([..._posts]);
             setIsLoading(false);
-            if (isUserLoggedIn()) getPostLikesAndSaves(_posts);
+            if (isUserLoggedIn()) getPostLikesAndSaves(clonedExistingPosts, clonedResponsePosts);
         } catch (error) {
             console.log(error);
             setIsLoading(false);
@@ -191,20 +192,20 @@ const PostUtilities = ({ parentName }) => {
         Promise.allSettled(promises);
     }
 
-    const getPostLikesAndSaves = async posts => {
-        const data = { postIds: posts.map(post => post._id) };
+    const getPostLikesAndSaves = async (existingPosts, responsePosts) => {
+        const data = { postIds: responsePosts.map(post => post._id) };
         const { data: reactionData } = await API(Constants.POST, Constants.GET_POST_LIKES_AND_SAVES, data, headerData);
 
-        const _posts = posts, reactedPosts = reactionData?.data ?? [];
+        const reactedPosts = reactionData?.data ?? [];
 
-        _posts.forEach(postObj => {
+        responsePosts.forEach(postObj => {
             const { _id: id } = postObj;
             const reactedPostObj = reactedPosts.find(post => post.postId === id) ?? null;
             postObj["isLiked"] = reactedPostObj?.liked ?? false;
             postObj["isSaved"] = reactedPostObj?.saved ?? false;
         });
 
-        setPosts([..._posts]);
+        setPosts([...existingPosts, ...responsePosts]);
     }
 
     const vote = async (e, postIndex, choiceIndex) => {
@@ -641,7 +642,7 @@ const PostUtilities = ({ parentName }) => {
             }
 
             <div ref={eopRef} id="end-of-posts">
-                {isLoading ? <Loader /> : morePostsAvailable ? "Mere paas maa hai!!" : "Tunak tunak tun taara ra..."}
+                <EndOfPosts isLoading={isLoading} morePostsAvailable={morePostsAvailable} />
             </div>
         </div>
     );
