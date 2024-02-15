@@ -150,8 +150,8 @@ export class UsersService {
         }
     }
 
-    public async getUserPosts(userId: string): Promise<Post[]> {
-        return await this.postService.getUserPostDetails(userId);
+    public async getUserPosts(userId: string, topupCount: string): Promise<Post[]> {
+        return await this.postService.getUserPostDetails(userId, +topupCount);
     }
 
     public async getUserSavedPosts(userId: string): Promise<Post[]> {

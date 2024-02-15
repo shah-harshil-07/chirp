@@ -61,11 +61,3 @@ export class IRepostedCommentPost extends Post {
     type: string;
     parentPost: any;
 }
-
-export const validationParamList = {
-    index: {
-        topupParamProps: {
-            topupCount: "required|isInteger|isNonNegative",
-        }
-    },
-}

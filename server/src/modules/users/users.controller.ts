@@ -18,17 +18,21 @@ import {
 } from "@nestjs/common";
 
 import { UsersService } from "./users.service";
+import { topupValidationStr } from "src/constants";
 import { AuthService } from "src/modules/auth/auth.service";
 import { IFollowingParamId } from "./followers/followers.dto";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { FollowersService } from "./followers/followers.service";
 import { ConfigService } from "src/modules/config/config.service";
 import { GetAuthTokenGuard } from "src/modules/auth/get-token.guard";
+import { CustomBadRequestException } from "src/exception-handlers/400/handler";
 import { CustomUnprocessableEntityException } from "src/exception-handlers/422/handler";
+import { CustomValidatorsService } from "../custom-validators/custom-validators.service";
 import {
     OtpDTO,
     UserDTO,
     IParamId,
+    IUserPostParams,
     LoggedInUserDTO,
     RegisteredUserDTO,
     GoogleAuthedUserDTO,
@@ -36,7 +40,6 @@ import {
     IUpdateUserDetailsDTO,
     RegisteredGoogleAuthedUserDTO,
 } from "./users.dto";
-import { CustomBadRequestException } from "src/exception-handlers/400/handler";
 
 interface IResponseProps {
     data?: any;
@@ -51,7 +54,10 @@ export class UsersController {
         private readonly authService: AuthService,
         private readonly userService: UsersService,
         private readonly followerService: FollowersService,
-    ) { }
+        private readonly topupCountValidatorService: CustomValidatorsService,
+    ) {
+        this.topupCountValidatorService = new CustomValidatorsService({ topupCount: topupValidationStr });
+    }
 
     @Post("verify-email")
     @UseInterceptors(ResponseInterceptor)
@@ -147,10 +153,14 @@ export class UsersController {
         return { success: true, data: userData, message: "User details fetched successfully." };
     }
 
-    @Get("get-posts/:id")
+    @Get("get-posts/:id/:topupCount")
     @UseInterceptors(ResponseInterceptor)
-    async getPosts(@Param() { id }: IParamId): Promise<IResponseProps> {
-        const userPosts = await this.userService.getUserPosts(id);
+    async getPosts(@Param() paramData: IUserPostParams): Promise<IResponseProps> {
+        const { isValid, errors } = this.topupCountValidatorService.validate(paramData);
+        if (!isValid) throw new CustomBadRequestException(errors);
+
+        const { id, topupCount } = paramData;
+        const userPosts = await this.userService.getUserPosts(id, topupCount);
         return { success: true, data: userPosts, message: "User posts fetched successfully." };
     }
 

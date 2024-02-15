@@ -22,3 +22,4 @@ export const IS_NEGATIVE_ERR_MESSAGE = "The given number must be non-negative.";
 /** Other constants */
 /*--------------------------------------------------------------------------------*/
 export const topupIncrementalValue = 5;
+export const topupValidationStr = "required|isInteger|isNonNegative";

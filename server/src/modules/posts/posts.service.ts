@@ -28,9 +28,7 @@ export class PostService {
 
     async findAll(topupCount: number): Promise<Post[]> {
         await this.postModel.updateMany({}, { $inc: { views: 1 } });
-        let diff = topupCount - topupIncrementalValue;
-        const startCount = diff <= 0 ? 0 : diff;
-        const endCount = Math.min(topupCount, topupIncrementalValue);
+        const [ startCount, endCount ] = this.commonService.getTopupRange(topupCount);
 
         const posts = await this.postModel.aggregate([
             { $sort: { createdAt: -1 } },
@@ -229,16 +227,20 @@ export class PostService {
         return clonedPost;
     }
 
-    async getUserPostDetails(userId: string): Promise<Post[]> {
+    async getUserPostDetails(userId: string, topupCount: number): Promise<Post[]> {
+        const [ startCount, endCount ] = this.commonService.getTopupRange(topupCount);
+
         const posts = await this.postModel.aggregate([
             { $match: { $expr: { $eq: ["$user", { $toObjectId: userId }] } } },
+            { $sort: { createdAt: -1 } },
+            { $skip: startCount },
+            { $limit: endCount },
             { $lookup: { localField: "postId", foreignField: "_id", from: "PostMessages", as: "post" } },
             { $unwind: { path: "$post", preserveNullAndEmptyArrays: true } },
             { $lookup: { from: "Users", localField: "user", foreignField: "_id", as: "user" } },
             { $unwind: { path: "$user", preserveNullAndEmptyArrays: true } },
             { $lookup: { from: "Users", localField: "post.user", foreignField: "_id", as: "post.user" } },
             { $unwind: { path: "$post.user", preserveNullAndEmptyArrays: true } },
-            { $sort: { createdAt: -1 } },
             {
                 $project: {
                     "text": 1,
@@ -275,9 +277,9 @@ export class PostService {
 
         const clonedPosts = JSON.parse(JSON.stringify(posts));
 
-        for (const post of clonedPosts) {
-            if (post.postId && !post?.post?._id) {
-                post.post = await this.getRepostedCommentData(post.postId);
+        for (const postObj of clonedPosts) {
+            if (postObj.postId && !postObj?.post?._id) {
+                postObj.post = await this.getRepostedCommentData(postObj.postId);
             }
         }
 

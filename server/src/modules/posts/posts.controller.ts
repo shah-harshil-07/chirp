@@ -20,12 +20,13 @@ import {
 } from "@nestjs/common";
 
 import { PostService } from "./posts.service";
+import { topupValidationStr } from "src/constants";
 import { IResponseProps } from "src/interceptors/interfaces";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { ConfigService } from "src/modules/config/config.service";
 import { CustomBadRequestException } from "src/exception-handlers/400/handler";
 import { CustomValidatorsService } from "../custom-validators/custom-validators.service";
-import { IScheduledPostIds, IVotingUserData, PostDTO, TopupParamProps, validationParamList } from "./post.dto";
+import { IScheduledPostIds, IVotingUserData, PostDTO, TopupParamProps } from "./post.dto";
 
 @Controller("posts")
 export class PostController {
@@ -34,7 +35,7 @@ export class PostController {
         private schedulerRegistery: SchedulerRegistry,
         private indexValidatorsService: CustomValidatorsService,
     ) {
-        this.indexValidatorsService = new CustomValidatorsService(validationParamList.index.topupParamProps);
+        this.indexValidatorsService = new CustomValidatorsService({ topupCount: topupValidationStr });
     }
 
     @Get("all/:topupCount")

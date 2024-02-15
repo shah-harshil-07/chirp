@@ -111,6 +111,11 @@ export interface IParamId {
     id: string;
 }
 
+export interface IUserPostParams {
+    id: string;
+    topupCount: string;
+}
+
 export const validationParamList = {
     updateDetails: {
         name: "required|isString",

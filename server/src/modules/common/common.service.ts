@@ -1,9 +1,10 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { existsSync, unlinkSync } from "fs";
+import { InjectModel } from "@nestjs/mongoose";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 
 import { OtpStore } from "./otp-store.schema";
+import { topupIncrementalValue } from "src/constants";
 
 @Injectable()
 export class CommonService {
@@ -28,5 +29,12 @@ export class CommonService {
     public unlinkImage(dir: string, fileName: string): void {
         const path = `${dir}/${fileName}`;
         if (existsSync(path)) unlinkSync(path);
+    }
+
+    public getTopupRange(topupCount: number): number[] {
+        const diff = topupCount - topupIncrementalValue;
+        const startCount = diff <= 0 ? 0 : diff;
+        const endCount = Math.min(topupCount, topupIncrementalValue);
+        return [startCount, endCount];
     }
 }
