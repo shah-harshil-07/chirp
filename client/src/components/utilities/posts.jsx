@@ -49,7 +49,14 @@ const PostUtilities = ({ parentName }) => {
     const [userImages, setUserImages] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [userComments, setUserComments] = useState([]);
-    const [morePostsAvailable, setMorePostsAvailable] = useState(true);
+    const [morePostsAvailable, setMorePostsAvailable] = useState(false);
+
+    useEffect(() => {
+        const _topupCount = Constants.topupCountIncrementValue;
+        setTopupCount(_topupCount);
+        getPosts(_topupCount);
+        // eslint-disable-next-line
+    }, [parentName]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(([loadMoreElement]) => {
@@ -64,7 +71,7 @@ const PostUtilities = ({ parentName }) => {
 
         return () => { observer.disconnect(); };
         // eslint-disable-next-line
-    }, [parentName, posts, morePostsAvailable]);
+    }, [posts, morePostsAvailable]);
 
     const getPosts = async topupCount => {
         try {
@@ -88,8 +95,10 @@ const PostUtilities = ({ parentName }) => {
             const { data: responseData } = await API(Constants.GET, `${url}/${topupCount}`);
             const clonedExistingPosts = JSON.parse(JSON.stringify(posts ?? []));
             const clonedResponsePosts = JSON.parse(JSON.stringify(responseData?.data ?? []));
-            const _posts = [...clonedExistingPosts, ...clonedResponsePosts];
-            setMorePostsAvailable(responseData?.data?.length > 0);
+            const _posts = [
+                ...topupCount === Constants.topupCountIncrementValue ? [] : clonedExistingPosts,
+                ...clonedResponsePosts
+            ];
 
             const comments = [], _userImages = {};
 
@@ -123,12 +132,20 @@ const PostUtilities = ({ parentName }) => {
 
             getPostImages(images);
             setPosts([..._posts]);
+            setMorePostsAvailable(responseData?.data?.length > 0);
             setIsLoading(false);
             if (isUserLoggedIn()) getPostLikesAndSaves(clonedExistingPosts, clonedResponsePosts);
         } catch (error) {
             console.log(error);
             setIsLoading(false);
+            showNullPage();
         }
+    }
+
+    const showNullPage = () => {
+        setPosts([]);
+        setUserImages({});
+        setMorePostsAvailable(false);
     }
 
     const getPromise = (imageName, postIndex, imageIndex, _postImages, parentImageIndex) => {

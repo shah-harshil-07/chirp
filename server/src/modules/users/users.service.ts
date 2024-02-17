@@ -159,8 +159,8 @@ export class UsersService {
         return savedPosts.map((postObj: ISavedPost) => postObj.post);
     }
 
-    public async getComments(userId: string): Promise<Post[]> {
-        const postList = await this.commentService.getUserComments(userId);
+    public async getComments(userId: string, topupCount: string): Promise<Post[]> {
+        const postList = await this.commentService.getUserComments(userId, +topupCount);
         return postList.map((postObj: IUserComment) => postObj.post);
     }
 

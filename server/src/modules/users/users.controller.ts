@@ -171,10 +171,14 @@ export class UsersController {
         return { success: true, data: posts, message: "Saved posts fetched successfully." };
     }
 
-    @Get("get-comments/:id")
+    @Get("get-comments/:id/:topupCount")
     @UseInterceptors(ResponseInterceptor)
-    async getComments(@Param() { id }: IParamId): Promise<IResponseProps> {
-        const data = await this.userService.getComments(id);
+    async getComments(@Param() paramData: IUserPostParams): Promise<IResponseProps> {
+        const { isValid, errors } = this.topupCountValidatorService.validate(paramData);
+        if (!isValid) throw new CustomBadRequestException(errors);
+
+        const { id, topupCount } = paramData;
+        const data = await this.userService.getComments(id, topupCount);
         return { success: true, data, message: "User comments fetched successfully." };
     }
 

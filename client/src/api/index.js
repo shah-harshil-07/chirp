@@ -5,7 +5,7 @@ const port = process.env.REACT_APP_SERVER_PORT;
 
 const API = async (method, baseUrl, data, headerData, isSpecialUrl) => {
     const headers = headerData ?? {};
-    const validateStatus = status => status < 500;
+    const validateStatus = status => status < 400;
     const url = isSpecialUrl ? baseUrl : `${origin}:${port}/${baseUrl}`;
 
     return new Promise((res, rej) => {

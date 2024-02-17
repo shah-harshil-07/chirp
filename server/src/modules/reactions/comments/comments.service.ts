@@ -7,6 +7,7 @@ import { Post } from "src/modules/posts/post.schema";
 import { PostService } from "src/modules/posts/posts.service";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { ConfigService } from "src/modules/config/config.service";
+import { CommonService } from "src/modules/common/common.service";
 import { ICommentData, ICommentList, IUserComment } from "./comments.dto";
 
 @Injectable()
@@ -14,6 +15,7 @@ import { ICommentData, ICommentList, IUserComment } from "./comments.dto";
 export class CommentsService {
     constructor(
         private readonly configService: ConfigService,
+        private readonly commonService: CommonService,
         @InjectModel(Comments.name) private readonly commentModel: Model<Comments>,
         @Inject(forwardRef(() => PostService)) private readonly postService: PostService,
     ) { }
@@ -60,6 +62,7 @@ export class CommentsService {
             { $match: { ...matchQuery } },
             { $lookup: { from: "Users", localField: "userId", foreignField: "_id", as: "user" } },
             { $unwind: "$user" },
+            { $sort: { createdAt: -1 } },
             {
                 $project: {
                     "text": 1,
@@ -88,11 +91,15 @@ export class CommentsService {
         return await this.commentModel.findByIdAndUpdate(commentId, { $inc: { [attribute]: count } }, { new: true });
     }
 
-    async getUserComments(userId: string): Promise<IUserComment[]> {
+    async getUserComments(userId: string, topupCount: number): Promise<IUserComment[]> {
+        const [ startCount, endCount ] = this.commonService.getTopupRange(topupCount);
+
         const comments = await this.commentModel.aggregate([
             { $match: { $expr: { $eq: ["$userId", { $toObjectId: userId }] } } },
             { $lookup: { from: "PostMessages", localField: "postId", foreignField: "_id", as: "post" } },
             { $sort: { createdAt: -1 } },
+            // { $skip: startCount },
+            // { $limit: endCount },
             { $group: { _id: "$postId", commentId: { $first: "$_id" } } },
             { $lookup: { from: "PostMessages", localField: "_id", foreignField: "_id", as: "post" } },
             { $unwind: "$post" },
