@@ -142,7 +142,7 @@ export class UsersService {
 
         const clonedDetails = JSON.parse(JSON.stringify(details));
         if (clonedDetails) {
-            clonedDetails["totalPosts"] = clonedDetails?.["_id"]?.length ?? 0;
+            clonedDetails["totalPosts"] = clonedDetails?._id?.length ?? 0;
             clonedDetails["_id"] = userId;
             return clonedDetails;
         } else {
@@ -154,8 +154,8 @@ export class UsersService {
         return await this.postService.getUserPostDetails(userId, +topupCount);
     }
 
-    public async getUserSavedPosts(userId: string): Promise<Post[]> {
-        const savedPosts = await this.savesLikesService.getSavedPosts(userId);
+    public async getUserSavedPosts(userId: string, topupCount: string): Promise<Post[]> {
+        const savedPosts = await this.savesLikesService.getSavedPosts(userId, +topupCount);
         return savedPosts.map((postObj: ISavedPost) => postObj.post);
     }
 

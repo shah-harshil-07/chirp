@@ -164,10 +164,14 @@ export class UsersController {
         return { success: true, data: userPosts, message: "User posts fetched successfully." };
     }
 
-    @Get("get-saved/:id")
+    @Get("get-saved/:id/:topupCount")
     @UseInterceptors(ResponseInterceptor)
-    async getSavedPosts(@Param() { id }: IParamId): Promise<IResponseProps> {
-        const posts = await this.userService.getUserSavedPosts(id);
+    async getSavedPosts(@Param() paramData: IUserPostParams): Promise<IResponseProps> {
+        const { isValid, errors } = this.topupCountValidatorService.validate(paramData);
+        if (!isValid) throw new CustomBadRequestException(errors);
+
+        const { id, topupCount } = paramData;
+        const posts = await this.userService.getUserSavedPosts(id, topupCount);
         return { success: true, data: posts, message: "Saved posts fetched successfully." };
     }
 

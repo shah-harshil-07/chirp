@@ -71,12 +71,14 @@ const PostUtilities = ({ parentName }) => {
 
         return () => { observer.disconnect(); };
         // eslint-disable-next-line
-    }, [posts, morePostsAvailable]);
+    }, [posts, morePostsAvailable, postImages]);
 
     const getPosts = async topupCount => {
         try {
             setIsLoading(true);
-            let images = [], url = '';
+            const isNewParent = topupCount === Constants.topupCountIncrementValue;
+            let url = '', images = [...isNewParent ? [] : postImages];
+
             switch (parentName) {
                 case "user":
                     url = `${Constants.GET_USER_POSTS}/${userId}`;
@@ -95,12 +97,10 @@ const PostUtilities = ({ parentName }) => {
             const { data: responseData } = await API(Constants.GET, `${url}/${topupCount}`);
             const clonedExistingPosts = JSON.parse(JSON.stringify(posts ?? []));
             const clonedResponsePosts = JSON.parse(JSON.stringify(responseData?.data ?? []));
-            const _posts = [
-                ...topupCount === Constants.topupCountIncrementValue ? [] : clonedExistingPosts,
-                ...clonedResponsePosts
-            ];
+            const _posts = [...isNewParent ? [] : clonedExistingPosts, ...clonedResponsePosts];
 
-            const comments = [], _userImages = {};
+            const _userImages = {};
+            const comments = [...isNewParent ? [] : clonedExistingPosts.map(post => post.comment)];
 
             clonedResponsePosts.forEach(async postObj => {
                 postObj["isLiked"] = null;
@@ -126,15 +126,18 @@ const PostUtilities = ({ parentName }) => {
             setUserImages({ ...userImages, ..._userImages });
 
             if (comments?.length && postUtilityTheme === "comments") {
-                const imageNames = comments.map(comment => comment.images);
+                const imageNames = comments.map(comment => comment?.images ?? []);
                 getCommentImages(imageNames, comments);
             }
 
-            getPostImages(images);
+            const clonedResponsePostImages = JSON.parse(JSON.stringify(images));
+            const clonedExistingPostImages = JSON.parse(JSON.stringify(postImages));
+            getPostImages(clonedResponsePostImages, [...isNewParent ? [] : clonedExistingPostImages]);
+
             setPosts([..._posts]);
             setMorePostsAvailable(responseData?.data?.length > 0);
             setIsLoading(false);
-            if (isUserLoggedIn()) getPostLikesAndSaves(clonedExistingPosts, clonedResponsePosts);
+            if (isUserLoggedIn()) getPostLikesAndSaves(isNewParent ? [] : clonedExistingPosts, clonedResponsePosts);
         } catch (error) {
             console.log(error);
             setIsLoading(false);
@@ -148,7 +151,7 @@ const PostUtilities = ({ parentName }) => {
         setMorePostsAvailable(false);
     }
 
-    const getPromise = (imageName, postIndex, imageIndex, _postImages, parentImageIndex) => {
+    const getPostImagePromise = (imageName, postIndex, imageIndex, _postImages, parentImageIndex) => {
         const successCallback = imageData => {
             if (parentImageIndex >= 0) {
                 if (!_postImages[postIndex][imageIndex]) _postImages[postIndex][imageIndex] = [];
@@ -160,25 +163,27 @@ const PostUtilities = ({ parentName }) => {
             setPostImages([..._postImages]);
         }
 
-        return getImageFetchingPromise(imageName, successCallback);
+        const { base64Prefix, httpsOrigin } = Constants;
+        const isSettledImage = imageName.startsWith(base64Prefix) || imageName.startsWith(httpsOrigin);
+        return isSettledImage ? null : getImageFetchingPromise(imageName, successCallback);
     }
 
-    const getPostImages = postImageNameArr => {
+    const getPostImages = (postImageNameArr, _postImages) => {
         const promises = [];
 
         postImageNameArr.forEach((postImageNames, postIndex) => {
+            if (!_postImages[postIndex]) _postImages[postIndex] = [];
+
             postImageNames.forEach((imageName, imageIndex) => {
-                const _postImages = postImages;
-                if (!_postImages[postIndex]) _postImages[postIndex] = [];
                 const params = [imageName, postIndex, imageIndex, _postImages];
 
                 if (Array.isArray(imageName)) {
                     imageName.forEach((image, imageIndex) => {
                         params[0] = image;
-                        promises.push(getPromise(...params, imageIndex));
+                        promises.push(getPostImagePromise(...params, imageIndex));
                     });
                 } else {
-                    promises.push(getPromise(...params));
+                    promises.push(getPostImagePromise(...params));
                 }
             });
         });
@@ -193,7 +198,9 @@ const PostUtilities = ({ parentName }) => {
             setUserComments([..._comments]);
         }
 
-        return getImageFetchingPromise(imageName, successCallback);
+        const { base64Prefix, httpsOrigin } = Constants;
+        const isSettledImage = imageName.startsWith(base64Prefix) || imageName.startsWith(httpsOrigin);
+        return isSettledImage ? null : getImageFetchingPromise(imageName, successCallback);
     }
 
     const getCommentImages = (imageNameSuperList, comments) => {
@@ -363,7 +370,8 @@ const PostUtilities = ({ parentName }) => {
                     const images = postImages[postIndex];
 
                     const commentObj = userComments?.[postIndex];
-                    const { _id: commentId } = commentObj ?? {};
+                    const { _id: commentId, user: commentor, createdAt: commentCreatedAt } = commentObj ?? {};
+                    const { _id: commentorId, name: commentorName, username: commentorUsername } = commentor ?? {};
 
                     const {
                         type: parentType,
@@ -599,18 +607,14 @@ const PostUtilities = ({ parentName }) => {
                                                     alt="post creator"
                                                     className="parent-post-user-img"
                                                     onError={e => e.target.src = String(sampleUserImg)}
-                                                    src={commentObj?.user?.picture ?? String(sampleUserImg)}
+                                                    src={userImages[commentorId] ?? String(sampleUserImg)}
                                                 />
 
                                                 <div className="repost-body-content user-comment-body-content">
                                                     <div className="user-comment-head">
-                                                        <b className="font-size-16">
-                                                            {commentObj?.user?.name ?? ''}
-                                                        </b>&nbsp;
+                                                        <b className="font-size-16">{commentorName ?? ''}</b>&nbsp;
 
-                                                        <span className="font-size-16">
-                                                            {`@${commentObj?.user?.username ?? ''}`}
-                                                        </span>
+                                                        <span className="font-size-16">{`@${commentorUsername ?? ''}`}</span>
 
                                                         <span>
                                                             <div className="seperator-container">
@@ -619,7 +623,7 @@ const PostUtilities = ({ parentName }) => {
                                                         </span>
 
                                                         <span className="font-size-16">
-                                                            {getPostTiming(commentObj?.createdAt)}
+                                                            {getPostTiming(commentCreatedAt)}
                                                         </span>
                                                     </div>
 

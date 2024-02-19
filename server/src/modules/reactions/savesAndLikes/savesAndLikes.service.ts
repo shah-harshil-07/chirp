@@ -6,6 +6,7 @@ import { SavesAndLikes } from "./savesAndLikes.schema";
 import { PostService } from "src/modules/posts/posts.service";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { ISavedPost, SavesLikesData } from "./savesAndLikes.dto";
+import { CommonService } from "src/modules/common/common.service";
 import { CommentsService } from "src/modules/reactions/comments/comments.service";
 
 @Injectable()
@@ -13,6 +14,7 @@ import { CommentsService } from "src/modules/reactions/comments/comments.service
 export class SavesLikesService {
     constructor(
         private readonly postService: PostService,
+        private readonly commonService: CommonService,
         private readonly commentsService: CommentsService,
         @InjectModel(SavesAndLikes.name) private readonly savesLikesModal: Model<SavesAndLikes>,
     ) { }
@@ -62,18 +64,22 @@ export class SavesLikesService {
         return this.savesLikesModal.find({ userId, postId: { $in: postIds } }).exec();
     }
 
-    async getSavedPosts(userId: string): Promise<ISavedPost[]> {
+    async getSavedPosts(userId: string, topupCount: number): Promise<ISavedPost[]> {
+        const [startCount, endCount] = this.commonService.getTopupRange(topupCount);
+
         return this.savesLikesModal.aggregate([
             { $match: { userId, saved: true } },
             { $lookup: { from: "PostMessages", localField: "postId", foreignField: "_id", as: "post" } },
             { $unwind: { path: "$post", preserveNullAndEmptyArrays: true } },
+            { $sort: { "post.createdAt": -1 } },
+            { $skip: startCount },
+            { $limit: endCount },
             { $lookup: { from: "Users", localField: "post.user", foreignField: "_id", as: "post.user" } },
             { $unwind: { path: "$post.user", preserveNullAndEmptyArrays: true } },
             { $lookup: { from: "PostMessages", localField: "post.postId", foreignField: "_id", as: "post.post" } },
             { $unwind: { path: "$post.post", preserveNullAndEmptyArrays: true } },
             { $lookup: { from: "Users", localField: "post.post.user", foreignField: "_id", as: "post.post.user" } },
             { $unwind: { path: "$post.post.user", preserveNullAndEmptyArrays: true } },
-            { $sort: { "post.createdAt": -1 } },
             {
                 $project: {
                     "post._id": 1,
