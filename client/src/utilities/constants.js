@@ -42,6 +42,7 @@ export const userCardTextLimit = 277;
 
 export const mutualConnectionFrontLimit = 4;
 export const topupCountIncrementValue = 5;
+export const maxFrontSuggestionLength = 4;
 
 /* API half URLs */
 /*--------------------------------------------------------------------------------*/
@@ -81,4 +82,5 @@ export const UNFOLLOW_USER = "user/unfollow-user";
 export const FOLLOWER_LIST = "user/get-followers";
 export const FOLLOWING_LIST = "user/get-following";
 export const CHECK_USER_FOLLOWING = "user/check-following";
+export const GET_SUGGESTED_USERS = "user/get-follow-suggestions";
 export const GET_MUTUAL_CONNECTIONS = "user/get-mutual-connections";

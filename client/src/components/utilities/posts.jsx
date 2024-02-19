@@ -38,6 +38,7 @@ const PostUtilities = ({ parentName }) => {
         createPollJSX,
         openRepostBox,
         openCommentBox,
+        getFinalUserImages,
         getFormattedNumber,
         handleMutedReaction,
         getImageFetchingPromise,
@@ -116,14 +117,9 @@ const PostUtilities = ({ parentName }) => {
                 if (postUtilityTheme === "comments") comments.push(postObj.comment);
             });
 
-            for (const userId in _userImages) {
-                const imageValue = _userImages[userId];
-                if (!imageValue.startsWith(Constants.httpsOrigin)) {
-                    await getImageFetchingPromise(imageValue, imageData => { _userImages[userId] = imageData; }, "user");
-                }
-            }
+            const settledUserImages = await getFinalUserImages(_userImages);
 
-            setUserImages({ ...userImages, ..._userImages });
+            setUserImages({ ...userImages, ...settledUserImages });
 
             if (comments?.length && postUtilityTheme === "comments") {
                 const imageNames = comments.map(comment => comment?.images ?? []);

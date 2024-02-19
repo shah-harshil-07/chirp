@@ -187,11 +187,23 @@ const usePostServices = () => {
         return (str + flag).trimEnd();
     }
 
+    const getFinalUserImages = async userImages => {
+        for (const userId in userImages) {
+            const imageValue = userImages[userId];
+            if (imageValue && !imageValue.startsWith(Constants.httpsOrigin)) {
+                await getImageFetchingPromise(imageValue, imageData => { userImages[userId] = imageData; }, "user");
+            }
+        }
+
+        return userImages;
+    }
+
     return {
         getPostTiming,
         createPollJSX,
         openRepostBox,
         openCommentBox,
+        getFinalUserImages,
         getFormattedNumber,
         handleMutedReaction,
         getFormattedPostTiming,

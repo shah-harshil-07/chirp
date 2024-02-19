@@ -36,6 +36,7 @@ const PostDetails = () => {
         createPollJSX,
         openRepostBox,
         openCommentBox,
+        getFinalUserImages,
         getFormattedNumber,
         handleMutedReaction,
         getFormattedPostTiming,
@@ -140,14 +141,9 @@ const PostDetails = () => {
                 };
             });
 
-            for (const userId in _userImages) {
-                const imageValue = _userImages[userId];
-                if (!imageValue.startsWith(Constants.httpsOrigin)) {
-                    await getImageFetchingPromise(imageValue, imageData => { _userImages[userId] = imageData; }, "user");
-                }
-            }
+            const settledUserImages = await getFinalUserImages(_userImages);
 
-            setUserImages({ ..._userImages });
+            setUserImages({ ...settledUserImages });
             setCommentList([..._commentList]);
             setPostDetails({ ..._postDetails });
             setInitialDetailsUpdated(true);

@@ -35,7 +35,8 @@ export const isUserLoggedIn = () => {
 }
 
 export const getCommonHeader = () => {
-    return { Authorization: `Bearer ${localStorage.getItem("chirp-accessToken")}` };
+    const accessToken = localStorage.getItem("chirp-accessToken");
+    return accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
 }
 
 export const getUserDetails = () => {
