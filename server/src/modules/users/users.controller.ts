@@ -325,4 +325,15 @@ export class UsersController {
         const connectionList = await this.followerService.getMutualConnections(id, loggedInUserId);
         return { success: true, data: connectionList, message: "Mutual connections fetched successfully." };
     }
+
+    @Get("get-follow-suggestions")
+    @UseGuards(GetAuthTokenGuard)
+    @UseInterceptors(ResponseInterceptor)
+    async getFollowSuggestions(@Req() req: any): Promise<IResponseProps> {
+        const { _id: loggedInUserId } = req?.user ?? {};
+        let users: UserDTO[];
+        if (loggedInUserId) users = await this.followerService.getFollowSuggestions(loggedInUserId);
+        else users = await this.userService.getFollowSuggestions();
+        return { success: true, data: users, message: "Suggested users to be followed fetched successfully." };
+    }
 }

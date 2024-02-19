@@ -124,12 +124,23 @@ export class UsersService {
     }
 
     public async getUserDetails(userId: string): Promise<IUserDetails> {
+        const selectedUserItems = [
+            "name",
+            "username",
+            "bio",
+            "website",
+            "createdAt",
+            "dateOfBirth",
+            "location",
+            "followers",
+            "following",
+            "picture",
+            "backgroundImage"
+        ];
+
         const details = await this
             .userModel
-            .findById(
-                userId,
-                "name username bio website createdAt dateOfBirth location followers following picture backgroundImage"
-            )
+            .findById( userId, selectedUserItems.join(" "))
             .populate({
                 path: "_id",
                 model: "Post",
@@ -190,5 +201,13 @@ export class UsersService {
         await this.userModel.findByIdAndUpdate(userId, { [imageType]: '' });
         if (fileName) this.commonService.unlinkImage(this.imageDirectory, fileName);
         return null;
+    }
+
+    public async getFollowSuggestions(): Promise<UserDTO[]> {
+        return await this
+            .userModel
+            .find({ followers: { $gt: 0 } }, { name: 1, username: 1, picture: 1 })
+            .sort("-followers createdAt")
+            .limit(20);
     }
 }

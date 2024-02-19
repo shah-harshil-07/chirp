@@ -6,6 +6,7 @@ import { UserModel } from "../users.schema";
 import { FollowerModel } from "./followers.schema";
 import { FollowDataFetchDTO } from "./followers.dto";
 import { ResponseInterceptor } from "src/interceptors/response";
+import { UserDTO } from "../users.dto";
 
 @Injectable()
 @UseInterceptors(ResponseInterceptor)
@@ -110,5 +111,28 @@ export class FollowersService {
         } else {
             return [];
         }
+    }
+
+    public async getFollowSuggestions(loggedInUserId: string): Promise<UserDTO[]> {
+        const userList = await this.followerModel.aggregate([
+            { $group: { _id: "$following", follower_count: { $sum: 1 }, followers: { $push: "$follower" } } },
+            { $match: { $expr: { $eq: [{ $in: [{ $toObjectId: loggedInUserId }, "$followers"] }, false] } } },
+            { $match: { $expr: { $ne: ["$_id", { $toObjectId: loggedInUserId }] } } },
+            { $sort: { follower_count: -1 } },
+            { $limit: 20 },
+            { $lookup: { from: "Users", localField: "_id", foreignField: "_id", as: "user" } },
+            { $unwind: "$user" },
+            {
+                $project: {
+                    "_id": 0,
+                    "user._id": 1,
+                    "user.name": 1,
+                    "user.picture": 1,
+                    "user.username": 1,
+                },
+            },
+        ]);
+
+        return userList.map(userObj => userObj.user);
     }
 }
