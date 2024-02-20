@@ -17,7 +17,7 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
     const { showError } = useToaster();
     const commonHeader = getCommonHeader();
     const { connectUser } = useConnectionServices();
-    const { getImageFetchingPromise } = usePostServices();
+    const { getFinalUserImages } = usePostServices();
     const dispatch = useDispatch(), navigate = useNavigate();
     const sampleUserImg = require("src/assets/sample-user.png");
     const { id: loggedUserId } = isUserLoggedIn() ? getUserDetails() : {};
@@ -31,7 +31,7 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
         // eslint-disable-next-line
     }, [theme]);
 
-    const applyTheme = () => {
+    const applyTheme = async () => {
         let url = '';
 
         switch (theme) {
@@ -40,6 +40,9 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
                 break;
             case "following":
                 url = Constants.FOLLOWING_LIST;
+                break;
+            case "suggestedUsers":
+                url = Constants.GET_SUGGESTED_USERS;
                 break;
             case "mutualConnection":
                 url = null;
@@ -59,7 +62,8 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
                 }) ?? [];
 
                 setUsers([..._users]);
-                updatedUserImages(_userImages);
+                const settledUserImages = await getFinalUserImages(_userImages);
+                setUserImages({ ...settledUserImages });
                 break;
             default:
                 break;
@@ -69,42 +73,43 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
     }
 
     const getFollowers = async url => {
-        if (url && userId) {
+        if (url) {
+            const formattedUrl = `${url}${userId ? `/${userId}` : ''}`;
+
             setIsLoading(true);
-            const { data: response } = await API(Constants.GET, `${url}/${userId}`, null, commonHeader);
+            const { data: response } = await API(Constants.GET, formattedUrl, null, commonHeader);
             setIsLoading(false);
 
-            const _userImages = {};
+            updateUserDataFromResponse(response);
+        }
+    }
 
-            const _users = response?.data?.map(userObj => {
+    const updateUserDataFromResponse = async response => {
+        const _userImages = {};
+
+        const _users = response?.data?.map((userObj, userIndex) => {
+            if (theme === "suggestedUsers") {
+                const id = userObj?._id;
+                const userPic = userObj?.picture;
+                if (userPic && id) _userImages[id] = userPic;
+                return { ...userObj, id: id ?? userIndex, userId: id };
+            } else {
                 const { _id: userId, picture: userPic } = userObj?.user ?? {};
-
                 if (userPic) _userImages[userId] = userPic;
-
                 return {
                     userId,
-                    id: userObj?._id ?? '',
+                    id: userObj?._id ?? userIndex,
                     bio: userObj?.user?.bio ?? '',
                     name: userObj?.user?.name ?? '',
                     username: userObj?.user?.username ?? '',
                     isFollowed: userObj?.isFollowed ?? false,
                 };
-            }) ?? [];
-
-            setUsers([..._users]);
-            updatedUserImages(_userImages);
-        }
-    }
-
-    const updatedUserImages = async _userImages => {
-        for (const userId in _userImages) {
-            const imageValue = _userImages[userId];
-            if (!imageValue.startsWith(Constants.httpsOrigin)) {
-                await getImageFetchingPromise(imageValue, imageData => { _userImages[userId] = imageData; }, "user");
             }
-        }
+        }) ?? [];
 
-        setUserImages({ ..._userImages });
+        setUsers([..._users]);
+        const settledUserImages = await getFinalUserImages(_userImages);
+        setUserImages({ ...settledUserImages });
     }
 
     const handleConnectingAction = (e, userIndex, isFollowed) => {
@@ -142,54 +147,60 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
         else showError("User id is unavaiable.");
     }
 
-    return isLoading ? <Loader /> : users?.map((userObj, i) => {
-        const { id, name, username, isFollowed, userId, bio } = userObj;
+    return isLoading ? <Loader /> : (
+        <div className={`w-100 ${theme === "suggestedUsers" ? "mt-5" : ''}`}>
+            {
+                users?.map((userObj, i) => {
+                    const { id, name, username, isFollowed, userId, bio } = userObj;
 
-        return (
-            <div key={id} className="user-follower-box" onClick={() => { moveToUserPage(userId); }}>
-                <div className="row ml-0 mr-0 user-follower-head">
-                    <div className="col-2 user-follower-imgbox">
-                        <img
-                            alt="user"
-                            className="user-follower-img"
-                            src={userImages[userId] ?? String(sampleUserImg)}
-                            onError={e => { e.target.src = String(sampleUserImg); }}
-                        />
-                    </div>
+                    return (
+                        <div key={id} className="user-follower-box" onClick={() => { moveToUserPage(userId); }}>
+                            <div className="row ml-0 mr-0 user-follower-head">
+                                <div className="col-2 user-follower-imgbox">
+                                    <img
+                                        alt="user"
+                                        className="user-follower-img"
+                                        src={userImages[userId] ?? String(sampleUserImg)}
+                                        onError={e => { e.target.src = String(sampleUserImg); }}
+                                    />
+                                </div>
 
-                    <div className="col-8 pl-0">
-                        <span className="fw-bold font-size-20">{name}</span>
-                        <br />
-                        <span>{username}</span>
-                    </div>
+                                <div className="col-8 pl-0">
+                                    <span className="fw-bold font-size-20">{name}</span>
+                                    <br />
+                                    <span>{username}</span>
+                                </div>
 
-                    {
-                        userId !== loggedUserId && (
-                            <div
-                                title={`click to ${isFollowed ? "unfollow" : "follow"}`}
-                                onClick={e => { handleConnectingAction(e, i, isFollowed); }}
-                                className={`
-                                    col-2
-                                    user-follower-action-btn
-                                    ${isFollowed ? "user-follower-following-btn" : "user-follower-follows-btn"}
-                                `}
-                            >
-                                <b>{isFollowed ? "Following" : "Follow"}</b>
+                                {
+                                    (userId !== loggedUserId || theme === "suggestedUsers") && (
+                                        <div
+                                            title={`click to ${isFollowed ? "unfollow" : "follow"}`}
+                                            onClick={e => { handleConnectingAction(e, i, isFollowed); }}
+                                            className={`
+                                                col-2
+                                                user-follower-action-btn
+                                                ${isFollowed ? "user-follower-following-btn" : "user-follower-follows-btn"}
+                                            `}
+                                        >
+                                            <b>{isFollowed ? "Following" : "Follow"}</b>
+                                        </div>
+                                    )
+                                }
                             </div>
-                        )
-                    }
-                </div>
 
-                <div className="row ml-0 mr-0">
-                    <div className="col-2 user-follower-bio" />
-                    <div className="col-10">
-                        {bio?.slice(0, 130) ?? ''}
-                        {bio?.length > 130 ? "..." : ''}
-                    </div>
-                </div>
-            </div>
-        );
-    });
+                            <div className="row ml-0 mr-0">
+                                <div className="col-2 user-follower-bio" />
+                                <div className="col-10">
+                                    {bio?.slice(0, 130) ?? ''}
+                                    {bio?.length > 130 ? "..." : ''}
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })
+            }
+        </div>
+    )
 };
 
 export default UserFollowers;

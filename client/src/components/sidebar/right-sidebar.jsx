@@ -96,6 +96,11 @@ const RightSidebar = () => {
         }
     }
 
+    const openSuggestionPage = e => {
+        e.preventDefault();
+        navigate("/suggested-followers");
+    }
+
     return (
         <div className="sidebar">
             <div id="right-sidebar-container">
@@ -201,7 +206,7 @@ const RightSidebar = () => {
 
                             {
                                 hasMaxLenghtPassed && (
-                                    <div id="who-to-follow-show-more">
+                                    <div id="who-to-follow-show-more" onClick={openSuggestionPage}>
                                         <span>Show More</span>
                                     </div>
                                 )
