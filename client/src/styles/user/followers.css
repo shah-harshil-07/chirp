@@ -36,13 +36,13 @@
 
 .user-follower-following-btn {
     float: right;
-    color: black;
     cursor: pointer;
     margin-top: 10px;
     border: 1px solid;
     border-radius: 20px;
-    background-color: white;
     padding: 5px 15px 5px 15px;
+    color: var(--following-text-color);
+    background-color: var(--following-back-color);
 }
 
 .user-follower-follows-btn {

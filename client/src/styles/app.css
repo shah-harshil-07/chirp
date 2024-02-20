@@ -14,6 +14,10 @@
     --viewed-bg-color: rgba(29, 155, 240, 0.3);
     --saved-bg-color: rgba(125, 15, 209, 0.3);
 
+    --follow-back-color: black;
+    --follow-text-color: white;
+    --following-text-color: black;
+    --following-back-color: white;
     --common-hover-back-color: rgba(15, 20, 25, 0.1);
 }
 
@@ -174,6 +178,10 @@
 
 .w-20 {
     width: 20%;
+}
+
+.w-30 {
+    width: 30%;
 }
 
 .w-80 {

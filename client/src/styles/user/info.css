@@ -1,11 +1,11 @@
 #user-info-follow-btn {
     float: right;
-    color: white;
     cursor: pointer;
     margin-top: 10px;
     border-radius: 20px;
-    background-color: black;
     padding: 5px 15px 5px 15px;
+    color: var(--follow-text-color);
+    background-color: var(--follow-back-color);
 }
 
 #user-info-profile-editor-btn {

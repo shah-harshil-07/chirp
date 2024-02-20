@@ -3,6 +3,7 @@ import "src/styles/sidebar/right-sidebar.css";
 
 // import CIcon from "@coreui/icons-react";
 // import { cilOptions } from "@coreui/icons";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 
@@ -10,16 +11,25 @@ import API from "src/api";
 import * as Constants from "src/utilities/constants";
 import useToaster from "src/custom-hooks/toaster-message";
 import usePostServices from "src/custom-hooks/post-services";
+import { openDetailsCard } from "src/redux/reducers/user-details";
 import useConnectionServices from "src/custom-hooks/connecting-services";
 import { getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const RightSidebar = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const { showError } = useToaster();
     const commonHeader = getCommonHeader();
     const { connectUser } = useConnectionServices();
-    const { getFinalUserImages } = usePostServices();
+    const { getFinalUserImages, closeUserCard } = usePostServices();
     const { id: loggedUserId } = isUserLoggedIn() ? getUserDetails() : {};
+
+    const followStyles = { color: "var(--follow-text-color)", backgroundColor: "var(--follow-back-color)" };
+    const followingStyles = {
+        border: "1px solid",
+        color: "var(--following-text-color)",
+        backgroundColor: "var(--following-back-color)"
+    };
 
     const maxLength = Constants.maxFrontSuggestionLength;
     const sampleUserImg = require("src/assets/sample-user.png");
@@ -39,9 +49,9 @@ const RightSidebar = () => {
             const { data: responseData } = await API(Constants.GET, Constants.GET_SUGGESTED_USERS, null, commonHeader);
 
             const _suggestedUsers = responseData?.data?.map((userObj, userIndex) => {
-                const { name, username, picture, _id: id } = userObj ?? {};
+                const { _id: id, picture } = userObj ?? {};
                 _userImages[id] = picture;
-                return { name, picture, username, id: id ?? userIndex };
+                return { ...userObj, id: id ?? userIndex, isFollowing: false };
             }) ?? [];
 
             const settledUserImages = await getFinalUserImages(_userImages);
@@ -55,7 +65,14 @@ const RightSidebar = () => {
     };
 
     const handleFollowAction = userId => {
-        if (loggedUserId) connectUser(null, userId, loggedUserId);
+        const successCallback = () => {
+            const _suggestedUsers = [...suggestedUsers];
+            const userIndex = _suggestedUsers.findIndex(user => user.id === userId);
+            if (userIndex >= 0 && _suggestedUsers[userIndex]) _suggestedUsers[userIndex]["isFollowing"] = true;
+            setSuggestedUsers([..._suggestedUsers]);
+        };
+
+        if (loggedUserId) connectUser(null, userId, loggedUserId, successCallback);
         else showError("Please login to follow.");
     }
 
@@ -65,6 +82,17 @@ const RightSidebar = () => {
             navigate(`/user/${userId}`);
         } else {
             showError("user id is unavailable.");
+        }
+    }
+
+    const openUserCard = (e, userDetails) => {
+        e.stopPropagation();
+        if (userDetails) {
+            const { id: userId } = userDetails;
+            const picture = userImages?.[userId] ?? '';
+            const imgRect = e.target.getBoundingClientRect();
+            const coordinates = { left: imgRect.left - 130, top: window.scrollY + imgRect.bottom + 10 };
+            dispatch(openDetailsCard({ ...userDetails, picture, coordinates }));
         }
     }
 
@@ -138,15 +166,17 @@ const RightSidebar = () => {
 
                             {
                                 suggestedUsers.map(user => {
-                                    const { name, username, id } = user ?? {};
+                                    const { name, username, id, isFollowing } = user ?? {};
                                     return name && username && (
                                         <div key={id} className="row who-to-follow-user-div">
                                             <div className="user-div-img-container">
                                                 <img
                                                     alt="logo"
+                                                    onMouseOut={closeUserCard}
                                                     className="sidebar-profile-img"
                                                     onClick={e => { moveToUserPage(e, id); }}
                                                     src={userImages[id] ?? String(sampleUserImg)}
+                                                    onMouseOver={e => { openUserCard(e, user); }}
                                                     onError={e => { e.target.src = String(sampleUserImg); }}
                                                 />
                                             </div>
@@ -155,11 +185,14 @@ const RightSidebar = () => {
                                                 &nbsp;{name}<br />@{username}
                                             </div>
 
-                                            <div
-                                                className="common-custom-btn"
-                                                onClick={() => { handleFollowAction(id); }}
-                                            >
-                                                Follow
+                                            <div className="w-30">
+                                                <div
+                                                    onClick={() => { handleFollowAction(id); }}
+                                                    style={isFollowing ? followingStyles : followStyles}
+                                                    className="common-custom-btn right-sidebar-follow-btn"
+                                                >
+                                                    {isFollowing ? "Following" : "Follow"}
+                                                </div>
                                             </div>
                                         </div>
                                     )

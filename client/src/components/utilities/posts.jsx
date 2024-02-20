@@ -19,7 +19,7 @@ import { getCommonHeader } from "src/utilities/helpers";
 import { openToaster } from "src/redux/reducers/toaster";
 import useToaster from "src/custom-hooks/toaster-message";
 import usePostServices from "src/custom-hooks/post-services";
-import { closeDetailsCard, openDetailsCard } from "src/redux/reducers/user-details";
+import { openDetailsCard } from "src/redux/reducers/user-details";
 
 const PostUtilities = ({ parentName }) => {
     const eopRef = useRef(null);
@@ -37,11 +37,13 @@ const PostUtilities = ({ parentName }) => {
         getPostTiming,
         createPollJSX,
         openRepostBox,
+        closeUserCard,
         openCommentBox,
         getFinalUserImages,
         getFormattedNumber,
         handleMutedReaction,
         getImageFetchingPromise,
+        closeDetailsCardImmediately,
     } = usePostServices();
 
     const [posts, setPosts] = useState([]);
@@ -317,27 +319,6 @@ const PostUtilities = ({ parentName }) => {
         dispatch(openDetailsCard({ ...userDetails, picture, coordinates }));
     }
 
-    const closeDetailsCardImmediately = () => {
-        dispatch(closeDetailsCard());
-        document.removeEventListener("mousemove", () => { });
-    }
-
-    const closeUserCard = e => {
-        e.stopPropagation();
-        let clientX = 0, clientY = 0;
-        document.addEventListener("mousemove", e => {
-            clientX = e.clientX;
-            clientY = e.clientY;
-        });
-
-        setTimeout(() => {
-            const currentHoveredElement = document.elementFromPoint(clientX, clientY);
-            const pointerContainsCard = document.getElementById("user-card-body")?.contains(currentHoveredElement);
-            if (!pointerContainsCard && !e.target.contains(currentHoveredElement)) dispatch(closeDetailsCard());
-            document.removeEventListener("mousemove", () => { });
-        }, 2000);
-    }
-
     const moveToUserPage = (e, userId) => {
         e.stopPropagation();
 
@@ -350,9 +331,7 @@ const PostUtilities = ({ parentName }) => {
     }
 
     const getRepostStyles = imageLength => {
-        const styles = { marginTop: '0' };
-        if (imageLength > 0) styles["marginTop"] = "10px";
-        return styles;
+        return { marginTop: imageLength > 0 ? "10px" : '0' };
     }
 
     return (

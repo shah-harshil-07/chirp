@@ -126,9 +126,12 @@ export class FollowersService {
                 $project: {
                     "_id": 0,
                     "user._id": 1,
+                    "user.bio": 1,
                     "user.name": 1,
                     "user.picture": 1,
                     "user.username": 1,
+                    "user.followers": 1,
+                    "user.following": 1,
                 },
             },
         ]);

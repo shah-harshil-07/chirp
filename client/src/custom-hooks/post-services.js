@@ -1,11 +1,12 @@
-import React from "react";
 import moment from "moment";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 
 import API from "src/api";
 import useToaster from "./toaster-message";
 import * as Constants from "src/utilities/constants";
 import { openModalWithProps } from "src/redux/reducers/modal";
+import { closeDetailsCard } from "src/redux/reducers/user-details";
 import { getCommonHeader, isUserLoggedIn } from "src/utilities/helpers";
 
 const usePostServices = () => {
@@ -16,6 +17,8 @@ const usePostServices = () => {
     const oneThousand = Math.pow(10, 3);
     const headerData = getCommonHeader();
     const availableMutedActions = ["like", "save"];
+
+    const [cardRemovalTimeout, setCardRemovalTimeout] = useState(null);
 
     const durationData = [
 		{ key: "months", symbol: "mo" },
@@ -198,16 +201,46 @@ const usePostServices = () => {
         return userImages;
     }
 
+    const closeDetailsCardImmediately = () => {
+        dispatch(closeDetailsCard());
+        document.removeEventListener("mousemove", () => { });
+
+        if (typeof cardRemovalTimeout === "function") {
+            clearTimeout(cardRemovalTimeout);
+            setCardRemovalTimeout(null);
+        }
+    }
+
+    const closeUserCard = e => {
+        e.stopPropagation();
+        let clientX = 0, clientY = 0;
+        document.addEventListener("mousemove", e => {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        });
+
+        const _timeout = setTimeout(() => {
+            const currentHoveredElement = document.elementFromPoint(clientX, clientY);
+            const pointerContainsCard = document.getElementById("user-card-body")?.contains(currentHoveredElement);
+            if (!pointerContainsCard && !e.target.contains(currentHoveredElement)) dispatch(closeDetailsCard());
+            document.removeEventListener("mousemove", () => { });
+        }, 2000);
+
+        setCardRemovalTimeout(_timeout);
+    }
+
     return {
         getPostTiming,
         createPollJSX,
         openRepostBox,
+        closeUserCard,
         openCommentBox,
         getFinalUserImages,
         getFormattedNumber,
         handleMutedReaction,
         getFormattedPostTiming,
         getImageFetchingPromise,
+        closeDetailsCardImmediately,
     };
 }
 

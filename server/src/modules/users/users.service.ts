@@ -206,7 +206,7 @@ export class UsersService {
     public async getFollowSuggestions(): Promise<UserDTO[]> {
         return await this
             .userModel
-            .find({ followers: { $gt: 0 } }, { name: 1, username: 1, picture: 1 })
+            .find({ followers: { $gt: 0 } }, { name: 1, username: 1, picture: 1, bio: 1, followers: 1, following: 1 })
             .sort("-followers createdAt")
             .limit(20);
     }

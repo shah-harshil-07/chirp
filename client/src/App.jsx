@@ -6,6 +6,7 @@ import { Outlet } from "react-router-dom";
 
 import AuthBar from "./components/auth-bar";
 import Toaster from "./components/utilities/toaster";
+import UserCard from "./components/utilities/user-card";
 import LightHouse from "./components/utilities/lighthouse";
 import LeftSidebar from "./components/sidebar/left-sidebar";
 import RightSidebar from "./components/sidebar/right-sidebar";
@@ -16,11 +17,13 @@ const App = () => {
 	const dialogState = useSelector(state => state.modal);
 	const toasterState = useSelector(state => state.toaster);
 	const lighthouseState = useSelector(state => state.lighthouse);
+	const userDetailState = useSelector(state => state.userDetails);
 	const confirmationState = useSelector(state => state.confirmation);
 
-	const { open: isLighthouseOpen, ...lighthouseProps } = lighthouseState;
-	const { open: isConfirmationOpen, ...confirmationProps } = confirmationState;
+	const { open: isLighthouseOpen, ...lighthouseProps } = lighthouseState ?? {};
 	const { open: isToasterOpen, messageObj: toasterProps } = toasterState ?? {};
+	const { open: isUserCardOpen, data: userDetailProps } = userDetailState ?? {};
+	const { open: isConfirmationOpen, ...confirmationProps } = confirmationState ?? {};
 
 	const getDialog = () => {
 		const Dialog = modalConfig?.[dialogState.type] ?? <></>, props = dialogState.props ?? {};
@@ -36,6 +39,8 @@ const App = () => {
 			{!isUserLoggedIn() && <AuthBar />}
 
 			{isToasterOpen && <Toaster {...toasterProps} />}
+
+			{isUserCardOpen && <UserCard {...userDetailProps} />}
 
 			{isLighthouseOpen && <LightHouse {...lighthouseProps} />}
 

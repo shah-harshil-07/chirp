@@ -1,8 +1,8 @@
 import "src/styles/user/info.css";
 import "src/styles/utilities/user-card.css";
 
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import API from "src/api";
@@ -15,14 +15,13 @@ import useConnectionServices from "src/custom-hooks/connecting-services";
 import { closeConfirmation, openConfirmation } from "src/redux/reducers/confirmation";
 import { checkContainerInViewport, getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
-const UserCard = () => {
+const UserCard = userData => {
     const { showError } = useToaster();
     const dispatch = useDispatch(), navigate = useNavigate();
     const cardRef = useRef(null), commonHeader = getCommonHeader();
-    const userDetailState = useSelector(state => state.userDetails);
-    const sampleUserImg = require("src/assets/sample-user.png");
-    const userData = userDetailState?.data ?? {};
+
     let { left, top } = userData?.coordinates ?? {};
+    const sampleUserImg = require("src/assets/sample-user.png");
     const { connectUser, getMutualConnections } = useConnectionServices();
     const { id: loggedUserId } = isUserLoggedIn() ? getUserDetails() : {};
 
@@ -35,12 +34,11 @@ const UserCard = () => {
         setFinalTop(top);
         setFinalLeft(left);
 
-        const { data: userData } = userDetailState ?? {};
         const { _id: userId } = userData ?? {};
         checkUserFollowing(userId);
         getMutualConnections(userId, setMutuallyConnectedUsers);
         // eslint-disable-next-line
-    }, [userDetailState]);
+    }, [userData]);
 
     useLayoutEffect(() => {
         const cardRect = cardRef?.current?.getBoundingClientRect() ?? null;
