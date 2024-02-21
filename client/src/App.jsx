@@ -2,7 +2,7 @@ import "src/styles/app.css";
 
 import React from "react";
 import { useSelector } from "react-redux";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 
 import AuthBar from "./components/auth-bar";
 import Toaster from "./components/utilities/toaster";
@@ -14,6 +14,7 @@ import Confirmation from "./components/utilities/confirmation";
 import { isUserLoggedIn, modalConfig } from "./utilities/helpers";
 
 const App = () => {
+	const location = useLocation();
 	const dialogState = useSelector(state => state.modal);
 	const toasterState = useSelector(state => state.toaster);
 	const lighthouseState = useSelector(state => state.lighthouse);
@@ -34,7 +35,11 @@ const App = () => {
 		<>
 			{getDialog()}
 
-			<div id="app-container"><LeftSidebar /><Outlet /><RightSidebar /></div>
+			<div id="app-container">
+				<LeftSidebar />
+				<Outlet />
+				{location.pathname === '/' && <RightSidebar />}
+			</div>
 
 			{!isUserLoggedIn() && <AuthBar />}
 

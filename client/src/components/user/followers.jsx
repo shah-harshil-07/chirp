@@ -1,6 +1,8 @@
 import "src/styles/user/followers.css";
 
+import CIcon from "@coreui/icons-react";
 import { useDispatch } from "react-redux";
+import { cilArrowLeft } from "@coreui/icons";
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import useToaster from "src/custom-hooks/toaster-message";
@@ -89,13 +91,12 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
 
         const _users = response?.data?.map((userObj, userIndex) => {
             if (theme === "suggestedUsers") {
-                const id = userObj?._id;
-                const userPic = userObj?.picture;
+                const { _id: id, picture: userPic } = userObj ?? {};
                 if (userPic && id) _userImages[id] = userPic;
                 return { ...userObj, id: id ?? userIndex, userId: id };
             } else {
                 const { _id: userId, picture: userPic } = userObj?.user ?? {};
-                if (userPic) _userImages[userId] = userPic;
+                if (userPic && userId) _userImages[userId] = userPic;
                 return {
                     userId,
                     id: userObj?._id ?? userIndex,
@@ -147,8 +148,22 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
         else showError("User id is unavaiable.");
     }
 
+    const moveToDashboard = () => {
+        navigate(-1);
+    }
+
     return isLoading ? <Loader /> : (
-        <div className={`w-100 ${theme === "suggestedUsers" ? "mt-5" : ''}`}>
+        <div className="w-100">
+            {
+                theme === "suggestedUsers" && (
+                    <div className="common-header">
+                        <div className="common-heading-icon" onClick={moveToDashboard}>
+                            <CIcon width={20} height={20} size="sm" icon={cilArrowLeft} />
+                        </div>
+                    </div>
+                )
+            }
+
             {
                 users?.map((userObj, i) => {
                     const { id, name, username, isFollowed, userId, bio } = userObj;
