@@ -130,7 +130,7 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, mutuallyConnected
     }
 
     const checkUserFollowing = userId => {
-        if (userId && userId !== loggedUserId) {
+        if (userId && loggedUserId && userId !== loggedUserId) {
             const url = `${Constants.CHECK_USER_FOLLOWING}/${userId}`;
 
             API(Constants.GET, url, null, commonHeader).then(({ data: response }) => {

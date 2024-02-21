@@ -36,6 +36,10 @@ const UserDetails = () => {
         // eslint-disable-next-line
     }, [userId]);
 
+    useEffect(() => {
+        console.log(userDetails);
+    }, [userDetails]);
+
     const getUserData = async () => {
         setIsLoading(true);
         const response = await API(Constants.GET, `${Constants.GET_USER_DETAILS}/${userId}`, headerData);
@@ -90,9 +94,9 @@ const UserDetails = () => {
                     <div id="user-header-sub-text">
                         {
                             theme === "posts" ? (
-                                <>{userDetails?.totalPosts ?? 0} post{userDetails?.totalPosts === 1 ? 's' : ''}</>
+                                <>{userDetails?.totalPosts ?? 0} post{userDetails?.totalPosts !== 1 ? 's' : ''}</>
                             ) : theme === "followers" ? (
-                                <>{userDetails?.followers ?? 0} follower{userDetails?.followers === 1 ? 's' : ''}</>
+                                <>{userDetails?.followers ?? 0} follower{userDetails?.followers !== 1 ? 's' : ''}</>
                             ) : theme === "following" ? (
                                 <>{userDetails?.following ?? 0} following</>
                             ) : (

@@ -74,41 +74,57 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
 
     const getFollowers = async url => {
         if (url) {
-            const formattedUrl = `${url}${userId ? `/${userId}` : ''}`;
-
-            setIsLoading(true);
-            const { data: response } = await API(Constants.GET, formattedUrl, null, commonHeader);
-            setIsLoading(false);
-
-            updateUserDataFromResponse(response);
+            try {                
+                const formattedUrl = `${url}${userId ? `/${userId}` : ''}`;
+    
+                setIsLoading(true);
+                const { data: response } = await API(Constants.GET, formattedUrl, null, commonHeader);
+                setIsLoading(false);
+    
+                updateUserDataFromResponse(response);
+            } catch (error) {
+                console.log(error);
+                handleDataFetchingError();
+            }
         }
     }
 
     const updateUserDataFromResponse = async response => {
-        const _userImages = {};
+        try {            
+            const _userImages = {};
+    
+            const _users = response?.data?.map((userObj, userIndex) => {
+                if (theme === "suggestedUsers") {
+                    const { _id: id, picture: userPic } = userObj ?? {};
+                    if (userPic && id) _userImages[id] = userPic;
+                    return { ...userObj, id: id ?? userIndex, userId: id };
+                } else {
+                    const { _id: userId, picture: userPic } = userObj?.user ?? {};
+                    if (userPic && userId) _userImages[userId] = userPic;
+                    return {
+                        userId,
+                        id: userObj?._id ?? userIndex,
+                        bio: userObj?.user?.bio ?? '',
+                        name: userObj?.user?.name ?? '',
+                        username: userObj?.user?.username ?? '',
+                        isFollowed: userObj?.isFollowed ?? false,
+                    };
+                }
+            }) ?? [];
+    
+            setUsers([..._users]);
+            const settledUserImages = await getFinalUserImages(_userImages);
+            setUserImages({ ...settledUserImages });
+        } catch (error) {
+            console.log(error);
+            handleDataFetchingError();
+        }
+    }
 
-        const _users = response?.data?.map((userObj, userIndex) => {
-            if (theme === "suggestedUsers") {
-                const { _id: id, picture: userPic } = userObj ?? {};
-                if (userPic && id) _userImages[id] = userPic;
-                return { ...userObj, id: id ?? userIndex, userId: id };
-            } else {
-                const { _id: userId, picture: userPic } = userObj?.user ?? {};
-                if (userPic && userId) _userImages[userId] = userPic;
-                return {
-                    userId,
-                    id: userObj?._id ?? userIndex,
-                    bio: userObj?.user?.bio ?? '',
-                    name: userObj?.user?.name ?? '',
-                    username: userObj?.user?.username ?? '',
-                    isFollowed: userObj?.isFollowed ?? false,
-                };
-            }
-        }) ?? [];
-
-        setUsers([..._users]);
-        const settledUserImages = await getFinalUserImages(_userImages);
-        setUserImages({ ...settledUserImages });
+    const handleDataFetchingError = () => {
+        setUsers([]);
+        setUserImages({});
+        setIsLoading(false);
     }
 
     const handleConnectingAction = (e, userIndex, isFollowed) => {
