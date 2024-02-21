@@ -19,7 +19,6 @@ import { getCommonHeader } from "src/utilities/helpers";
 import { openToaster } from "src/redux/reducers/toaster";
 import useToaster from "src/custom-hooks/toaster-message";
 import usePostServices from "src/custom-hooks/post-services";
-import { openDetailsCard } from "src/redux/reducers/user-details";
 
 const PostUtilities = ({ parentName }) => {
     const eopRef = useRef(null);
@@ -34,6 +33,7 @@ const PostUtilities = ({ parentName }) => {
     const userDetails = localStorage.getItem("chirp-userDetails");
     const loggedInUserId = userDetails ? JSON.parse(userDetails)?._id ?? '' : '';
     const {
+        openUserCard,
         getPostTiming,
         createPollJSX,
         openRepostBox,
@@ -310,15 +310,6 @@ const PostUtilities = ({ parentName }) => {
         navigate(`/post/${postId}`, { preventScrollReset: false, state: { type } });
     }
 
-    const openUserCard = (e, userDetails) => {
-        e.stopPropagation();
-        const { _id: userId } = userDetails;
-        const picture = userImages?.[userId] ?? '';
-        const imgRect = e.target.getBoundingClientRect();
-        const coordinates = { left: imgRect.left - 130, top: window.scrollY + imgRect.bottom + 10 };
-        dispatch(openDetailsCard({ ...userDetails, picture, coordinates }));
-    }
-
     const moveToUserPage = (e, userId) => {
         e.stopPropagation();
 
@@ -376,17 +367,20 @@ const PostUtilities = ({ parentName }) => {
                                 className="post-user-image"
                                 onClick={e => { moveToUserPage(e, userId); }}
                                 src={userImages[userId] ?? String(sampleUserImg)}
-                                onMouseOver={e => { openUserCard(e, post?.user); }}
                                 onError={e => { e.target.src = String(sampleUserImg); }}
+                                onMouseOver={e => { openUserCard(e, post?.user, userImages[userId]); }}
                             />
 
                             <div className="post-card-body">
                                 <div className="row mx-3">
                                     <b>{name}</b>&nbsp;
+
                                     <span>{`@${username}`}</span>
+
                                     <span>
                                         <div className="seperator-container"><div className="seperator" /></div>
                                     </span>
+
                                     <span>{getPostTiming(createdAt)}</span>
                                 </div>
 
@@ -421,19 +415,24 @@ const PostUtilities = ({ parentName }) => {
                                                 className="parent-post-user-img"
                                                 onClick={e => { moveToUserPage(e, parentUserId); }}
                                                 src={userImages[parentUserId] ?? String(sampleUserImg)}
-                                                onMouseOver={e => { openUserCard(e, parentPostUser); }}
                                                 onError={e => { e.target.src = String(sampleUserImg); }}
+                                                onMouseOver={e => {
+                                                    openUserCard(e, parentPostUser, userImages[parentUserId]);
+                                                }}
                                             />
 
                                             <div className="repost-body-content">
                                                 <div className="row mx-0">
                                                     <b className="font-size-16">{parentName}</b>&nbsp;
+
                                                     <span className="font-size-16">{`@${parentUserName}`}</span>
+
                                                     <span>
                                                         <div className="seperator-container">
                                                             <div className="seperator" />
                                                         </div>
                                                     </span>
+
                                                     <span className="font-size-16">
                                                         {getPostTiming(parentCreatedAt)}
                                                     </span>
@@ -474,9 +473,7 @@ const PostUtilities = ({ parentName }) => {
                                             <CIcon title="Reply" icon={cilCommentBubble} className="chirp-action" />
                                         </span>
 
-                                        <span className="post-reaction-data">
-                                            {getFormattedNumber(comments ?? 0)}
-                                        </span>
+                                        <span className="post-reaction-data">{getFormattedNumber(comments ?? 0)}</span>
                                     </div>
 
                                     <div
@@ -487,9 +484,7 @@ const PostUtilities = ({ parentName }) => {
                                             <CIcon icon={cilSend} title="Repost" className="chirp-action" />
                                         </span>
 
-                                        <span className="post-reaction-data">
-                                            {getFormattedNumber(reposts ?? 0)}
-                                        </span>
+                                        <span className="post-reaction-data">{getFormattedNumber(reposts ?? 0)}</span>
                                     </div>
 
                                     <div
@@ -499,18 +494,9 @@ const PostUtilities = ({ parentName }) => {
                                         <span className="reply-icon" style={isLiked ? { paddingTop: "6px" } : {}}>
                                             {
                                                 isLiked ? (
-                                                    <img
-                                                        width="20"
-                                                        alt="like"
-                                                        height="20"
-                                                        src={String(likeIcon)}
-                                                    />
+                                                    <img width="20" alt="like" height="20" src={String(likeIcon)} />
                                                 ) : (
-                                                    <CIcon
-                                                        title="Like"
-                                                        icon={cilThumbUp}
-                                                        className="chirp-action"
-                                                    />
+                                                    <CIcon title="Like" icon={cilThumbUp} className="chirp-action" />
                                                 )
                                             }
                                         </span>
@@ -531,9 +517,7 @@ const PostUtilities = ({ parentName }) => {
                                             <CIcon title="Views" icon={cilChart} className="chirp-action" />
                                         </span>
 
-                                        <span className="post-reaction-data">
-                                            {getFormattedNumber(views ?? 0)}
-                                        </span>
+                                        <span className="post-reaction-data">{getFormattedNumber(views ?? 0)}</span>
                                     </div>
 
                                     <div
@@ -543,18 +527,9 @@ const PostUtilities = ({ parentName }) => {
                                         <span className="reply-icon" style={isSaved ? { paddingTop: "6px" } : {}}>
                                             {
                                                 isSaved ? (
-                                                    <img
-                                                        width="20"
-                                                        alt="like"
-                                                        height="20"
-                                                        src={String(savedIcon)}
-                                                    />
+                                                    <img width="20" alt="like" height="20" src={String(savedIcon)} />
                                                 ) : (
-                                                    <CIcon
-                                                        title="Bookmark"
-                                                        icon={cilBookmark}
-                                                        className="chirp-action"
-                                                    />
+                                                    <CIcon title="Bookmark" icon={cilBookmark} className="chirp-action" />
                                                 )
                                             }
                                         </span>

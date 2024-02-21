@@ -136,7 +136,10 @@ const PostDetails = () => {
                         userId,
                         name: name ?? '',
                         username: username ?? '',
+                        bio: commentObj?.user?.bio ?? '',
                         picture: userPic ?? String(sampleUserImg),
+                        followers: commentObj?.user?.followers ?? '',
+                        following: commentObj?.user?.following ?? '',
                     },
                 };
             });

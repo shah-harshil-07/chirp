@@ -21,8 +21,17 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
     const headerData = getCommonHeader();
     const likeIcon = require("src/assets/like.png");
     const sampleUserImg = require("src/assets/sample-user.png");
-    const { openCommentBox, openRepostBox } = usePostServices();
-    const { getPostTiming, handleMutedReaction, getImageFetchingPromise, getFormattedNumber } = usePostServices();
+    const {
+        openUserCard,
+        getPostTiming,
+        openRepostBox,
+        closeUserCard,
+        openCommentBox,
+        getFormattedNumber,
+        handleMutedReaction,
+        getImageFetchingPromise,
+        closeDetailsCardImmediately,
+    } = usePostServices();
 
     const [comments, setComments] = useState([]);
 
@@ -136,10 +145,12 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
             <Card className="mt-3 comment-card" onClick={() => { moveToCommentDetailPage(id); }} key={commentIndex}>
                 <img
                     alt="user"
+                    onMouseOut={closeUserCard}
                     className="post-detail-user-image"
                     onClick={e => { moveToUserPage(e, userId); }}
                     src={userImages[userId] ?? String(sampleUserImg)}
                     onError={e => { e.target.src = String(sampleUserImg); }}
+                    onMouseOver={e => { openUserCard(e, user, userImages[userId]); }}
                 />
 
                 <div id="comment-container">
@@ -198,9 +209,7 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
                                 <CIcon icon={cilSend} title="Repost" className="chirp-action" />
                             </span>
 
-                            <span className="post-reaction-data">
-                                {getFormattedNumber(reposts ?? 0)}
-                            </span>
+                            <span className="post-reaction-data">{getFormattedNumber(reposts ?? 0)}</span>
                         </div>
 
                         <div

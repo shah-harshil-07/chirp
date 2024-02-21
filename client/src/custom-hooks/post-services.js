@@ -6,7 +6,7 @@ import API from "src/api";
 import useToaster from "./toaster-message";
 import * as Constants from "src/utilities/constants";
 import { openModalWithProps } from "src/redux/reducers/modal";
-import { closeDetailsCard } from "src/redux/reducers/user-details";
+import { closeDetailsCard, openDetailsCard } from "src/redux/reducers/user-details";
 import { getCommonHeader, isUserLoggedIn } from "src/utilities/helpers";
 
 const usePostServices = () => {
@@ -201,6 +201,15 @@ const usePostServices = () => {
         return userImages;
     }
 
+    const openUserCard = (e, userDetails, picture) => {
+        e.stopPropagation();
+        if (userDetails) {
+            const imgRect = e.target.getBoundingClientRect();
+            const coordinates = { left: imgRect.left - 130, top: window.scrollY + imgRect.bottom + 10 };
+            dispatch(openDetailsCard({ ...userDetails, picture, coordinates }));
+        }
+    }
+
     const closeDetailsCardImmediately = () => {
         dispatch(closeDetailsCard());
         document.removeEventListener("mousemove", () => { });
@@ -230,6 +239,7 @@ const usePostServices = () => {
     }
 
     return {
+        openUserCard,
         getPostTiming,
         createPollJSX,
         openRepostBox,

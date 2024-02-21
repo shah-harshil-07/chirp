@@ -3,7 +3,6 @@ import "src/styles/sidebar/right-sidebar.css";
 
 // import CIcon from "@coreui/icons-react";
 // import { cilOptions } from "@coreui/icons";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 
@@ -11,18 +10,16 @@ import API from "src/api";
 import * as Constants from "src/utilities/constants";
 import useToaster from "src/custom-hooks/toaster-message";
 import usePostServices from "src/custom-hooks/post-services";
-import { openDetailsCard } from "src/redux/reducers/user-details";
 import useConnectionServices from "src/custom-hooks/connecting-services";
 import { getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const RightSidebar = () => {
-    const dispatch = useDispatch();
     const navigate = useNavigate();
     const { showError } = useToaster();
     const commonHeader = getCommonHeader();
     const { connectUser } = useConnectionServices();
-    const { getFinalUserImages, closeUserCard } = usePostServices();
     const { id: loggedUserId } = isUserLoggedIn() ? getUserDetails() : {};
+    const { getFinalUserImages, closeUserCard, openUserCard } = usePostServices();
 
     const followStyles = { color: "var(--follow-text-color)", backgroundColor: "var(--follow-back-color)" };
     const followingStyles = {
@@ -82,17 +79,6 @@ const RightSidebar = () => {
             navigate(`/user/${userId}`);
         } else {
             showError("user id is unavailable.");
-        }
-    }
-
-    const openUserCard = (e, userDetails) => {
-        e.stopPropagation();
-        if (userDetails) {
-            const { id: userId } = userDetails;
-            const picture = userImages?.[userId] ?? '';
-            const imgRect = e.target.getBoundingClientRect();
-            const coordinates = { left: imgRect.left - 130, top: window.scrollY + imgRect.bottom + 10 };
-            dispatch(openDetailsCard({ ...userDetails, picture, coordinates }));
         }
     }
 
@@ -181,8 +167,8 @@ const RightSidebar = () => {
                                                     className="sidebar-profile-img"
                                                     onClick={e => { moveToUserPage(e, id); }}
                                                     src={userImages[id] ?? String(sampleUserImg)}
-                                                    onMouseOver={e => { openUserCard(e, user); }}
                                                     onError={e => { e.target.src = String(sampleUserImg); }}
+                                                    onMouseOver={e => { openUserCard(e, user, userImages[id]); }}
                                                 />
                                             </div>
 
