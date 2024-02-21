@@ -36,10 +36,6 @@ const UserDetails = () => {
         // eslint-disable-next-line
     }, [userId]);
 
-    useEffect(() => {
-        console.log(userDetails);
-    }, [userDetails]);
-
     const getUserData = async () => {
         setIsLoading(true);
         const response = await API(Constants.GET, `${Constants.GET_USER_DETAILS}/${userId}`, headerData);

@@ -11,7 +11,6 @@ import CustomModal from "../utilities/custom-modal";
 import * as Constants from "src/utilities/constants";
 import CustomSelect from "../utilities/custom-select";
 import { closeModal } from "src/redux/reducers/modal";
-import { getCommonHeader } from "src/utilities/helpers";
 import LabelledInput from "../utilities/labelled-input";
 import useToaster from "src/custom-hooks/toaster-message";
 import { placeHolderImageSrc } from "src/utilities/constants";
@@ -19,6 +18,7 @@ import DateOptionServices from "src/custom-hooks/date-services";
 import useImageConverter from "src/custom-hooks/image-converter";
 import { getErrorMessage, validate } from "src/utilities/helpers";
 import LabelledInputTextarea from "../utilities/labelled-textarea";
+import { getCommonHeader, updateUserProfileImg } from "src/utilities/helpers";
 import { closeConfirmation, openConfirmation } from "src/redux/reducers/confirmation";
 
 const ProfileEditor = ({
@@ -376,6 +376,7 @@ const ProfileEditor = ({
 
         if (response?.meta?.status) {
             const message = response?.meta?.message ?? "Details updated successfully!";
+            updateUserProfileImg(uploadedProfileImgFile);
             showSuccess(message);
             closeProfileEditor();
             getterFn();

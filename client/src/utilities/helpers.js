@@ -75,3 +75,9 @@ export const userTabs = [
     { label: "Comments", parentName: "comments" },
     { label: "Saved", parentName: "saved" },
 ]
+
+export const updateUserProfileImg = profileImg => {
+    const userDetails = JSON.parse(localStorage.getItem("chirp-userDetails") ?? {});
+    userDetails.picture = profileImg;
+    localStorage.setItem("chirp-userDetails", JSON.stringify(userDetails));
+}
