@@ -1,14 +1,12 @@
 import "src/styles/user/info.css";
 
-import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 
 import * as Constants from "src/utilities/constants";
-import useToaster from "src/custom-hooks/toaster-message";
+import usePostServices from "src/custom-hooks/post-services";
 
 const MutualConnections = ({ users, handleMutualConnDisplay }) => {
-    const navigate = useNavigate();
-    const { showError } = useToaster();
+    const { moveToUserPage } = usePostServices();
 
     const [totalUsers, setTotalUsers] = useState(0);
     const [displayedUsers, setDisplayedUsers] = useState([]);
@@ -18,11 +16,6 @@ const MutualConnections = ({ users, handleMutualConnDisplay }) => {
         setTotalUsers(users?.length ?? 0);
         setDisplayedUsers([...users?.slice(0, limit)]);
     }, [users]);
-
-    const moveToUserPage = userId => {
-        if (userId) navigate(`/user/${userId}`);
-        else showError("User id is unavaiable.");
-    }
 
     const printNameSeparator = userIndex => {
         const n = users.length;
@@ -43,7 +36,7 @@ const MutualConnections = ({ users, handleMutualConnDisplay }) => {
                             <span
                                 title="Go to details"
                                 className="user-info-mutual-connector"
-                                onClick={() => { moveToUserPage(userId); }}
+                                onClick={e => { moveToUserPage(e, userId); }}
                             >
                                 {name}
                             </span>

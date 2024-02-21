@@ -5,7 +5,6 @@ import { useDispatch } from "react-redux";
 import { cilArrowLeft } from "@coreui/icons";
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import useToaster from "src/custom-hooks/toaster-message";
 
 import API from "src/api";
 import Loader from "src/components/utilities/loader";
@@ -16,12 +15,11 @@ import { closeConfirmation, openConfirmation } from "src/redux/reducers/confirma
 import { getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
-    const { showError } = useToaster();
     const commonHeader = getCommonHeader();
     const { connectUser } = useConnectionServices();
-    const { getFinalUserImages } = usePostServices();
     const dispatch = useDispatch(), navigate = useNavigate();
     const sampleUserImg = require("src/assets/sample-user.png");
+    const { getFinalUserImages, moveToUserPage } = usePostServices();
     const { id: loggedUserId } = isUserLoggedIn() ? getUserDetails() : {};
 
     const [users, setUsers] = useState([]);
@@ -143,11 +141,6 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
         }
     }
 
-    const moveToUserPage = userId => {
-        if (userId) navigate(`/user/${userId}`);
-        else showError("User id is unavaiable.");
-    }
-
     const moveToDashboard = () => {
         navigate(-1);
     }
@@ -169,7 +162,7 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
                     const { id, name, username, isFollowed, userId, bio } = userObj;
 
                     return (
-                        <div key={id} className="user-follower-box" onClick={() => { moveToUserPage(userId); }}>
+                        <div key={id} className="user-follower-box" onClick={e => { moveToUserPage(e, userId); }}>
                             <div className="row ml-0 mr-0 user-follower-head">
                                 <div className="col-2 user-follower-imgbox">
                                     <img

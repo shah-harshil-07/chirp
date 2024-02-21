@@ -36,6 +36,7 @@ const PostDetails = () => {
         createPollJSX,
         openRepostBox,
         openCommentBox,
+        moveToUserPage,
         getFinalUserImages,
         getFormattedNumber,
         handleMutedReaction,
@@ -265,15 +266,6 @@ const PostDetails = () => {
 
     const moveBack = () => {
         navigate(-1);
-    }
-
-    const moveToUserPage = (e, userId) => {
-        if (userId) {
-            e.stopPropagation();
-            navigate(`/user/${userId}`);
-        } else {
-            showError("user id is unavailable.");
-        }
     }
 
     const moveToPostDetailPage = (e, postId, type = "post") => {

@@ -128,13 +128,11 @@ const ProfileEditor = ({
         const fileChangeFn = isProfileKey ? setUploadedProfileImgFile : setUploadedBackImgFile;
         const fileObjChangeFn = isProfileKey ? setUploadedProfileImgFileObject : setUploadedBackImgFileObject;
 
-        if (file) {
-            if (isNewChange) {
-                fileChangeFn(null);
-                fileObjChangeFn(null);
-            } else {
-                setSelectedImgKey(key);
-            }
+        if (file && isNewChange) {
+            fileChangeFn(null);
+            fileObjChangeFn(null);
+        } else if (file) {
+            setSelectedImgKey(key);
         } else {
             refObj.current.click();
         }
@@ -342,7 +340,7 @@ const ProfileEditor = ({
             dayValue = dayValue < 10 ? `0${dayValue}` : String(dayValue);
 
             const strDateOfBirth = `${year ?? preselectedYear}-${monthValue}-${dayValue}`;
-            let websiteLink = website.startsWith(httpsOrigin) ? website : httpsOrigin + website;
+            let websiteLink = website.startsWith(httpsOrigin) ? website : website ? (httpsOrigin + website) : '';
 
             formData.set("bio", bio ?? '');
             formData.set("name", name ?? '');

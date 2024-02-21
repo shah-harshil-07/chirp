@@ -8,11 +8,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import useDocumentClickServices from "src/custom-hooks/document-services";
 import { cilHome, cilSettings, cilBookmark, cilUser, cilOptions } from "@coreui/icons";
 
+import usePostServices from "src/custom-hooks/post-services";
 import { openConfirmation } from "src/redux/reducers/confirmation";
 import { getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const LeftSidebar = () => {
     const dispatch = useDispatch();
+    const { moveToUserPage } = usePostServices();
     const logo = require("src/assets/logo-1.png");
     const navigate = useNavigate(), location = useLocation();
     const sampleUserImg = require("src/assets/sample-user.png");
@@ -51,10 +53,8 @@ const LeftSidebar = () => {
         else navigate('/', { preventScrollReset: false });
     }
 
-    const moveToUserPage = (e, viewSaved = false) => {
-        e.preventDefault();
-        const { id } = userDetails;
-        if (id) navigate(`user/${id}`, { state: { viewSaved } });
+    const callMoveToUserPageFn = (e, viewSaved = false) => {
+        moveToUserPage(e, userDetails.id, { state: { viewSaved } });
     }
 
     const openLogoutConfirmation = () => {
@@ -99,7 +99,7 @@ const LeftSidebar = () => {
                         <div className="col-sm-9 left-sidebar-link-label">Settings</div>
                     </div>
 
-                    <div className="row left-sidebar-link" onClick={e => { moveToUserPage(e, true); }}>
+                    <div className="row left-sidebar-link" onClick={e => { callMoveToUserPageFn(e, true); }}>
                         <div className="col-sm-3 px-4 align-self-center">
                             <CIcon width={30} height={30} icon={cilBookmark} />
                         </div>
@@ -107,7 +107,7 @@ const LeftSidebar = () => {
                         <div className="col-sm-9 left-sidebar-link-label">Bookmarks</div>
                     </div>
 
-                    <div className="row left-sidebar-link" onClick={moveToUserPage}>
+                    <div className="row left-sidebar-link" onClick={callMoveToUserPageFn}>
                         <div className="col-sm-3 px-4 align-self-center">
                             <CIcon width={30} height={30} icon={cilUser} />
                         </div>
@@ -133,7 +133,7 @@ const LeftSidebar = () => {
                             <div id="profile-image-container">
                                 <img
                                     alt="user"
-                                    onClick={moveToUserPage}
+                                    onClick={callMoveToUserPageFn}
                                     className="sidebar-profile-img"
                                     src={userDetails.picture ?? String(sampleUserImg)}
                                     onError={e => { e.target.src = String(sampleUserImg); }}

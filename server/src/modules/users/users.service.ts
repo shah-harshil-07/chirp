@@ -191,8 +191,8 @@ export class UsersService {
         user.dateOfBirth = new Date(userData?.dateOfBirth);
         user.backgroundImage = userData?.backgroundImage ?? '';
 
+        user.website = userData?.website ?? '';
         if (userData?.picture) user.picture = userData?.picture ?? '';
-        if (userData?.website) user.website = userData?.website ?? '';
 
         return user.save();
     }

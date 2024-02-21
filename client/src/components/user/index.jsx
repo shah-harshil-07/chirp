@@ -90,9 +90,9 @@ const UserDetails = () => {
                     <div id="user-header-sub-text">
                         {
                             theme === "posts" ? (
-                                <>{userDetails?.totalPosts ?? 0} post{userDetails?.totalPosts > 1 ? 's' : ''}</>
+                                <>{userDetails?.totalPosts ?? 0} post{userDetails?.totalPosts === 1 ? 's' : ''}</>
                             ) : theme === "followers" ? (
-                                <>{userDetails?.followers ?? 0} follower{userDetails?.followers > 1 ? 's' : ''}</>
+                                <>{userDetails?.followers ?? 0} follower{userDetails?.followers === 1 ? 's' : ''}</>
                             ) : theme === "following" ? (
                                 <>{userDetails?.following ?? 0} following</>
                             ) : (

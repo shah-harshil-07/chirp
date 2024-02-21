@@ -39,6 +39,7 @@ const PostUtilities = ({ parentName }) => {
         openRepostBox,
         closeUserCard,
         openCommentBox,
+        moveToUserPage,
         getFinalUserImages,
         getFormattedNumber,
         handleMutedReaction,
@@ -310,15 +311,9 @@ const PostUtilities = ({ parentName }) => {
         navigate(`/post/${postId}`, { preventScrollReset: false, state: { type } });
     }
 
-    const moveToUserPage = (e, userId) => {
-        e.stopPropagation();
-
-        if (userId) {
-            closeDetailsCardImmediately();
-            navigate(`/user/${userId}`);
-        } else {
-            showError("user id is unavailable.");
-        }
+    const callMoveToUserPageFn = (e, userId) => {
+        closeDetailsCardImmediately();
+        moveToUserPage(e, userId);
     }
 
     const getRepostStyles = imageLength => {
@@ -365,7 +360,7 @@ const PostUtilities = ({ parentName }) => {
                                 alt="user"
                                 onMouseOut={closeUserCard}
                                 className="post-user-image"
-                                onClick={e => { moveToUserPage(e, userId); }}
+                                onClick={e => { callMoveToUserPageFn(e, userId); }}
                                 src={userImages[userId] ?? String(sampleUserImg)}
                                 onError={e => { e.target.src = String(sampleUserImg); }}
                                 onMouseOver={e => { openUserCard(e, post?.user, userImages[userId]); }}
@@ -413,7 +408,7 @@ const PostUtilities = ({ parentName }) => {
                                                 alt="post creator"
                                                 onMouseOut={closeUserCard}
                                                 className="parent-post-user-img"
-                                                onClick={e => { moveToUserPage(e, parentUserId); }}
+                                                onClick={e => { callMoveToUserPageFn(e, parentUserId); }}
                                                 src={userImages[parentUserId] ?? String(sampleUserImg)}
                                                 onError={e => { e.target.src = String(sampleUserImg); }}
                                                 onMouseOver={e => {

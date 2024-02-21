@@ -2,7 +2,6 @@ import "src/styles/form/index.css";
 
 import CIcon from "@coreui/icons-react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
 import { cilImage, cilSmile, cilList, cilCalendarCheck } from "@coreui/icons";
 
@@ -14,6 +13,7 @@ import { openModal } from "src/redux/reducers/modal";
 import * as Constants from "src/utilities/constants";
 import useToaster from "src/custom-hooks/toaster-message";
 import EmojiContainer from "../utilities/emoji-container";
+import usePostServices from "src/custom-hooks/post-services";
 import DateOptionServices from "src/custom-hooks/date-services";
 import useImageConverter from "src/custom-hooks/image-converter";
 import { getCommonHeader, getUserDetails } from "src/utilities/helpers";
@@ -27,9 +27,9 @@ const Form = ({
 	editScheduleMode,
 	editScheduledPost
 }) => {
-	const navigate = useNavigate();
 	const userDetails = getUserDetails();
 	const headerData = getCommonHeader();
+	const { moveToUserPage } = usePostServices();
 	const dateService = new DateOptionServices();
 	const weekOptions = dateService.getWeekOptions();
 	const monthOptions = dateService.getMonthOptions();
@@ -142,12 +142,6 @@ const Form = ({
 		setSchedulerData(null);
 	}
 
-	const moveToUserPage = e => {
-		e.preventDefault();
-		const { id } = userDetails;
-		if (id) navigate(`user/${id}`);
-	}
-
 	const createPost = async () => {
 		if (isFormValid && text) {
 			try {
@@ -222,8 +216,8 @@ const Form = ({
 			<img
 				alt="user"
 				className="user-image"
-				onClick={moveToUserPage}
 				src={userDetails?.picture ?? String(sampleUserImg)}
+				onClick={e => { moveToUserPage(e, userDetails.id); }}
 				onError={e => { e.target.src = String(sampleUserImg); }}
 			/>
 

@@ -1,6 +1,7 @@
 import moment from "moment";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import API from "src/api";
 import useToaster from "./toaster-message";
@@ -10,11 +11,13 @@ import { closeDetailsCard, openDetailsCard } from "src/redux/reducers/user-detai
 import { getCommonHeader, isUserLoggedIn } from "src/utilities/helpers";
 
 const usePostServices = () => {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { showError } = useToaster();
     const oneCrore = Math.pow(10, 7);
     const oneLakh = Math.pow(10, 5);
     const oneThousand = Math.pow(10, 3);
+
+    const { showError } = useToaster();
     const headerData = getCommonHeader();
     const availableMutedActions = ["like", "save"];
 
@@ -238,12 +241,25 @@ const usePostServices = () => {
         setCardRemovalTimeout(_timeout);
     }
 
+    const moveToUserPage = (e, userId, props) => {
+        if (e) e.stopPropagation();
+
+        if (userId) {
+            const navigationParams = [`/user/${userId}`];
+            if (props) navigationParams.push(props);
+            navigate(...navigationParams);
+        } else {
+            showError("User id is unavailable.");
+        }
+    }
+
     return {
         openUserCard,
         getPostTiming,
         createPollJSX,
         openRepostBox,
         closeUserCard,
+        moveToUserPage,
         openCommentBox,
         getFinalUserImages,
         getFormattedNumber,

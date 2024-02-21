@@ -26,6 +26,7 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
         getPostTiming,
         openRepostBox,
         closeUserCard,
+        moveToUserPage,
         openCommentBox,
         getFormattedNumber,
         handleMutedReaction,
@@ -105,13 +106,9 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
         handleMutedReaction(action, commentData, handleLikeAction, handleSaveAction);
     }
 
-    const moveToUserPage = (e, userId) => {
-        if (userId) {
-            e.stopPropagation();
-            navigate(`/user/${userId}`);
-        } else {
-            showError("user id is unavailable.");
-        }
+    const callMoveToUserPageFn = (e, userId) => {
+        closeDetailsCardImmediately();
+        moveToUserPage(e, userId);
     }
 
     const moveToCommentDetailPage = commentId => {
@@ -147,8 +144,8 @@ const CommentList = ({ commentList, userImages, isLoading }) => {
                     alt="user"
                     onMouseOut={closeUserCard}
                     className="post-detail-user-image"
-                    onClick={e => { moveToUserPage(e, userId); }}
                     src={userImages[userId] ?? String(sampleUserImg)}
+                    onClick={e => { callMoveToUserPageFn(e, userId); }}
                     onError={e => { e.target.src = String(sampleUserImg); }}
                     onMouseOver={e => { openUserCard(e, user, userImages[userId]); }}
                 />

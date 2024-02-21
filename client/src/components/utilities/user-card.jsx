@@ -2,13 +2,12 @@ import "src/styles/user/info.css";
 import "src/styles/utilities/user-card.css";
 
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import API from "src/api";
 import DisplayedText from "./displayed-text";
 import * as Constants from "src/utilities/constants";
-import useToaster from "src/custom-hooks/toaster-message";
+import usePostServices from "src/custom-hooks/post-services";
 import { closeDetailsCard } from "src/redux/reducers/user-details";
 import MutualConnections from "src/components/user/mutual-connections";
 import useConnectionServices from "src/custom-hooks/connecting-services";
@@ -16,8 +15,8 @@ import { closeConfirmation, openConfirmation } from "src/redux/reducers/confirma
 import { checkContainerInViewport, getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const UserCard = userData => {
-    const { showError } = useToaster();
-    const dispatch = useDispatch(), navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { moveToUserPage } = usePostServices();
     const cardRef = useRef(null), commonHeader = getCommonHeader();
 
     let { left, top } = userData?.coordinates ?? {};
@@ -68,12 +67,9 @@ const UserCard = userData => {
         dispatch(closeDetailsCard());
     }
 
-    const moveToUserPage = (e, theme = "posts") => {
+    const callMoveToUserPageFn = (e, theme = "posts") => {
         closeUserCard();
-        e.stopPropagation();
-
-        if (userData?._id) navigate(`/user/${userData._id}`, { state: { theme } });
-        else showError("user id is unavailable.");
+        moveToUserPage(e, userData._id, { state: { theme } });
     }
 
     const handleUnfollowAction = e => {
@@ -99,7 +95,7 @@ const UserCard = userData => {
             <div className="d-flex justify-content-between">
                 <img
                     alt="user"
-                    onClick={moveToUserPage}
+                    onClick={callMoveToUserPageFn}
                     className="user-card-header-img"
                     src={userData?.picture ?? String(sampleUserImg)}
                     onError={e => { e.target.src = String(sampleUserImg); }}
@@ -141,14 +137,14 @@ const UserCard = userData => {
             <div className="d-flex justify-content-around">
                 <div
                     className="mr-2 user-follower-data"
-                    onClick={e => { if (userData?.following > 0) moveToUserPage(e, "following"); }}
+                    onClick={e => { if (userData?.following > 0) callMoveToUserPageFn(e, "following"); }}
                 >
                     <b>{userData?.following ?? 0}</b>&nbsp;Following
                 </div>
 
                 <div
                     className="ml-2 user-follower-data"
-                    onClick={e => { if (userData?.followers > 0) moveToUserPage(e, "followers"); }}
+                    onClick={e => { if (userData?.followers > 0) callMoveToUserPageFn(e, "followers"); }}
                 >
                     <b>{userData?.followers ?? 0}</b>&nbsp;Follower{userData.followers > 1 ? 's' : ''}
                 </div>
@@ -157,7 +153,7 @@ const UserCard = userData => {
             <div style={{ marginTop: "5px" }}>
                 <MutualConnections
                     users={mutuallyConnectedUsers}
-                    handleMutualConnDisplay={e => { moveToUserPage(e, "mutualConnection"); }}
+                    handleMutualConnDisplay={e => { callMoveToUserPageFn(e, "mutualConnection"); }}
                 />
             </div>
         </div>
