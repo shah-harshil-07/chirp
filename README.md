@@ -4,4 +4,3 @@
 # If user is logged out, the `No more posts` text is not displayed properly.
 # Move the `moveToUserPage` fn to usePostServices hook.
 # In the user/posts and user/comments or user/saved components, the user card opens up but does not display all the details.
-# Open the console with dock side as bottom. You will see the left sidebar's profile bar is lifted up above the console. Its's position must be fixed. and must not differ with opening of console.

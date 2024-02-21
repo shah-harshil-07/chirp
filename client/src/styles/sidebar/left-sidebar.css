@@ -4,11 +4,11 @@
 }
 
 #left-sidebar-container {
-    position: relative;
     width: 300px;
-    background-color: white;
     float: right;
     height: 100%;
+    position: relative;
+    background-color: white;
 }
 
 #left-sidebar-super-container {
@@ -28,9 +28,9 @@
 
 .left-sidebar-link {
     width: 100%;
-    margin-top: 25px;
     height: 50px;
     cursor: pointer;
+    margin-top: 25px;
 }
 
 .left-sidebar-link:hover {
@@ -65,13 +65,12 @@
     width: 296px;
     height: 70px;
     float: right;
-    padding-left: 15px;
-    padding-top: 7px;
-    border-radius: 35px;
     margin-left: 0;
     margin-right: 0;
-    position: fixed;
-    bottom: 5px;
+    padding-top: 7px;
+    padding-left: 15px;
+    border-radius: 35px;
+    margin-top: calc(100% - 10px);
 }
 
 #left-sidebar-profile-container:hover {
@@ -91,13 +90,14 @@
 }
 
 .left-sidebar-user-actionbar {
-    width: inherit;
-    bottom: 80px;
+    width: 291px;
+    float: right;
+    bottom: 74px;
     cursor: pointer;
     padding-top: 10px;
-    position: fixed;
-    padding-bottom: 10px;
+    position: absolute;
     border-radius: 10px;
+    padding-bottom: 10px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
