@@ -14,8 +14,8 @@ import { openModalWithProps } from "src/redux/reducers/modal";
 import { placeHolderImageSrc } from "src/utilities/constants";
 import { openLighthouse } from "src/redux/reducers/lighthouse";
 import useImageConverter from "src/custom-hooks/image-converter";
+import { closeConfirmation } from "src/redux/reducers/confirmation";
 import useConnectionServices from "src/custom-hooks/connecting-services";
-import { closeConfirmation, openConfirmation } from "src/redux/reducers/confirmation";
 import { getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const UserInfo = ({ details, getterFn, isLoading, changeTheme, mutuallyConnectedUsers }) => {
