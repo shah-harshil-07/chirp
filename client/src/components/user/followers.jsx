@@ -10,17 +10,17 @@ import API from "src/api";
 import Loader from "src/components/utilities/loader";
 import * as Constants from "src/utilities/constants";
 import usePostServices from "src/custom-hooks/post-services";
+import { closeConfirmation } from "src/redux/reducers/confirmation";
 import useConnectionServices from "src/custom-hooks/connecting-services";
-import { closeConfirmation, openConfirmation } from "src/redux/reducers/confirmation";
 import { getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
     const commonHeader = getCommonHeader();
-    const { connectUser } = useConnectionServices();
     const dispatch = useDispatch(), navigate = useNavigate();
     const sampleUserImg = require("src/assets/sample-user.png");
     const { getFinalUserImages, moveToUserPage } = usePostServices();
     const { id: loggedUserId } = isUserLoggedIn() ? getUserDetails() : {};
+    const { connectUser, confirmDisconnectUser } = useConnectionServices();
 
     const [users, setUsers] = useState([]);
     const [userImages, setUserImages] = useState({});
@@ -74,13 +74,13 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
 
     const getFollowers = async url => {
         if (url) {
-            try {                
+            try {
                 const formattedUrl = `${url}${userId ? `/${userId}` : ''}`;
-    
+
                 setIsLoading(true);
                 const { data: response } = await API(Constants.GET, formattedUrl, null, commonHeader);
                 setIsLoading(false);
-    
+
                 updateUserDataFromResponse(response);
             } catch (error) {
                 console.log(error);
@@ -90,9 +90,9 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
     }
 
     const updateUserDataFromResponse = async response => {
-        try {            
+        try {
             const _userImages = {};
-    
+
             const _users = response?.data?.map((userObj, userIndex) => {
                 if (theme === "suggestedUsers") {
                     const { _id: id, picture: userPic } = userObj ?? {};
@@ -111,7 +111,7 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
                     };
                 }
             }) ?? [];
-    
+
             setUsers([..._users]);
             const settledUserImages = await getFinalUserImages(_userImages);
             setUserImages({ ...settledUserImages });
@@ -139,21 +139,15 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
                 setUsers([..._users]);
             }
         } else {
-            const confirmationProps = {
-                headingText: "Unfollow",
-                message: "Are you sure you want to unfollow the user?",
-                handleConfirmAction: () => {
-                    connectUser(e, userId, false);
-                    dispatch(closeConfirmation());
+            confirmDisconnectUser(() => {
+                connectUser(e, userId, false);
+                dispatch(closeConfirmation());
 
-                    if (_users[userIndex]) {
-                        _users[userIndex]["isFollowed"] = false;
-                        setUsers([..._users]);
-                    }
+                if (_users[userIndex]) {
+                    _users[userIndex]["isFollowed"] = false;
+                    setUsers([..._users]);
                 }
-            };
-
-            dispatch(openConfirmation(confirmationProps));
+            });
         }
     }
 

@@ -1,3 +1,2 @@
 # As soon as user signs up for the first time, shoot a welcome email to the newly registered user.
 # If user is logged out, the `No more posts` text is not displayed properly.
-# When the following list of the logged user from logged user's profile is opened up, it shows the user it follows but it shows `Follow` button on the right side and calls the follow action on it instead of `Following` button with the same action.

@@ -259,6 +259,9 @@ const PostUtilities = ({ parentName }) => {
                         const type = statusCode >= 200 && statusCode < 300 ? "Success" : "Error";
                         dispatch(openToaster({ messageObj: { type, message } }));
                     }
+                }).catch(error => {
+                    console.log(error);
+                    showError("Something went wrong!");
                 });
 
             choices[choiceIndex].votes++;

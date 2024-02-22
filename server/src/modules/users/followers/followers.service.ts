@@ -34,7 +34,7 @@ export class FollowersService {
     }
 
     public async getAllFollowers({ userId, type, loggedInUserId }: FollowDataFetchDTO): Promise<FollowerModel[]> {
-        const isFollowingQuerySet = loggedInUserId && loggedInUserId !== userId ? [
+        const isFollowingQuerySet = loggedInUserId ? [
             { $lookup: { localField: "user._id", foreignField: "following", from: "Followers", as: "followData" } },
             {
                 $addFields: {
