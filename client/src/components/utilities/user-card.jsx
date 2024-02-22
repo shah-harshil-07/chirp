@@ -9,9 +9,9 @@ import DisplayedText from "./displayed-text";
 import * as Constants from "src/utilities/constants";
 import usePostServices from "src/custom-hooks/post-services";
 import { closeDetailsCard } from "src/redux/reducers/user-details";
+import { closeConfirmation } from "src/redux/reducers/confirmation";
 import MutualConnections from "src/components/user/mutual-connections";
 import useConnectionServices from "src/custom-hooks/connecting-services";
-import { closeConfirmation, openConfirmation } from "src/redux/reducers/confirmation";
 import { checkContainerInViewport, getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const UserCard = userData => {
@@ -21,8 +21,8 @@ const UserCard = userData => {
 
     let { left, top } = userData?.coordinates ?? {};
     const sampleUserImg = require("src/assets/sample-user.png");
-    const { connectUser, getMutualConnections } = useConnectionServices();
     const { id: loggedUserId } = isUserLoggedIn() ? getUserDetails() : {};
+    const { connectUser, getMutualConnections, confirmDisconnectUser } = useConnectionServices();
 
     const [finalTop, setFinalTop] = useState(top);
     const [finalLeft, setFinalLeft] = useState(left);
@@ -73,17 +73,11 @@ const UserCard = userData => {
     }
 
     const handleUnfollowAction = e => {
-        const confirmationProps = {
-            headingText: "Unfollow",
-            message: "Are you sure you want to unfollow the user?",
-            handleConfirmAction: () => {
-                setIsFollowing(false);
-                dispatch(closeConfirmation());
-                connectUser(e, userData._id, false);
-            }
-        };
-
-        dispatch(openConfirmation(confirmationProps));
+        confirmDisconnectUser(() => {
+            setIsFollowing(false);
+            dispatch(closeConfirmation());
+            connectUser(e, userData._id, false);
+        });
     }
 
     const handleFollowAction = e => {

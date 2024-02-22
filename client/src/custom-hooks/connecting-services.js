@@ -1,9 +1,13 @@
+import { useDispatch } from "react-redux";
+
 import API from "src/api";
 import useToaster from "./toaster-message";
 import * as Constants from "src/utilities/constants";
+import { openConfirmation } from "src/redux/reducers/confirmation";
 import { getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const useConnectionServices = () => {
+    const dispatch = useDispatch();
     const loggedInUserData = isUserLoggedIn() ? getUserDetails() : {};
     const { id: loggedUserId } = loggedInUserData;
 
@@ -33,6 +37,16 @@ const useConnectionServices = () => {
         }
     }
 
+    const confirmDisconnectUser = handleConfirmAction => {
+        const confirmationProps = {
+            handleConfirmAction,
+            headingText: "Unfollow",
+            message: "Are you sure you want to unfollow the user?",
+        };
+
+        dispatch(openConfirmation(confirmationProps));
+    }
+
     const getMutualConnections = (userId, updateFn) => {
         if (loggedUserId && userId && loggedUserId !== userId) {
             const url = `${Constants.GET_MUTUAL_CONNECTIONS}/${userId}`;
@@ -43,7 +57,7 @@ const useConnectionServices = () => {
         }
     }
 
-    return { connectUser, getMutualConnections };
+    return { connectUser, getMutualConnections, confirmDisconnectUser };
 };
 
 export default useConnectionServices;

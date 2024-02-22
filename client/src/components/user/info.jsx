@@ -23,9 +23,9 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, mutuallyConnected
     const dispatch = useDispatch();
     const commonHeader = getCommonHeader();
     let availableCoverage = totalLineLength;
-    const { connectUser } = useConnectionServices();
     const { getFileObjectFromBase64 } = useImageConverter();
     const sampleUserImg = require("src/assets/sample-user.png");
+    const { connectUser, confirmDisconnectUser } = useConnectionServices();
 
     const loggedInUserData = isUserLoggedIn() ? getUserDetails() : {};
     const { id: loggedUserId } = loggedInUserData;
@@ -180,17 +180,11 @@ const UserInfo = ({ details, getterFn, isLoading, changeTheme, mutuallyConnected
     }
 
     const handleUnfollowAction = e => {
-        const confirmationProps = {
-            headingText: "Unfollow",
-            message: "Are you sure you want to unfollow the user?",
-            handleConfirmAction: () => {
-                setIsFollowing(false);
-                dispatch(closeConfirmation());
-                connectUser(e, profileDetails.id, false);
-            }
-        };
-
-        dispatch(openConfirmation(confirmationProps));
+        confirmDisconnectUser(() => {
+            setIsFollowing(false);
+            dispatch(closeConfirmation());
+            connectUser(e, profileDetails.id, false);
+        });
     }
 
     const handleFollowAction = e => {
