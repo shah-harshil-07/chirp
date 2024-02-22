@@ -61,6 +61,19 @@ export class UsersService {
         return { otpId };
     }
 
+    public async sendWelcomeMail(username: string, emailId: string): Promise<void> {
+        const smtpConfig = this.configService.getConfigObj("smtp");
+
+        await this.mailerService.sendMail({
+            to: emailId,
+            template: "welcome",
+            context: { username },
+            from: smtpConfig.displayEmail,
+            subject: "Welcome to Chirp!",
+            replyTo: smtpConfig.replyToEmail,
+        });
+    }
+
     public async findOtpValue(otpId: string): Promise<OtpStore> {
         return await this.otpModel.findById(otpId);
     }
@@ -68,6 +81,7 @@ export class UsersService {
     public async createUser(userData: RegisteredUserDTO): Promise<RegisteredUserDTO> {
         const userDocument = new this.userModel(userData);
         await userDocument.save();
+        await this.sendWelcomeMail(userData.username, userData.email);
         return userDocument;
     }
 
@@ -111,6 +125,7 @@ export class UsersService {
     public async createGoogleAuthedUser(userData: RegisteredGoogleAuthedUserDTO): Promise<UserDTO> {
         const userDocument = new this.userModel(userData);
         await userDocument.save();
+        await this.sendWelcomeMail(userData.username, userData.email);
         return userDocument;
     }
 
