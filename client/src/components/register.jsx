@@ -1,11 +1,12 @@
 import "src/styles/auth.css";
 import "src/styles/register.css";
 
-import React, { useEffect, useRef, useState } from "react";
 import CIcon from "@coreui/icons-react";
 import { cibGoogle } from "@coreui/icons";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
+import React, { useEffect, useRef, useState } from "react";
 
 import API from "src/api";
 import CodeInput from "./signup-steps/code-input";
@@ -19,6 +20,7 @@ import { openModal, closeModal } from "src/redux/reducers/modal";
 import { validate, getErrorMessage } from "src/utilities/helpers";
 
 const Register = () => {
+    const navigate = useNavigate();
     const initialBodyData = {
         codeInput: '',
         createAccount: { name: '', username: '', email: '', password: '', confirmPassword: '', noteChecked: false },
@@ -346,6 +348,7 @@ const Register = () => {
             const type = responseData?.meta?.status ? "Success" : "Error";
             const message = type === "Success" ? responseData?.meta?.message : responseData?.error?.message ?? "Error";
             dispatch(openToaster({ messageObj: { type, message } }));
+            setTimeout(() => { navigate(0); }, 5000);
         } catch (error) {
             console.log(error);
             setShowLoader(false);
@@ -357,17 +360,19 @@ const Register = () => {
         const username = usernameInputRef.current.getUsername();
 
         try {
-            const response = await API(Constants.POST, Constants.REGISTER_GOOGLE_AUTHED_USER, { ...googleAuthedUser, username });
-            const responseData = response.data;
+            const url = Constants.REGISTER_GOOGLE_AUTHED_USER;
+            const data = { ...googleAuthedUser, username };
+            const { data: responseData } = await API(Constants.POST, url, data);
 
             if (responseData?.meta?.status && responseData?.meta?.message) {
                 const { token, user: userDetails } = responseData?.data ?? {};
                 if (token && userDetails) {
-                    localStorage.setItem("chirp-accessToken", responseData.data.token);
+                    localStorage.setItem("chirp-accessToken", token);
                     localStorage.setItem("chirp-userDetails", JSON.stringify(userDetails));
                 }
 
                 showSuccess(responseData.meta.message);
+                setTimeout(() => { navigate(0); }, 5000);
             } else if (responseData?.errors?.length) {
                 const message = responseData?.errors?.[0] ?? "Something went wrong!";
                 showError(message);
@@ -392,11 +397,11 @@ const Register = () => {
         setBodyData({ ...bodyData, [key]: data });
     }
 
-    const showUserInputPage = () => {
-        const userInputBodyJSX = (
-            <UsernameInput ref={usernameInputRef} handleDataChange={isValid => setIsGoogleAuthedUsernameValid(isValid)} />
-        );
+    const userInputBodyJSX = (
+        <UsernameInput ref={usernameInputRef} handleDataChange={setIsGoogleAuthedUsernameValid} />
+    );
 
+    const showUserInputPage = () => {
         setBodyJSX(userInputBodyJSX);
         setFooterText("Set Username");
         setIncludeFooter(true);
