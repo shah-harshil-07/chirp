@@ -226,8 +226,8 @@ export class UsersService {
             .limit(20);
     }
 
-    public async getUserSuggestions(searchValue: string): Promise<UserDTO[]> {
-        if (!searchValue.length) return [];
+    public async searchUsers(searchValue: string): Promise<UserDTO[]> {
+        if (!searchValue?.length) return [];
         const regexSearchQuery = { $regex: new RegExp(searchValue, "ig") };
         return await this
             .userModel

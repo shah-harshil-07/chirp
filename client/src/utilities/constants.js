@@ -78,6 +78,7 @@ export const CREATE_COMMENT = "comments/store";
 export const COMMENT_LIST = "comments/all";
 
 export const FOLLOW_USER = "user/follow";
+export const SEARCH_USER = "user/search";
 export const UNFOLLOW_USER = "user/unfollow-user";
 export const FOLLOWER_LIST = "user/get-followers";
 export const FOLLOWING_LIST = "user/get-following";

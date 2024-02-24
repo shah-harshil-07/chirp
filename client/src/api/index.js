@@ -3,13 +3,13 @@ import axios from "axios";
 const origin = process.env.REACT_APP_SERVER_ORIGIN;
 const port = process.env.REACT_APP_SERVER_PORT;
 
-const API = async (method, baseUrl, data, headerData, isSpecialUrl) => {
+const API = async (method, baseUrl, data, headerData, isSpecialUrl, signal) => {
     const headers = headerData ?? {};
     const validateStatus = status => status <= 422;
     const url = isSpecialUrl ? baseUrl : `${origin}:${port}/${baseUrl}`;
 
     return new Promise((res, rej) => {
-        axios({ url, data, method, headers, validateStatus })
+        axios({ url, data, method, headers, validateStatus, signal })
             .then(response => {
                 res(response);
             })

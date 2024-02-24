@@ -338,10 +338,10 @@ export class UsersController {
         return { success: true, data: users, message: "Suggested users to be followed fetched successfully." };
     }
 
-    @Get("get-user-suggestions")
+    @Post("search")
     @UseInterceptors(ResponseInterceptor)
-    async getUserSuggestions(@Body() searchData: ISearchUserDTO): Promise<IResponseProps> {
-        const users = await this.userService.getUserSuggestions(searchData.searchValue);
+    async getSuggestions(@Body() searchData: ISearchUserDTO): Promise<IResponseProps> {
+        const users = await this.userService.searchUsers(searchData.searchValue);
         return { success: true, data: users, message: "Searched users fetched successfully." };
     }
 }
