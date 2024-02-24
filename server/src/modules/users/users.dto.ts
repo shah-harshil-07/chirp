@@ -133,3 +133,7 @@ export class IDeleteImgDetailsDTO {
     @IsIn(["picture", "backgroundImage"])
     imageType: string;
 }
+
+export interface ISearchUserDTO {
+    searchValue: string;
+}

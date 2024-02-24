@@ -155,7 +155,7 @@ export class UsersService {
 
         const details = await this
             .userModel
-            .findById( userId, selectedUserItems.join(" "))
+            .findById(userId, selectedUserItems.join(" "))
             .populate({
                 path: "_id",
                 model: "Post",
@@ -224,5 +224,16 @@ export class UsersService {
             .find({ followers: { $gt: 0 } }, { name: 1, username: 1, picture: 1, bio: 1, followers: 1, following: 1 })
             .sort("-followers createdAt")
             .limit(20);
+    }
+
+    public async getUserSuggestions(searchValue: string): Promise<UserDTO[]> {
+        if (!searchValue.length) return [];
+        const regexSearchQuery = { $regex: new RegExp(searchValue, "ig") };
+        return await this
+            .userModel
+            .find(
+                { $or: [{ name: regexSearchQuery }, { username: regexSearchQuery }] },
+                { name: 1, username: 1, picture: 1 }
+            );
     }
 }

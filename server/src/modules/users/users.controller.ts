@@ -39,6 +39,7 @@ import {
     IDeleteImgDetailsDTO,
     IUpdateUserDetailsDTO,
     RegisteredGoogleAuthedUserDTO,
+    ISearchUserDTO,
 } from "./users.dto";
 
 interface IResponseProps {
@@ -335,5 +336,12 @@ export class UsersController {
         if (loggedInUserId) users = await this.followerService.getFollowSuggestions(loggedInUserId);
         else users = await this.userService.getFollowSuggestions();
         return { success: true, data: users, message: "Suggested users to be followed fetched successfully." };
+    }
+
+    @Get("get-user-suggestions")
+    @UseInterceptors(ResponseInterceptor)
+    async getUserSuggestions(@Body() searchData: ISearchUserDTO): Promise<IResponseProps> {
+        const users = await this.userService.getUserSuggestions(searchData.searchValue);
+        return { success: true, data: users, message: "Searched users fetched successfully." };
     }
 }
