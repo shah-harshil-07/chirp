@@ -3,7 +3,7 @@ import "src/styles/user/followers.css";
 import CIcon from "@coreui/icons-react";
 import { useDispatch } from "react-redux";
 import { cilArrowLeft } from "@coreui/icons";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 
 import API from "src/api";
@@ -15,9 +15,10 @@ import useConnectionServices from "src/custom-hooks/connecting-services";
 import { getCommonHeader, getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
-    const commonHeader = getCommonHeader();
     const dispatch = useDispatch(), navigate = useNavigate();
+    const externalThemes = ["suggestedUsers", "searchedUsers"];
     const sampleUserImg = require("src/assets/sample-user.png");
+    const commonHeader = getCommonHeader(), location = useLocation();
     const { getFinalUserImages, moveToUserPage } = usePostServices();
     const { id: loggedUserId } = isUserLoggedIn() ? getUserDetails() : {};
     const { connectUser, confirmDisconnectUser } = useConnectionServices();
@@ -43,6 +44,9 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
                 break;
             case "suggestedUsers":
                 url = Constants.GET_SUGGESTED_USERS;
+                break;
+            case "searchedUsers":
+                url = Constants.SEARCH_USER;
                 break;
             case "mutualConnection":
                 url = null;
@@ -76,9 +80,11 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
         if (url) {
             try {
                 const formattedUrl = `${url}${userId ? `/${userId}` : ''}`;
+                const method = theme === "searchedUsers" ? Constants.POST : Constants.GET;
+                const data = theme === "searchedUsers" ? { searchValue: location?.state?.query ?? '' } : null;
 
                 setIsLoading(true);
-                const { data: response } = await API(Constants.GET, formattedUrl, null, commonHeader);
+                const { data: response } = await API(method, formattedUrl, data, commonHeader);
                 setIsLoading(false);
 
                 updateUserDataFromResponse(response);
@@ -94,7 +100,7 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
             const _userImages = {};
 
             const _users = response?.data?.map((userObj, userIndex) => {
-                if (theme === "suggestedUsers") {
+                if (externalThemes.includes(theme)) {
                     const { _id: id, picture: userPic } = userObj ?? {};
                     if (userPic && id) _userImages[id] = userPic;
                     return { ...userObj, id: id ?? userIndex, userId: id };
@@ -158,7 +164,7 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
     return isLoading ? <Loader /> : (
         <div className="w-100">
             {
-                theme === "suggestedUsers" && (
+                externalThemes.includes(theme) && (
                     <div className="common-header">
                         <div className="common-heading-icon" onClick={moveToDashboard}>
                             <CIcon width={20} height={20} size="sm" icon={cilArrowLeft} />
@@ -190,7 +196,7 @@ const UserFollowers = ({ theme, userId, mutuallyConnectedUsers }) => {
                                 </div>
 
                                 {
-                                    (userId !== loggedUserId || theme === "suggestedUsers") && (
+                                    (theme !== "searchedUsers" && (userId !== loggedUserId || theme === "suggestedUsers")) && (
                                         <div
                                             title={`click to ${isFollowed ? "unfollow" : "follow"}`}
                                             onClick={e => { handleConnectingAction(e, i, isFollowed); }}

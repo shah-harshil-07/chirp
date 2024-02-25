@@ -233,7 +233,7 @@ export class UsersService {
             .userModel
             .find(
                 { $or: [{ name: regexSearchQuery }, { username: regexSearchQuery }] },
-                { name: 1, username: 1, picture: 1 }
+                { name: 1, username: 1, picture: 1, bio: 1 }
             );
     }
 }

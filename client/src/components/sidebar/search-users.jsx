@@ -1,21 +1,24 @@
 import "src/styles/sidebar/index.css";
 import "src/styles/sidebar/right-sidebar.css";
 
-import API from "src/api";
+import { useNavigate } from "react-router-dom";
 import React, { useRef, useState } from "react";
+
+import API from "src/api";
 import * as Constants from "src/utilities/constants";
 import useToaster from "src/custom-hooks/toaster-message";
 import usePostServices from "src/custom-hooks/post-services";
 
 const SearchUsers = () => {
     const valueRef = useRef(null);
-    const { showError } = useToaster();
     const sampleUserImg = require("src/assets/sample-user.png");
+    const { showError } = useToaster(), navigate = useNavigate();
     const { getFinalUserImages, moveToUserPage } = usePostServices();
 
     const [userImages, setUserImages] = useState({});
     const [searchValue, setSearchValue] = useState('');
     const [userSuggestions, setUserSuggestions] = useState([]);
+    const [showSeeMoreOption, setShowSeeMoreOption] = useState(false);
     const [controller, setController] = useState(new AbortController());
 
     const getUsers = async value => {
@@ -29,9 +32,11 @@ const SearchUsers = () => {
             if (currentValue === value) {
                 API(Constants.POST, Constants.SEARCH_USER, data, null, false, signal)
                     .then(async ({ data: response }) => {
-                        const newUserImages = {};
+                        const newUserImages = {}, responseData = response?.data ?? [];
+                        const responseUsers = responseData.slice(0, 5);
+                        setShowSeeMoreOption(responseData.length > 5);
 
-                        const _userSuggestions = response?.data?.map((userObj, userIndex) => {
+                        const _userSuggestions = responseUsers.map((userObj, userIndex) => {
                             const formattedUserObj = {
                                 name: userObj?.name ?? '',
                                 id: userObj?._id ?? userIndex,
@@ -42,7 +47,7 @@ const SearchUsers = () => {
                             const { id, picture } = formattedUserObj;
                             if (!userImages[id]) newUserImages[id] = picture;
                             return formattedUserObj;
-                        }) ?? [];
+                        });
 
                         const newSettledUserImages = await getFinalUserImages(newUserImages);
 
@@ -61,6 +66,11 @@ const SearchUsers = () => {
 
             setController(newController);
         }, 100);
+    }
+
+    const moveToUserSuggestionPage = () => {
+        const currentValue = valueRef?.current?.value ?? searchValue;
+        navigate("/searched-users", { state: { query: currentValue } });
     }
 
     return (
@@ -94,20 +104,31 @@ const SearchUsers = () => {
                                                     <div>
                                                         <img
                                                             alt="logo"
-                                                            className="sidebar-profile-img"
-                                                            style={{ width: "50px", height: "50px" }}
+                                                            className="searched-user-img"
                                                             src={userImages[id] ?? String(sampleUserImg)}
                                                             onError={e => { e.target.src = String(sampleUserImg); }}
                                                         />
                                                     </div>
     
-                                                    <div style={{ marginLeft: "5px" }}>
+                                                    <div className="searched-user-name-bar">
                                                         {name ?? ''}<br />{username ?? ''}
                                                     </div>
                                                 </div>
                                             </li>
                                         );
                                     })
+                                }
+                                {
+                                    showSeeMoreOption && (
+                                        <li
+                                            role="option"
+                                            aria-selected="true"
+                                            className="p-dropdown-item"
+                                            onClick={moveToUserSuggestionPage}
+                                        >
+                                            <div className="searched-user-see-more">See more</div>
+                                        </li>
+                                    )
                                 }
                             </ul>
                         </div>
