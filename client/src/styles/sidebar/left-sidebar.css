@@ -12,8 +12,10 @@
 }
 
 #left-sidebar-super-container {
+    height: 96vh;
+    display: flex;
     position: fixed;
-    margin-left: 17%;
+    flex-direction: column;
 }
 
 #chirp-icon-container {

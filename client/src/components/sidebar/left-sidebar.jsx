@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useDocumentClickServices from "src/custom-hooks/document-services";
-import { cilHome, cilSettings, cilBookmark, cilUser, cilOptions } from "@coreui/icons";
+import { cilHome, cilBookmark, cilUser, cilOptions } from "@coreui/icons";
 
 import usePostServices from "src/custom-hooks/post-services";
 import { openConfirmation } from "src/redux/reducers/confirmation";
@@ -83,22 +83,6 @@ const LeftSidebar = () => {
                         <div className="col-sm-9 left-sidebar-link-label">Home</div>
                     </div>
 
-                    <div className="row left-sidebar-link">
-                        <div className="col-sm-3 px-4 align-self-center">
-                            <span style={{ fontSize: "33px", marginLeft: "5px" }}>#</span>
-                        </div>
-
-                        <div className="col-sm-9 left-sidebar-link-label">Explore</div>
-                    </div>
-
-                    <div className="row left-sidebar-link">
-                        <div className="col-sm-3 px-4 align-self-center">
-                            <CIcon width={30} height={30} icon={cilSettings} />
-                        </div>
-
-                        <div className="col-sm-9 left-sidebar-link-label">Settings</div>
-                    </div>
-
                     <div className="row left-sidebar-link" onClick={e => { callMoveToUserPageFn(e, true); }}>
                         <div className="col-sm-3 px-4 align-self-center">
                             <CIcon width={30} height={30} icon={cilBookmark} />
@@ -114,8 +98,6 @@ const LeftSidebar = () => {
 
                         <div className="col-sm-9 left-sidebar-link-label">Profile</div>
                     </div>
-
-                    <div id="left-sidebar-chirp-btn">Post</div>
                 </div>
 
                 {

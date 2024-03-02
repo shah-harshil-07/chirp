@@ -199,7 +199,9 @@ const PostUtilities = ({ parentName }) => {
 
         const { base64Prefix, httpsOrigin } = Constants;
         const isSettledImage = imageName.startsWith(base64Prefix) || imageName.startsWith(httpsOrigin);
-        return isSettledImage ? null : getImageFetchingPromise(imageName, successCallback);
+        return isSettledImage
+            ? new Promise(res => { successCallback(imageName); res(); })
+            : getImageFetchingPromise(imageName, successCallback);
     }
 
     const getCommentImages = (imageNameSuperList, comments) => {
