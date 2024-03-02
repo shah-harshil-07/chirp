@@ -8,12 +8,14 @@ import { useNavigate, useLocation } from "react-router-dom";
 import useDocumentClickServices from "src/custom-hooks/document-services";
 import { cilHome, cilBookmark, cilUser, cilOptions } from "@coreui/icons";
 
+import useToaster from "src/custom-hooks/toaster-message";
 import usePostServices from "src/custom-hooks/post-services";
 import { openConfirmation } from "src/redux/reducers/confirmation";
 import { getUserDetails, isUserLoggedIn } from "src/utilities/helpers";
 
 const LeftSidebar = () => {
     const dispatch = useDispatch();
+    const { showError } = useToaster();
     const { moveToUserPage } = usePostServices();
     const logo = require("src/assets/logo-1.png");
     const navigate = useNavigate(), location = useLocation();
@@ -54,7 +56,8 @@ const LeftSidebar = () => {
     }
 
     const callMoveToUserPageFn = (e, viewSaved = false) => {
-        moveToUserPage(e, userDetails.id, { state: { viewSaved } });
+        if (userDetails?.id) moveToUserPage(e, userDetails.id, { state: { viewSaved } });
+        else showError("Please login");
     }
 
     const openLogoutConfirmation = () => {
