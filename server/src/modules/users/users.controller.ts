@@ -19,11 +19,11 @@ import {
 
 import { UsersService } from "./users.service";
 import { topupValidationStr } from "src/constants";
+import { CommonService } from "../common/common.service";
 import { AuthService } from "src/modules/auth/auth.service";
 import { IFollowingParamId } from "./followers/followers.dto";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { FollowersService } from "./followers/followers.service";
-import { ConfigService } from "src/modules/config/config.service";
 import { GetAuthTokenGuard } from "src/modules/auth/get-token.guard";
 import { CustomBadRequestException } from "src/exception-handlers/400/handler";
 import { CustomUnprocessableEntityException } from "src/exception-handlers/422/handler";
@@ -54,6 +54,7 @@ export class UsersController {
     constructor(
         private readonly authService: AuthService,
         private readonly userService: UsersService,
+        private readonly commonService: CommonService,
         private readonly followerService: FollowersService,
         private readonly topupCountValidatorService: CustomValidatorsService,
     ) {
@@ -191,10 +192,7 @@ export class UsersController {
     @Post("update-details/:id")
     @UseInterceptors(
         ResponseInterceptor,
-        FileFieldsInterceptor(
-            [{ name: "picture", maxCount: 1 }, { name: "backgroundImage", maxCount: 1 }],
-            ConfigService.getFileStorageConfigObj("user-images"),
-        ),
+        FileFieldsInterceptor([{ name: "picture", maxCount: 1 }, { name: "backgroundImage", maxCount: 1 }]),
     )
     async updateDetails(
         @Param() { id }: IParamId,
@@ -204,11 +202,28 @@ export class UsersController {
             backgroundImage?: Express.Multer.File[]
         }
     ): Promise<IResponseProps> {
-        const detailsData: IUpdateUserDetailsDTO = {
-            ...requestData,
-            picture: files?.picture?.[0]?.filename ?? '',
-            backgroundImage: files?.backgroundImage?.[0]?.filename ?? '',
-        };
+        const {
+            buffer: pictureBuffer,
+            mimetype: pictureMimeType,
+            originalname: pictureOriginalName,
+        } = files?.picture?.[0] ?? {};
+
+        const {
+            buffer: bgImageBuffer,
+            mimetype: bgImageMimeType,
+            originalname: bgImageOriginalName,
+        } = files?.backgroundImage?.[0] ?? {};
+
+        const pictureExt = pictureOriginalName?.split('.')?.[1] ?? "jpg";
+        const bgImageExt = bgImageOriginalName?.split('.')?.[1] ?? "jpg";
+
+        const backImageName = `${Date.now()}-${(Math.random() * (10 ** 9)).toFixed(0)}.${bgImageExt}`;
+        const pictureImageName = `${Date.now()}-${(Math.random() * (10 ** 9)).toFixed(0)}.${pictureExt}`;
+
+        const bgImageUrl = await this.commonService.uploadImageToS3(backImageName, bgImageBuffer, bgImageMimeType);
+        const pictureUrl = await this.commonService.uploadImageToS3(pictureImageName, pictureBuffer, pictureMimeType);
+
+        const detailsData: IUpdateUserDetailsDTO = { ...requestData, picture: pictureUrl, backgroundImage: bgImageUrl };
 
         const data = await this.userService.updateDetails(id, detailsData);
         return { success: true, data, message: "User details updated successfully." };

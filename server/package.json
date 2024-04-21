@@ -1,8 +1,8 @@
 {
   "name": "chirp-server-terminal",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Chirp repository contains code of a social media web application like twitter. It has features like infinite scrolling, user based likes, posts and comments, trending page, etc. This is the backend side of the application.",
+  "author": "Harshil Shah",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.556.0",
     "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.1",

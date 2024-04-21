@@ -14,6 +14,13 @@ interface IFileStorageConfig {
     storage: StorageEngine;
 }
 
+export interface IS3ClientConfig {
+    region: string;
+    bucketName: string;
+    accessKeyId: string;
+    secretAccessKey: string;
+}
+
 @Injectable()
 export class ConfigService {
     private databaseConfig: IAnyObject = {
@@ -41,6 +48,13 @@ export class ConfigService {
         error: "redBright",
         warning: "cyanBright",
         dependencies: "green",
+    };
+
+    private s3ClientConfig: IS3ClientConfig = {
+        region: process.env.AWS_S3_REGION,
+        accessKeyId: process.env.AWS_ACCESS_KEY,
+        bucketName: process.env.AWS_S3_BUCKET_NAME,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     };
 
     public getConfigObj(key: string): IAnyObject {
@@ -101,5 +115,9 @@ export class ConfigService {
                 new MaxFileSizeValidator({ maxSize: 1024 * 1024 * sizeLimit }),
             ],
         });
+    }
+
+    public getS3ClientConfigObj(): IS3ClientConfig {
+        return this.s3ClientConfig;
     }
 }
