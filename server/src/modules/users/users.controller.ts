@@ -197,10 +197,7 @@ export class UsersController {
     async updateDetails(
         @Param() { id }: IParamId,
         @Body() requestData: IUpdateUserDetailsDTO,
-        @UploadedFiles() files: {
-            picture?: Express.Multer.File[],
-            backgroundImage?: Express.Multer.File[]
-        }
+        @UploadedFiles() files: { picture?: Express.Multer.File[], backgroundImage?: Express.Multer.File[] }
     ): Promise<IResponseProps> {
         const {
             buffer: pictureBuffer,

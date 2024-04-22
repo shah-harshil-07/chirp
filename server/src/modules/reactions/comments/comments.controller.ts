@@ -6,6 +6,7 @@ import { CommentsService } from "./comments.service";
 import { IResponseProps } from "src/interceptors/interfaces";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { ConfigService } from "src/modules/config/config.service";
+import { CommonService } from "src/modules/common/common.service";
 import { CustomBadRequestException } from "src/exception-handlers/400/handler";
 import { CommentDTO, ICommentListReqDTO, IPostId, validationParamList } from "./comments.dto";
 import { CustomValidatorsService } from "src/modules/custom-validators/custom-validators.service";
@@ -13,6 +14,7 @@ import { CustomValidatorsService } from "src/modules/custom-validators/custom-va
 @Controller("comments")
 export class CommentsController {
     constructor(
+        private readonly commonService: CommonService,
         private readonly commentService: CommentsService,
         private readonly storeValidatorsService: CustomValidatorsService,
     ) {
@@ -21,7 +23,7 @@ export class CommentsController {
 
     @Post("store")
     @UseGuards(AuthGuard("jwt"))
-    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 4, ConfigService.getFileStorageConfigObj()))
+    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 4))
     async store(
         @Req() req: any,
         @Body() commentData: CommentDTO,
@@ -29,7 +31,7 @@ export class CommentsController {
     ): Promise<IResponseProps> {
         const createdAt = new Date();
         const { _id: userId } = req.user;
-        const fileNames = images.map(imageObj => imageObj.filename);
+        const fileNames = await this.commonService.uploadMultipleImagesToS3(images);
 
         const parsedCommentData = JSON.parse(commentData.data);
         const { isValid, errors } = this.storeValidatorsService.validate(parsedCommentData);

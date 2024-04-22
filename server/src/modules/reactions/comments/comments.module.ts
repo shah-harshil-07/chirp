@@ -6,10 +6,12 @@ import { CommentsController } from "./comments.controller";
 import { PostModule } from "src/modules/posts/posts.module";
 import { Comments, CommentsSchema } from "./comments.schema";
 import { ConfigModule } from "src/modules/config/config.module";
+import { CommonModule } from "src/modules/common/common.module";
 import { CustomValidatorsModule } from "src/modules/custom-validators/custom-validators.module";
 
 @Module({
 	imports: [
+		CommonModule,
 		ConfigModule,
 		CustomValidatorsModule,
 		forwardRef(() => PostModule),

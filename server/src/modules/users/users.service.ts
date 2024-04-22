@@ -31,8 +31,6 @@ import {
 @Injectable()
 @UseInterceptors(ResponseInterceptor)
 export class UsersService {
-    private imageDirectory = "storage/user-images";
-
     constructor(
         private readonly postService: PostService,
         private readonly mailerService: MailerService,
@@ -197,8 +195,8 @@ export class UsersService {
 
         const user = await this.userModel.findOne({ _id: userId });
 
-        if (user.picture) this.commonService.unlinkImage(this.imageDirectory, user.picture);
-        if (user.backgroundImage) this.commonService.unlinkImage(this.imageDirectory, user.backgroundImage);
+        if (user.picture) await this.commonService.deleteImageFromS3(user.picture);
+        if (user.backgroundImage) await this.commonService.deleteImageFromS3(user.backgroundImage);
 
         user.bio = userData?.bio ?? '';
         user.name = userData?.name ?? '';
@@ -214,7 +212,7 @@ export class UsersService {
 
     public async deleteUserImage(userId: string, fileName: string, imageType: string): Promise<null> {
         await this.userModel.findByIdAndUpdate(userId, { [imageType]: '' });
-        if (fileName) this.commonService.unlinkImage(this.imageDirectory, fileName);
+        if (fileName) await this.commonService.deleteImageFromS3(fileName);
         return null;
     }
 

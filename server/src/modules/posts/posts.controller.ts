@@ -24,6 +24,7 @@ import { topupValidationStr } from "src/constants";
 import { IResponseProps } from "src/interceptors/interfaces";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { ConfigService } from "src/modules/config/config.service";
+import { CommonService } from "src/modules/common/common.service";
 import { CustomBadRequestException } from "src/exception-handlers/400/handler";
 import { CustomValidatorsService } from "../custom-validators/custom-validators.service";
 import { IScheduledPostIds, IVotingUserData, PostDTO, TopupParamProps } from "./post.dto";
@@ -32,6 +33,7 @@ import { IScheduledPostIds, IVotingUserData, PostDTO, TopupParamProps } from "./
 export class PostController {
     constructor(
         private readonly postService: PostService,
+        private readonly commonService: CommonService,
         private schedulerRegistery: SchedulerRegistry,
         private indexValidatorsService: CustomValidatorsService,
     ) {
@@ -59,20 +61,18 @@ export class PostController {
 
     @Post("create")
     @UseGuards(AuthGuard("jwt"))
-    @UseInterceptors(
-        ResponseInterceptor,
-        FilesInterceptor("images[]", 5, ConfigService.getFileStorageConfigObj())
-    )
+    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 5))
     async create(
         @Req() req: any,
         @Body() postData: PostDTO,
         @UploadedFiles(ConfigService.getParseFilePipeObj()) images: Array<Express.Multer.File>
     ): Promise<IResponseProps> {
         const { _id: userId } = req.user;
-        const fileNames = images.map(imageObj => imageObj.filename);
         const parsedData = JSON.parse(postData.data);
-        const data = { text: parsedData.text, images: fileNames, poll: parsedData.poll ?? null };
+        const data = { text: parsedData.text, poll: parsedData.poll ?? null, images: [] };
         data["postId"] = parsedData.postId;
+
+        data["images"] = await this.commonService.uploadMultipleImagesToS3(images);
 
         if (data?.poll?.choices?.length) {
             const choices = data.poll.choices.map((choice: string) => {
@@ -130,16 +130,14 @@ export class PostController {
 
     @Post("scheduled/reschedule/:id")
     @UseGuards(AuthGuard("jwt"))
-    @UseInterceptors(
-        ResponseInterceptor,
-        FilesInterceptor("images[]", 5, ConfigService.getFileStorageConfigObj())
-    )
+    @UseInterceptors(ResponseInterceptor, FilesInterceptor("images[]", 5))
     async reschedulePost(
         @Req() req: any,
         @Param() { id }: any,
         @Body() postData: PostDTO,
         @UploadedFiles(ConfigService.getParseFilePipeObj()) images: Array<Express.Multer.File>
     ): Promise<IResponseProps> {
+        postData["images"] = await this.commonService.uploadMultipleImagesToS3(images);
         await this.postService.deleteScheduledPostWithImages(id);
         return await this.create(req, postData, images);
     }

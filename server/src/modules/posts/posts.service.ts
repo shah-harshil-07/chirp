@@ -4,7 +4,6 @@ import { SchedulerRegistry } from "@nestjs/schedule";
 import { Inject, Injectable, InternalServerErrorException, UseInterceptors, forwardRef } from "@nestjs/common";
 
 import { Post, ScheduledPost } from "./post.schema";
-import { topupIncrementalValue } from "src/constants";
 import { CommonService } from "../common/common.service";
 import { ResponseInterceptor } from "src/interceptors/response";
 import { Comments } from "../reactions/comments/comments.schema";
@@ -133,7 +132,7 @@ export class PostService {
     public deleteScheduledPostWithImages = async (postId: ObjectId): Promise<ScheduledPost> => {
         const post = await this.deleteScheduledPost(postId);
         const images = post?.data?.images ?? [];
-        images.forEach(image => { this.commonService.unlinkImage("storage/post-images", image); });
+        await this.commonService.deleteMultipleImagesFromS3(images);
         return post;
     }
 
