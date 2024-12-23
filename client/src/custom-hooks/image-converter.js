@@ -23,27 +23,31 @@ const useImageConverter = () => {
         const files = e.target.files;
 
         if (files.length + uploadedFiles.length > uploadLimit) {
-			showError(`More than ${uploadLimit} image${uploadLimit > 1 ? "s are" : " is"} not allowed.`);
-		} else {
-			for (const fileObj of files) {
-				if (!allowedFileTypes.includes(fileObj.type)) {
-					showError("Only jpg, jpeg & png type files are allowed.");
-					continue;
-				}
+          showError(`More than ${uploadLimit} image${uploadLimit > 1 ? "s are" : " is"} not allowed.`);
+        } else {
+          for (const fileObj of files) {
+            if (!allowedFileTypes.includes(fileObj.type)) {
+              showError("Only jpg, jpeg & png type files are allowed.");
+              continue;
+            }
 
-				if (fileObj.size > (1024 * 1024 * 5)) {
-					showError("Uploaded file's size must not exceed 5MB.");
-					continue;
-				}
+            if (fileObj.size > (1024 * 1024 * 3)) {
+              showError("Uploaded file's size must not exceed 3MB.");
+              continue;
+            }
 
-				const reader = new FileReader();
-				reader.onload = e => { onloadCallback(e, fileObj); }
-				reader.readAsDataURL(fileObj);
-			}
-		}
+            const reader = new FileReader();
+            reader.onload = e => { onloadCallback(e, fileObj); }
+            reader.readAsDataURL(fileObj);
+          }
+        }
     }
 
-    return { getFileObjectFromBase64, uploadImagesAction };
+    const resetFileCache = fileUploadRef => {
+      if (fileUploadRef?.current) fileUploadRef.current.value = '';
+    }
+
+    return { getFileObjectFromBase64, uploadImagesAction, resetFileCache };
 }
 
 export default useImageConverter;
